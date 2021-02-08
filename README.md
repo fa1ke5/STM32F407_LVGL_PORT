@@ -2,9 +2,17 @@
 
 Графическая библиотека LVGL на отладочной плате stm32f407vet6 с aliexpress с использованием FSMC 16bit под HAL. В комплекте проект от CubeMX.
 
+
+
 плата https://aliexpress.ru/item/32978440523.html?spm=a2g0o.productlist.0.0.3e98670eTcRV2t&algo_pvid=6c5f00b0-83cd-4ee4-a2a8-bf341dcd81f6&algo_expid=6c5f00b0-83cd-4ee4-a2a8-bf341dcd81f6-11&btsid=0b8b034c16128172502837184edc76&ws_ab_test=searchweb0_0,searchweb201602_,searchweb201603_&sku_id=66702899478 .
 
+![image](https://github.com/fa1ke5/STM32F407_LVGL_PORT/blob/main/doc/MB/stm32f407vet6_st-link03.png)
+
 дисплей https://aliexpress.ru/item/32662835059.html?spm=a2g0o.productlist.0.0.34efb1636w477y&algo_pvid=542f2dc9-c3c2-4420-b0fa-43bbce93113f&algo_expid=542f2dc9-c3c2-4420-b0fa-43bbce93113f-1&btsid=0b8b034c16128174275838227edc76&ws_ab_test=searchweb0_0,searchweb201602_,searchweb201603_&sku_id=59910157439
+
+![image](https://github.com/fa1ke5/STM32F407_LVGL_PORT/blob/main/doc/LCD/face.jpg)
+
+![image](https://github.com/fa1ke5/STM32F407_LVGL_PORT/blob/main/doc/LCD/back.jpg)
 
 Дисплей на базе контроллера ILI9341 320ч240, pin2pin совместим с разьемом отладочной платы, одно время китайцы продавали их прямо комплектами. 
 Дисплей оборудован резистивным тачскрином на базе XPT2064, интерфейс SPI.
