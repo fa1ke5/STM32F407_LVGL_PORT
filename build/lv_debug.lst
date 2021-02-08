@@ -1,0 +1,620 @@
+ARM GAS  D:\Temp\ccGfAgqy.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_debug.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.lv_debug_check_null,"ax",%progbits
+  18              		.align	1
+  19              		.global	lv_debug_check_null
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	lv_debug_check_null:
+  27              	.LVL0:
+  28              	.LFB131:
+  29              		.file 1 "lvgl/src/lv_misc/lv_debug.c"
+   1:lvgl/src/lv_misc/lv_debug.c **** /**
+   2:lvgl/src/lv_misc/lv_debug.c ****  * @file lv_debug.c
+   3:lvgl/src/lv_misc/lv_debug.c ****  *
+   4:lvgl/src/lv_misc/lv_debug.c ****  */
+   5:lvgl/src/lv_misc/lv_debug.c **** 
+   6:lvgl/src/lv_misc/lv_debug.c **** /*********************
+   7:lvgl/src/lv_misc/lv_debug.c ****  *      INCLUDES
+   8:lvgl/src/lv_misc/lv_debug.c ****  *********************/
+   9:lvgl/src/lv_misc/lv_debug.c **** #include "lv_debug.h"
+  10:lvgl/src/lv_misc/lv_debug.c **** 
+  11:lvgl/src/lv_misc/lv_debug.c **** #if LV_USE_DEBUG
+  12:lvgl/src/lv_misc/lv_debug.c **** 
+  13:lvgl/src/lv_misc/lv_debug.c **** #include "lv_mem.h"
+  14:lvgl/src/lv_misc/lv_debug.c **** #include <string.h>
+  15:lvgl/src/lv_misc/lv_debug.c **** 
+  16:lvgl/src/lv_misc/lv_debug.c **** /*********************
+  17:lvgl/src/lv_misc/lv_debug.c ****  *      DEFINES
+  18:lvgl/src/lv_misc/lv_debug.c ****  *********************/
+  19:lvgl/src/lv_misc/lv_debug.c **** #ifndef LV_DEBUG_STR_MAX_LENGTH
+  20:lvgl/src/lv_misc/lv_debug.c ****     #define LV_DEBUG_STR_MAX_LENGTH (1024 * 8)
+  21:lvgl/src/lv_misc/lv_debug.c **** #endif
+  22:lvgl/src/lv_misc/lv_debug.c **** 
+  23:lvgl/src/lv_misc/lv_debug.c **** #ifndef LV_DEBUG_STR_MAX_REPEAT
+  24:lvgl/src/lv_misc/lv_debug.c ****     #define LV_DEBUG_STR_MAX_REPEAT 8
+  25:lvgl/src/lv_misc/lv_debug.c **** #endif
+  26:lvgl/src/lv_misc/lv_debug.c **** /**********************
+  27:lvgl/src/lv_misc/lv_debug.c ****  *      TYPEDEFS
+  28:lvgl/src/lv_misc/lv_debug.c ****  **********************/
+  29:lvgl/src/lv_misc/lv_debug.c **** 
+ARM GAS  D:\Temp\ccGfAgqy.s 			page 2
+
+
+  30:lvgl/src/lv_misc/lv_debug.c **** /**********************
+  31:lvgl/src/lv_misc/lv_debug.c ****  *  STATIC PROTOTYPES
+  32:lvgl/src/lv_misc/lv_debug.c ****  **********************/
+  33:lvgl/src/lv_misc/lv_debug.c **** 
+  34:lvgl/src/lv_misc/lv_debug.c **** /**********************
+  35:lvgl/src/lv_misc/lv_debug.c ****  *  STATIC VARIABLES
+  36:lvgl/src/lv_misc/lv_debug.c ****  **********************/
+  37:lvgl/src/lv_misc/lv_debug.c **** 
+  38:lvgl/src/lv_misc/lv_debug.c **** /**********************
+  39:lvgl/src/lv_misc/lv_debug.c ****  *      MACROS
+  40:lvgl/src/lv_misc/lv_debug.c ****  **********************/
+  41:lvgl/src/lv_misc/lv_debug.c **** 
+  42:lvgl/src/lv_misc/lv_debug.c **** /**********************
+  43:lvgl/src/lv_misc/lv_debug.c ****  *   GLOBAL FUNCTIONS
+  44:lvgl/src/lv_misc/lv_debug.c ****  **********************/
+  45:lvgl/src/lv_misc/lv_debug.c **** 
+  46:lvgl/src/lv_misc/lv_debug.c **** bool lv_debug_check_null(const void * p)
+  47:lvgl/src/lv_misc/lv_debug.c **** {
+  30              		.loc 1 47 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  48:lvgl/src/lv_misc/lv_debug.c ****     if(p) return true;
+  35              		.loc 1 48 5 view .LVU1
+  36              		.loc 1 48 7 is_stmt 0 view .LVU2
+  37 0000 00B1     		cbz	r0, .L2
+  38              		.loc 1 48 18 view .LVU3
+  39 0002 0120     		movs	r0, #1
+  40              	.LVL1:
+  41              	.L2:
+  49:lvgl/src/lv_misc/lv_debug.c **** 
+  50:lvgl/src/lv_misc/lv_debug.c ****     return false;
+  51:lvgl/src/lv_misc/lv_debug.c **** }
+  42              		.loc 1 51 1 view .LVU4
+  43 0004 7047     		bx	lr
+  44              		.cfi_endproc
+  45              	.LFE131:
+  47              		.section	.text.lv_debug_check_mem_integrity,"ax",%progbits
+  48              		.align	1
+  49              		.global	lv_debug_check_mem_integrity
+  50              		.syntax unified
+  51              		.thumb
+  52              		.thumb_func
+  53              		.fpu fpv4-sp-d16
+  55              	lv_debug_check_mem_integrity:
+  56              	.LFB132:
+  52:lvgl/src/lv_misc/lv_debug.c **** 
+  53:lvgl/src/lv_misc/lv_debug.c **** bool lv_debug_check_mem_integrity(void)
+  54:lvgl/src/lv_misc/lv_debug.c **** {
+  57              		.loc 1 54 1 is_stmt 1 view -0
+  58              		.cfi_startproc
+  59              		@ args = 0, pretend = 0, frame = 0
+  60              		@ frame_needed = 0, uses_anonymous_args = 0
+  61 0000 08B5     		push	{r3, lr}
+  62              	.LCFI0:
+  63              		.cfi_def_cfa_offset 8
+ARM GAS  D:\Temp\ccGfAgqy.s 			page 3
+
+
+  64              		.cfi_offset 3, -8
+  65              		.cfi_offset 14, -4
+  55:lvgl/src/lv_misc/lv_debug.c ****     return lv_mem_test() == LV_RES_OK ? true : false;
+  66              		.loc 1 55 5 view .LVU6
+  67              		.loc 1 55 12 is_stmt 0 view .LVU7
+  68 0002 FFF7FEFF 		bl	lv_mem_test
+  69              	.LVL2:
+  56:lvgl/src/lv_misc/lv_debug.c **** }
+  70              		.loc 1 56 1 view .LVU8
+  71 0006 0128     		cmp	r0, #1
+  72 0008 14BF     		ite	ne
+  73 000a 0020     		movne	r0, #0
+  74 000c 0120     		moveq	r0, #1
+  75 000e 08BD     		pop	{r3, pc}
+  76              		.cfi_endproc
+  77              	.LFE132:
+  79              		.section	.text.lv_debug_check_str,"ax",%progbits
+  80              		.align	1
+  81              		.global	lv_debug_check_str
+  82              		.syntax unified
+  83              		.thumb
+  84              		.thumb_func
+  85              		.fpu fpv4-sp-d16
+  87              	lv_debug_check_str:
+  88              	.LVL3:
+  89              	.LFB133:
+  57:lvgl/src/lv_misc/lv_debug.c **** 
+  58:lvgl/src/lv_misc/lv_debug.c **** bool lv_debug_check_str(const void * str)
+  59:lvgl/src/lv_misc/lv_debug.c **** {
+  90              		.loc 1 59 1 is_stmt 1 view -0
+  91              		.cfi_startproc
+  92              		@ args = 0, pretend = 0, frame = 0
+  93              		@ frame_needed = 0, uses_anonymous_args = 0
+  94              		@ link register save eliminated.
+  95              		.loc 1 59 1 is_stmt 0 view .LVU10
+  96 0000 10B4     		push	{r4}
+  97              	.LCFI1:
+  98              		.cfi_def_cfa_offset 4
+  99              		.cfi_offset 4, -4
+  60:lvgl/src/lv_misc/lv_debug.c ****     const uint8_t * s = (const uint8_t *)str;
+ 100              		.loc 1 60 5 is_stmt 1 view .LVU11
+ 101              	.LVL4:
+  61:lvgl/src/lv_misc/lv_debug.c ****     uint8_t last_byte = 0;
+ 102              		.loc 1 61 5 view .LVU12
+  62:lvgl/src/lv_misc/lv_debug.c ****     uint32_t rep = 0;
+ 103              		.loc 1 62 5 view .LVU13
+  63:lvgl/src/lv_misc/lv_debug.c ****     uint32_t i;
+ 104              		.loc 1 63 5 view .LVU14
+  64:lvgl/src/lv_misc/lv_debug.c **** 
+  65:lvgl/src/lv_misc/lv_debug.c ****     for(i = 0; i < LV_DEBUG_STR_MAX_LENGTH && s[i] != '\0'; i++) {
+ 105              		.loc 1 65 5 view .LVU15
+ 106              		.loc 1 65 11 is_stmt 0 view .LVU16
+ 107 0002 0022     		movs	r2, #0
+  62:lvgl/src/lv_misc/lv_debug.c ****     uint32_t i;
+ 108              		.loc 1 62 14 view .LVU17
+ 109 0004 1446     		mov	r4, r2
+  61:lvgl/src/lv_misc/lv_debug.c ****     uint32_t rep = 0;
+ARM GAS  D:\Temp\ccGfAgqy.s 			page 4
+
+
+ 110              		.loc 1 61 13 view .LVU18
+ 111 0006 1146     		mov	r1, r2
+ 112              		.loc 1 65 5 view .LVU19
+ 113 0008 05E0     		b	.L7
+ 114              	.LVL5:
+ 115              	.L18:
+  66:lvgl/src/lv_misc/lv_debug.c ****         if(s[i] != last_byte) {
+  67:lvgl/src/lv_misc/lv_debug.c ****             last_byte = s[i];
+  68:lvgl/src/lv_misc/lv_debug.c ****             rep = 1;
+  69:lvgl/src/lv_misc/lv_debug.c ****         }
+  70:lvgl/src/lv_misc/lv_debug.c ****         else if(s[i] > 0x7F) {
+ 116              		.loc 1 70 14 is_stmt 1 view .LVU20
+ 117              		.loc 1 70 16 is_stmt 0 view .LVU21
+ 118 000a 13F0800F 		tst	r3, #128
+ 119 000e 0CD1     		bne	.L17
+ 120              	.LVL6:
+ 121              	.L8:
+  71:lvgl/src/lv_misc/lv_debug.c ****             rep++;
+  72:lvgl/src/lv_misc/lv_debug.c ****             if(rep > LV_DEBUG_STR_MAX_REPEAT) {
+  73:lvgl/src/lv_misc/lv_debug.c ****                 LV_LOG_WARN("lv_debug_check_str: a non-ASCII char has repeated more than LV_DEBUG_S
+  74:lvgl/src/lv_misc/lv_debug.c ****                 return false;
+  75:lvgl/src/lv_misc/lv_debug.c ****             }
+  76:lvgl/src/lv_misc/lv_debug.c ****         }
+  77:lvgl/src/lv_misc/lv_debug.c **** 
+  78:lvgl/src/lv_misc/lv_debug.c ****         if(s[i] < 10) {
+ 122              		.loc 1 78 9 is_stmt 1 view .LVU22
+ 123              		.loc 1 78 11 is_stmt 0 view .LVU23
+ 124 0010 092B     		cmp	r3, #9
+ 125 0012 13D9     		bls	.L14
+  65:lvgl/src/lv_misc/lv_debug.c ****         if(s[i] != last_byte) {
+ 126              		.loc 1 65 62 discriminator 2 view .LVU24
+ 127 0014 0132     		adds	r2, r2, #1
+ 128              	.LVL7:
+ 129              	.L7:
+  65:lvgl/src/lv_misc/lv_debug.c ****         if(s[i] != last_byte) {
+ 130              		.loc 1 65 5 discriminator 1 view .LVU25
+ 131 0016 B2F5005F 		cmp	r2, #8192
+ 132 001a 0BD2     		bcs	.L10
+  65:lvgl/src/lv_misc/lv_debug.c ****         if(s[i] != last_byte) {
+ 133              		.loc 1 65 48 discriminator 3 view .LVU26
+ 134 001c 835C     		ldrb	r3, [r0, r2]	@ zero_extendqisi2
+  65:lvgl/src/lv_misc/lv_debug.c ****         if(s[i] != last_byte) {
+ 135              		.loc 1 65 44 discriminator 3 view .LVU27
+ 136 001e 4BB1     		cbz	r3, .L10
+  66:lvgl/src/lv_misc/lv_debug.c ****         if(s[i] != last_byte) {
+ 137              		.loc 1 66 9 is_stmt 1 view .LVU28
+  66:lvgl/src/lv_misc/lv_debug.c ****         if(s[i] != last_byte) {
+ 138              		.loc 1 66 11 is_stmt 0 view .LVU29
+ 139 0020 8B42     		cmp	r3, r1
+ 140 0022 F2D0     		beq	.L18
+  67:lvgl/src/lv_misc/lv_debug.c ****             rep = 1;
+ 141              		.loc 1 67 23 view .LVU30
+ 142 0024 1946     		mov	r1, r3
+ 143              	.LVL8:
+  68:lvgl/src/lv_misc/lv_debug.c ****         }
+ 144              		.loc 1 68 17 view .LVU31
+ 145 0026 0124     		movs	r4, #1
+ARM GAS  D:\Temp\ccGfAgqy.s 			page 5
+
+
+ 146              	.LVL9:
+  68:lvgl/src/lv_misc/lv_debug.c ****         }
+ 147              		.loc 1 68 17 view .LVU32
+ 148 0028 F2E7     		b	.L8
+ 149              	.LVL10:
+ 150              	.L17:
+  71:lvgl/src/lv_misc/lv_debug.c ****             if(rep > LV_DEBUG_STR_MAX_REPEAT) {
+ 151              		.loc 1 71 13 is_stmt 1 view .LVU33
+  71:lvgl/src/lv_misc/lv_debug.c ****             if(rep > LV_DEBUG_STR_MAX_REPEAT) {
+ 152              		.loc 1 71 16 is_stmt 0 view .LVU34
+ 153 002a 0134     		adds	r4, r4, #1
+ 154              	.LVL11:
+  72:lvgl/src/lv_misc/lv_debug.c ****                 LV_LOG_WARN("lv_debug_check_str: a non-ASCII char has repeated more than LV_DEBUG_S
+ 155              		.loc 1 72 13 is_stmt 1 view .LVU35
+  72:lvgl/src/lv_misc/lv_debug.c ****                 LV_LOG_WARN("lv_debug_check_str: a non-ASCII char has repeated more than LV_DEBUG_S
+ 156              		.loc 1 72 15 is_stmt 0 view .LVU36
+ 157 002c 082C     		cmp	r4, #8
+ 158 002e EFD9     		bls	.L8
+  74:lvgl/src/lv_misc/lv_debug.c ****             }
+ 159              		.loc 1 74 24 view .LVU37
+ 160 0030 0020     		movs	r0, #0
+ 161              	.LVL12:
+  74:lvgl/src/lv_misc/lv_debug.c ****             }
+ 162              		.loc 1 74 24 view .LVU38
+ 163 0032 04E0     		b	.L9
+ 164              	.LVL13:
+ 165              	.L10:
+  79:lvgl/src/lv_misc/lv_debug.c ****             LV_LOG_WARN("lv_debug_check_str: invalid char in the string (< 10 value)");
+  80:lvgl/src/lv_misc/lv_debug.c ****             return false;   /*Shouldn't occur in strings*/
+  81:lvgl/src/lv_misc/lv_debug.c ****         }
+  82:lvgl/src/lv_misc/lv_debug.c ****     }
+  83:lvgl/src/lv_misc/lv_debug.c **** 
+  84:lvgl/src/lv_misc/lv_debug.c ****     if(s[i] == '\0') return true;
+ 166              		.loc 1 84 5 is_stmt 1 view .LVU39
+ 167              		.loc 1 84 9 is_stmt 0 view .LVU40
+ 168 0034 835C     		ldrb	r3, [r0, r2]	@ zero_extendqisi2
+ 169              		.loc 1 84 7 view .LVU41
+ 170 0036 2BB1     		cbz	r3, .L15
+  85:lvgl/src/lv_misc/lv_debug.c **** 
+  86:lvgl/src/lv_misc/lv_debug.c ****     LV_LOG_WARN("lv_debug_check_str: string is longer than LV_DEBUG_STR_MAX_LENGTH");
+  87:lvgl/src/lv_misc/lv_debug.c ****     return false;
+ 171              		.loc 1 87 12 view .LVU42
+ 172 0038 0020     		movs	r0, #0
+ 173              	.LVL14:
+ 174              		.loc 1 87 12 view .LVU43
+ 175 003a 00E0     		b	.L9
+ 176              	.LVL15:
+ 177              	.L14:
+  80:lvgl/src/lv_misc/lv_debug.c ****         }
+ 178              		.loc 1 80 20 view .LVU44
+ 179 003c 0020     		movs	r0, #0
+ 180              	.LVL16:
+ 181              	.L9:
+  88:lvgl/src/lv_misc/lv_debug.c **** }
+ 182              		.loc 1 88 1 view .LVU45
+ 183 003e 5DF8044B 		ldr	r4, [sp], #4
+ 184              	.LCFI2:
+ARM GAS  D:\Temp\ccGfAgqy.s 			page 6
+
+
+ 185              		.cfi_remember_state
+ 186              		.cfi_restore 4
+ 187              		.cfi_def_cfa_offset 0
+ 188              	.LVL17:
+ 189              		.loc 1 88 1 view .LVU46
+ 190 0042 7047     		bx	lr
+ 191              	.LVL18:
+ 192              	.L15:
+ 193              	.LCFI3:
+ 194              		.cfi_restore_state
+  84:lvgl/src/lv_misc/lv_debug.c **** 
+ 195              		.loc 1 84 29 view .LVU47
+ 196 0044 0120     		movs	r0, #1
+ 197              	.LVL19:
+  84:lvgl/src/lv_misc/lv_debug.c **** 
+ 198              		.loc 1 84 29 view .LVU48
+ 199 0046 FAE7     		b	.L9
+ 200              		.cfi_endproc
+ 201              	.LFE133:
+ 203              		.section	.text.lv_debug_log_error,"ax",%progbits
+ 204              		.align	1
+ 205              		.global	lv_debug_log_error
+ 206              		.syntax unified
+ 207              		.thumb
+ 208              		.thumb_func
+ 209              		.fpu fpv4-sp-d16
+ 211              	lv_debug_log_error:
+ 212              	.LVL20:
+ 213              	.LFB134:
+  89:lvgl/src/lv_misc/lv_debug.c **** 
+  90:lvgl/src/lv_misc/lv_debug.c **** void lv_debug_log_error(const char * msg, uint64_t value)
+  91:lvgl/src/lv_misc/lv_debug.c **** {
+ 214              		.loc 1 91 1 is_stmt 1 view -0
+ 215              		.cfi_startproc
+ 216              		@ args = 0, pretend = 0, frame = 256
+ 217              		@ frame_needed = 0, uses_anonymous_args = 0
+ 218              		.loc 1 91 1 is_stmt 0 view .LVU50
+ 219 0000 70B5     		push	{r4, r5, r6, lr}
+ 220              	.LCFI4:
+ 221              		.cfi_def_cfa_offset 16
+ 222              		.cfi_offset 4, -16
+ 223              		.cfi_offset 5, -12
+ 224              		.cfi_offset 6, -8
+ 225              		.cfi_offset 14, -4
+ 226 0002 C0B0     		sub	sp, sp, #256
+ 227              	.LCFI5:
+ 228              		.cfi_def_cfa_offset 272
+ 229 0004 0646     		mov	r6, r0
+ 230 0006 1446     		mov	r4, r2
+  92:lvgl/src/lv_misc/lv_debug.c ****     static const char hex[] = "0123456789ABCDEF";
+ 231              		.loc 1 92 5 is_stmt 1 view .LVU51
+  93:lvgl/src/lv_misc/lv_debug.c **** 
+  94:lvgl/src/lv_misc/lv_debug.c ****     size_t msg_len = strlen(msg);
+ 232              		.loc 1 94 5 view .LVU52
+ 233              		.loc 1 94 22 is_stmt 0 view .LVU53
+ 234 0008 FFF7FEFF 		bl	strlen
+ 235              	.LVL21:
+ARM GAS  D:\Temp\ccGfAgqy.s 			page 7
+
+
+  95:lvgl/src/lv_misc/lv_debug.c ****     uint32_t value_len = sizeof(unsigned long int);
+ 236              		.loc 1 95 5 is_stmt 1 view .LVU54
+  96:lvgl/src/lv_misc/lv_debug.c **** 
+  97:lvgl/src/lv_misc/lv_debug.c ****     if(msg_len < 230) {
+ 237              		.loc 1 97 5 view .LVU55
+ 238              		.loc 1 97 7 is_stmt 0 view .LVU56
+ 239 000c E528     		cmp	r0, #229
+ 240 000e 01D9     		bls	.L24
+ 241              	.LVL22:
+ 242              	.L19:
+  98:lvgl/src/lv_misc/lv_debug.c ****         char buf[255];
+  99:lvgl/src/lv_misc/lv_debug.c ****         char * bufp = buf;
+ 100:lvgl/src/lv_misc/lv_debug.c **** 
+ 101:lvgl/src/lv_misc/lv_debug.c ****         /*Add the function name*/
+ 102:lvgl/src/lv_misc/lv_debug.c ****         _lv_memcpy(bufp, msg, msg_len);
+ 103:lvgl/src/lv_misc/lv_debug.c ****         bufp += msg_len;
+ 104:lvgl/src/lv_misc/lv_debug.c **** 
+ 105:lvgl/src/lv_misc/lv_debug.c ****         /*Add value in hey*/
+ 106:lvgl/src/lv_misc/lv_debug.c ****         *bufp = ' ';
+ 107:lvgl/src/lv_misc/lv_debug.c ****         bufp ++;
+ 108:lvgl/src/lv_misc/lv_debug.c ****         *bufp = '(';
+ 109:lvgl/src/lv_misc/lv_debug.c ****         bufp ++;
+ 110:lvgl/src/lv_misc/lv_debug.c ****         *bufp = '0';
+ 111:lvgl/src/lv_misc/lv_debug.c ****         bufp ++;
+ 112:lvgl/src/lv_misc/lv_debug.c ****         *bufp = 'x';
+ 113:lvgl/src/lv_misc/lv_debug.c ****         bufp ++;
+ 114:lvgl/src/lv_misc/lv_debug.c **** 
+ 115:lvgl/src/lv_misc/lv_debug.c ****         int8_t i;
+ 116:lvgl/src/lv_misc/lv_debug.c ****         for(i = value_len * 2 - 1; i >= 0; i--) {
+ 117:lvgl/src/lv_misc/lv_debug.c ****             uint8_t x = (unsigned long int)((unsigned long int)value >> (i * 4)) & 0xF;
+ 118:lvgl/src/lv_misc/lv_debug.c **** 
+ 119:lvgl/src/lv_misc/lv_debug.c ****             *bufp = hex[x];
+ 120:lvgl/src/lv_misc/lv_debug.c ****             bufp++;
+ 121:lvgl/src/lv_misc/lv_debug.c ****         }
+ 122:lvgl/src/lv_misc/lv_debug.c **** 
+ 123:lvgl/src/lv_misc/lv_debug.c ****         *bufp = ')';
+ 124:lvgl/src/lv_misc/lv_debug.c ****         bufp ++;
+ 125:lvgl/src/lv_misc/lv_debug.c **** 
+ 126:lvgl/src/lv_misc/lv_debug.c ****         *bufp = '\0';
+ 127:lvgl/src/lv_misc/lv_debug.c ****         LV_LOG_ERROR(buf);
+ 128:lvgl/src/lv_misc/lv_debug.c ****     }
+ 129:lvgl/src/lv_misc/lv_debug.c ****     else {
+ 130:lvgl/src/lv_misc/lv_debug.c ****         LV_LOG_ERROR(msg);
+ 131:lvgl/src/lv_misc/lv_debug.c ****     }
+ 132:lvgl/src/lv_misc/lv_debug.c **** }
+ 243              		.loc 1 132 1 view .LVU57
+ 244 0010 40B0     		add	sp, sp, #256
+ 245              	.LCFI6:
+ 246              		.cfi_remember_state
+ 247              		.cfi_def_cfa_offset 16
+ 248              		@ sp needed
+ 249 0012 70BD     		pop	{r4, r5, r6, pc}
+ 250              	.LVL23:
+ 251              	.L24:
+ 252              	.LCFI7:
+ 253              		.cfi_restore_state
+ 254              		.loc 1 132 1 view .LVU58
+ARM GAS  D:\Temp\ccGfAgqy.s 			page 8
+
+
+ 255 0014 0546     		mov	r5, r0
+ 256              	.LBB2:
+  98:lvgl/src/lv_misc/lv_debug.c ****         char buf[255];
+ 257              		.loc 1 98 9 is_stmt 1 view .LVU59
+  99:lvgl/src/lv_misc/lv_debug.c **** 
+ 258              		.loc 1 99 9 view .LVU60
+ 259              	.LVL24:
+ 102:lvgl/src/lv_misc/lv_debug.c ****         bufp += msg_len;
+ 260              		.loc 1 102 9 view .LVU61
+ 261 0016 0246     		mov	r2, r0
+ 262 0018 3146     		mov	r1, r6
+ 263 001a 6846     		mov	r0, sp
+ 264              	.LVL25:
+ 102:lvgl/src/lv_misc/lv_debug.c ****         bufp += msg_len;
+ 265              		.loc 1 102 9 is_stmt 0 view .LVU62
+ 266 001c FFF7FEFF 		bl	_lv_memcpy
+ 267              	.LVL26:
+ 103:lvgl/src/lv_misc/lv_debug.c **** 
+ 268              		.loc 1 103 9 is_stmt 1 view .LVU63
+ 103:lvgl/src/lv_misc/lv_debug.c **** 
+ 269              		.loc 1 103 14 is_stmt 0 view .LVU64
+ 270 0020 0DEB0501 		add	r1, sp, r5
+ 271              	.LVL27:
+ 106:lvgl/src/lv_misc/lv_debug.c ****         bufp ++;
+ 272              		.loc 1 106 9 is_stmt 1 view .LVU65
+ 106:lvgl/src/lv_misc/lv_debug.c ****         bufp ++;
+ 273              		.loc 1 106 15 is_stmt 0 view .LVU66
+ 274 0024 2023     		movs	r3, #32
+ 275 0026 0DF80530 		strb	r3, [sp, r5]
+ 107:lvgl/src/lv_misc/lv_debug.c ****         *bufp = '(';
+ 276              		.loc 1 107 9 is_stmt 1 view .LVU67
+ 277              	.LVL28:
+ 108:lvgl/src/lv_misc/lv_debug.c ****         bufp ++;
+ 278              		.loc 1 108 9 view .LVU68
+ 108:lvgl/src/lv_misc/lv_debug.c ****         bufp ++;
+ 279              		.loc 1 108 15 is_stmt 0 view .LVU69
+ 280 002a 2823     		movs	r3, #40
+ 281 002c 4B70     		strb	r3, [r1, #1]
+ 109:lvgl/src/lv_misc/lv_debug.c ****         *bufp = '0';
+ 282              		.loc 1 109 9 is_stmt 1 view .LVU70
+ 283              	.LVL29:
+ 110:lvgl/src/lv_misc/lv_debug.c ****         bufp ++;
+ 284              		.loc 1 110 9 view .LVU71
+ 110:lvgl/src/lv_misc/lv_debug.c ****         bufp ++;
+ 285              		.loc 1 110 15 is_stmt 0 view .LVU72
+ 286 002e 3023     		movs	r3, #48
+ 287 0030 8B70     		strb	r3, [r1, #2]
+ 111:lvgl/src/lv_misc/lv_debug.c ****         *bufp = 'x';
+ 288              		.loc 1 111 9 is_stmt 1 view .LVU73
+ 289              	.LVL30:
+ 112:lvgl/src/lv_misc/lv_debug.c ****         bufp ++;
+ 290              		.loc 1 112 9 view .LVU74
+ 112:lvgl/src/lv_misc/lv_debug.c ****         bufp ++;
+ 291              		.loc 1 112 15 is_stmt 0 view .LVU75
+ 292 0032 7823     		movs	r3, #120
+ 293 0034 CB70     		strb	r3, [r1, #3]
+ 113:lvgl/src/lv_misc/lv_debug.c **** 
+ARM GAS  D:\Temp\ccGfAgqy.s 			page 9
+
+
+ 294              		.loc 1 113 9 is_stmt 1 view .LVU76
+ 113:lvgl/src/lv_misc/lv_debug.c **** 
+ 295              		.loc 1 113 14 is_stmt 0 view .LVU77
+ 296 0036 0431     		adds	r1, r1, #4
+ 297              	.LVL31:
+ 115:lvgl/src/lv_misc/lv_debug.c ****         for(i = value_len * 2 - 1; i >= 0; i--) {
+ 298              		.loc 1 115 9 is_stmt 1 view .LVU78
+ 116:lvgl/src/lv_misc/lv_debug.c ****             uint8_t x = (unsigned long int)((unsigned long int)value >> (i * 4)) & 0xF;
+ 299              		.loc 1 116 9 view .LVU79
+ 116:lvgl/src/lv_misc/lv_debug.c ****             uint8_t x = (unsigned long int)((unsigned long int)value >> (i * 4)) & 0xF;
+ 300              		.loc 1 116 15 is_stmt 0 view .LVU80
+ 301 0038 0723     		movs	r3, #7
+ 116:lvgl/src/lv_misc/lv_debug.c ****             uint8_t x = (unsigned long int)((unsigned long int)value >> (i * 4)) & 0xF;
+ 302              		.loc 1 116 9 view .LVU81
+ 303 003a 0AE0     		b	.L21
+ 304              	.LVL32:
+ 305              	.L22:
+ 306              	.LBB3:
+ 117:lvgl/src/lv_misc/lv_debug.c **** 
+ 307              		.loc 1 117 13 is_stmt 1 discriminator 3 view .LVU82
+ 117:lvgl/src/lv_misc/lv_debug.c **** 
+ 308              		.loc 1 117 76 is_stmt 0 discriminator 3 view .LVU83
+ 309 003c 9A00     		lsls	r2, r3, #2
+ 117:lvgl/src/lv_misc/lv_debug.c **** 
+ 310              		.loc 1 117 25 discriminator 3 view .LVU84
+ 311 003e 24FA02F2 		lsr	r2, r4, r2
+ 117:lvgl/src/lv_misc/lv_debug.c **** 
+ 312              		.loc 1 117 21 discriminator 3 view .LVU85
+ 313 0042 02F00F02 		and	r2, r2, #15
+ 314              	.LVL33:
+ 119:lvgl/src/lv_misc/lv_debug.c ****             bufp++;
+ 315              		.loc 1 119 13 is_stmt 1 discriminator 3 view .LVU86
+ 119:lvgl/src/lv_misc/lv_debug.c ****             bufp++;
+ 316              		.loc 1 119 24 is_stmt 0 discriminator 3 view .LVU87
+ 317 0046 0648     		ldr	r0, .L25
+ 318 0048 825C     		ldrb	r2, [r0, r2]	@ zero_extendqisi2
+ 319              	.LVL34:
+ 119:lvgl/src/lv_misc/lv_debug.c ****             bufp++;
+ 320              		.loc 1 119 19 discriminator 3 view .LVU88
+ 321 004a 01F8012B 		strb	r2, [r1], #1
+ 322              	.LVL35:
+ 120:lvgl/src/lv_misc/lv_debug.c ****         }
+ 323              		.loc 1 120 13 is_stmt 1 discriminator 3 view .LVU89
+ 120:lvgl/src/lv_misc/lv_debug.c ****         }
+ 324              		.loc 1 120 13 is_stmt 0 discriminator 3 view .LVU90
+ 325              	.LBE3:
+ 116:lvgl/src/lv_misc/lv_debug.c ****             uint8_t x = (unsigned long int)((unsigned long int)value >> (i * 4)) & 0xF;
+ 326              		.loc 1 116 45 discriminator 3 view .LVU91
+ 327 004e 013B     		subs	r3, r3, #1
+ 328              	.LVL36:
+ 116:lvgl/src/lv_misc/lv_debug.c ****             uint8_t x = (unsigned long int)((unsigned long int)value >> (i * 4)) & 0xF;
+ 329              		.loc 1 116 45 discriminator 3 view .LVU92
+ 330 0050 5BB2     		sxtb	r3, r3
+ 331              	.LVL37:
+ 332              	.L21:
+ 116:lvgl/src/lv_misc/lv_debug.c ****             uint8_t x = (unsigned long int)((unsigned long int)value >> (i * 4)) & 0xF;
+ 333              		.loc 1 116 9 discriminator 1 view .LVU93
+ARM GAS  D:\Temp\ccGfAgqy.s 			page 10
+
+
+ 334 0052 002B     		cmp	r3, #0
+ 335 0054 F2DA     		bge	.L22
+ 123:lvgl/src/lv_misc/lv_debug.c ****         bufp ++;
+ 336              		.loc 1 123 9 is_stmt 1 view .LVU94
+ 123:lvgl/src/lv_misc/lv_debug.c ****         bufp ++;
+ 337              		.loc 1 123 15 is_stmt 0 view .LVU95
+ 338 0056 2923     		movs	r3, #41
+ 339              	.LVL38:
+ 123:lvgl/src/lv_misc/lv_debug.c ****         bufp ++;
+ 340              		.loc 1 123 15 view .LVU96
+ 341 0058 0B70     		strb	r3, [r1]
+ 124:lvgl/src/lv_misc/lv_debug.c **** 
+ 342              		.loc 1 124 9 is_stmt 1 view .LVU97
+ 343              	.LVL39:
+ 126:lvgl/src/lv_misc/lv_debug.c ****         LV_LOG_ERROR(buf);
+ 344              		.loc 1 126 9 view .LVU98
+ 126:lvgl/src/lv_misc/lv_debug.c ****         LV_LOG_ERROR(buf);
+ 345              		.loc 1 126 15 is_stmt 0 view .LVU99
+ 346 005a 0023     		movs	r3, #0
+ 347 005c 4B70     		strb	r3, [r1, #1]
+ 127:lvgl/src/lv_misc/lv_debug.c ****     }
+ 348              		.loc 1 127 26 is_stmt 1 view .LVU100
+ 349              	.LBE2:
+ 130:lvgl/src/lv_misc/lv_debug.c ****     }
+ 350              		.loc 1 130 26 view .LVU101
+ 351              		.loc 1 132 1 is_stmt 0 view .LVU102
+ 352 005e D7E7     		b	.L19
+ 353              	.L26:
+ 354              		.align	2
+ 355              	.L25:
+ 356 0060 00000000 		.word	.LANCHOR0
+ 357              		.cfi_endproc
+ 358              	.LFE134:
+ 360              		.section	.rodata.hex.9025,"a"
+ 361              		.align	2
+ 362              		.set	.LANCHOR0,. + 0
+ 365              	hex.9025:
+ 366 0000 30313233 		.ascii	"0123456789ABCDEF\000"
+ 366      34353637 
+ 366      38394142 
+ 366      43444546 
+ 366      00
+ 367              		.text
+ 368              	.Letext0:
+ 369              		.file 2 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 370              		.file 3 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 371              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 372              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 373              		.file 6 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-none
+ 374              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 375              		.file 8 "lvgl/src/lv_misc/lv_types.h"
+ 376              		.file 9 "lvgl/src/lv_misc/lv_mem.h"
+ 377              		.file 10 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 378              		.file 11 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 379              		.file 12 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 380              		.file 13 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ARM GAS  D:\Temp\ccGfAgqy.s 			page 11
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_debug.c
+  D:\Temp\ccGfAgqy.s:18     .text.lv_debug_check_null:0000000000000000 $t
+  D:\Temp\ccGfAgqy.s:26     .text.lv_debug_check_null:0000000000000000 lv_debug_check_null
+  D:\Temp\ccGfAgqy.s:48     .text.lv_debug_check_mem_integrity:0000000000000000 $t
+  D:\Temp\ccGfAgqy.s:55     .text.lv_debug_check_mem_integrity:0000000000000000 lv_debug_check_mem_integrity
+  D:\Temp\ccGfAgqy.s:80     .text.lv_debug_check_str:0000000000000000 $t
+  D:\Temp\ccGfAgqy.s:87     .text.lv_debug_check_str:0000000000000000 lv_debug_check_str
+  D:\Temp\ccGfAgqy.s:204    .text.lv_debug_log_error:0000000000000000 $t
+  D:\Temp\ccGfAgqy.s:211    .text.lv_debug_log_error:0000000000000000 lv_debug_log_error
+  D:\Temp\ccGfAgqy.s:356    .text.lv_debug_log_error:0000000000000060 $d
+  D:\Temp\ccGfAgqy.s:361    .rodata.hex.9025:0000000000000000 $d
+  D:\Temp\ccGfAgqy.s:365    .rodata.hex.9025:0000000000000000 hex.9025
+
+UNDEFINED SYMBOLS
+lv_mem_test
+strlen
+_lv_memcpy

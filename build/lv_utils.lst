@@ -1,0 +1,516 @@
+ARM GAS  D:\Temp\ccwZ4v6w.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_utils.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._lv_utils_num_to_str,"ax",%progbits
+  18              		.align	1
+  19              		.global	_lv_utils_num_to_str
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	_lv_utils_num_to_str:
+  27              	.LVL0:
+  28              	.LFB135:
+  29              		.file 1 "lvgl/src/lv_misc/lv_utils.c"
+   1:lvgl/src/lv_misc/lv_utils.c **** /**
+   2:lvgl/src/lv_misc/lv_utils.c ****  * @file lv_utils.c
+   3:lvgl/src/lv_misc/lv_utils.c ****  *
+   4:lvgl/src/lv_misc/lv_utils.c ****  */
+   5:lvgl/src/lv_misc/lv_utils.c **** 
+   6:lvgl/src/lv_misc/lv_utils.c **** /*********************
+   7:lvgl/src/lv_misc/lv_utils.c ****  *      INCLUDES
+   8:lvgl/src/lv_misc/lv_utils.c ****  *********************/
+   9:lvgl/src/lv_misc/lv_utils.c **** #include <stdbool.h>
+  10:lvgl/src/lv_misc/lv_utils.c **** 
+  11:lvgl/src/lv_misc/lv_utils.c **** #include "lv_utils.h"
+  12:lvgl/src/lv_misc/lv_utils.c **** #include "lv_math.h"
+  13:lvgl/src/lv_misc/lv_utils.c **** #include "lv_printf.h"
+  14:lvgl/src/lv_misc/lv_utils.c **** #include "lv_txt.h"
+  15:lvgl/src/lv_misc/lv_utils.c **** 
+  16:lvgl/src/lv_misc/lv_utils.c **** /*********************
+  17:lvgl/src/lv_misc/lv_utils.c ****  *      DEFINES
+  18:lvgl/src/lv_misc/lv_utils.c ****  *********************/
+  19:lvgl/src/lv_misc/lv_utils.c **** 
+  20:lvgl/src/lv_misc/lv_utils.c **** /**********************
+  21:lvgl/src/lv_misc/lv_utils.c ****  *      TYPEDEFS
+  22:lvgl/src/lv_misc/lv_utils.c ****  **********************/
+  23:lvgl/src/lv_misc/lv_utils.c **** 
+  24:lvgl/src/lv_misc/lv_utils.c **** /**********************
+  25:lvgl/src/lv_misc/lv_utils.c ****  *  STATIC PROTOTYPES
+  26:lvgl/src/lv_misc/lv_utils.c ****  **********************/
+  27:lvgl/src/lv_misc/lv_utils.c **** 
+  28:lvgl/src/lv_misc/lv_utils.c **** /**********************
+  29:lvgl/src/lv_misc/lv_utils.c ****  *  STATIC VARIABLES
+ARM GAS  D:\Temp\ccwZ4v6w.s 			page 2
+
+
+  30:lvgl/src/lv_misc/lv_utils.c ****  **********************/
+  31:lvgl/src/lv_misc/lv_utils.c **** 
+  32:lvgl/src/lv_misc/lv_utils.c **** /**********************
+  33:lvgl/src/lv_misc/lv_utils.c ****  *      MACROS
+  34:lvgl/src/lv_misc/lv_utils.c ****  **********************/
+  35:lvgl/src/lv_misc/lv_utils.c **** 
+  36:lvgl/src/lv_misc/lv_utils.c **** /**********************
+  37:lvgl/src/lv_misc/lv_utils.c ****  *   GLOBAL FUNCTIONS
+  38:lvgl/src/lv_misc/lv_utils.c ****  **********************/
+  39:lvgl/src/lv_misc/lv_utils.c **** 
+  40:lvgl/src/lv_misc/lv_utils.c **** /**
+  41:lvgl/src/lv_misc/lv_utils.c ****  * Convert a number to string
+  42:lvgl/src/lv_misc/lv_utils.c ****  * @param num a number
+  43:lvgl/src/lv_misc/lv_utils.c ****  * @param buf pointer to a `char` buffer. The result will be stored here (max 10 elements)
+  44:lvgl/src/lv_misc/lv_utils.c ****  * @return same as `buf` (just for convenience)
+  45:lvgl/src/lv_misc/lv_utils.c ****  */
+  46:lvgl/src/lv_misc/lv_utils.c **** char * _lv_utils_num_to_str(int32_t num, char * buf)
+  47:lvgl/src/lv_misc/lv_utils.c **** {
+  30              		.loc 1 47 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  48:lvgl/src/lv_misc/lv_utils.c ****     if(num == 0) {
+  35              		.loc 1 48 5 view .LVU1
+  36              		.loc 1 48 7 is_stmt 0 view .LVU2
+  37 0000 C0B1     		cbz	r0, .L13
+  47:lvgl/src/lv_misc/lv_utils.c ****     if(num == 0) {
+  38              		.loc 1 47 1 view .LVU3
+  39 0002 70B4     		push	{r4, r5, r6}
+  40              	.LCFI0:
+  41              		.cfi_def_cfa_offset 12
+  42              		.cfi_offset 4, -12
+  43              		.cfi_offset 5, -8
+  44              		.cfi_offset 6, -4
+  45 0004 0446     		mov	r4, r0
+  49:lvgl/src/lv_misc/lv_utils.c ****         buf[0] = '0';
+  50:lvgl/src/lv_misc/lv_utils.c ****         buf[1] = '\0';
+  51:lvgl/src/lv_misc/lv_utils.c ****         return buf;
+  52:lvgl/src/lv_misc/lv_utils.c ****     }
+  53:lvgl/src/lv_misc/lv_utils.c ****     int8_t digitCount = 0;
+  46              		.loc 1 53 5 is_stmt 1 view .LVU4
+  47              	.LVL1:
+  54:lvgl/src/lv_misc/lv_utils.c ****     int8_t i          = 0;
+  48              		.loc 1 54 5 view .LVU5
+  55:lvgl/src/lv_misc/lv_utils.c ****     if(num < 0) {
+  49              		.loc 1 55 5 view .LVU6
+  50              		.loc 1 55 7 is_stmt 0 view .LVU7
+  51 0006 0028     		cmp	r0, #0
+  52 0008 1ADB     		blt	.L14
+  53:lvgl/src/lv_misc/lv_utils.c ****     int8_t i          = 0;
+  53              		.loc 1 53 12 view .LVU8
+  54 000a 0020     		movs	r0, #0
+  55              	.LVL2:
+  56              	.L4:
+  53:lvgl/src/lv_misc/lv_utils.c ****     int8_t i          = 0;
+  57              		.loc 1 53 12 view .LVU9
+ARM GAS  D:\Temp\ccwZ4v6w.s 			page 3
+
+
+  58 000c 0246     		mov	r2, r0
+  59              	.LVL3:
+  60              	.L5:
+  56:lvgl/src/lv_misc/lv_utils.c ****         buf[digitCount++] = '-';
+  57:lvgl/src/lv_misc/lv_utils.c ****         num               = LV_MATH_ABS(num);
+  58:lvgl/src/lv_misc/lv_utils.c ****         ++i;
+  59:lvgl/src/lv_misc/lv_utils.c ****     }
+  60:lvgl/src/lv_misc/lv_utils.c ****     while(num) {
+  61              		.loc 1 60 10 view .LVU10
+  62 000e F4B1     		cbz	r4, .L15
+  63              	.LBB2:
+  61:lvgl/src/lv_misc/lv_utils.c ****         char digit        = num % 10;
+  64              		.loc 1 61 9 is_stmt 1 view .LVU11
+  65              		.loc 1 61 33 is_stmt 0 view .LVU12
+  66 0010 184D     		ldr	r5, .L16
+  67 0012 85FB0435 		smull	r3, r5, r5, r4
+  68 0016 E317     		asrs	r3, r4, #31
+  69 0018 C3EBA503 		rsb	r3, r3, r5, asr #2
+  70 001c 1E46     		mov	r6, r3
+  71 001e 03EB8303 		add	r3, r3, r3, lsl #2
+  72 0022 5D00     		lsls	r5, r3, #1
+  73 0024 631B     		subs	r3, r4, r5
+  74              		.loc 1 61 14 view .LVU13
+  75 0026 DBB2     		uxtb	r3, r3
+  76              	.LVL4:
+  62:lvgl/src/lv_misc/lv_utils.c ****         buf[digitCount++] = digit + 48;
+  77              		.loc 1 62 9 is_stmt 1 view .LVU14
+  78              		.loc 1 62 23 is_stmt 0 view .LVU15
+  79 0028 551C     		adds	r5, r2, #1
+  80              	.LVL5:
+  81              		.loc 1 62 35 view .LVU16
+  82 002a 3033     		adds	r3, r3, #48
+  83              	.LVL6:
+  84              		.loc 1 62 27 view .LVU17
+  85 002c 8B54     		strb	r3, [r1, r2]
+  63:lvgl/src/lv_misc/lv_utils.c ****         num /= 10;
+  86              		.loc 1 63 9 is_stmt 1 view .LVU18
+  87              		.loc 1 63 13 is_stmt 0 view .LVU19
+  88 002e 3446     		mov	r4, r6
+  89              	.LVL7:
+  62:lvgl/src/lv_misc/lv_utils.c ****         buf[digitCount++] = digit + 48;
+  90              		.loc 1 62 23 view .LVU20
+  91 0030 6AB2     		sxtb	r2, r5
+  92 0032 ECE7     		b	.L5
+  93              	.LVL8:
+  94              	.L13:
+  95              	.LCFI1:
+  96              		.cfi_def_cfa_offset 0
+  97              		.cfi_restore 4
+  98              		.cfi_restore 5
+  99              		.cfi_restore 6
+  62:lvgl/src/lv_misc/lv_utils.c ****         buf[digitCount++] = digit + 48;
+ 100              		.loc 1 62 23 view .LVU21
+ 101              	.LBE2:
+  49:lvgl/src/lv_misc/lv_utils.c ****         buf[1] = '\0';
+ 102              		.loc 1 49 9 is_stmt 1 view .LVU22
+  49:lvgl/src/lv_misc/lv_utils.c ****         buf[1] = '\0';
+ARM GAS  D:\Temp\ccwZ4v6w.s 			page 4
+
+
+ 103              		.loc 1 49 16 is_stmt 0 view .LVU23
+ 104 0034 3023     		movs	r3, #48
+ 105 0036 0B70     		strb	r3, [r1]
+  50:lvgl/src/lv_misc/lv_utils.c ****         return buf;
+ 106              		.loc 1 50 9 is_stmt 1 view .LVU24
+  50:lvgl/src/lv_misc/lv_utils.c ****         return buf;
+ 107              		.loc 1 50 16 is_stmt 0 view .LVU25
+ 108 0038 0023     		movs	r3, #0
+ 109 003a 4B70     		strb	r3, [r1, #1]
+  51:lvgl/src/lv_misc/lv_utils.c ****     }
+ 110              		.loc 1 51 9 is_stmt 1 view .LVU26
+  64:lvgl/src/lv_misc/lv_utils.c ****     }
+  65:lvgl/src/lv_misc/lv_utils.c ****     buf[digitCount] = '\0';
+  66:lvgl/src/lv_misc/lv_utils.c ****     digitCount--;
+  67:lvgl/src/lv_misc/lv_utils.c ****     while(digitCount > i) {
+  68:lvgl/src/lv_misc/lv_utils.c ****         char temp       = buf[i];
+  69:lvgl/src/lv_misc/lv_utils.c ****         buf[i]          = buf[digitCount];
+  70:lvgl/src/lv_misc/lv_utils.c ****         buf[digitCount] = temp;
+  71:lvgl/src/lv_misc/lv_utils.c ****         digitCount--;
+  72:lvgl/src/lv_misc/lv_utils.c ****         i++;
+  73:lvgl/src/lv_misc/lv_utils.c ****     }
+  74:lvgl/src/lv_misc/lv_utils.c ****     return buf;
+  75:lvgl/src/lv_misc/lv_utils.c **** }
+ 111              		.loc 1 75 1 is_stmt 0 view .LVU27
+ 112 003c 0846     		mov	r0, r1
+ 113              	.LVL9:
+ 114              		.loc 1 75 1 view .LVU28
+ 115 003e 7047     		bx	lr
+ 116              	.LVL10:
+ 117              	.L14:
+ 118              	.LCFI2:
+ 119              		.cfi_def_cfa_offset 12
+ 120              		.cfi_offset 4, -12
+ 121              		.cfi_offset 5, -8
+ 122              		.cfi_offset 6, -4
+  56:lvgl/src/lv_misc/lv_utils.c ****         num               = LV_MATH_ABS(num);
+ 123              		.loc 1 56 9 is_stmt 1 view .LVU29
+  56:lvgl/src/lv_misc/lv_utils.c ****         num               = LV_MATH_ABS(num);
+ 124              		.loc 1 56 27 is_stmt 0 view .LVU30
+ 125 0040 2D23     		movs	r3, #45
+ 126 0042 0B70     		strb	r3, [r1]
+  57:lvgl/src/lv_misc/lv_utils.c ****         ++i;
+ 127              		.loc 1 57 9 is_stmt 1 view .LVU31
+  57:lvgl/src/lv_misc/lv_utils.c ****         ++i;
+ 128              		.loc 1 57 27 is_stmt 0 view .LVU32
+ 129 0044 0028     		cmp	r0, #0
+ 130 0046 B8BF     		it	lt
+ 131 0048 4442     		rsblt	r4, r0, #0
+ 132              	.LVL11:
+  58:lvgl/src/lv_misc/lv_utils.c ****     }
+ 133              		.loc 1 58 9 is_stmt 1 view .LVU33
+  56:lvgl/src/lv_misc/lv_utils.c ****         num               = LV_MATH_ABS(num);
+ 134              		.loc 1 56 23 is_stmt 0 view .LVU34
+ 135 004a 0120     		movs	r0, #1
+ 136 004c DEE7     		b	.L4
+ 137              	.LVL12:
+ 138              	.L15:
+ARM GAS  D:\Temp\ccwZ4v6w.s 			page 5
+
+
+  65:lvgl/src/lv_misc/lv_utils.c ****     digitCount--;
+ 139              		.loc 1 65 5 is_stmt 1 view .LVU35
+  65:lvgl/src/lv_misc/lv_utils.c ****     digitCount--;
+ 140              		.loc 1 65 21 is_stmt 0 view .LVU36
+ 141 004e 0023     		movs	r3, #0
+ 142 0050 8B54     		strb	r3, [r1, r2]
+  66:lvgl/src/lv_misc/lv_utils.c ****     while(digitCount > i) {
+ 143              		.loc 1 66 5 is_stmt 1 view .LVU37
+  66:lvgl/src/lv_misc/lv_utils.c ****     while(digitCount > i) {
+ 144              		.loc 1 66 15 is_stmt 0 view .LVU38
+ 145 0052 531E     		subs	r3, r2, #1
+ 146 0054 5BB2     		sxtb	r3, r3
+ 147              	.LVL13:
+  67:lvgl/src/lv_misc/lv_utils.c ****         char temp       = buf[i];
+ 148              		.loc 1 67 5 is_stmt 1 view .LVU39
+  67:lvgl/src/lv_misc/lv_utils.c ****         char temp       = buf[i];
+ 149              		.loc 1 67 10 is_stmt 0 view .LVU40
+ 150 0056 07E0     		b	.L7
+ 151              	.LVL14:
+ 152              	.L8:
+ 153              	.LBB3:
+  68:lvgl/src/lv_misc/lv_utils.c ****         buf[i]          = buf[digitCount];
+ 154              		.loc 1 68 9 is_stmt 1 view .LVU41
+  68:lvgl/src/lv_misc/lv_utils.c ****         buf[i]          = buf[digitCount];
+ 155              		.loc 1 68 14 is_stmt 0 view .LVU42
+ 156 0058 0A5C     		ldrb	r2, [r1, r0]	@ zero_extendqisi2
+ 157              	.LVL15:
+  69:lvgl/src/lv_misc/lv_utils.c ****         buf[digitCount] = temp;
+ 158              		.loc 1 69 9 is_stmt 1 view .LVU43
+  69:lvgl/src/lv_misc/lv_utils.c ****         buf[digitCount] = temp;
+ 159              		.loc 1 69 30 is_stmt 0 view .LVU44
+ 160 005a CC5C     		ldrb	r4, [r1, r3]	@ zero_extendqisi2
+  69:lvgl/src/lv_misc/lv_utils.c ****         buf[digitCount] = temp;
+ 161              		.loc 1 69 25 view .LVU45
+ 162 005c 0C54     		strb	r4, [r1, r0]
+  70:lvgl/src/lv_misc/lv_utils.c ****         digitCount--;
+ 163              		.loc 1 70 9 is_stmt 1 view .LVU46
+  70:lvgl/src/lv_misc/lv_utils.c ****         digitCount--;
+ 164              		.loc 1 70 25 is_stmt 0 view .LVU47
+ 165 005e CA54     		strb	r2, [r1, r3]
+  71:lvgl/src/lv_misc/lv_utils.c ****         i++;
+ 166              		.loc 1 71 9 is_stmt 1 view .LVU48
+  71:lvgl/src/lv_misc/lv_utils.c ****         i++;
+ 167              		.loc 1 71 19 is_stmt 0 view .LVU49
+ 168 0060 013B     		subs	r3, r3, #1
+ 169              	.LVL16:
+  71:lvgl/src/lv_misc/lv_utils.c ****         i++;
+ 170              		.loc 1 71 19 view .LVU50
+ 171 0062 5BB2     		sxtb	r3, r3
+ 172              	.LVL17:
+  72:lvgl/src/lv_misc/lv_utils.c ****     }
+ 173              		.loc 1 72 9 is_stmt 1 view .LVU51
+  72:lvgl/src/lv_misc/lv_utils.c ****     }
+ 174              		.loc 1 72 10 is_stmt 0 view .LVU52
+ 175 0064 0130     		adds	r0, r0, #1
+ 176              	.LVL18:
+  72:lvgl/src/lv_misc/lv_utils.c ****     }
+ARM GAS  D:\Temp\ccwZ4v6w.s 			page 6
+
+
+ 177              		.loc 1 72 10 view .LVU53
+ 178 0066 40B2     		sxtb	r0, r0
+ 179              	.LVL19:
+ 180              	.L7:
+  72:lvgl/src/lv_misc/lv_utils.c ****     }
+ 181              		.loc 1 72 10 view .LVU54
+ 182              	.LBE3:
+  67:lvgl/src/lv_misc/lv_utils.c ****         char temp       = buf[i];
+ 183              		.loc 1 67 10 view .LVU55
+ 184 0068 8342     		cmp	r3, r0
+ 185 006a F5DC     		bgt	.L8
+ 186              		.loc 1 75 1 view .LVU56
+ 187 006c 0846     		mov	r0, r1
+ 188              	.LVL20:
+ 189              		.loc 1 75 1 view .LVU57
+ 190 006e 70BC     		pop	{r4, r5, r6}
+ 191              	.LCFI3:
+ 192              		.cfi_restore 6
+ 193              		.cfi_restore 5
+ 194              		.cfi_restore 4
+ 195              		.cfi_def_cfa_offset 0
+ 196 0070 7047     		bx	lr
+ 197              	.L17:
+ 198 0072 00BF     		.align	2
+ 199              	.L16:
+ 200 0074 67666666 		.word	1717986919
+ 201              		.cfi_endproc
+ 202              	.LFE135:
+ 204              		.section	.text._lv_utils_bsearch,"ax",%progbits
+ 205              		.align	1
+ 206              		.global	_lv_utils_bsearch
+ 207              		.syntax unified
+ 208              		.thumb
+ 209              		.thumb_func
+ 210              		.fpu fpv4-sp-d16
+ 212              	_lv_utils_bsearch:
+ 213              	.LVL21:
+ 214              	.LFB136:
+  76:lvgl/src/lv_misc/lv_utils.c **** 
+  77:lvgl/src/lv_misc/lv_utils.c **** /** Searches base[0] to base[n - 1] for an item that matches *key.
+  78:lvgl/src/lv_misc/lv_utils.c ****  *
+  79:lvgl/src/lv_misc/lv_utils.c ****  * @note The function cmp must return negative if its first
+  80:lvgl/src/lv_misc/lv_utils.c ****  *  argument (the search key) is less that its second (a table entry),
+  81:lvgl/src/lv_misc/lv_utils.c ****  *  zero if equal, and positive if greater.
+  82:lvgl/src/lv_misc/lv_utils.c ****  *
+  83:lvgl/src/lv_misc/lv_utils.c ****  *  @note Items in the array must be in ascending order.
+  84:lvgl/src/lv_misc/lv_utils.c ****  *
+  85:lvgl/src/lv_misc/lv_utils.c ****  * @param key    Pointer to item being searched for
+  86:lvgl/src/lv_misc/lv_utils.c ****  * @param base   Pointer to first element to search
+  87:lvgl/src/lv_misc/lv_utils.c ****  * @param n      Number of elements
+  88:lvgl/src/lv_misc/lv_utils.c ****  * @param size   Size of each element
+  89:lvgl/src/lv_misc/lv_utils.c ****  * @param cmp    Pointer to comparison function (see #lv_font_codeCompare as a comparison function
+  90:lvgl/src/lv_misc/lv_utils.c ****  * example)
+  91:lvgl/src/lv_misc/lv_utils.c ****  *
+  92:lvgl/src/lv_misc/lv_utils.c ****  * @return a pointer to a matching item, or NULL if none exists.
+  93:lvgl/src/lv_misc/lv_utils.c ****  */
+  94:lvgl/src/lv_misc/lv_utils.c **** void * _lv_utils_bsearch(const void * key, const void * base, uint32_t n, uint32_t size,
+ARM GAS  D:\Temp\ccwZ4v6w.s 			page 7
+
+
+  95:lvgl/src/lv_misc/lv_utils.c ****                          int32_t (*cmp)(const void * pRef, const void * pElement))
+  96:lvgl/src/lv_misc/lv_utils.c **** {
+ 215              		.loc 1 96 1 is_stmt 1 view -0
+ 216              		.cfi_startproc
+ 217              		@ args = 4, pretend = 0, frame = 0
+ 218              		@ frame_needed = 0, uses_anonymous_args = 0
+ 219              		.loc 1 96 1 is_stmt 0 view .LVU59
+ 220 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+ 221              	.LCFI4:
+ 222              		.cfi_def_cfa_offset 32
+ 223              		.cfi_offset 4, -32
+ 224              		.cfi_offset 5, -28
+ 225              		.cfi_offset 6, -24
+ 226              		.cfi_offset 7, -20
+ 227              		.cfi_offset 8, -16
+ 228              		.cfi_offset 9, -12
+ 229              		.cfi_offset 10, -8
+ 230              		.cfi_offset 14, -4
+ 231 0004 8246     		mov	r10, r0
+ 232 0006 8846     		mov	r8, r1
+ 233 0008 1446     		mov	r4, r2
+ 234 000a 1F46     		mov	r7, r3
+ 235 000c DDF82090 		ldr	r9, [sp, #32]
+  97:lvgl/src/lv_misc/lv_utils.c ****     const char * middle;
+ 236              		.loc 1 97 5 is_stmt 1 view .LVU60
+  98:lvgl/src/lv_misc/lv_utils.c ****     int32_t c;
+ 237              		.loc 1 98 5 view .LVU61
+  99:lvgl/src/lv_misc/lv_utils.c **** 
+ 100:lvgl/src/lv_misc/lv_utils.c ****     for(middle = base; n != 0;) {
+ 238              		.loc 1 100 5 view .LVU62
+ 239              	.LVL22:
+ 240              		.loc 1 100 5 is_stmt 0 view .LVU63
+ 241 0010 02E0     		b	.L19
+ 242              	.LVL23:
+ 243              	.L20:
+ 101:lvgl/src/lv_misc/lv_utils.c ****         middle += (n / 2) * size;
+ 102:lvgl/src/lv_misc/lv_utils.c ****         if((c = (*cmp)(key, middle)) > 0) {
+ 103:lvgl/src/lv_misc/lv_utils.c ****             n    = (n / 2) - ((n & 1) == 0);
+ 104:lvgl/src/lv_misc/lv_utils.c ****             base = (middle += size);
+ 105:lvgl/src/lv_misc/lv_utils.c ****         }
+ 106:lvgl/src/lv_misc/lv_utils.c ****         else if(c < 0) {
+ 244              		.loc 1 106 14 is_stmt 1 view .LVU64
+ 245              		.loc 1 106 16 is_stmt 0 view .LVU65
+ 246 0012 0028     		cmp	r0, #0
+ 247 0014 13DA     		bge	.L18
+ 107:lvgl/src/lv_misc/lv_utils.c ****             n /= 2;
+ 248              		.loc 1 107 15 view .LVU66
+ 249 0016 2C46     		mov	r4, r5
+ 250              	.LVL24:
+ 251              	.L19:
+ 100:lvgl/src/lv_misc/lv_utils.c ****         middle += (n / 2) * size;
+ 252              		.loc 1 100 5 discriminator 1 view .LVU67
+ 253 0018 84B1     		cbz	r4, .L25
+ 101:lvgl/src/lv_misc/lv_utils.c ****         middle += (n / 2) * size;
+ 254              		.loc 1 101 9 is_stmt 1 view .LVU68
+ 101:lvgl/src/lv_misc/lv_utils.c ****         middle += (n / 2) * size;
+ 255              		.loc 1 101 22 is_stmt 0 view .LVU69
+ARM GAS  D:\Temp\ccwZ4v6w.s 			page 8
+
+
+ 256 001a 6508     		lsrs	r5, r4, #1
+ 101:lvgl/src/lv_misc/lv_utils.c ****         middle += (n / 2) * size;
+ 257              		.loc 1 101 16 view .LVU70
+ 258 001c 07FB0586 		mla	r6, r7, r5, r8
+ 259              	.LVL25:
+ 102:lvgl/src/lv_misc/lv_utils.c ****             n    = (n / 2) - ((n & 1) == 0);
+ 260              		.loc 1 102 9 is_stmt 1 view .LVU71
+ 102:lvgl/src/lv_misc/lv_utils.c ****             n    = (n / 2) - ((n & 1) == 0);
+ 261              		.loc 1 102 18 is_stmt 0 view .LVU72
+ 262 0020 3146     		mov	r1, r6
+ 263 0022 5046     		mov	r0, r10
+ 264 0024 C847     		blx	r9
+ 265              	.LVL26:
+ 102:lvgl/src/lv_misc/lv_utils.c ****             n    = (n / 2) - ((n & 1) == 0);
+ 266              		.loc 1 102 11 view .LVU73
+ 267 0026 0028     		cmp	r0, #0
+ 102:lvgl/src/lv_misc/lv_utils.c ****             n    = (n / 2) - ((n & 1) == 0);
+ 268              		.loc 1 102 11 view .LVU74
+ 269 0028 F3DD     		ble	.L20
+ 103:lvgl/src/lv_misc/lv_utils.c ****             base = (middle += size);
+ 270              		.loc 1 103 13 is_stmt 1 view .LVU75
+ 103:lvgl/src/lv_misc/lv_utils.c ****             base = (middle += size);
+ 271              		.loc 1 103 39 is_stmt 0 view .LVU76
+ 272 002a 14F0010F 		tst	r4, #1
+ 273 002e 0CBF     		ite	eq
+ 274 0030 0124     		moveq	r4, #1
+ 275              	.LVL27:
+ 103:lvgl/src/lv_misc/lv_utils.c ****             base = (middle += size);
+ 276              		.loc 1 103 39 view .LVU77
+ 277 0032 0024     		movne	r4, #0
+ 103:lvgl/src/lv_misc/lv_utils.c ****             base = (middle += size);
+ 278              		.loc 1 103 18 view .LVU78
+ 279 0034 2C1B     		subs	r4, r5, r4
+ 280              	.LVL28:
+ 104:lvgl/src/lv_misc/lv_utils.c ****         }
+ 281              		.loc 1 104 13 is_stmt 1 view .LVU79
+ 104:lvgl/src/lv_misc/lv_utils.c ****         }
+ 282              		.loc 1 104 28 is_stmt 0 view .LVU80
+ 283 0036 06EB0708 		add	r8, r6, r7
+ 284              	.LVL29:
+ 104:lvgl/src/lv_misc/lv_utils.c ****         }
+ 285              		.loc 1 104 28 view .LVU81
+ 286 003a EDE7     		b	.L19
+ 287              	.LVL30:
+ 288              	.L25:
+ 108:lvgl/src/lv_misc/lv_utils.c ****             middle = base;
+ 109:lvgl/src/lv_misc/lv_utils.c ****         }
+ 110:lvgl/src/lv_misc/lv_utils.c ****         else {
+ 111:lvgl/src/lv_misc/lv_utils.c ****             return (char *)middle;
+ 112:lvgl/src/lv_misc/lv_utils.c ****         }
+ 113:lvgl/src/lv_misc/lv_utils.c ****     }
+ 114:lvgl/src/lv_misc/lv_utils.c ****     return NULL;
+ 289              		.loc 1 114 12 view .LVU82
+ 290 003c 0026     		movs	r6, #0
+ 291              	.LVL31:
+ 292              	.L18:
+ 115:lvgl/src/lv_misc/lv_utils.c **** }
+ARM GAS  D:\Temp\ccwZ4v6w.s 			page 9
+
+
+ 293              		.loc 1 115 1 view .LVU83
+ 294 003e 3046     		mov	r0, r6
+ 295 0040 BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+ 296              		.loc 1 115 1 view .LVU84
+ 297              		.cfi_endproc
+ 298              	.LFE136:
+ 300              		.text
+ 301              	.Letext0:
+ 302              		.file 2 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 303              		.file 3 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 304              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 305              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 306              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 307              		.file 7 "lvgl/lv_conf.h"
+ 308              		.file 8 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 309              		.file 9 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 310              		.file 10 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-non
+ 311              		.file 11 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 312              		.file 12 "lvgl/src/lv_misc/lv_mem.h"
+ 313              		.file 13 "lvgl/src/lv_misc/../lv_font/lv_font.h"
+ 314              		.file 14 "lvgl/src/lv_misc/lv_txt.h"
+ARM GAS  D:\Temp\ccwZ4v6w.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_utils.c
+  D:\Temp\ccwZ4v6w.s:18     .text._lv_utils_num_to_str:0000000000000000 $t
+  D:\Temp\ccwZ4v6w.s:26     .text._lv_utils_num_to_str:0000000000000000 _lv_utils_num_to_str
+  D:\Temp\ccwZ4v6w.s:200    .text._lv_utils_num_to_str:0000000000000074 $d
+  D:\Temp\ccwZ4v6w.s:205    .text._lv_utils_bsearch:0000000000000000 $t
+  D:\Temp\ccwZ4v6w.s:212    .text._lv_utils_bsearch:0000000000000000 _lv_utils_bsearch
+
+NO UNDEFINED SYMBOLS

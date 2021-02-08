@@ -1,0 +1,282 @@
+ARM GAS  D:\Temp\ccGXd7od.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_gc.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._lv_gc_clear_roots,"ax",%progbits
+  18              		.align	1
+  19              		.global	_lv_gc_clear_roots
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	_lv_gc_clear_roots:
+  27              	.LFB167:
+  28              		.file 1 "lvgl/src/lv_misc/lv_gc.c"
+   1:lvgl/src/lv_misc/lv_gc.c **** /**
+   2:lvgl/src/lv_misc/lv_gc.c ****  * @file lv_gc.c
+   3:lvgl/src/lv_misc/lv_gc.c ****  *
+   4:lvgl/src/lv_misc/lv_gc.c ****  */
+   5:lvgl/src/lv_misc/lv_gc.c **** 
+   6:lvgl/src/lv_misc/lv_gc.c **** /*********************
+   7:lvgl/src/lv_misc/lv_gc.c ****  *      INCLUDES
+   8:lvgl/src/lv_misc/lv_gc.c ****  *********************/
+   9:lvgl/src/lv_misc/lv_gc.c **** 
+  10:lvgl/src/lv_misc/lv_gc.c **** #include "lv_gc.h"
+  11:lvgl/src/lv_misc/lv_gc.c **** #include "string.h"
+  12:lvgl/src/lv_misc/lv_gc.c **** 
+  13:lvgl/src/lv_misc/lv_gc.c **** /*********************
+  14:lvgl/src/lv_misc/lv_gc.c ****  *      DEFINES
+  15:lvgl/src/lv_misc/lv_gc.c ****  *********************/
+  16:lvgl/src/lv_misc/lv_gc.c **** 
+  17:lvgl/src/lv_misc/lv_gc.c **** /**********************
+  18:lvgl/src/lv_misc/lv_gc.c ****  *      TYPEDEFS
+  19:lvgl/src/lv_misc/lv_gc.c ****  **********************/
+  20:lvgl/src/lv_misc/lv_gc.c **** 
+  21:lvgl/src/lv_misc/lv_gc.c **** /**********************
+  22:lvgl/src/lv_misc/lv_gc.c ****  *  STATIC PROTOTYPES
+  23:lvgl/src/lv_misc/lv_gc.c ****  **********************/
+  24:lvgl/src/lv_misc/lv_gc.c **** 
+  25:lvgl/src/lv_misc/lv_gc.c **** /**********************
+  26:lvgl/src/lv_misc/lv_gc.c ****  *  STATIC VARIABLES
+  27:lvgl/src/lv_misc/lv_gc.c ****  **********************/
+  28:lvgl/src/lv_misc/lv_gc.c **** 
+  29:lvgl/src/lv_misc/lv_gc.c **** #if(!defined(LV_ENABLE_GC)) || LV_ENABLE_GC == 0
+  30:lvgl/src/lv_misc/lv_gc.c ****     LV_ROOTS
+ARM GAS  D:\Temp\ccGXd7od.s 			page 2
+
+
+  31:lvgl/src/lv_misc/lv_gc.c **** #endif /* LV_ENABLE_GC */
+  32:lvgl/src/lv_misc/lv_gc.c **** 
+  33:lvgl/src/lv_misc/lv_gc.c **** /**********************
+  34:lvgl/src/lv_misc/lv_gc.c ****  *      MACROS
+  35:lvgl/src/lv_misc/lv_gc.c ****  **********************/
+  36:lvgl/src/lv_misc/lv_gc.c **** 
+  37:lvgl/src/lv_misc/lv_gc.c **** /**********************
+  38:lvgl/src/lv_misc/lv_gc.c ****  *   GLOBAL FUNCTIONS
+  39:lvgl/src/lv_misc/lv_gc.c ****  **********************/
+  40:lvgl/src/lv_misc/lv_gc.c **** 
+  41:lvgl/src/lv_misc/lv_gc.c **** void _lv_gc_clear_roots(void)
+  42:lvgl/src/lv_misc/lv_gc.c **** {
+  29              		.loc 1 42 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 08B5     		push	{r3, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 3, -8
+  37              		.cfi_offset 14, -4
+  43:lvgl/src/lv_misc/lv_gc.c **** #define LV_CLEAR_ROOT(root_type, root_name) _lv_memset_00(&LV_GC_ROOT(root_name), sizeof(LV_GC_ROOT
+  44:lvgl/src/lv_misc/lv_gc.c ****     LV_ITERATE_ROOTS(LV_CLEAR_ROOT)
+  38              		.loc 1 44 5 view .LVU1
+  39 0002 0C21     		movs	r1, #12
+  40 0004 2348     		ldr	r0, .L3
+  41 0006 FFF7FEFF 		bl	_lv_memset_00
+  42              	.LVL0:
+  43              		.loc 1 44 5 view .LVU2
+  44 000a 0C21     		movs	r1, #12
+  45 000c 2248     		ldr	r0, .L3+4
+  46 000e FFF7FEFF 		bl	_lv_memset_00
+  47              	.LVL1:
+  48              		.loc 1 44 5 view .LVU3
+  49 0012 0C21     		movs	r1, #12
+  50 0014 2148     		ldr	r0, .L3+8
+  51 0016 FFF7FEFF 		bl	_lv_memset_00
+  52              	.LVL2:
+  53              		.loc 1 44 5 view .LVU4
+  54 001a 0C21     		movs	r1, #12
+  55 001c 2048     		ldr	r0, .L3+12
+  56 001e FFF7FEFF 		bl	_lv_memset_00
+  57              	.LVL3:
+  58              		.loc 1 44 5 view .LVU5
+  59 0022 0C21     		movs	r1, #12
+  60 0024 1F48     		ldr	r0, .L3+16
+  61 0026 FFF7FEFF 		bl	_lv_memset_00
+  62              	.LVL4:
+  63              		.loc 1 44 5 view .LVU6
+  64 002a 0C21     		movs	r1, #12
+  65 002c 1E48     		ldr	r0, .L3+20
+  66 002e FFF7FEFF 		bl	_lv_memset_00
+  67              	.LVL5:
+  68              		.loc 1 44 5 view .LVU7
+  69 0032 0C21     		movs	r1, #12
+  70 0034 1D48     		ldr	r0, .L3+24
+  71 0036 FFF7FEFF 		bl	_lv_memset_00
+ARM GAS  D:\Temp\ccGXd7od.s 			page 3
+
+
+  72              	.LVL6:
+  73              		.loc 1 44 5 view .LVU8
+  74 003a 0C21     		movs	r1, #12
+  75 003c 1C48     		ldr	r0, .L3+28
+  76 003e FFF7FEFF 		bl	_lv_memset_00
+  77              	.LVL7:
+  78              		.loc 1 44 5 view .LVU9
+  79 0042 0C21     		movs	r1, #12
+  80 0044 1B48     		ldr	r0, .L3+32
+  81 0046 FFF7FEFF 		bl	_lv_memset_00
+  82              	.LVL8:
+  83              		.loc 1 44 5 view .LVU10
+  84 004a 0421     		movs	r1, #4
+  85 004c 1A48     		ldr	r0, .L3+36
+  86 004e FFF7FEFF 		bl	_lv_memset_00
+  87              	.LVL9:
+  88              		.loc 1 44 5 view .LVU11
+  89 0052 0421     		movs	r1, #4
+  90 0054 1948     		ldr	r0, .L3+40
+  91 0056 FFF7FEFF 		bl	_lv_memset_00
+  92              	.LVL10:
+  93              		.loc 1 44 5 view .LVU12
+  94 005a 8021     		movs	r1, #128
+  95 005c 1848     		ldr	r0, .L3+44
+  96 005e FFF7FEFF 		bl	_lv_memset_00
+  97              	.LVL11:
+  98              		.loc 1 44 5 view .LVU13
+  99 0062 8021     		movs	r1, #128
+ 100 0064 1748     		ldr	r0, .L3+48
+ 101 0066 FFF7FEFF 		bl	_lv_memset_00
+ 102              	.LVL12:
+ 103              		.loc 1 44 5 view .LVU14
+ 104 006a 0421     		movs	r1, #4
+ 105 006c 1648     		ldr	r0, .L3+52
+ 106 006e FFF7FEFF 		bl	_lv_memset_00
+ 107              	.LVL13:
+ 108              		.loc 1 44 5 view .LVU15
+ 109 0072 0421     		movs	r1, #4
+ 110 0074 1548     		ldr	r0, .L3+56
+ 111 0076 FFF7FEFF 		bl	_lv_memset_00
+ 112              	.LVL14:
+ 113              		.loc 1 44 5 view .LVU16
+ 114 007a 0421     		movs	r1, #4
+ 115 007c 1448     		ldr	r0, .L3+60
+ 116 007e FFF7FEFF 		bl	_lv_memset_00
+ 117              	.LVL15:
+ 118              		.loc 1 44 5 view .LVU17
+ 119 0082 0421     		movs	r1, #4
+ 120 0084 1348     		ldr	r0, .L3+64
+ 121 0086 FFF7FEFF 		bl	_lv_memset_00
+ 122              	.LVL16:
+ 123              		.loc 1 44 5 view .LVU18
+ 124 008a 0421     		movs	r1, #4
+ 125 008c 1248     		ldr	r0, .L3+68
+ 126 008e FFF7FEFF 		bl	_lv_memset_00
+ 127              	.LVL17:
+  45:lvgl/src/lv_misc/lv_gc.c **** }
+ARM GAS  D:\Temp\ccGXd7od.s 			page 4
+
+
+ 128              		.loc 1 45 1 is_stmt 0 view .LVU19
+ 129 0092 08BD     		pop	{r3, pc}
+ 130              	.L4:
+ 131              		.align	2
+ 132              	.L3:
+ 133 0094 00000000 		.word	_lv_task_ll
+ 134 0098 00000000 		.word	_lv_disp_ll
+ 135 009c 00000000 		.word	_lv_indev_ll
+ 136 00a0 00000000 		.word	_lv_drv_ll
+ 137 00a4 00000000 		.word	_lv_file_ll
+ 138 00a8 00000000 		.word	_lv_anim_ll
+ 139 00ac 00000000 		.word	_lv_group_ll
+ 140 00b0 00000000 		.word	_lv_img_defoder_ll
+ 141 00b4 00000000 		.word	_lv_obj_style_trans_ll
+ 142 00b8 00000000 		.word	_lv_img_cache_array
+ 143 00bc 00000000 		.word	_lv_task_act
+ 144 00c0 00000000 		.word	_lv_mem_buf
+ 145 00c4 00000000 		.word	_lv_draw_mask_list
+ 146 00c8 00000000 		.word	_lv_theme_material_styles
+ 147 00cc 00000000 		.word	_lv_theme_template_styles
+ 148 00d0 00000000 		.word	_lv_theme_mono_styles
+ 149 00d4 00000000 		.word	_lv_theme_empty_styles
+ 150 00d8 00000000 		.word	_lv_font_decompr_buf
+ 151              		.cfi_endproc
+ 152              	.LFE167:
+ 154              		.comm	_lv_font_decompr_buf,4,4
+ 155              		.comm	_lv_theme_empty_styles,4,4
+ 156              		.comm	_lv_theme_mono_styles,4,4
+ 157              		.comm	_lv_theme_template_styles,4,4
+ 158              		.comm	_lv_theme_material_styles,4,4
+ 159              		.comm	_lv_draw_mask_list,128,4
+ 160              		.comm	_lv_mem_buf,128,4
+ 161              		.comm	_lv_task_act,4,4
+ 162              		.comm	_lv_img_cache_array,4,4
+ 163              		.comm	_lv_obj_style_trans_ll,12,4
+ 164              		.comm	_lv_img_defoder_ll,12,4
+ 165              		.comm	_lv_group_ll,12,4
+ 166              		.comm	_lv_anim_ll,12,4
+ 167              		.comm	_lv_file_ll,12,4
+ 168              		.comm	_lv_drv_ll,12,4
+ 169              		.comm	_lv_indev_ll,12,4
+ 170              		.comm	_lv_disp_ll,12,4
+ 171              		.comm	_lv_task_ll,12,4
+ 172              		.text
+ 173              	.Letext0:
+ 174              		.file 2 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 175              		.file 3 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 176              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 177              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 178              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 179              		.file 7 "lvgl/lv_conf.h"
+ 180              		.file 8 "lvgl/src/lv_misc/lv_types.h"
+ 181              		.file 9 "lvgl/src/lv_misc/lv_mem.h"
+ 182              		.file 10 "lvgl/src/lv_misc/lv_ll.h"
+ 183              		.file 11 "lvgl/src/lv_misc/lv_task.h"
+ 184              		.file 12 "lvgl/src/lv_misc/../lv_draw/../lv_misc/lv_color.h"
+ 185              		.file 13 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ARM GAS  D:\Temp\ccGXd7od.s 			page 5
+
+
+ 186              		.file 14 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 187              		.file 15 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-non
+ 188              		.file 16 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 189              		.file 17 "lvgl/src/lv_misc/../lv_draw/lv_img_buf.h"
+ 190              		.file 18 "lvgl/src/lv_misc/../lv_draw/../lv_core/../lv_font/lv_font.h"
+ 191              		.file 19 "lvgl/src/lv_misc/../lv_draw/../lv_core/../lv_misc/lv_anim.h"
+ 192              		.file 20 "lvgl/src/lv_misc/../lv_draw/../lv_core/../lv_draw/lv_draw_mask.h"
+ 193              		.file 21 "lvgl/src/lv_misc/../lv_draw/lv_img_decoder.h"
+ 194              		.file 22 "lvgl/src/lv_misc/../lv_draw/lv_img_cache.h"
+ 195              		.file 23 "lvgl/src/lv_misc/lv_gc.h"
+ARM GAS  D:\Temp\ccGXd7od.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_gc.c
+  D:\Temp\ccGXd7od.s:18     .text._lv_gc_clear_roots:0000000000000000 $t
+  D:\Temp\ccGXd7od.s:26     .text._lv_gc_clear_roots:0000000000000000 _lv_gc_clear_roots
+  D:\Temp\ccGXd7od.s:133    .text._lv_gc_clear_roots:0000000000000094 $d
+                            *COM*:000000000000000c _lv_task_ll
+                            *COM*:000000000000000c _lv_disp_ll
+                            *COM*:000000000000000c _lv_indev_ll
+                            *COM*:000000000000000c _lv_drv_ll
+                            *COM*:000000000000000c _lv_file_ll
+                            *COM*:000000000000000c _lv_anim_ll
+                            *COM*:000000000000000c _lv_group_ll
+                            *COM*:000000000000000c _lv_img_defoder_ll
+                            *COM*:000000000000000c _lv_obj_style_trans_ll
+                            *COM*:0000000000000004 _lv_img_cache_array
+                            *COM*:0000000000000004 _lv_task_act
+                            *COM*:0000000000000080 _lv_mem_buf
+                            *COM*:0000000000000080 _lv_draw_mask_list
+                            *COM*:0000000000000004 _lv_theme_material_styles
+                            *COM*:0000000000000004 _lv_theme_template_styles
+                            *COM*:0000000000000004 _lv_theme_mono_styles
+                            *COM*:0000000000000004 _lv_theme_empty_styles
+                            *COM*:0000000000000004 _lv_font_decompr_buf
+
+UNDEFINED SYMBOLS
+_lv_memset_00

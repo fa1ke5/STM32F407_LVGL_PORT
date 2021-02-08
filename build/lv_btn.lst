@@ -1,0 +1,1882 @@
+ARM GAS  D:\Temp\cchBbrDN.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_btn.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.lv_btn_design,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	lv_btn_design:
+  26              	.LVL0:
+  27              	.LFB475:
+  28              		.file 1 "lvgl/src/lv_widgets/lv_btn.c"
+   1:lvgl/src/lv_widgets/lv_btn.c **** /**
+   2:lvgl/src/lv_widgets/lv_btn.c ****  * @file lv_btn.c
+   3:lvgl/src/lv_widgets/lv_btn.c ****  *
+   4:lvgl/src/lv_widgets/lv_btn.c ****  */
+   5:lvgl/src/lv_widgets/lv_btn.c **** 
+   6:lvgl/src/lv_widgets/lv_btn.c **** /*********************
+   7:lvgl/src/lv_widgets/lv_btn.c ****  *      INCLUDES
+   8:lvgl/src/lv_widgets/lv_btn.c ****  *********************/
+   9:lvgl/src/lv_widgets/lv_btn.c **** 
+  10:lvgl/src/lv_widgets/lv_btn.c **** #include "lv_btn.h"
+  11:lvgl/src/lv_widgets/lv_btn.c **** #if LV_USE_BTN != 0
+  12:lvgl/src/lv_widgets/lv_btn.c **** 
+  13:lvgl/src/lv_widgets/lv_btn.c **** #include <string.h>
+  14:lvgl/src/lv_widgets/lv_btn.c **** #include "../lv_core/lv_group.h"
+  15:lvgl/src/lv_widgets/lv_btn.c **** #include "../lv_misc/lv_debug.h"
+  16:lvgl/src/lv_widgets/lv_btn.c **** #include "../lv_draw/lv_draw.h"
+  17:lvgl/src/lv_widgets/lv_btn.c **** #include "../lv_themes/lv_theme.h"
+  18:lvgl/src/lv_widgets/lv_btn.c **** #include "../lv_misc/lv_area.h"
+  19:lvgl/src/lv_widgets/lv_btn.c **** #include "../lv_misc/lv_color.h"
+  20:lvgl/src/lv_widgets/lv_btn.c **** #include "../lv_misc/lv_math.h"
+  21:lvgl/src/lv_widgets/lv_btn.c **** 
+  22:lvgl/src/lv_widgets/lv_btn.c **** /*********************
+  23:lvgl/src/lv_widgets/lv_btn.c ****  *      DEFINES
+  24:lvgl/src/lv_widgets/lv_btn.c ****  *********************/
+  25:lvgl/src/lv_widgets/lv_btn.c **** #define LV_OBJX_NAME "lv_btn"
+  26:lvgl/src/lv_widgets/lv_btn.c **** #define LV_BTN_INK_VALUE_MAX 256
+  27:lvgl/src/lv_widgets/lv_btn.c **** #define LV_BTN_INK_VALUE_MAX_SHIFT 8
+  28:lvgl/src/lv_widgets/lv_btn.c **** 
+  29:lvgl/src/lv_widgets/lv_btn.c **** /**********************
+  30:lvgl/src/lv_widgets/lv_btn.c ****  *      TYPEDEFS
+ARM GAS  D:\Temp\cchBbrDN.s 			page 2
+
+
+  31:lvgl/src/lv_widgets/lv_btn.c ****  **********************/
+  32:lvgl/src/lv_widgets/lv_btn.c **** 
+  33:lvgl/src/lv_widgets/lv_btn.c **** /**********************
+  34:lvgl/src/lv_widgets/lv_btn.c ****  *  STATIC PROTOTYPES
+  35:lvgl/src/lv_widgets/lv_btn.c ****  **********************/
+  36:lvgl/src/lv_widgets/lv_btn.c **** static lv_design_res_t lv_btn_design(lv_obj_t * btn, const lv_area_t * clip_area, lv_design_mode_t 
+  37:lvgl/src/lv_widgets/lv_btn.c **** static lv_res_t lv_btn_signal(lv_obj_t * btn, lv_signal_t sign, void * param);
+  38:lvgl/src/lv_widgets/lv_btn.c **** 
+  39:lvgl/src/lv_widgets/lv_btn.c **** /**********************
+  40:lvgl/src/lv_widgets/lv_btn.c ****  *  STATIC VARIABLES
+  41:lvgl/src/lv_widgets/lv_btn.c ****  **********************/
+  42:lvgl/src/lv_widgets/lv_btn.c **** static lv_signal_cb_t ancestor_signal;
+  43:lvgl/src/lv_widgets/lv_btn.c **** static lv_design_cb_t ancestor_design;
+  44:lvgl/src/lv_widgets/lv_btn.c **** 
+  45:lvgl/src/lv_widgets/lv_btn.c **** /**********************
+  46:lvgl/src/lv_widgets/lv_btn.c ****  *      MACROS
+  47:lvgl/src/lv_widgets/lv_btn.c ****  **********************/
+  48:lvgl/src/lv_widgets/lv_btn.c **** 
+  49:lvgl/src/lv_widgets/lv_btn.c **** /**********************
+  50:lvgl/src/lv_widgets/lv_btn.c ****  *   GLOBAL FUNCTIONS
+  51:lvgl/src/lv_widgets/lv_btn.c ****  **********************/
+  52:lvgl/src/lv_widgets/lv_btn.c **** 
+  53:lvgl/src/lv_widgets/lv_btn.c **** /**
+  54:lvgl/src/lv_widgets/lv_btn.c ****  * Create a button object
+  55:lvgl/src/lv_widgets/lv_btn.c ****  * @param par pointer to an object, it will be the parent of the new button
+  56:lvgl/src/lv_widgets/lv_btn.c ****  * @param copy pointer to a button object, if not NULL then the new object will be copied from it
+  57:lvgl/src/lv_widgets/lv_btn.c ****  * @return pointer to the created button
+  58:lvgl/src/lv_widgets/lv_btn.c ****  */
+  59:lvgl/src/lv_widgets/lv_btn.c **** lv_obj_t * lv_btn_create(lv_obj_t * par, const lv_obj_t * copy)
+  60:lvgl/src/lv_widgets/lv_btn.c **** {
+  61:lvgl/src/lv_widgets/lv_btn.c ****     LV_LOG_TRACE("button create started");
+  62:lvgl/src/lv_widgets/lv_btn.c **** 
+  63:lvgl/src/lv_widgets/lv_btn.c ****     lv_obj_t * btn;
+  64:lvgl/src/lv_widgets/lv_btn.c **** 
+  65:lvgl/src/lv_widgets/lv_btn.c ****     btn = lv_cont_create(par, copy);
+  66:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_MEM(btn);
+  67:lvgl/src/lv_widgets/lv_btn.c ****     if(btn == NULL) return NULL;
+  68:lvgl/src/lv_widgets/lv_btn.c **** 
+  69:lvgl/src/lv_widgets/lv_btn.c ****     if(ancestor_signal == NULL) ancestor_signal = lv_obj_get_signal_cb(btn);
+  70:lvgl/src/lv_widgets/lv_btn.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(btn);
+  71:lvgl/src/lv_widgets/lv_btn.c **** 
+  72:lvgl/src/lv_widgets/lv_btn.c ****     /*Allocate the extended data*/
+  73:lvgl/src/lv_widgets/lv_btn.c ****     lv_btn_ext_t * ext = lv_obj_allocate_ext_attr(btn, sizeof(lv_btn_ext_t));
+  74:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_MEM(ext);
+  75:lvgl/src/lv_widgets/lv_btn.c ****     if(ext == NULL) {
+  76:lvgl/src/lv_widgets/lv_btn.c ****         lv_obj_del(btn);
+  77:lvgl/src/lv_widgets/lv_btn.c ****         return NULL;
+  78:lvgl/src/lv_widgets/lv_btn.c ****     }
+  79:lvgl/src/lv_widgets/lv_btn.c **** 
+  80:lvgl/src/lv_widgets/lv_btn.c ****     ext->checkable = 0;
+  81:lvgl/src/lv_widgets/lv_btn.c **** 
+  82:lvgl/src/lv_widgets/lv_btn.c ****     lv_obj_set_signal_cb(btn, lv_btn_signal);
+  83:lvgl/src/lv_widgets/lv_btn.c ****     lv_obj_set_design_cb(btn, lv_btn_design);
+  84:lvgl/src/lv_widgets/lv_btn.c **** 
+  85:lvgl/src/lv_widgets/lv_btn.c ****     /*If no copy do the basic initialization*/
+  86:lvgl/src/lv_widgets/lv_btn.c ****     if(copy == NULL) {
+  87:lvgl/src/lv_widgets/lv_btn.c ****         /*Set layout if the button is not a screen*/
+ARM GAS  D:\Temp\cchBbrDN.s 			page 3
+
+
+  88:lvgl/src/lv_widgets/lv_btn.c ****         if(par) {
+  89:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_set_size(btn, LV_DPI, LV_DPI / 3);
+  90:lvgl/src/lv_widgets/lv_btn.c ****             lv_btn_set_layout(btn, LV_LAYOUT_CENTER);
+  91:lvgl/src/lv_widgets/lv_btn.c ****         }
+  92:lvgl/src/lv_widgets/lv_btn.c **** 
+  93:lvgl/src/lv_widgets/lv_btn.c ****         lv_obj_set_click(btn, true); /*Be sure the button is clickable*/
+  94:lvgl/src/lv_widgets/lv_btn.c **** 
+  95:lvgl/src/lv_widgets/lv_btn.c ****         lv_theme_apply(btn, LV_THEME_BTN);
+  96:lvgl/src/lv_widgets/lv_btn.c ****     }
+  97:lvgl/src/lv_widgets/lv_btn.c ****     /*Copy 'copy'*/
+  98:lvgl/src/lv_widgets/lv_btn.c ****     else {
+  99:lvgl/src/lv_widgets/lv_btn.c ****         lv_btn_ext_t * copy_ext = lv_obj_get_ext_attr(copy);
+ 100:lvgl/src/lv_widgets/lv_btn.c ****         ext->checkable             = copy_ext->checkable;
+ 101:lvgl/src/lv_widgets/lv_btn.c **** 
+ 102:lvgl/src/lv_widgets/lv_btn.c ****         /*Refresh the style with new signal function*/
+ 103:lvgl/src/lv_widgets/lv_btn.c ****         lv_obj_refresh_style(btn, LV_OBJ_PART_ALL, LV_STYLE_PROP_ALL);
+ 104:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 105:lvgl/src/lv_widgets/lv_btn.c **** 
+ 106:lvgl/src/lv_widgets/lv_btn.c ****     LV_LOG_INFO("button created");
+ 107:lvgl/src/lv_widgets/lv_btn.c **** 
+ 108:lvgl/src/lv_widgets/lv_btn.c ****     return btn;
+ 109:lvgl/src/lv_widgets/lv_btn.c **** }
+ 110:lvgl/src/lv_widgets/lv_btn.c **** 
+ 111:lvgl/src/lv_widgets/lv_btn.c **** /*=====================
+ 112:lvgl/src/lv_widgets/lv_btn.c ****  * Setter functions
+ 113:lvgl/src/lv_widgets/lv_btn.c ****  *====================*/
+ 114:lvgl/src/lv_widgets/lv_btn.c **** 
+ 115:lvgl/src/lv_widgets/lv_btn.c **** /**
+ 116:lvgl/src/lv_widgets/lv_btn.c ****  * Enable the toggled states
+ 117:lvgl/src/lv_widgets/lv_btn.c ****  * @param btn pointer to a button object
+ 118:lvgl/src/lv_widgets/lv_btn.c ****  * @param tgl true: enable toggled states, false: disable
+ 119:lvgl/src/lv_widgets/lv_btn.c ****  */
+ 120:lvgl/src/lv_widgets/lv_btn.c **** void lv_btn_set_checkable(lv_obj_t * btn, bool tgl)
+ 121:lvgl/src/lv_widgets/lv_btn.c **** {
+ 122:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_OBJ(btn, LV_OBJX_NAME);
+ 123:lvgl/src/lv_widgets/lv_btn.c **** 
+ 124:lvgl/src/lv_widgets/lv_btn.c ****     lv_btn_ext_t * ext = lv_obj_get_ext_attr(btn);
+ 125:lvgl/src/lv_widgets/lv_btn.c **** 
+ 126:lvgl/src/lv_widgets/lv_btn.c ****     ext->checkable = tgl != false ? 1 : 0;
+ 127:lvgl/src/lv_widgets/lv_btn.c **** }
+ 128:lvgl/src/lv_widgets/lv_btn.c **** 
+ 129:lvgl/src/lv_widgets/lv_btn.c **** /**
+ 130:lvgl/src/lv_widgets/lv_btn.c ****  * Set the state of the button
+ 131:lvgl/src/lv_widgets/lv_btn.c ****  * @param btn pointer to a button object
+ 132:lvgl/src/lv_widgets/lv_btn.c ****  * @param state the new state of the button (from lv_btn_state_t enum)
+ 133:lvgl/src/lv_widgets/lv_btn.c ****  */
+ 134:lvgl/src/lv_widgets/lv_btn.c **** void lv_btn_set_state(lv_obj_t * btn, lv_btn_state_t state)
+ 135:lvgl/src/lv_widgets/lv_btn.c **** {
+ 136:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_OBJ(btn, LV_OBJX_NAME);
+ 137:lvgl/src/lv_widgets/lv_btn.c **** 
+ 138:lvgl/src/lv_widgets/lv_btn.c ****     switch(state) {
+ 139:lvgl/src/lv_widgets/lv_btn.c ****         case LV_BTN_STATE_RELEASED:
+ 140:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_clear_state(btn, LV_STATE_PRESSED | LV_STATE_CHECKED | LV_STATE_DISABLED);
+ 141:lvgl/src/lv_widgets/lv_btn.c ****             break;
+ 142:lvgl/src/lv_widgets/lv_btn.c ****         case LV_BTN_STATE_PRESSED:
+ 143:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_clear_state(btn, LV_STATE_CHECKED | LV_STATE_DISABLED);
+ 144:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_add_state(btn, LV_STATE_PRESSED);
+ARM GAS  D:\Temp\cchBbrDN.s 			page 4
+
+
+ 145:lvgl/src/lv_widgets/lv_btn.c ****             break;
+ 146:lvgl/src/lv_widgets/lv_btn.c ****         case LV_BTN_STATE_CHECKED_RELEASED:
+ 147:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_add_state(btn, LV_STATE_CHECKED);
+ 148:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_clear_state(btn, LV_STATE_PRESSED | LV_STATE_DISABLED);
+ 149:lvgl/src/lv_widgets/lv_btn.c ****             break;
+ 150:lvgl/src/lv_widgets/lv_btn.c ****         case LV_BTN_STATE_CHECKED_PRESSED:
+ 151:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_add_state(btn, LV_STATE_PRESSED | LV_STATE_CHECKED);
+ 152:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_clear_state(btn, LV_STATE_DISABLED);
+ 153:lvgl/src/lv_widgets/lv_btn.c ****             break;
+ 154:lvgl/src/lv_widgets/lv_btn.c ****         case LV_BTN_STATE_DISABLED:
+ 155:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_clear_state(btn, LV_STATE_PRESSED | LV_STATE_CHECKED);
+ 156:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_add_state(btn, LV_STATE_DISABLED);
+ 157:lvgl/src/lv_widgets/lv_btn.c ****             break;
+ 158:lvgl/src/lv_widgets/lv_btn.c ****         case LV_BTN_STATE_CHECKED_DISABLED:
+ 159:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_clear_state(btn, LV_STATE_PRESSED);
+ 160:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_add_state(btn, LV_STATE_DISABLED | LV_STATE_CHECKED);
+ 161:lvgl/src/lv_widgets/lv_btn.c ****             break;
+ 162:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 163:lvgl/src/lv_widgets/lv_btn.c **** }
+ 164:lvgl/src/lv_widgets/lv_btn.c **** 
+ 165:lvgl/src/lv_widgets/lv_btn.c **** /**
+ 166:lvgl/src/lv_widgets/lv_btn.c ****  * Toggle the state of the button (ON->OFF, OFF->ON)
+ 167:lvgl/src/lv_widgets/lv_btn.c ****  * @param btn pointer to a button object
+ 168:lvgl/src/lv_widgets/lv_btn.c ****  */
+ 169:lvgl/src/lv_widgets/lv_btn.c **** void lv_btn_toggle(lv_obj_t * btn)
+ 170:lvgl/src/lv_widgets/lv_btn.c **** {
+ 171:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_OBJ(btn, LV_OBJX_NAME);
+ 172:lvgl/src/lv_widgets/lv_btn.c **** 
+ 173:lvgl/src/lv_widgets/lv_btn.c ****     if(lv_obj_get_state(btn, LV_BTN_PART_MAIN) & LV_STATE_CHECKED) {
+ 174:lvgl/src/lv_widgets/lv_btn.c ****         lv_obj_clear_state(btn, LV_STATE_CHECKED);
+ 175:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 176:lvgl/src/lv_widgets/lv_btn.c ****     else {
+ 177:lvgl/src/lv_widgets/lv_btn.c ****         lv_obj_add_state(btn, LV_STATE_CHECKED);
+ 178:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 179:lvgl/src/lv_widgets/lv_btn.c **** }
+ 180:lvgl/src/lv_widgets/lv_btn.c **** 
+ 181:lvgl/src/lv_widgets/lv_btn.c **** /*=====================
+ 182:lvgl/src/lv_widgets/lv_btn.c ****  * Getter functions
+ 183:lvgl/src/lv_widgets/lv_btn.c ****  *====================*/
+ 184:lvgl/src/lv_widgets/lv_btn.c **** 
+ 185:lvgl/src/lv_widgets/lv_btn.c **** /**
+ 186:lvgl/src/lv_widgets/lv_btn.c ****  * Get the current state of the button
+ 187:lvgl/src/lv_widgets/lv_btn.c ****  * @param btn pointer to a button object
+ 188:lvgl/src/lv_widgets/lv_btn.c ****  * @return the state of the button (from lv_btn_state_t enum).
+ 189:lvgl/src/lv_widgets/lv_btn.c ****  * If the button is in disabled state `LV_BTN_STATE_DISABLED` will be ORed to the other button stat
+ 190:lvgl/src/lv_widgets/lv_btn.c ****  */
+ 191:lvgl/src/lv_widgets/lv_btn.c **** lv_btn_state_t lv_btn_get_state(const lv_obj_t * btn)
+ 192:lvgl/src/lv_widgets/lv_btn.c **** {
+ 193:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_OBJ(btn, LV_OBJX_NAME);
+ 194:lvgl/src/lv_widgets/lv_btn.c **** 
+ 195:lvgl/src/lv_widgets/lv_btn.c ****     lv_state_t obj_state = lv_obj_get_state(btn, LV_BTN_PART_MAIN);
+ 196:lvgl/src/lv_widgets/lv_btn.c **** 
+ 197:lvgl/src/lv_widgets/lv_btn.c ****     if(obj_state & LV_STATE_DISABLED) {
+ 198:lvgl/src/lv_widgets/lv_btn.c ****         if(obj_state & LV_STATE_CHECKED) return LV_BTN_STATE_CHECKED_DISABLED;
+ 199:lvgl/src/lv_widgets/lv_btn.c ****         else return LV_BTN_STATE_DISABLED;
+ 200:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 201:lvgl/src/lv_widgets/lv_btn.c **** 
+ARM GAS  D:\Temp\cchBbrDN.s 			page 5
+
+
+ 202:lvgl/src/lv_widgets/lv_btn.c ****     if(obj_state & LV_STATE_CHECKED) {
+ 203:lvgl/src/lv_widgets/lv_btn.c ****         if(obj_state & LV_STATE_PRESSED) return LV_BTN_STATE_CHECKED_PRESSED;
+ 204:lvgl/src/lv_widgets/lv_btn.c ****         else return LV_BTN_STATE_CHECKED_RELEASED;
+ 205:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 206:lvgl/src/lv_widgets/lv_btn.c ****     else {
+ 207:lvgl/src/lv_widgets/lv_btn.c ****         if(obj_state & LV_STATE_PRESSED) return LV_BTN_STATE_PRESSED;
+ 208:lvgl/src/lv_widgets/lv_btn.c ****         else return LV_BTN_STATE_RELEASED;
+ 209:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 210:lvgl/src/lv_widgets/lv_btn.c **** }
+ 211:lvgl/src/lv_widgets/lv_btn.c **** 
+ 212:lvgl/src/lv_widgets/lv_btn.c **** /**
+ 213:lvgl/src/lv_widgets/lv_btn.c ****  * Get the toggle enable attribute of the button
+ 214:lvgl/src/lv_widgets/lv_btn.c ****  * @param btn pointer to a button object
+ 215:lvgl/src/lv_widgets/lv_btn.c ****  * @return true: toggle enabled, false: disabled
+ 216:lvgl/src/lv_widgets/lv_btn.c ****  */
+ 217:lvgl/src/lv_widgets/lv_btn.c **** bool lv_btn_get_checkable(const lv_obj_t * btn)
+ 218:lvgl/src/lv_widgets/lv_btn.c **** {
+ 219:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_OBJ(btn, LV_OBJX_NAME);
+ 220:lvgl/src/lv_widgets/lv_btn.c **** 
+ 221:lvgl/src/lv_widgets/lv_btn.c ****     lv_btn_ext_t * ext = lv_obj_get_ext_attr(btn);
+ 222:lvgl/src/lv_widgets/lv_btn.c **** 
+ 223:lvgl/src/lv_widgets/lv_btn.c ****     return ext->checkable != 0 ? true : false;
+ 224:lvgl/src/lv_widgets/lv_btn.c **** }
+ 225:lvgl/src/lv_widgets/lv_btn.c **** 
+ 226:lvgl/src/lv_widgets/lv_btn.c **** /**********************
+ 227:lvgl/src/lv_widgets/lv_btn.c ****  *   STATIC FUNCTIONS
+ 228:lvgl/src/lv_widgets/lv_btn.c ****  **********************/
+ 229:lvgl/src/lv_widgets/lv_btn.c **** 
+ 230:lvgl/src/lv_widgets/lv_btn.c **** /**
+ 231:lvgl/src/lv_widgets/lv_btn.c ****  * Handle the drawing related tasks of the drop down lists
+ 232:lvgl/src/lv_widgets/lv_btn.c ****  * @param btn pointer to an object
+ 233:lvgl/src/lv_widgets/lv_btn.c ****  * @param mask the object will be drawn only in this area
+ 234:lvgl/src/lv_widgets/lv_btn.c ****  * @param mode LV_DESIGN_COVER_CHK: only check if the object fully covers the 'mask_p' area
+ 235:lvgl/src/lv_widgets/lv_btn.c ****  *                                  (return 'true' if yes)
+ 236:lvgl/src/lv_widgets/lv_btn.c ****  *             LV_DESIGN_DRAW: draw the object (always return 'true')
+ 237:lvgl/src/lv_widgets/lv_btn.c ****  *             LV_DESIGN_DRAW_POST: drawing after every children are drawn
+ 238:lvgl/src/lv_widgets/lv_btn.c ****  * @param return an element of `lv_design_res_t`
+ 239:lvgl/src/lv_widgets/lv_btn.c ****  */
+ 240:lvgl/src/lv_widgets/lv_btn.c **** static lv_design_res_t lv_btn_design(lv_obj_t * btn, const lv_area_t * clip_area, lv_design_mode_t 
+ 241:lvgl/src/lv_widgets/lv_btn.c **** {
+  29              		.loc 1 241 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 241 1 is_stmt 0 view .LVU1
+  34 0000 08B5     		push	{r3, lr}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 8
+  37              		.cfi_offset 3, -8
+  38              		.cfi_offset 14, -4
+ 242:lvgl/src/lv_widgets/lv_btn.c ****     if(mode == LV_DESIGN_COVER_CHK) {
+  39              		.loc 1 242 5 is_stmt 1 view .LVU2
+  40              		.loc 1 242 7 is_stmt 0 view .LVU3
+  41 0002 022A     		cmp	r2, #2
+  42 0004 05D0     		beq	.L7
+ 243:lvgl/src/lv_widgets/lv_btn.c ****         return ancestor_design(btn, clip_area, mode);
+ 244:lvgl/src/lv_widgets/lv_btn.c ****     }
+ARM GAS  D:\Temp\cchBbrDN.s 			page 6
+
+
+ 245:lvgl/src/lv_widgets/lv_btn.c ****     else if(mode == LV_DESIGN_DRAW_MAIN) {
+  43              		.loc 1 245 10 is_stmt 1 view .LVU4
+  44              		.loc 1 245 12 is_stmt 0 view .LVU5
+  45 0006 42B9     		cbnz	r2, .L4
+ 246:lvgl/src/lv_widgets/lv_btn.c ****         ancestor_design(btn, clip_area, mode);
+  46              		.loc 1 246 9 is_stmt 1 view .LVU6
+  47 0008 084B     		ldr	r3, .L9
+  48 000a 1B68     		ldr	r3, [r3]
+  49 000c 9847     		blx	r3
+  50              	.LVL1:
+ 247:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 248:lvgl/src/lv_widgets/lv_btn.c ****     else if(mode == LV_DESIGN_DRAW_POST) {
+ 249:lvgl/src/lv_widgets/lv_btn.c ****         ancestor_design(btn, clip_area, mode);
+ 250:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 251:lvgl/src/lv_widgets/lv_btn.c **** 
+ 252:lvgl/src/lv_widgets/lv_btn.c ****     return LV_DESIGN_RES_OK;
+  51              		.loc 1 252 12 is_stmt 0 view .LVU7
+  52 000e 0020     		movs	r0, #0
+  53              	.L3:
+ 253:lvgl/src/lv_widgets/lv_btn.c **** }
+  54              		.loc 1 253 1 view .LVU8
+  55 0010 08BD     		pop	{r3, pc}
+  56              	.LVL2:
+  57              	.L7:
+ 243:lvgl/src/lv_widgets/lv_btn.c ****     }
+  58              		.loc 1 243 9 is_stmt 1 view .LVU9
+ 243:lvgl/src/lv_widgets/lv_btn.c ****     }
+  59              		.loc 1 243 16 is_stmt 0 view .LVU10
+  60 0012 064B     		ldr	r3, .L9
+  61 0014 1B68     		ldr	r3, [r3]
+  62 0016 9847     		blx	r3
+  63              	.LVL3:
+ 243:lvgl/src/lv_widgets/lv_btn.c ****     }
+  64              		.loc 1 243 16 view .LVU11
+  65 0018 FAE7     		b	.L3
+  66              	.LVL4:
+  67              	.L4:
+ 248:lvgl/src/lv_widgets/lv_btn.c ****         ancestor_design(btn, clip_area, mode);
+  68              		.loc 1 248 10 is_stmt 1 view .LVU12
+ 248:lvgl/src/lv_widgets/lv_btn.c ****         ancestor_design(btn, clip_area, mode);
+  69              		.loc 1 248 12 is_stmt 0 view .LVU13
+  70 001a 012A     		cmp	r2, #1
+  71 001c 01D0     		beq	.L8
+ 252:lvgl/src/lv_widgets/lv_btn.c **** }
+  72              		.loc 1 252 12 view .LVU14
+  73 001e 0020     		movs	r0, #0
+  74              	.LVL5:
+ 252:lvgl/src/lv_widgets/lv_btn.c **** }
+  75              		.loc 1 252 12 view .LVU15
+  76 0020 F6E7     		b	.L3
+  77              	.LVL6:
+  78              	.L8:
+ 249:lvgl/src/lv_widgets/lv_btn.c ****     }
+  79              		.loc 1 249 9 is_stmt 1 view .LVU16
+  80 0022 024B     		ldr	r3, .L9
+  81 0024 1B68     		ldr	r3, [r3]
+  82 0026 9847     		blx	r3
+ARM GAS  D:\Temp\cchBbrDN.s 			page 7
+
+
+  83              	.LVL7:
+ 252:lvgl/src/lv_widgets/lv_btn.c **** }
+  84              		.loc 1 252 12 is_stmt 0 view .LVU17
+  85 0028 0020     		movs	r0, #0
+  86 002a F1E7     		b	.L3
+  87              	.L10:
+  88              		.align	2
+  89              	.L9:
+  90 002c 00000000 		.word	.LANCHOR0
+  91              		.cfi_endproc
+  92              	.LFE475:
+  94              		.section	.text.lv_btn_create,"ax",%progbits
+  95              		.align	1
+  96              		.global	lv_btn_create
+  97              		.syntax unified
+  98              		.thumb
+  99              		.thumb_func
+ 100              		.fpu fpv4-sp-d16
+ 102              	lv_btn_create:
+ 103              	.LVL8:
+ 104              	.LFB469:
+  60:lvgl/src/lv_widgets/lv_btn.c ****     LV_LOG_TRACE("button create started");
+ 105              		.loc 1 60 1 is_stmt 1 view -0
+ 106              		.cfi_startproc
+ 107              		@ args = 0, pretend = 0, frame = 0
+ 108              		@ frame_needed = 0, uses_anonymous_args = 0
+  60:lvgl/src/lv_widgets/lv_btn.c ****     LV_LOG_TRACE("button create started");
+ 109              		.loc 1 60 1 is_stmt 0 view .LVU19
+ 110 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 111              	.LCFI1:
+ 112              		.cfi_def_cfa_offset 24
+ 113              		.cfi_offset 3, -24
+ 114              		.cfi_offset 4, -20
+ 115              		.cfi_offset 5, -16
+ 116              		.cfi_offset 6, -12
+ 117              		.cfi_offset 7, -8
+ 118              		.cfi_offset 14, -4
+ 119 0002 0746     		mov	r7, r0
+ 120 0004 0E46     		mov	r6, r1
+  61:lvgl/src/lv_widgets/lv_btn.c **** 
+ 121              		.loc 1 61 42 is_stmt 1 view .LVU20
+  63:lvgl/src/lv_widgets/lv_btn.c **** 
+ 122              		.loc 1 63 5 view .LVU21
+  65:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_MEM(btn);
+ 123              		.loc 1 65 5 view .LVU22
+  65:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_MEM(btn);
+ 124              		.loc 1 65 11 is_stmt 0 view .LVU23
+ 125 0006 FFF7FEFF 		bl	lv_cont_create
+ 126              	.LVL9:
+  65:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_MEM(btn);
+ 127              		.loc 1 65 11 view .LVU24
+ 128 000a 0446     		mov	r4, r0
+ 129              	.LVL10:
+  66:lvgl/src/lv_widgets/lv_btn.c ****     if(btn == NULL) return NULL;
+ 130              		.loc 1 66 5 is_stmt 1 view .LVU25
+  66:lvgl/src/lv_widgets/lv_btn.c ****     if(btn == NULL) return NULL;
+ 131              		.loc 1 66 5 view .LVU26
+ARM GAS  D:\Temp\cchBbrDN.s 			page 8
+
+
+ 132 000c FFF7FEFF 		bl	lv_debug_check_null
+ 133              	.LVL11:
+  66:lvgl/src/lv_widgets/lv_btn.c ****     if(btn == NULL) return NULL;
+ 134              		.loc 1 66 5 is_stmt 0 view .LVU27
+ 135 0010 58B3     		cbz	r0, .L23
+  66:lvgl/src/lv_widgets/lv_btn.c ****     if(btn == NULL) return NULL;
+ 136              		.loc 1 66 23 is_stmt 1 discriminator 2 view .LVU28
+  67:lvgl/src/lv_widgets/lv_btn.c **** 
+ 137              		.loc 1 67 5 discriminator 2 view .LVU29
+  67:lvgl/src/lv_widgets/lv_btn.c **** 
+ 138              		.loc 1 67 7 is_stmt 0 discriminator 2 view .LVU30
+ 139 0012 44B3     		cbz	r4, .L11
+  69:lvgl/src/lv_widgets/lv_btn.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(btn);
+ 140              		.loc 1 69 5 is_stmt 1 view .LVU31
+  69:lvgl/src/lv_widgets/lv_btn.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(btn);
+ 141              		.loc 1 69 24 is_stmt 0 view .LVU32
+ 142 0014 2D4B     		ldr	r3, .L29
+ 143 0016 1B68     		ldr	r3, [r3]
+  69:lvgl/src/lv_widgets/lv_btn.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(btn);
+ 144              		.loc 1 69 7 view .LVU33
+ 145 0018 6BB3     		cbz	r3, .L24
+ 146              	.L15:
+  70:lvgl/src/lv_widgets/lv_btn.c **** 
+ 147              		.loc 1 70 5 is_stmt 1 view .LVU34
+  70:lvgl/src/lv_widgets/lv_btn.c **** 
+ 148              		.loc 1 70 24 is_stmt 0 view .LVU35
+ 149 001a 2D4B     		ldr	r3, .L29+4
+ 150 001c 1B68     		ldr	r3, [r3]
+  70:lvgl/src/lv_widgets/lv_btn.c **** 
+ 151              		.loc 1 70 7 view .LVU36
+ 152 001e 83B3     		cbz	r3, .L25
+ 153              	.L16:
+  73:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_MEM(ext);
+ 154              		.loc 1 73 5 is_stmt 1 view .LVU37
+  73:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_MEM(ext);
+ 155              		.loc 1 73 26 is_stmt 0 view .LVU38
+ 156 0020 0321     		movs	r1, #3
+ 157 0022 2046     		mov	r0, r4
+ 158 0024 FFF7FEFF 		bl	lv_obj_allocate_ext_attr
+ 159              	.LVL12:
+ 160 0028 0546     		mov	r5, r0
+ 161              	.LVL13:
+  74:lvgl/src/lv_widgets/lv_btn.c ****     if(ext == NULL) {
+ 162              		.loc 1 74 5 is_stmt 1 view .LVU39
+  74:lvgl/src/lv_widgets/lv_btn.c ****     if(ext == NULL) {
+ 163              		.loc 1 74 5 view .LVU40
+ 164 002a FFF7FEFF 		bl	lv_debug_check_null
+ 165              	.LVL14:
+  74:lvgl/src/lv_widgets/lv_btn.c ****     if(ext == NULL) {
+ 166              		.loc 1 74 5 is_stmt 0 view .LVU41
+ 167 002e 70B3     		cbz	r0, .L26
+  74:lvgl/src/lv_widgets/lv_btn.c ****     if(ext == NULL) {
+ 168              		.loc 1 74 23 is_stmt 1 discriminator 2 view .LVU42
+  75:lvgl/src/lv_widgets/lv_btn.c ****         lv_obj_del(btn);
+ 169              		.loc 1 75 5 discriminator 2 view .LVU43
+  75:lvgl/src/lv_widgets/lv_btn.c ****         lv_obj_del(btn);
+ 170              		.loc 1 75 7 is_stmt 0 discriminator 2 view .LVU44
+ARM GAS  D:\Temp\cchBbrDN.s 			page 9
+
+
+ 171 0030 9DB3     		cbz	r5, .L27
+  80:lvgl/src/lv_widgets/lv_btn.c **** 
+ 172              		.loc 1 80 5 is_stmt 1 view .LVU45
+  80:lvgl/src/lv_widgets/lv_btn.c **** 
+ 173              		.loc 1 80 20 is_stmt 0 view .LVU46
+ 174 0032 AB78     		ldrb	r3, [r5, #2]	@ zero_extendqisi2
+ 175 0034 6FF30003 		bfc	r3, #0, #1
+ 176 0038 AB70     		strb	r3, [r5, #2]
+  82:lvgl/src/lv_widgets/lv_btn.c ****     lv_obj_set_design_cb(btn, lv_btn_design);
+ 177              		.loc 1 82 5 is_stmt 1 view .LVU47
+ 178 003a 2649     		ldr	r1, .L29+8
+ 179 003c 2046     		mov	r0, r4
+ 180 003e FFF7FEFF 		bl	lv_obj_set_signal_cb
+ 181              	.LVL15:
+  83:lvgl/src/lv_widgets/lv_btn.c **** 
+ 182              		.loc 1 83 5 view .LVU48
+ 183 0042 2549     		ldr	r1, .L29+12
+ 184 0044 2046     		mov	r0, r4
+ 185 0046 FFF7FEFF 		bl	lv_obj_set_design_cb
+ 186              	.LVL16:
+  86:lvgl/src/lv_widgets/lv_btn.c ****         /*Set layout if the button is not a screen*/
+ 187              		.loc 1 86 5 view .LVU49
+  86:lvgl/src/lv_widgets/lv_btn.c ****         /*Set layout if the button is not a screen*/
+ 188              		.loc 1 86 7 is_stmt 0 view .LVU50
+ 189 004a 5EB3     		cbz	r6, .L28
+ 190              	.LBB5:
+  99:lvgl/src/lv_widgets/lv_btn.c ****         ext->checkable             = copy_ext->checkable;
+ 191              		.loc 1 99 9 is_stmt 1 view .LVU51
+  99:lvgl/src/lv_widgets/lv_btn.c ****         ext->checkable             = copy_ext->checkable;
+ 192              		.loc 1 99 35 is_stmt 0 view .LVU52
+ 193 004c 3046     		mov	r0, r6
+ 194 004e FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 195              	.LVL17:
+ 100:lvgl/src/lv_widgets/lv_btn.c **** 
+ 196              		.loc 1 100 9 is_stmt 1 view .LVU53
+ 100:lvgl/src/lv_widgets/lv_btn.c **** 
+ 197              		.loc 1 100 46 is_stmt 0 view .LVU54
+ 198 0052 8278     		ldrb	r2, [r0, #2]	@ zero_extendqisi2
+ 100:lvgl/src/lv_widgets/lv_btn.c **** 
+ 199              		.loc 1 100 36 view .LVU55
+ 200 0054 AB78     		ldrb	r3, [r5, #2]	@ zero_extendqisi2
+ 201 0056 62F30003 		bfi	r3, r2, #0, #1
+ 202 005a AB70     		strb	r3, [r5, #2]
+ 103:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 203              		.loc 1 103 9 is_stmt 1 view .LVU56
+ 204 005c FF22     		movs	r2, #255
+ 205 005e 1146     		mov	r1, r2
+ 206 0060 2046     		mov	r0, r4
+ 207              	.LVL18:
+ 103:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 208              		.loc 1 103 9 is_stmt 0 view .LVU57
+ 209 0062 FFF7FEFF 		bl	lv_obj_refresh_style
+ 210              	.LVL19:
+ 211              	.L11:
+ 103:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 212              		.loc 1 103 9 view .LVU58
+ 213              	.LBE5:
+ARM GAS  D:\Temp\cchBbrDN.s 			page 10
+
+
+ 109:lvgl/src/lv_widgets/lv_btn.c **** 
+ 214              		.loc 1 109 1 view .LVU59
+ 215 0066 2046     		mov	r0, r4
+ 216 0068 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 217              	.LVL20:
+ 218              	.L23:
+  66:lvgl/src/lv_widgets/lv_btn.c ****     if(btn == NULL) return NULL;
+ 219              		.loc 1 66 5 is_stmt 1 discriminator 1 view .LVU60
+  66:lvgl/src/lv_widgets/lv_btn.c ****     if(btn == NULL) return NULL;
+ 220              		.loc 1 66 5 discriminator 1 view .LVU61
+ 221 006a 2246     		mov	r2, r4
+ 222 006c 0023     		movs	r3, #0
+ 223 006e 1B48     		ldr	r0, .L29+16
+ 224 0070 FFF7FEFF 		bl	lv_debug_log_error
+ 225              	.LVL21:
+ 226              	.L13:
+  66:lvgl/src/lv_widgets/lv_btn.c ****     if(btn == NULL) return NULL;
+ 227              		.loc 1 66 5 discriminator 1 view .LVU62
+  66:lvgl/src/lv_widgets/lv_btn.c ****     if(btn == NULL) return NULL;
+ 228              		.loc 1 66 5 discriminator 1 view .LVU63
+ 229 0074 FEE7     		b	.L13
+ 230              	.L24:
+  69:lvgl/src/lv_widgets/lv_btn.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(btn);
+ 231              		.loc 1 69 33 discriminator 1 view .LVU64
+  69:lvgl/src/lv_widgets/lv_btn.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(btn);
+ 232              		.loc 1 69 51 is_stmt 0 discriminator 1 view .LVU65
+ 233 0076 2046     		mov	r0, r4
+ 234 0078 FFF7FEFF 		bl	lv_obj_get_signal_cb
+ 235              	.LVL22:
+  69:lvgl/src/lv_widgets/lv_btn.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(btn);
+ 236              		.loc 1 69 49 discriminator 1 view .LVU66
+ 237 007c 134B     		ldr	r3, .L29
+ 238 007e 1860     		str	r0, [r3]
+ 239 0080 CBE7     		b	.L15
+ 240              	.L25:
+  70:lvgl/src/lv_widgets/lv_btn.c **** 
+ 241              		.loc 1 70 33 is_stmt 1 discriminator 1 view .LVU67
+  70:lvgl/src/lv_widgets/lv_btn.c **** 
+ 242              		.loc 1 70 51 is_stmt 0 discriminator 1 view .LVU68
+ 243 0082 2046     		mov	r0, r4
+ 244 0084 FFF7FEFF 		bl	lv_obj_get_design_cb
+ 245              	.LVL23:
+  70:lvgl/src/lv_widgets/lv_btn.c **** 
+ 246              		.loc 1 70 49 discriminator 1 view .LVU69
+ 247 0088 114B     		ldr	r3, .L29+4
+ 248 008a 1860     		str	r0, [r3]
+ 249 008c C8E7     		b	.L16
+ 250              	.LVL24:
+ 251              	.L26:
+  74:lvgl/src/lv_widgets/lv_btn.c ****     if(ext == NULL) {
+ 252              		.loc 1 74 5 is_stmt 1 discriminator 1 view .LVU70
+  74:lvgl/src/lv_widgets/lv_btn.c ****     if(ext == NULL) {
+ 253              		.loc 1 74 5 discriminator 1 view .LVU71
+ 254 008e 2A46     		mov	r2, r5
+ 255 0090 0023     		movs	r3, #0
+ 256 0092 1248     		ldr	r0, .L29+16
+ 257 0094 FFF7FEFF 		bl	lv_debug_log_error
+ARM GAS  D:\Temp\cchBbrDN.s 			page 11
+
+
+ 258              	.LVL25:
+ 259              	.L18:
+  74:lvgl/src/lv_widgets/lv_btn.c ****     if(ext == NULL) {
+ 260              		.loc 1 74 5 discriminator 2 view .LVU72
+  74:lvgl/src/lv_widgets/lv_btn.c ****     if(ext == NULL) {
+ 261              		.loc 1 74 5 discriminator 2 view .LVU73
+ 262 0098 FEE7     		b	.L18
+ 263              	.L27:
+  76:lvgl/src/lv_widgets/lv_btn.c ****         return NULL;
+ 264              		.loc 1 76 9 view .LVU74
+ 265 009a 2046     		mov	r0, r4
+ 266 009c FFF7FEFF 		bl	lv_obj_del
+ 267              	.LVL26:
+  77:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 268              		.loc 1 77 9 view .LVU75
+  77:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 269              		.loc 1 77 16 is_stmt 0 view .LVU76
+ 270 00a0 0024     		movs	r4, #0
+ 271              	.LVL27:
+  77:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 272              		.loc 1 77 16 view .LVU77
+ 273 00a2 E0E7     		b	.L11
+ 274              	.LVL28:
+ 275              	.L28:
+  88:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_set_size(btn, LV_DPI, LV_DPI / 3);
+ 276              		.loc 1 88 9 is_stmt 1 view .LVU78
+  88:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_set_size(btn, LV_DPI, LV_DPI / 3);
+ 277              		.loc 1 88 11 is_stmt 0 view .LVU79
+ 278 00a4 47B1     		cbz	r7, .L21
+  89:lvgl/src/lv_widgets/lv_btn.c ****             lv_btn_set_layout(btn, LV_LAYOUT_CENTER);
+ 279              		.loc 1 89 13 is_stmt 1 view .LVU80
+ 280 00a6 1A22     		movs	r2, #26
+ 281 00a8 5021     		movs	r1, #80
+ 282 00aa 2046     		mov	r0, r4
+ 283 00ac FFF7FEFF 		bl	lv_obj_set_size
+ 284              	.LVL29:
+  90:lvgl/src/lv_widgets/lv_btn.c ****         }
+ 285              		.loc 1 90 13 view .LVU81
+ 286              	.LBB6:
+ 287              	.LBI6:
+ 288              		.file 2 "lvgl/src/lv_widgets/lv_btn.h"
+   1:lvgl/src/lv_widgets/lv_btn.h **** /**
+   2:lvgl/src/lv_widgets/lv_btn.h ****  * @file lv_btn.h
+   3:lvgl/src/lv_widgets/lv_btn.h ****  *
+   4:lvgl/src/lv_widgets/lv_btn.h ****  */
+   5:lvgl/src/lv_widgets/lv_btn.h **** 
+   6:lvgl/src/lv_widgets/lv_btn.h **** #ifndef LV_BTN_H
+   7:lvgl/src/lv_widgets/lv_btn.h **** #define LV_BTN_H
+   8:lvgl/src/lv_widgets/lv_btn.h **** 
+   9:lvgl/src/lv_widgets/lv_btn.h **** #ifdef __cplusplus
+  10:lvgl/src/lv_widgets/lv_btn.h **** extern "C" {
+  11:lvgl/src/lv_widgets/lv_btn.h **** #endif
+  12:lvgl/src/lv_widgets/lv_btn.h **** 
+  13:lvgl/src/lv_widgets/lv_btn.h **** /*********************
+  14:lvgl/src/lv_widgets/lv_btn.h ****  *      INCLUDES
+  15:lvgl/src/lv_widgets/lv_btn.h ****  *********************/
+  16:lvgl/src/lv_widgets/lv_btn.h **** #include "../lv_conf_internal.h"
+ARM GAS  D:\Temp\cchBbrDN.s 			page 12
+
+
+  17:lvgl/src/lv_widgets/lv_btn.h **** 
+  18:lvgl/src/lv_widgets/lv_btn.h **** #if LV_USE_BTN != 0
+  19:lvgl/src/lv_widgets/lv_btn.h **** 
+  20:lvgl/src/lv_widgets/lv_btn.h **** /*Testing of dependencies*/
+  21:lvgl/src/lv_widgets/lv_btn.h **** #if LV_USE_CONT == 0
+  22:lvgl/src/lv_widgets/lv_btn.h **** #error "lv_btn: lv_cont is required. Enable it in lv_conf.h (LV_USE_CONT 1)"
+  23:lvgl/src/lv_widgets/lv_btn.h **** #endif
+  24:lvgl/src/lv_widgets/lv_btn.h **** 
+  25:lvgl/src/lv_widgets/lv_btn.h **** #include "lv_cont.h"
+  26:lvgl/src/lv_widgets/lv_btn.h **** #include "../lv_core/lv_indev.h"
+  27:lvgl/src/lv_widgets/lv_btn.h **** 
+  28:lvgl/src/lv_widgets/lv_btn.h **** /*********************
+  29:lvgl/src/lv_widgets/lv_btn.h ****  *      DEFINES
+  30:lvgl/src/lv_widgets/lv_btn.h ****  *********************/
+  31:lvgl/src/lv_widgets/lv_btn.h **** 
+  32:lvgl/src/lv_widgets/lv_btn.h **** /**********************
+  33:lvgl/src/lv_widgets/lv_btn.h ****  *      TYPEDEFS
+  34:lvgl/src/lv_widgets/lv_btn.h ****  **********************/
+  35:lvgl/src/lv_widgets/lv_btn.h **** 
+  36:lvgl/src/lv_widgets/lv_btn.h **** /** Possible states of a button.
+  37:lvgl/src/lv_widgets/lv_btn.h ****  * It can be used not only by buttons but other button-like objects too*/
+  38:lvgl/src/lv_widgets/lv_btn.h **** enum {
+  39:lvgl/src/lv_widgets/lv_btn.h ****     LV_BTN_STATE_RELEASED,
+  40:lvgl/src/lv_widgets/lv_btn.h ****     LV_BTN_STATE_PRESSED,
+  41:lvgl/src/lv_widgets/lv_btn.h ****     LV_BTN_STATE_DISABLED,
+  42:lvgl/src/lv_widgets/lv_btn.h ****     LV_BTN_STATE_CHECKED_RELEASED,
+  43:lvgl/src/lv_widgets/lv_btn.h ****     LV_BTN_STATE_CHECKED_PRESSED,
+  44:lvgl/src/lv_widgets/lv_btn.h ****     LV_BTN_STATE_CHECKED_DISABLED,
+  45:lvgl/src/lv_widgets/lv_btn.h ****     _LV_BTN_STATE_LAST, /* Number of states*/
+  46:lvgl/src/lv_widgets/lv_btn.h **** };
+  47:lvgl/src/lv_widgets/lv_btn.h **** typedef uint8_t lv_btn_state_t;
+  48:lvgl/src/lv_widgets/lv_btn.h **** 
+  49:lvgl/src/lv_widgets/lv_btn.h **** /** Extended data of button*/
+  50:lvgl/src/lv_widgets/lv_btn.h **** typedef struct {
+  51:lvgl/src/lv_widgets/lv_btn.h ****     /** Ext. of ancestor*/
+  52:lvgl/src/lv_widgets/lv_btn.h ****     lv_cont_ext_t cont;
+  53:lvgl/src/lv_widgets/lv_btn.h **** 
+  54:lvgl/src/lv_widgets/lv_btn.h ****     /** 1: Toggle enabled*/
+  55:lvgl/src/lv_widgets/lv_btn.h ****     uint8_t checkable : 1;
+  56:lvgl/src/lv_widgets/lv_btn.h **** } lv_btn_ext_t;
+  57:lvgl/src/lv_widgets/lv_btn.h **** 
+  58:lvgl/src/lv_widgets/lv_btn.h **** /**Styles*/
+  59:lvgl/src/lv_widgets/lv_btn.h **** enum {
+  60:lvgl/src/lv_widgets/lv_btn.h ****     LV_BTN_PART_MAIN = LV_OBJ_PART_MAIN,
+  61:lvgl/src/lv_widgets/lv_btn.h ****     _LV_BTN_PART_VIRTUAL_LAST,
+  62:lvgl/src/lv_widgets/lv_btn.h ****     _LV_BTN_PART_REAL_LAST = _LV_OBJ_PART_REAL_LAST,
+  63:lvgl/src/lv_widgets/lv_btn.h **** };
+  64:lvgl/src/lv_widgets/lv_btn.h **** typedef uint8_t lv_btn_part_t;
+  65:lvgl/src/lv_widgets/lv_btn.h **** 
+  66:lvgl/src/lv_widgets/lv_btn.h **** /**********************
+  67:lvgl/src/lv_widgets/lv_btn.h ****  * GLOBAL PROTOTYPES
+  68:lvgl/src/lv_widgets/lv_btn.h ****  **********************/
+  69:lvgl/src/lv_widgets/lv_btn.h **** 
+  70:lvgl/src/lv_widgets/lv_btn.h **** /**
+  71:lvgl/src/lv_widgets/lv_btn.h ****  * Create a button object
+  72:lvgl/src/lv_widgets/lv_btn.h ****  * @param par pointer to an object, it will be the parent of the new button
+  73:lvgl/src/lv_widgets/lv_btn.h ****  * @param copy pointer to a button object, if not NULL then the new object will be copied from it
+ARM GAS  D:\Temp\cchBbrDN.s 			page 13
+
+
+  74:lvgl/src/lv_widgets/lv_btn.h ****  * @return pointer to the created button
+  75:lvgl/src/lv_widgets/lv_btn.h ****  */
+  76:lvgl/src/lv_widgets/lv_btn.h **** lv_obj_t * lv_btn_create(lv_obj_t * par, const lv_obj_t * copy);
+  77:lvgl/src/lv_widgets/lv_btn.h **** 
+  78:lvgl/src/lv_widgets/lv_btn.h **** /*=====================
+  79:lvgl/src/lv_widgets/lv_btn.h ****  * Setter functions
+  80:lvgl/src/lv_widgets/lv_btn.h ****  *====================*/
+  81:lvgl/src/lv_widgets/lv_btn.h **** 
+  82:lvgl/src/lv_widgets/lv_btn.h **** /**
+  83:lvgl/src/lv_widgets/lv_btn.h ****  * Enable the toggled states. On release the button will change from/to toggled state.
+  84:lvgl/src/lv_widgets/lv_btn.h ****  * @param btn pointer to a button object
+  85:lvgl/src/lv_widgets/lv_btn.h ****  * @param tgl true: enable toggled states, false: disable
+  86:lvgl/src/lv_widgets/lv_btn.h ****  */
+  87:lvgl/src/lv_widgets/lv_btn.h **** void lv_btn_set_checkable(lv_obj_t * btn, bool tgl);
+  88:lvgl/src/lv_widgets/lv_btn.h **** 
+  89:lvgl/src/lv_widgets/lv_btn.h **** /**
+  90:lvgl/src/lv_widgets/lv_btn.h ****  * Set the state of the button
+  91:lvgl/src/lv_widgets/lv_btn.h ****  * @param btn pointer to a button object
+  92:lvgl/src/lv_widgets/lv_btn.h ****  * @param state the new state of the button (from lv_btn_state_t enum)
+  93:lvgl/src/lv_widgets/lv_btn.h ****  */
+  94:lvgl/src/lv_widgets/lv_btn.h **** void lv_btn_set_state(lv_obj_t * btn, lv_btn_state_t state);
+  95:lvgl/src/lv_widgets/lv_btn.h **** 
+  96:lvgl/src/lv_widgets/lv_btn.h **** /**
+  97:lvgl/src/lv_widgets/lv_btn.h ****  * Toggle the state of the button (ON->OFF, OFF->ON)
+  98:lvgl/src/lv_widgets/lv_btn.h ****  * @param btn pointer to a button object
+  99:lvgl/src/lv_widgets/lv_btn.h ****  */
+ 100:lvgl/src/lv_widgets/lv_btn.h **** void lv_btn_toggle(lv_obj_t * btn);
+ 101:lvgl/src/lv_widgets/lv_btn.h **** 
+ 102:lvgl/src/lv_widgets/lv_btn.h **** /**
+ 103:lvgl/src/lv_widgets/lv_btn.h ****  * Set the layout on a button
+ 104:lvgl/src/lv_widgets/lv_btn.h ****  * @param btn pointer to a button object
+ 105:lvgl/src/lv_widgets/lv_btn.h ****  * @param layout a layout from 'lv_cont_layout_t'
+ 106:lvgl/src/lv_widgets/lv_btn.h ****  */
+ 107:lvgl/src/lv_widgets/lv_btn.h **** static inline void lv_btn_set_layout(lv_obj_t * btn, lv_layout_t layout)
+ 289              		.loc 2 107 20 view .LVU82
+ 290              	.LBB7:
+ 108:lvgl/src/lv_widgets/lv_btn.h **** {
+ 109:lvgl/src/lv_widgets/lv_btn.h ****     lv_cont_set_layout(btn, layout);
+ 291              		.loc 2 109 5 view .LVU83
+ 292 00b0 0121     		movs	r1, #1
+ 293 00b2 2046     		mov	r0, r4
+ 294 00b4 FFF7FEFF 		bl	lv_cont_set_layout
+ 295              	.LVL30:
+ 296              	.L21:
+ 297              		.loc 2 109 5 is_stmt 0 view .LVU84
+ 298              	.LBE7:
+ 299              	.LBE6:
+  93:lvgl/src/lv_widgets/lv_btn.c **** 
+ 300              		.loc 1 93 9 is_stmt 1 view .LVU85
+ 301 00b8 0121     		movs	r1, #1
+ 302 00ba 2046     		mov	r0, r4
+ 303 00bc FFF7FEFF 		bl	lv_obj_set_click
+ 304              	.LVL31:
+  95:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 305              		.loc 1 95 9 view .LVU86
+ 306 00c0 0521     		movs	r1, #5
+ 307 00c2 2046     		mov	r0, r4
+ARM GAS  D:\Temp\cchBbrDN.s 			page 14
+
+
+ 308 00c4 FFF7FEFF 		bl	lv_theme_apply
+ 309              	.LVL32:
+ 310 00c8 CDE7     		b	.L11
+ 311              	.L30:
+ 312 00ca 00BF     		.align	2
+ 313              	.L29:
+ 314 00cc 00000000 		.word	.LANCHOR1
+ 315 00d0 00000000 		.word	.LANCHOR0
+ 316 00d4 00000000 		.word	lv_btn_signal
+ 317 00d8 00000000 		.word	lv_btn_design
+ 318 00dc 00000000 		.word	.LC0
+ 319              		.cfi_endproc
+ 320              	.LFE469:
+ 322              		.section	.text.lv_btn_set_checkable,"ax",%progbits
+ 323              		.align	1
+ 324              		.global	lv_btn_set_checkable
+ 325              		.syntax unified
+ 326              		.thumb
+ 327              		.thumb_func
+ 328              		.fpu fpv4-sp-d16
+ 330              	lv_btn_set_checkable:
+ 331              	.LVL33:
+ 332              	.LFB470:
+ 121:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_OBJ(btn, LV_OBJX_NAME);
+ 333              		.loc 1 121 1 view -0
+ 334              		.cfi_startproc
+ 335              		@ args = 0, pretend = 0, frame = 0
+ 336              		@ frame_needed = 0, uses_anonymous_args = 0
+ 121:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_OBJ(btn, LV_OBJX_NAME);
+ 337              		.loc 1 121 1 is_stmt 0 view .LVU88
+ 338 0000 38B5     		push	{r3, r4, r5, lr}
+ 339              	.LCFI2:
+ 340              		.cfi_def_cfa_offset 16
+ 341              		.cfi_offset 3, -16
+ 342              		.cfi_offset 4, -12
+ 343              		.cfi_offset 5, -8
+ 344              		.cfi_offset 14, -4
+ 345 0002 0446     		mov	r4, r0
+ 346 0004 0D46     		mov	r5, r1
+ 122:lvgl/src/lv_widgets/lv_btn.c **** 
+ 347              		.loc 1 122 5 is_stmt 1 view .LVU89
+ 122:lvgl/src/lv_widgets/lv_btn.c **** 
+ 348              		.loc 1 122 5 view .LVU90
+ 349 0006 FFF7FEFF 		bl	lv_debug_check_null
+ 350              	.LVL34:
+ 122:lvgl/src/lv_widgets/lv_btn.c **** 
+ 351              		.loc 1 122 5 is_stmt 0 view .LVU91
+ 352 000a 28B9     		cbnz	r0, .L32
+ 122:lvgl/src/lv_widgets/lv_btn.c **** 
+ 353              		.loc 1 122 5 is_stmt 1 discriminator 1 view .LVU92
+ 122:lvgl/src/lv_widgets/lv_btn.c **** 
+ 354              		.loc 1 122 5 discriminator 1 view .LVU93
+ 355 000c 2246     		mov	r2, r4
+ 356 000e 0023     		movs	r3, #0
+ 357 0010 0548     		ldr	r0, .L35
+ 358 0012 FFF7FEFF 		bl	lv_debug_log_error
+ 359              	.LVL35:
+ARM GAS  D:\Temp\cchBbrDN.s 			page 15
+
+
+ 360              	.L33:
+ 122:lvgl/src/lv_widgets/lv_btn.c **** 
+ 361              		.loc 1 122 5 discriminator 1 view .LVU94
+ 122:lvgl/src/lv_widgets/lv_btn.c **** 
+ 362              		.loc 1 122 5 discriminator 1 view .LVU95
+ 363 0016 FEE7     		b	.L33
+ 364              	.L32:
+ 122:lvgl/src/lv_widgets/lv_btn.c **** 
+ 365              		.loc 1 122 37 discriminator 2 view .LVU96
+ 124:lvgl/src/lv_widgets/lv_btn.c **** 
+ 366              		.loc 1 124 5 discriminator 2 view .LVU97
+ 124:lvgl/src/lv_widgets/lv_btn.c **** 
+ 367              		.loc 1 124 26 is_stmt 0 discriminator 2 view .LVU98
+ 368 0018 2046     		mov	r0, r4
+ 369 001a FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 370              	.LVL36:
+ 126:lvgl/src/lv_widgets/lv_btn.c **** }
+ 371              		.loc 1 126 5 is_stmt 1 discriminator 2 view .LVU99
+ 126:lvgl/src/lv_widgets/lv_btn.c **** }
+ 372              		.loc 1 126 20 is_stmt 0 discriminator 2 view .LVU100
+ 373 001e 8378     		ldrb	r3, [r0, #2]	@ zero_extendqisi2
+ 374 0020 65F30003 		bfi	r3, r5, #0, #1
+ 375 0024 8370     		strb	r3, [r0, #2]
+ 127:lvgl/src/lv_widgets/lv_btn.c **** 
+ 376              		.loc 1 127 1 discriminator 2 view .LVU101
+ 377 0026 38BD     		pop	{r3, r4, r5, pc}
+ 378              	.LVL37:
+ 379              	.L36:
+ 127:lvgl/src/lv_widgets/lv_btn.c **** 
+ 380              		.loc 1 127 1 discriminator 2 view .LVU102
+ 381              		.align	2
+ 382              	.L35:
+ 383 0028 00000000 		.word	.LC1
+ 384              		.cfi_endproc
+ 385              	.LFE470:
+ 387              		.section	.text.lv_btn_set_state,"ax",%progbits
+ 388              		.align	1
+ 389              		.global	lv_btn_set_state
+ 390              		.syntax unified
+ 391              		.thumb
+ 392              		.thumb_func
+ 393              		.fpu fpv4-sp-d16
+ 395              	lv_btn_set_state:
+ 396              	.LVL38:
+ 397              	.LFB471:
+ 135:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_OBJ(btn, LV_OBJX_NAME);
+ 398              		.loc 1 135 1 is_stmt 1 view -0
+ 399              		.cfi_startproc
+ 400              		@ args = 0, pretend = 0, frame = 0
+ 401              		@ frame_needed = 0, uses_anonymous_args = 0
+ 135:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_OBJ(btn, LV_OBJX_NAME);
+ 402              		.loc 1 135 1 is_stmt 0 view .LVU104
+ 403 0000 38B5     		push	{r3, r4, r5, lr}
+ 404              	.LCFI3:
+ 405              		.cfi_def_cfa_offset 16
+ 406              		.cfi_offset 3, -16
+ 407              		.cfi_offset 4, -12
+ARM GAS  D:\Temp\cchBbrDN.s 			page 16
+
+
+ 408              		.cfi_offset 5, -8
+ 409              		.cfi_offset 14, -4
+ 410 0002 0446     		mov	r4, r0
+ 411 0004 0D46     		mov	r5, r1
+ 136:lvgl/src/lv_widgets/lv_btn.c **** 
+ 412              		.loc 1 136 5 is_stmt 1 view .LVU105
+ 136:lvgl/src/lv_widgets/lv_btn.c **** 
+ 413              		.loc 1 136 5 view .LVU106
+ 414 0006 FFF7FEFF 		bl	lv_debug_check_null
+ 415              	.LVL39:
+ 136:lvgl/src/lv_widgets/lv_btn.c **** 
+ 416              		.loc 1 136 5 is_stmt 0 view .LVU107
+ 417 000a 30B1     		cbz	r0, .L49
+ 136:lvgl/src/lv_widgets/lv_btn.c **** 
+ 418              		.loc 1 136 37 is_stmt 1 discriminator 2 view .LVU108
+ 138:lvgl/src/lv_widgets/lv_btn.c ****         case LV_BTN_STATE_RELEASED:
+ 419              		.loc 1 138 5 discriminator 2 view .LVU109
+ 420 000c 052D     		cmp	r5, #5
+ 421 000e 0ED8     		bhi	.L37
+ 422 0010 DFE805F0 		tbb	[pc, r5]
+ 423              	.L42:
+ 424 0014 09       		.byte	(.L47-.L42)/2
+ 425 0015 0E       		.byte	(.L46-.L42)/2
+ 426 0016 29       		.byte	(.L45-.L42)/2
+ 427 0017 17       		.byte	(.L44-.L42)/2
+ 428 0018 20       		.byte	(.L43-.L42)/2
+ 429 0019 32       		.byte	(.L41-.L42)/2
+ 430              		.p2align 1
+ 431              	.L49:
+ 136:lvgl/src/lv_widgets/lv_btn.c **** 
+ 432              		.loc 1 136 5 discriminator 1 view .LVU110
+ 136:lvgl/src/lv_widgets/lv_btn.c **** 
+ 433              		.loc 1 136 5 discriminator 1 view .LVU111
+ 434 001a 2246     		mov	r2, r4
+ 435 001c 0023     		movs	r3, #0
+ 436 001e 1B48     		ldr	r0, .L50
+ 437 0020 FFF7FEFF 		bl	lv_debug_log_error
+ 438              	.LVL40:
+ 439              	.L39:
+ 136:lvgl/src/lv_widgets/lv_btn.c **** 
+ 440              		.loc 1 136 5 discriminator 1 view .LVU112
+ 136:lvgl/src/lv_widgets/lv_btn.c **** 
+ 441              		.loc 1 136 5 discriminator 1 view .LVU113
+ 442 0024 FEE7     		b	.L39
+ 443              	.L47:
+ 140:lvgl/src/lv_widgets/lv_btn.c ****             break;
+ 444              		.loc 1 140 13 view .LVU114
+ 445 0026 3121     		movs	r1, #49
+ 446 0028 2046     		mov	r0, r4
+ 447 002a FFF7FEFF 		bl	lv_obj_clear_state
+ 448              	.LVL41:
+ 141:lvgl/src/lv_widgets/lv_btn.c ****         case LV_BTN_STATE_PRESSED:
+ 449              		.loc 1 141 13 view .LVU115
+ 450              	.L37:
+ 163:lvgl/src/lv_widgets/lv_btn.c **** 
+ 451              		.loc 1 163 1 is_stmt 0 view .LVU116
+ 452 002e 38BD     		pop	{r3, r4, r5, pc}
+ARM GAS  D:\Temp\cchBbrDN.s 			page 17
+
+
+ 453              	.LVL42:
+ 454              	.L46:
+ 143:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_add_state(btn, LV_STATE_PRESSED);
+ 455              		.loc 1 143 13 is_stmt 1 view .LVU117
+ 456 0030 2121     		movs	r1, #33
+ 457 0032 2046     		mov	r0, r4
+ 458 0034 FFF7FEFF 		bl	lv_obj_clear_state
+ 459              	.LVL43:
+ 144:lvgl/src/lv_widgets/lv_btn.c ****             break;
+ 460              		.loc 1 144 13 view .LVU118
+ 461 0038 1021     		movs	r1, #16
+ 462 003a 2046     		mov	r0, r4
+ 463 003c FFF7FEFF 		bl	lv_obj_add_state
+ 464              	.LVL44:
+ 145:lvgl/src/lv_widgets/lv_btn.c ****         case LV_BTN_STATE_CHECKED_RELEASED:
+ 465              		.loc 1 145 13 view .LVU119
+ 466 0040 F5E7     		b	.L37
+ 467              	.L44:
+ 147:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_clear_state(btn, LV_STATE_PRESSED | LV_STATE_DISABLED);
+ 468              		.loc 1 147 13 view .LVU120
+ 469 0042 0121     		movs	r1, #1
+ 470 0044 2046     		mov	r0, r4
+ 471 0046 FFF7FEFF 		bl	lv_obj_add_state
+ 472              	.LVL45:
+ 148:lvgl/src/lv_widgets/lv_btn.c ****             break;
+ 473              		.loc 1 148 13 view .LVU121
+ 474 004a 3021     		movs	r1, #48
+ 475 004c 2046     		mov	r0, r4
+ 476 004e FFF7FEFF 		bl	lv_obj_clear_state
+ 477              	.LVL46:
+ 149:lvgl/src/lv_widgets/lv_btn.c ****         case LV_BTN_STATE_CHECKED_PRESSED:
+ 478              		.loc 1 149 13 view .LVU122
+ 479 0052 ECE7     		b	.L37
+ 480              	.L43:
+ 151:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_clear_state(btn, LV_STATE_DISABLED);
+ 481              		.loc 1 151 13 view .LVU123
+ 482 0054 1121     		movs	r1, #17
+ 483 0056 2046     		mov	r0, r4
+ 484 0058 FFF7FEFF 		bl	lv_obj_add_state
+ 485              	.LVL47:
+ 152:lvgl/src/lv_widgets/lv_btn.c ****             break;
+ 486              		.loc 1 152 13 view .LVU124
+ 487 005c 2021     		movs	r1, #32
+ 488 005e 2046     		mov	r0, r4
+ 489 0060 FFF7FEFF 		bl	lv_obj_clear_state
+ 490              	.LVL48:
+ 153:lvgl/src/lv_widgets/lv_btn.c ****         case LV_BTN_STATE_DISABLED:
+ 491              		.loc 1 153 13 view .LVU125
+ 492 0064 E3E7     		b	.L37
+ 493              	.L45:
+ 155:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_add_state(btn, LV_STATE_DISABLED);
+ 494              		.loc 1 155 13 view .LVU126
+ 495 0066 1121     		movs	r1, #17
+ 496 0068 2046     		mov	r0, r4
+ 497 006a FFF7FEFF 		bl	lv_obj_clear_state
+ 498              	.LVL49:
+ 156:lvgl/src/lv_widgets/lv_btn.c ****             break;
+ARM GAS  D:\Temp\cchBbrDN.s 			page 18
+
+
+ 499              		.loc 1 156 13 view .LVU127
+ 500 006e 2021     		movs	r1, #32
+ 501 0070 2046     		mov	r0, r4
+ 502 0072 FFF7FEFF 		bl	lv_obj_add_state
+ 503              	.LVL50:
+ 157:lvgl/src/lv_widgets/lv_btn.c ****         case LV_BTN_STATE_CHECKED_DISABLED:
+ 504              		.loc 1 157 13 view .LVU128
+ 505 0076 DAE7     		b	.L37
+ 506              	.L41:
+ 159:lvgl/src/lv_widgets/lv_btn.c ****             lv_obj_add_state(btn, LV_STATE_DISABLED | LV_STATE_CHECKED);
+ 507              		.loc 1 159 13 view .LVU129
+ 508 0078 1021     		movs	r1, #16
+ 509 007a 2046     		mov	r0, r4
+ 510 007c FFF7FEFF 		bl	lv_obj_clear_state
+ 511              	.LVL51:
+ 160:lvgl/src/lv_widgets/lv_btn.c ****             break;
+ 512              		.loc 1 160 13 view .LVU130
+ 513 0080 2121     		movs	r1, #33
+ 514 0082 2046     		mov	r0, r4
+ 515 0084 FFF7FEFF 		bl	lv_obj_add_state
+ 516              	.LVL52:
+ 161:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 517              		.loc 1 161 13 view .LVU131
+ 163:lvgl/src/lv_widgets/lv_btn.c **** 
+ 518              		.loc 1 163 1 is_stmt 0 view .LVU132
+ 519 0088 D1E7     		b	.L37
+ 520              	.L51:
+ 521 008a 00BF     		.align	2
+ 522              	.L50:
+ 523 008c 00000000 		.word	.LC1
+ 524              		.cfi_endproc
+ 525              	.LFE471:
+ 527              		.section	.text.lv_btn_toggle,"ax",%progbits
+ 528              		.align	1
+ 529              		.global	lv_btn_toggle
+ 530              		.syntax unified
+ 531              		.thumb
+ 532              		.thumb_func
+ 533              		.fpu fpv4-sp-d16
+ 535              	lv_btn_toggle:
+ 536              	.LVL53:
+ 537              	.LFB472:
+ 170:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_OBJ(btn, LV_OBJX_NAME);
+ 538              		.loc 1 170 1 is_stmt 1 view -0
+ 539              		.cfi_startproc
+ 540              		@ args = 0, pretend = 0, frame = 0
+ 541              		@ frame_needed = 0, uses_anonymous_args = 0
+ 170:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_OBJ(btn, LV_OBJX_NAME);
+ 542              		.loc 1 170 1 is_stmt 0 view .LVU134
+ 543 0000 10B5     		push	{r4, lr}
+ 544              	.LCFI4:
+ 545              		.cfi_def_cfa_offset 8
+ 546              		.cfi_offset 4, -8
+ 547              		.cfi_offset 14, -4
+ 548 0002 0446     		mov	r4, r0
+ 171:lvgl/src/lv_widgets/lv_btn.c **** 
+ 549              		.loc 1 171 5 is_stmt 1 view .LVU135
+ARM GAS  D:\Temp\cchBbrDN.s 			page 19
+
+
+ 171:lvgl/src/lv_widgets/lv_btn.c **** 
+ 550              		.loc 1 171 5 view .LVU136
+ 551 0004 FFF7FEFF 		bl	lv_debug_check_null
+ 552              	.LVL54:
+ 171:lvgl/src/lv_widgets/lv_btn.c **** 
+ 553              		.loc 1 171 5 is_stmt 0 view .LVU137
+ 554 0008 28B9     		cbnz	r0, .L53
+ 171:lvgl/src/lv_widgets/lv_btn.c **** 
+ 555              		.loc 1 171 5 is_stmt 1 discriminator 1 view .LVU138
+ 171:lvgl/src/lv_widgets/lv_btn.c **** 
+ 556              		.loc 1 171 5 discriminator 1 view .LVU139
+ 557 000a 2246     		mov	r2, r4
+ 558 000c 0023     		movs	r3, #0
+ 559 000e 0A48     		ldr	r0, .L58
+ 560 0010 FFF7FEFF 		bl	lv_debug_log_error
+ 561              	.LVL55:
+ 562              	.L54:
+ 171:lvgl/src/lv_widgets/lv_btn.c **** 
+ 563              		.loc 1 171 5 discriminator 1 view .LVU140
+ 171:lvgl/src/lv_widgets/lv_btn.c **** 
+ 564              		.loc 1 171 5 discriminator 1 view .LVU141
+ 565 0014 FEE7     		b	.L54
+ 566              	.L53:
+ 171:lvgl/src/lv_widgets/lv_btn.c **** 
+ 567              		.loc 1 171 37 discriminator 2 view .LVU142
+ 173:lvgl/src/lv_widgets/lv_btn.c ****         lv_obj_clear_state(btn, LV_STATE_CHECKED);
+ 568              		.loc 1 173 5 discriminator 2 view .LVU143
+ 173:lvgl/src/lv_widgets/lv_btn.c ****         lv_obj_clear_state(btn, LV_STATE_CHECKED);
+ 569              		.loc 1 173 8 is_stmt 0 discriminator 2 view .LVU144
+ 570 0016 0021     		movs	r1, #0
+ 571 0018 2046     		mov	r0, r4
+ 572 001a FFF7FEFF 		bl	lv_obj_get_state
+ 573              	.LVL56:
+ 173:lvgl/src/lv_widgets/lv_btn.c ****         lv_obj_clear_state(btn, LV_STATE_CHECKED);
+ 574              		.loc 1 173 7 discriminator 2 view .LVU145
+ 575 001e 10F0010F 		tst	r0, #1
+ 576 0022 04D0     		beq	.L55
+ 174:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 577              		.loc 1 174 9 is_stmt 1 view .LVU146
+ 578 0024 0121     		movs	r1, #1
+ 579 0026 2046     		mov	r0, r4
+ 580 0028 FFF7FEFF 		bl	lv_obj_clear_state
+ 581              	.LVL57:
+ 582              	.L52:
+ 179:lvgl/src/lv_widgets/lv_btn.c **** 
+ 583              		.loc 1 179 1 is_stmt 0 view .LVU147
+ 584 002c 10BD     		pop	{r4, pc}
+ 585              	.LVL58:
+ 586              	.L55:
+ 177:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 587              		.loc 1 177 9 is_stmt 1 view .LVU148
+ 588 002e 0121     		movs	r1, #1
+ 589 0030 2046     		mov	r0, r4
+ 590 0032 FFF7FEFF 		bl	lv_obj_add_state
+ 591              	.LVL59:
+ 179:lvgl/src/lv_widgets/lv_btn.c **** 
+ 592              		.loc 1 179 1 is_stmt 0 view .LVU149
+ARM GAS  D:\Temp\cchBbrDN.s 			page 20
+
+
+ 593 0036 F9E7     		b	.L52
+ 594              	.L59:
+ 595              		.align	2
+ 596              	.L58:
+ 597 0038 00000000 		.word	.LC1
+ 598              		.cfi_endproc
+ 599              	.LFE472:
+ 601              		.section	.text.lv_btn_get_state,"ax",%progbits
+ 602              		.align	1
+ 603              		.global	lv_btn_get_state
+ 604              		.syntax unified
+ 605              		.thumb
+ 606              		.thumb_func
+ 607              		.fpu fpv4-sp-d16
+ 609              	lv_btn_get_state:
+ 610              	.LVL60:
+ 611              	.LFB473:
+ 192:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_OBJ(btn, LV_OBJX_NAME);
+ 612              		.loc 1 192 1 is_stmt 1 view -0
+ 613              		.cfi_startproc
+ 614              		@ args = 0, pretend = 0, frame = 0
+ 615              		@ frame_needed = 0, uses_anonymous_args = 0
+ 192:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_OBJ(btn, LV_OBJX_NAME);
+ 616              		.loc 1 192 1 is_stmt 0 view .LVU151
+ 617 0000 10B5     		push	{r4, lr}
+ 618              	.LCFI5:
+ 619              		.cfi_def_cfa_offset 8
+ 620              		.cfi_offset 4, -8
+ 621              		.cfi_offset 14, -4
+ 622 0002 0446     		mov	r4, r0
+ 193:lvgl/src/lv_widgets/lv_btn.c **** 
+ 623              		.loc 1 193 5 is_stmt 1 view .LVU152
+ 193:lvgl/src/lv_widgets/lv_btn.c **** 
+ 624              		.loc 1 193 5 view .LVU153
+ 625 0004 FFF7FEFF 		bl	lv_debug_check_null
+ 626              	.LVL61:
+ 193:lvgl/src/lv_widgets/lv_btn.c **** 
+ 627              		.loc 1 193 5 is_stmt 0 view .LVU154
+ 628 0008 28B9     		cbnz	r0, .L61
+ 193:lvgl/src/lv_widgets/lv_btn.c **** 
+ 629              		.loc 1 193 5 is_stmt 1 discriminator 1 view .LVU155
+ 193:lvgl/src/lv_widgets/lv_btn.c **** 
+ 630              		.loc 1 193 5 discriminator 1 view .LVU156
+ 631 000a 2246     		mov	r2, r4
+ 632 000c 0023     		movs	r3, #0
+ 633 000e 1148     		ldr	r0, .L70
+ 634 0010 FFF7FEFF 		bl	lv_debug_log_error
+ 635              	.LVL62:
+ 636              	.L62:
+ 193:lvgl/src/lv_widgets/lv_btn.c **** 
+ 637              		.loc 1 193 5 discriminator 1 view .LVU157
+ 193:lvgl/src/lv_widgets/lv_btn.c **** 
+ 638              		.loc 1 193 5 discriminator 1 view .LVU158
+ 639 0014 FEE7     		b	.L62
+ 640              	.L61:
+ 193:lvgl/src/lv_widgets/lv_btn.c **** 
+ 641              		.loc 1 193 37 discriminator 2 view .LVU159
+ARM GAS  D:\Temp\cchBbrDN.s 			page 21
+
+
+ 195:lvgl/src/lv_widgets/lv_btn.c **** 
+ 642              		.loc 1 195 5 discriminator 2 view .LVU160
+ 195:lvgl/src/lv_widgets/lv_btn.c **** 
+ 643              		.loc 1 195 28 is_stmt 0 discriminator 2 view .LVU161
+ 644 0016 0021     		movs	r1, #0
+ 645 0018 2046     		mov	r0, r4
+ 646 001a FFF7FEFF 		bl	lv_obj_get_state
+ 647              	.LVL63:
+ 197:lvgl/src/lv_widgets/lv_btn.c ****         if(obj_state & LV_STATE_CHECKED) return LV_BTN_STATE_CHECKED_DISABLED;
+ 648              		.loc 1 197 5 is_stmt 1 discriminator 2 view .LVU162
+ 197:lvgl/src/lv_widgets/lv_btn.c ****         if(obj_state & LV_STATE_CHECKED) return LV_BTN_STATE_CHECKED_DISABLED;
+ 649              		.loc 1 197 7 is_stmt 0 discriminator 2 view .LVU163
+ 650 001e 10F0200F 		tst	r0, #32
+ 651 0022 04D0     		beq	.L63
+ 198:lvgl/src/lv_widgets/lv_btn.c ****         else return LV_BTN_STATE_DISABLED;
+ 652              		.loc 1 198 9 is_stmt 1 view .LVU164
+ 198:lvgl/src/lv_widgets/lv_btn.c ****         else return LV_BTN_STATE_DISABLED;
+ 653              		.loc 1 198 11 is_stmt 0 view .LVU165
+ 654 0024 10F0010F 		tst	r0, #1
+ 655 0028 0ED0     		beq	.L66
+ 198:lvgl/src/lv_widgets/lv_btn.c ****         else return LV_BTN_STATE_DISABLED;
+ 656              		.loc 1 198 49 view .LVU166
+ 657 002a 0520     		movs	r0, #5
+ 658              	.LVL64:
+ 659              	.L64:
+ 210:lvgl/src/lv_widgets/lv_btn.c **** 
+ 660              		.loc 1 210 1 view .LVU167
+ 661 002c 10BD     		pop	{r4, pc}
+ 662              	.LVL65:
+ 663              	.L63:
+ 202:lvgl/src/lv_widgets/lv_btn.c ****         if(obj_state & LV_STATE_PRESSED) return LV_BTN_STATE_CHECKED_PRESSED;
+ 664              		.loc 1 202 5 is_stmt 1 view .LVU168
+ 202:lvgl/src/lv_widgets/lv_btn.c ****         if(obj_state & LV_STATE_PRESSED) return LV_BTN_STATE_CHECKED_PRESSED;
+ 665              		.loc 1 202 7 is_stmt 0 view .LVU169
+ 666 002e 10F0010F 		tst	r0, #1
+ 667 0032 04D0     		beq	.L65
+ 203:lvgl/src/lv_widgets/lv_btn.c ****         else return LV_BTN_STATE_CHECKED_RELEASED;
+ 668              		.loc 1 203 9 is_stmt 1 view .LVU170
+ 203:lvgl/src/lv_widgets/lv_btn.c ****         else return LV_BTN_STATE_CHECKED_RELEASED;
+ 669              		.loc 1 203 11 is_stmt 0 view .LVU171
+ 670 0034 10F0100F 		tst	r0, #16
+ 671 0038 08D0     		beq	.L67
+ 203:lvgl/src/lv_widgets/lv_btn.c ****         else return LV_BTN_STATE_CHECKED_RELEASED;
+ 672              		.loc 1 203 49 view .LVU172
+ 673 003a 0420     		movs	r0, #4
+ 674              	.LVL66:
+ 203:lvgl/src/lv_widgets/lv_btn.c ****         else return LV_BTN_STATE_CHECKED_RELEASED;
+ 675              		.loc 1 203 49 view .LVU173
+ 676 003c F6E7     		b	.L64
+ 677              	.LVL67:
+ 678              	.L65:
+ 207:lvgl/src/lv_widgets/lv_btn.c ****         else return LV_BTN_STATE_RELEASED;
+ 679              		.loc 1 207 9 is_stmt 1 view .LVU174
+ 207:lvgl/src/lv_widgets/lv_btn.c ****         else return LV_BTN_STATE_RELEASED;
+ 680              		.loc 1 207 11 is_stmt 0 view .LVU175
+ 681 003e 10F0100F 		tst	r0, #16
+ 682 0042 05D0     		beq	.L68
+ARM GAS  D:\Temp\cchBbrDN.s 			page 22
+
+
+ 207:lvgl/src/lv_widgets/lv_btn.c ****         else return LV_BTN_STATE_RELEASED;
+ 683              		.loc 1 207 49 view .LVU176
+ 684 0044 0120     		movs	r0, #1
+ 685              	.LVL68:
+ 207:lvgl/src/lv_widgets/lv_btn.c ****         else return LV_BTN_STATE_RELEASED;
+ 686              		.loc 1 207 49 view .LVU177
+ 687 0046 F1E7     		b	.L64
+ 688              	.LVL69:
+ 689              	.L66:
+ 199:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 690              		.loc 1 199 21 view .LVU178
+ 691 0048 0220     		movs	r0, #2
+ 692              	.LVL70:
+ 199:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 693              		.loc 1 199 21 view .LVU179
+ 694 004a EFE7     		b	.L64
+ 695              	.LVL71:
+ 696              	.L67:
+ 204:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 697              		.loc 1 204 21 view .LVU180
+ 698 004c 0320     		movs	r0, #3
+ 699              	.LVL72:
+ 204:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 700              		.loc 1 204 21 view .LVU181
+ 701 004e EDE7     		b	.L64
+ 702              	.LVL73:
+ 703              	.L68:
+ 208:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 704              		.loc 1 208 21 view .LVU182
+ 705 0050 0020     		movs	r0, #0
+ 706              	.LVL74:
+ 208:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 707              		.loc 1 208 21 view .LVU183
+ 708 0052 EBE7     		b	.L64
+ 709              	.L71:
+ 710              		.align	2
+ 711              	.L70:
+ 712 0054 00000000 		.word	.LC1
+ 713              		.cfi_endproc
+ 714              	.LFE473:
+ 716              		.section	.text.lv_btn_get_checkable,"ax",%progbits
+ 717              		.align	1
+ 718              		.global	lv_btn_get_checkable
+ 719              		.syntax unified
+ 720              		.thumb
+ 721              		.thumb_func
+ 722              		.fpu fpv4-sp-d16
+ 724              	lv_btn_get_checkable:
+ 725              	.LVL75:
+ 726              	.LFB474:
+ 218:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_OBJ(btn, LV_OBJX_NAME);
+ 727              		.loc 1 218 1 is_stmt 1 view -0
+ 728              		.cfi_startproc
+ 729              		@ args = 0, pretend = 0, frame = 0
+ 730              		@ frame_needed = 0, uses_anonymous_args = 0
+ 218:lvgl/src/lv_widgets/lv_btn.c ****     LV_ASSERT_OBJ(btn, LV_OBJX_NAME);
+ 731              		.loc 1 218 1 is_stmt 0 view .LVU185
+ARM GAS  D:\Temp\cchBbrDN.s 			page 23
+
+
+ 732 0000 10B5     		push	{r4, lr}
+ 733              	.LCFI6:
+ 734              		.cfi_def_cfa_offset 8
+ 735              		.cfi_offset 4, -8
+ 736              		.cfi_offset 14, -4
+ 737 0002 0446     		mov	r4, r0
+ 219:lvgl/src/lv_widgets/lv_btn.c **** 
+ 738              		.loc 1 219 5 is_stmt 1 view .LVU186
+ 219:lvgl/src/lv_widgets/lv_btn.c **** 
+ 739              		.loc 1 219 5 view .LVU187
+ 740 0004 FFF7FEFF 		bl	lv_debug_check_null
+ 741              	.LVL76:
+ 219:lvgl/src/lv_widgets/lv_btn.c **** 
+ 742              		.loc 1 219 5 is_stmt 0 view .LVU188
+ 743 0008 28B9     		cbnz	r0, .L73
+ 219:lvgl/src/lv_widgets/lv_btn.c **** 
+ 744              		.loc 1 219 5 is_stmt 1 discriminator 1 view .LVU189
+ 219:lvgl/src/lv_widgets/lv_btn.c **** 
+ 745              		.loc 1 219 5 discriminator 1 view .LVU190
+ 746 000a 2246     		mov	r2, r4
+ 747 000c 0023     		movs	r3, #0
+ 748 000e 0548     		ldr	r0, .L76
+ 749 0010 FFF7FEFF 		bl	lv_debug_log_error
+ 750              	.LVL77:
+ 751              	.L74:
+ 219:lvgl/src/lv_widgets/lv_btn.c **** 
+ 752              		.loc 1 219 5 discriminator 1 view .LVU191
+ 219:lvgl/src/lv_widgets/lv_btn.c **** 
+ 753              		.loc 1 219 5 discriminator 1 view .LVU192
+ 754 0014 FEE7     		b	.L74
+ 755              	.L73:
+ 219:lvgl/src/lv_widgets/lv_btn.c **** 
+ 756              		.loc 1 219 37 discriminator 2 view .LVU193
+ 221:lvgl/src/lv_widgets/lv_btn.c **** 
+ 757              		.loc 1 221 5 discriminator 2 view .LVU194
+ 221:lvgl/src/lv_widgets/lv_btn.c **** 
+ 758              		.loc 1 221 26 is_stmt 0 discriminator 2 view .LVU195
+ 759 0016 2046     		mov	r0, r4
+ 760 0018 FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 761              	.LVL78:
+ 223:lvgl/src/lv_widgets/lv_btn.c **** }
+ 762              		.loc 1 223 5 is_stmt 1 discriminator 2 view .LVU196
+ 223:lvgl/src/lv_widgets/lv_btn.c **** }
+ 763              		.loc 1 223 27 is_stmt 0 discriminator 2 view .LVU197
+ 764 001c 8078     		ldrb	r0, [r0, #2]	@ zero_extendqisi2
+ 765              	.LVL79:
+ 224:lvgl/src/lv_widgets/lv_btn.c **** 
+ 766              		.loc 1 224 1 discriminator 2 view .LVU198
+ 767 001e 00F00100 		and	r0, r0, #1
+ 768 0022 10BD     		pop	{r4, pc}
+ 769              	.LVL80:
+ 770              	.L77:
+ 224:lvgl/src/lv_widgets/lv_btn.c **** 
+ 771              		.loc 1 224 1 discriminator 2 view .LVU199
+ 772              		.align	2
+ 773              	.L76:
+ 774 0024 00000000 		.word	.LC1
+ARM GAS  D:\Temp\cchBbrDN.s 			page 24
+
+
+ 775              		.cfi_endproc
+ 776              	.LFE474:
+ 778              		.section	.text.lv_btn_signal,"ax",%progbits
+ 779              		.align	1
+ 780              		.syntax unified
+ 781              		.thumb
+ 782              		.thumb_func
+ 783              		.fpu fpv4-sp-d16
+ 785              	lv_btn_signal:
+ 786              	.LVL81:
+ 787              	.LFB476:
+ 254:lvgl/src/lv_widgets/lv_btn.c **** 
+ 255:lvgl/src/lv_widgets/lv_btn.c **** /**
+ 256:lvgl/src/lv_widgets/lv_btn.c ****  * Signal function of the button
+ 257:lvgl/src/lv_widgets/lv_btn.c ****  * @param btn pointer to a button object
+ 258:lvgl/src/lv_widgets/lv_btn.c ****  * @param sign a signal type from lv_signal_t enum
+ 259:lvgl/src/lv_widgets/lv_btn.c ****  * @param param pointer to a signal specific variable
+ 260:lvgl/src/lv_widgets/lv_btn.c ****  * @return LV_RES_OK: the object is not deleted in the function; LV_RES_INV: the object is deleted
+ 261:lvgl/src/lv_widgets/lv_btn.c ****  */
+ 262:lvgl/src/lv_widgets/lv_btn.c **** static lv_res_t lv_btn_signal(lv_obj_t * btn, lv_signal_t sign, void * param)
+ 263:lvgl/src/lv_widgets/lv_btn.c **** {
+ 788              		.loc 1 263 1 is_stmt 1 view -0
+ 789              		.cfi_startproc
+ 790              		@ args = 0, pretend = 0, frame = 8
+ 791              		@ frame_needed = 0, uses_anonymous_args = 0
+ 792              		.loc 1 263 1 is_stmt 0 view .LVU201
+ 793 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 794              	.LCFI7:
+ 795              		.cfi_def_cfa_offset 24
+ 796              		.cfi_offset 4, -24
+ 797              		.cfi_offset 5, -20
+ 798              		.cfi_offset 6, -16
+ 799              		.cfi_offset 7, -12
+ 800              		.cfi_offset 8, -8
+ 801              		.cfi_offset 14, -4
+ 802 0004 82B0     		sub	sp, sp, #8
+ 803              	.LCFI8:
+ 804              		.cfi_def_cfa_offset 32
+ 805 0006 0646     		mov	r6, r0
+ 806 0008 0D46     		mov	r5, r1
+ 807 000a 1746     		mov	r7, r2
+ 264:lvgl/src/lv_widgets/lv_btn.c ****     lv_res_t res;
+ 808              		.loc 1 264 5 is_stmt 1 view .LVU202
+ 265:lvgl/src/lv_widgets/lv_btn.c **** 
+ 266:lvgl/src/lv_widgets/lv_btn.c ****     /* Include the ancient signal function */
+ 267:lvgl/src/lv_widgets/lv_btn.c ****     res = ancestor_signal(btn, sign, param);
+ 809              		.loc 1 267 5 view .LVU203
+ 810              		.loc 1 267 11 is_stmt 0 view .LVU204
+ 811 000c 354B     		ldr	r3, .L94
+ 812 000e 1B68     		ldr	r3, [r3]
+ 813 0010 9847     		blx	r3
+ 814              	.LVL82:
+ 815              		.loc 1 267 11 view .LVU205
+ 816 0012 0446     		mov	r4, r0
+ 817              	.LVL83:
+ 268:lvgl/src/lv_widgets/lv_btn.c ****     if(res != LV_RES_OK) return res;
+ 818              		.loc 1 268 5 is_stmt 1 view .LVU206
+ARM GAS  D:\Temp\cchBbrDN.s 			page 25
+
+
+ 819              		.loc 1 268 7 is_stmt 0 view .LVU207
+ 820 0014 0128     		cmp	r0, #1
+ 821 0016 09D1     		bne	.L79
+ 269:lvgl/src/lv_widgets/lv_btn.c ****     if(sign == LV_SIGNAL_GET_TYPE) return lv_obj_handle_get_type_signal(param, LV_OBJX_NAME);
+ 822              		.loc 1 269 5 is_stmt 1 view .LVU208
+ 823              		.loc 1 269 7 is_stmt 0 view .LVU209
+ 824 0018 072D     		cmp	r5, #7
+ 825 001a 0BD0     		beq	.L91
+ 270:lvgl/src/lv_widgets/lv_btn.c **** 
+ 271:lvgl/src/lv_widgets/lv_btn.c ****     bool tgl           = lv_btn_get_checkable(btn);
+ 826              		.loc 1 271 5 is_stmt 1 view .LVU210
+ 827              		.loc 1 271 26 is_stmt 0 view .LVU211
+ 828 001c 3046     		mov	r0, r6
+ 829              	.LVL84:
+ 830              		.loc 1 271 26 view .LVU212
+ 831 001e FFF7FEFF 		bl	lv_btn_get_checkable
+ 832              	.LVL85:
+ 833 0022 8046     		mov	r8, r0
+ 834              	.LVL86:
+ 272:lvgl/src/lv_widgets/lv_btn.c **** 
+ 273:lvgl/src/lv_widgets/lv_btn.c ****     if(sign == LV_SIGNAL_RELEASED) {
+ 835              		.loc 1 273 5 is_stmt 1 view .LVU213
+ 836              		.loc 1 273 7 is_stmt 0 view .LVU214
+ 837 0024 0E2D     		cmp	r5, #14
+ 838 0026 0BD0     		beq	.L92
+ 274:lvgl/src/lv_widgets/lv_btn.c ****         /*If not dragged and it was not long press action then
+ 275:lvgl/src/lv_widgets/lv_btn.c ****          *change state and run the action*/
+ 276:lvgl/src/lv_widgets/lv_btn.c ****         if(lv_indev_is_dragging(param) == false && tgl) {
+ 277:lvgl/src/lv_widgets/lv_btn.c ****             uint32_t toggled = 0;
+ 278:lvgl/src/lv_widgets/lv_btn.c ****             if(lv_obj_get_state(btn, LV_BTN_PART_MAIN) & LV_STATE_CHECKED) {
+ 279:lvgl/src/lv_widgets/lv_btn.c ****                 lv_btn_set_state(btn, LV_BTN_STATE_RELEASED);
+ 280:lvgl/src/lv_widgets/lv_btn.c ****                 toggled = 0;
+ 281:lvgl/src/lv_widgets/lv_btn.c ****             }
+ 282:lvgl/src/lv_widgets/lv_btn.c ****             else {
+ 283:lvgl/src/lv_widgets/lv_btn.c ****                 lv_btn_set_state(btn, LV_BTN_STATE_CHECKED_RELEASED);
+ 284:lvgl/src/lv_widgets/lv_btn.c ****                 toggled = 1;
+ 285:lvgl/src/lv_widgets/lv_btn.c ****             }
+ 286:lvgl/src/lv_widgets/lv_btn.c **** 
+ 287:lvgl/src/lv_widgets/lv_btn.c ****             res = lv_event_send(btn, LV_EVENT_VALUE_CHANGED, &toggled);
+ 288:lvgl/src/lv_widgets/lv_btn.c ****             if(res != LV_RES_OK) return res;
+ 289:lvgl/src/lv_widgets/lv_btn.c ****         }
+ 290:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 291:lvgl/src/lv_widgets/lv_btn.c ****     else if(sign == LV_SIGNAL_CONTROL) {
+ 839              		.loc 1 291 10 is_stmt 1 view .LVU215
+ 840              		.loc 1 291 12 is_stmt 0 view .LVU216
+ 841 0028 182D     		cmp	r5, #24
+ 842 002a 2DD0     		beq	.L93
+ 843              	.LVL87:
+ 844              	.L79:
+ 292:lvgl/src/lv_widgets/lv_btn.c **** #if LV_USE_GROUP
+ 293:lvgl/src/lv_widgets/lv_btn.c ****         char c = *((char *)param);
+ 294:lvgl/src/lv_widgets/lv_btn.c ****         if(c == LV_KEY_RIGHT || c == LV_KEY_UP) {
+ 295:lvgl/src/lv_widgets/lv_btn.c ****             if(lv_btn_get_checkable(btn)) {
+ 296:lvgl/src/lv_widgets/lv_btn.c ****                 lv_btn_set_state(btn, LV_BTN_STATE_CHECKED_RELEASED);
+ 297:lvgl/src/lv_widgets/lv_btn.c **** 
+ 298:lvgl/src/lv_widgets/lv_btn.c ****                 uint32_t state = 1;
+ 299:lvgl/src/lv_widgets/lv_btn.c ****                 res            = lv_event_send(btn, LV_EVENT_VALUE_CHANGED, &state);
+ARM GAS  D:\Temp\cchBbrDN.s 			page 26
+
+
+ 300:lvgl/src/lv_widgets/lv_btn.c ****                 if(res != LV_RES_OK) return res;
+ 301:lvgl/src/lv_widgets/lv_btn.c ****             }
+ 302:lvgl/src/lv_widgets/lv_btn.c **** 
+ 303:lvgl/src/lv_widgets/lv_btn.c ****         }
+ 304:lvgl/src/lv_widgets/lv_btn.c ****         else if(c == LV_KEY_LEFT || c == LV_KEY_DOWN) {
+ 305:lvgl/src/lv_widgets/lv_btn.c ****             if(lv_btn_get_checkable(btn)) {
+ 306:lvgl/src/lv_widgets/lv_btn.c ****                 lv_btn_set_state(btn, LV_BTN_STATE_RELEASED);
+ 307:lvgl/src/lv_widgets/lv_btn.c **** 
+ 308:lvgl/src/lv_widgets/lv_btn.c ****                 uint32_t state = 0;
+ 309:lvgl/src/lv_widgets/lv_btn.c ****                 res            = lv_event_send(btn, LV_EVENT_VALUE_CHANGED, &state);
+ 310:lvgl/src/lv_widgets/lv_btn.c ****                 if(res != LV_RES_OK) return res;
+ 311:lvgl/src/lv_widgets/lv_btn.c ****             }
+ 312:lvgl/src/lv_widgets/lv_btn.c ****         }
+ 313:lvgl/src/lv_widgets/lv_btn.c **** #endif
+ 314:lvgl/src/lv_widgets/lv_btn.c ****     }
+ 315:lvgl/src/lv_widgets/lv_btn.c **** 
+ 316:lvgl/src/lv_widgets/lv_btn.c ****     return res;
+ 317:lvgl/src/lv_widgets/lv_btn.c **** }
+ 845              		.loc 1 317 1 view .LVU217
+ 846 002c 2046     		mov	r0, r4
+ 847 002e 02B0     		add	sp, sp, #8
+ 848              	.LCFI9:
+ 849              		.cfi_remember_state
+ 850              		.cfi_def_cfa_offset 24
+ 851              		@ sp needed
+ 852 0030 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 853              	.LVL88:
+ 854              	.L91:
+ 855              	.LCFI10:
+ 856              		.cfi_restore_state
+ 269:lvgl/src/lv_widgets/lv_btn.c **** 
+ 857              		.loc 1 269 36 is_stmt 1 discriminator 1 view .LVU218
+ 269:lvgl/src/lv_widgets/lv_btn.c **** 
+ 858              		.loc 1 269 43 is_stmt 0 discriminator 1 view .LVU219
+ 859 0034 2C49     		ldr	r1, .L94+4
+ 860 0036 3846     		mov	r0, r7
+ 861              	.LVL89:
+ 269:lvgl/src/lv_widgets/lv_btn.c **** 
+ 862              		.loc 1 269 43 discriminator 1 view .LVU220
+ 863 0038 FFF7FEFF 		bl	lv_obj_handle_get_type_signal
+ 864              	.LVL90:
+ 865 003c 0446     		mov	r4, r0
+ 866 003e F5E7     		b	.L79
+ 867              	.LVL91:
+ 868              	.L92:
+ 276:lvgl/src/lv_widgets/lv_btn.c ****             uint32_t toggled = 0;
+ 869              		.loc 1 276 9 is_stmt 1 view .LVU221
+ 276:lvgl/src/lv_widgets/lv_btn.c ****             uint32_t toggled = 0;
+ 870              		.loc 1 276 12 is_stmt 0 view .LVU222
+ 871 0040 3846     		mov	r0, r7
+ 872 0042 FFF7FEFF 		bl	lv_indev_is_dragging
+ 873              	.LVL92:
+ 276:lvgl/src/lv_widgets/lv_btn.c ****             uint32_t toggled = 0;
+ 874              		.loc 1 276 11 view .LVU223
+ 875 0046 0028     		cmp	r0, #0
+ 876 0048 F0D1     		bne	.L79
+ 276:lvgl/src/lv_widgets/lv_btn.c ****             uint32_t toggled = 0;
+ARM GAS  D:\Temp\cchBbrDN.s 			page 27
+
+
+ 877              		.loc 1 276 49 discriminator 1 view .LVU224
+ 878 004a B8F1000F 		cmp	r8, #0
+ 879 004e EDD0     		beq	.L79
+ 880              	.LBB8:
+ 277:lvgl/src/lv_widgets/lv_btn.c ****             if(lv_obj_get_state(btn, LV_BTN_PART_MAIN) & LV_STATE_CHECKED) {
+ 881              		.loc 1 277 13 is_stmt 1 view .LVU225
+ 277:lvgl/src/lv_widgets/lv_btn.c ****             if(lv_obj_get_state(btn, LV_BTN_PART_MAIN) & LV_STATE_CHECKED) {
+ 882              		.loc 1 277 22 is_stmt 0 view .LVU226
+ 883 0050 0021     		movs	r1, #0
+ 884 0052 0191     		str	r1, [sp, #4]
+ 278:lvgl/src/lv_widgets/lv_btn.c ****                 lv_btn_set_state(btn, LV_BTN_STATE_RELEASED);
+ 885              		.loc 1 278 13 is_stmt 1 view .LVU227
+ 278:lvgl/src/lv_widgets/lv_btn.c ****                 lv_btn_set_state(btn, LV_BTN_STATE_RELEASED);
+ 886              		.loc 1 278 16 is_stmt 0 view .LVU228
+ 887 0054 3046     		mov	r0, r6
+ 888 0056 FFF7FEFF 		bl	lv_obj_get_state
+ 889              	.LVL93:
+ 278:lvgl/src/lv_widgets/lv_btn.c ****                 lv_btn_set_state(btn, LV_BTN_STATE_RELEASED);
+ 890              		.loc 1 278 15 view .LVU229
+ 891 005a 10F0010F 		tst	r0, #1
+ 892 005e 0CD0     		beq	.L82
+ 279:lvgl/src/lv_widgets/lv_btn.c ****                 toggled = 0;
+ 893              		.loc 1 279 17 is_stmt 1 view .LVU230
+ 894 0060 0021     		movs	r1, #0
+ 895 0062 3046     		mov	r0, r6
+ 896 0064 FFF7FEFF 		bl	lv_btn_set_state
+ 897              	.LVL94:
+ 280:lvgl/src/lv_widgets/lv_btn.c ****             }
+ 898              		.loc 1 280 17 view .LVU231
+ 280:lvgl/src/lv_widgets/lv_btn.c ****             }
+ 899              		.loc 1 280 25 is_stmt 0 view .LVU232
+ 900 0068 0023     		movs	r3, #0
+ 901 006a 0193     		str	r3, [sp, #4]
+ 902              	.L83:
+ 287:lvgl/src/lv_widgets/lv_btn.c ****             if(res != LV_RES_OK) return res;
+ 903              		.loc 1 287 13 is_stmt 1 view .LVU233
+ 287:lvgl/src/lv_widgets/lv_btn.c ****             if(res != LV_RES_OK) return res;
+ 904              		.loc 1 287 19 is_stmt 0 view .LVU234
+ 905 006c 01AA     		add	r2, sp, #4
+ 906 006e 1021     		movs	r1, #16
+ 907 0070 3046     		mov	r0, r6
+ 908 0072 FFF7FEFF 		bl	lv_event_send
+ 909              	.LVL95:
+ 910 0076 0446     		mov	r4, r0
+ 911              	.LVL96:
+ 288:lvgl/src/lv_widgets/lv_btn.c ****         }
+ 912              		.loc 1 288 13 is_stmt 1 view .LVU235
+ 913 0078 D8E7     		b	.L79
+ 914              	.LVL97:
+ 915              	.L82:
+ 283:lvgl/src/lv_widgets/lv_btn.c ****                 toggled = 1;
+ 916              		.loc 1 283 17 view .LVU236
+ 917 007a 0321     		movs	r1, #3
+ 918 007c 3046     		mov	r0, r6
+ 919 007e FFF7FEFF 		bl	lv_btn_set_state
+ 920              	.LVL98:
+ 284:lvgl/src/lv_widgets/lv_btn.c ****             }
+ARM GAS  D:\Temp\cchBbrDN.s 			page 28
+
+
+ 921              		.loc 1 284 17 view .LVU237
+ 284:lvgl/src/lv_widgets/lv_btn.c ****             }
+ 922              		.loc 1 284 25 is_stmt 0 view .LVU238
+ 923 0082 0123     		movs	r3, #1
+ 924 0084 0193     		str	r3, [sp, #4]
+ 925 0086 F1E7     		b	.L83
+ 926              	.L93:
+ 284:lvgl/src/lv_widgets/lv_btn.c ****             }
+ 927              		.loc 1 284 25 view .LVU239
+ 928              	.LBE8:
+ 929              	.LBB9:
+ 293:lvgl/src/lv_widgets/lv_btn.c ****         if(c == LV_KEY_RIGHT || c == LV_KEY_UP) {
+ 930              		.loc 1 293 9 is_stmt 1 view .LVU240
+ 293:lvgl/src/lv_widgets/lv_btn.c ****         if(c == LV_KEY_RIGHT || c == LV_KEY_UP) {
+ 931              		.loc 1 293 14 is_stmt 0 view .LVU241
+ 932 0088 3B78     		ldrb	r3, [r7]	@ zero_extendqisi2
+ 933              	.LVL99:
+ 294:lvgl/src/lv_widgets/lv_btn.c ****             if(lv_btn_get_checkable(btn)) {
+ 934              		.loc 1 294 9 is_stmt 1 view .LVU242
+ 294:lvgl/src/lv_widgets/lv_btn.c ****             if(lv_btn_get_checkable(btn)) {
+ 935              		.loc 1 294 11 is_stmt 0 view .LVU243
+ 936 008a 132B     		cmp	r3, #19
+ 937 008c 17D0     		beq	.L85
+ 294:lvgl/src/lv_widgets/lv_btn.c ****             if(lv_btn_get_checkable(btn)) {
+ 938              		.loc 1 294 30 discriminator 1 view .LVU244
+ 939 008e 112B     		cmp	r3, #17
+ 940 0090 15D0     		beq	.L85
+ 304:lvgl/src/lv_widgets/lv_btn.c ****             if(lv_btn_get_checkable(btn)) {
+ 941              		.loc 1 304 14 is_stmt 1 view .LVU245
+ 304:lvgl/src/lv_widgets/lv_btn.c ****             if(lv_btn_get_checkable(btn)) {
+ 942              		.loc 1 304 16 is_stmt 0 view .LVU246
+ 943 0092 142B     		cmp	r3, #20
+ 944 0094 01D0     		beq	.L88
+ 304:lvgl/src/lv_widgets/lv_btn.c ****             if(lv_btn_get_checkable(btn)) {
+ 945              		.loc 1 304 34 discriminator 1 view .LVU247
+ 946 0096 122B     		cmp	r3, #18
+ 947 0098 C8D1     		bne	.L79
+ 948              	.L88:
+ 305:lvgl/src/lv_widgets/lv_btn.c ****                 lv_btn_set_state(btn, LV_BTN_STATE_RELEASED);
+ 949              		.loc 1 305 13 is_stmt 1 view .LVU248
+ 305:lvgl/src/lv_widgets/lv_btn.c ****                 lv_btn_set_state(btn, LV_BTN_STATE_RELEASED);
+ 950              		.loc 1 305 16 is_stmt 0 view .LVU249
+ 951 009a 3046     		mov	r0, r6
+ 952 009c FFF7FEFF 		bl	lv_btn_get_checkable
+ 953              	.LVL100:
+ 305:lvgl/src/lv_widgets/lv_btn.c ****                 lv_btn_set_state(btn, LV_BTN_STATE_RELEASED);
+ 954              		.loc 1 305 15 view .LVU250
+ 955 00a0 0028     		cmp	r0, #0
+ 956 00a2 C3D0     		beq	.L79
+ 957              	.LBB10:
+ 306:lvgl/src/lv_widgets/lv_btn.c **** 
+ 958              		.loc 1 306 17 is_stmt 1 view .LVU251
+ 959 00a4 0021     		movs	r1, #0
+ 960 00a6 3046     		mov	r0, r6
+ 961 00a8 FFF7FEFF 		bl	lv_btn_set_state
+ 962              	.LVL101:
+ 308:lvgl/src/lv_widgets/lv_btn.c ****                 res            = lv_event_send(btn, LV_EVENT_VALUE_CHANGED, &state);
+ARM GAS  D:\Temp\cchBbrDN.s 			page 29
+
+
+ 963              		.loc 1 308 17 view .LVU252
+ 308:lvgl/src/lv_widgets/lv_btn.c ****                 res            = lv_event_send(btn, LV_EVENT_VALUE_CHANGED, &state);
+ 964              		.loc 1 308 26 is_stmt 0 view .LVU253
+ 965 00ac 0023     		movs	r3, #0
+ 966 00ae 0193     		str	r3, [sp, #4]
+ 309:lvgl/src/lv_widgets/lv_btn.c ****                 if(res != LV_RES_OK) return res;
+ 967              		.loc 1 309 17 is_stmt 1 view .LVU254
+ 309:lvgl/src/lv_widgets/lv_btn.c ****                 if(res != LV_RES_OK) return res;
+ 968              		.loc 1 309 34 is_stmt 0 view .LVU255
+ 969 00b0 01AA     		add	r2, sp, #4
+ 970 00b2 1021     		movs	r1, #16
+ 971 00b4 3046     		mov	r0, r6
+ 972 00b6 FFF7FEFF 		bl	lv_event_send
+ 973              	.LVL102:
+ 974 00ba 0446     		mov	r4, r0
+ 975              	.LVL103:
+ 310:lvgl/src/lv_widgets/lv_btn.c ****             }
+ 976              		.loc 1 310 17 is_stmt 1 view .LVU256
+ 977 00bc B6E7     		b	.L79
+ 978              	.LVL104:
+ 979              	.L85:
+ 310:lvgl/src/lv_widgets/lv_btn.c ****             }
+ 980              		.loc 1 310 17 is_stmt 0 view .LVU257
+ 981              	.LBE10:
+ 295:lvgl/src/lv_widgets/lv_btn.c ****                 lv_btn_set_state(btn, LV_BTN_STATE_CHECKED_RELEASED);
+ 982              		.loc 1 295 13 is_stmt 1 view .LVU258
+ 295:lvgl/src/lv_widgets/lv_btn.c ****                 lv_btn_set_state(btn, LV_BTN_STATE_CHECKED_RELEASED);
+ 983              		.loc 1 295 16 is_stmt 0 view .LVU259
+ 984 00be 3046     		mov	r0, r6
+ 985 00c0 FFF7FEFF 		bl	lv_btn_get_checkable
+ 986              	.LVL105:
+ 295:lvgl/src/lv_widgets/lv_btn.c ****                 lv_btn_set_state(btn, LV_BTN_STATE_CHECKED_RELEASED);
+ 987              		.loc 1 295 15 view .LVU260
+ 988 00c4 0028     		cmp	r0, #0
+ 989 00c6 B1D0     		beq	.L79
+ 990              	.LBB11:
+ 296:lvgl/src/lv_widgets/lv_btn.c **** 
+ 991              		.loc 1 296 17 is_stmt 1 view .LVU261
+ 992 00c8 0321     		movs	r1, #3
+ 993 00ca 3046     		mov	r0, r6
+ 994 00cc FFF7FEFF 		bl	lv_btn_set_state
+ 995              	.LVL106:
+ 298:lvgl/src/lv_widgets/lv_btn.c ****                 res            = lv_event_send(btn, LV_EVENT_VALUE_CHANGED, &state);
+ 996              		.loc 1 298 17 view .LVU262
+ 298:lvgl/src/lv_widgets/lv_btn.c ****                 res            = lv_event_send(btn, LV_EVENT_VALUE_CHANGED, &state);
+ 997              		.loc 1 298 26 is_stmt 0 view .LVU263
+ 998 00d0 0123     		movs	r3, #1
+ 999 00d2 0193     		str	r3, [sp, #4]
+ 299:lvgl/src/lv_widgets/lv_btn.c ****                 if(res != LV_RES_OK) return res;
+ 1000              		.loc 1 299 17 is_stmt 1 view .LVU264
+ 299:lvgl/src/lv_widgets/lv_btn.c ****                 if(res != LV_RES_OK) return res;
+ 1001              		.loc 1 299 34 is_stmt 0 view .LVU265
+ 1002 00d4 01AA     		add	r2, sp, #4
+ 1003 00d6 1021     		movs	r1, #16
+ 1004 00d8 3046     		mov	r0, r6
+ 1005 00da FFF7FEFF 		bl	lv_event_send
+ 1006              	.LVL107:
+ARM GAS  D:\Temp\cchBbrDN.s 			page 30
+
+
+ 1007 00de 0446     		mov	r4, r0
+ 1008              	.LVL108:
+ 300:lvgl/src/lv_widgets/lv_btn.c ****             }
+ 1009              		.loc 1 300 17 is_stmt 1 view .LVU266
+ 1010 00e0 A4E7     		b	.L79
+ 1011              	.L95:
+ 1012 00e2 00BF     		.align	2
+ 1013              	.L94:
+ 1014 00e4 00000000 		.word	.LANCHOR1
+ 1015 00e8 00000000 		.word	.LC2
+ 1016              	.LBE11:
+ 1017              	.LBE9:
+ 1018              		.cfi_endproc
+ 1019              	.LFE476:
+ 1021              		.section	.bss.ancestor_design,"aw",%nobits
+ 1022              		.align	2
+ 1023              		.set	.LANCHOR0,. + 0
+ 1026              	ancestor_design:
+ 1027 0000 00000000 		.space	4
+ 1028              		.section	.bss.ancestor_signal,"aw",%nobits
+ 1029              		.align	2
+ 1030              		.set	.LANCHOR1,. + 0
+ 1033              	ancestor_signal:
+ 1034 0000 00000000 		.space	4
+ 1035              		.section	.rodata.lv_btn_create.str1.4,"aMS",%progbits,1
+ 1036              		.align	2
+ 1037              	.LC0:
+ 1038 0000 4F757420 		.ascii	"Out of memory\000"
+ 1038      6F66206D 
+ 1038      656D6F72 
+ 1038      7900
+ 1039              		.section	.rodata.lv_btn_set_checkable.str1.4,"aMS",%progbits,1
+ 1040              		.align	2
+ 1041              	.LC1:
+ 1042 0000 4E554C4C 		.ascii	"NULL pointer\000"
+ 1042      20706F69 
+ 1042      6E746572 
+ 1042      00
+ 1043              		.section	.rodata.lv_btn_signal.str1.4,"aMS",%progbits,1
+ 1044              		.align	2
+ 1045              	.LC2:
+ 1046 0000 6C765F62 		.ascii	"lv_btn\000"
+ 1046      746E00
+ 1047              		.text
+ 1048              	.Letext0:
+ 1049              		.file 3 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1050              		.file 4 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1051              		.file 5 "Drivers/CMSIS/Include/core_cm4.h"
+ 1052              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 1053              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 1054              		.file 8 "lvgl/lv_conf.h"
+ 1055              		.file 9 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1056              		.file 10 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1057              		.file 11 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-non
+ 1058              		.file 12 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1059              		.file 13 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_types.h"
+ 1060              		.file 14 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_mem.h"
+ARM GAS  D:\Temp\cchBbrDN.s 			page 31
+
+
+ 1061              		.file 15 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_area.h"
+ 1062              		.file 16 "lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h"
+ 1063              		.file 17 "lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h"
+ 1064              		.file 18 "lvgl/src/lv_widgets/../lv_core/lv_style.h"
+ 1065              		.file 19 "lvgl/src/lv_widgets/../lv_core/../lv_hal/../lv_misc/lv_ll.h"
+ 1066              		.file 20 "lvgl/src/lv_widgets/../lv_core/lv_obj.h"
+ 1067              		.file 21 "lvgl/src/lv_widgets/../lv_core/../lv_hal/lv_hal_indev.h"
+ 1068              		.file 22 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_bidi.h"
+ 1069              		.file 23 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_txt.h"
+ 1070              		.file 24 "lvgl/src/lv_widgets/../lv_core/../lv_draw/lv_draw_label.h"
+ 1071              		.file 25 "lvgl/src/lv_widgets/lv_cont.h"
+ 1072              		.file 26 "lvgl/src/lv_widgets/../lv_core/../lv_core/lv_group.h"
+ 1073              		.file 27 "lvgl/src/lv_widgets/../lv_themes/lv_theme.h"
+ 1074              		.file 28 "lvgl/src/lv_widgets/../lv_core/lv_indev.h"
+ 1075              		.file 29 "lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_debug.h"
+ARM GAS  D:\Temp\cchBbrDN.s 			page 32
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_btn.c
+  D:\Temp\cchBbrDN.s:18     .text.lv_btn_design:0000000000000000 $t
+  D:\Temp\cchBbrDN.s:25     .text.lv_btn_design:0000000000000000 lv_btn_design
+  D:\Temp\cchBbrDN.s:90     .text.lv_btn_design:000000000000002c $d
+  D:\Temp\cchBbrDN.s:95     .text.lv_btn_create:0000000000000000 $t
+  D:\Temp\cchBbrDN.s:102    .text.lv_btn_create:0000000000000000 lv_btn_create
+  D:\Temp\cchBbrDN.s:314    .text.lv_btn_create:00000000000000cc $d
+  D:\Temp\cchBbrDN.s:785    .text.lv_btn_signal:0000000000000000 lv_btn_signal
+  D:\Temp\cchBbrDN.s:323    .text.lv_btn_set_checkable:0000000000000000 $t
+  D:\Temp\cchBbrDN.s:330    .text.lv_btn_set_checkable:0000000000000000 lv_btn_set_checkable
+  D:\Temp\cchBbrDN.s:383    .text.lv_btn_set_checkable:0000000000000028 $d
+  D:\Temp\cchBbrDN.s:388    .text.lv_btn_set_state:0000000000000000 $t
+  D:\Temp\cchBbrDN.s:395    .text.lv_btn_set_state:0000000000000000 lv_btn_set_state
+  D:\Temp\cchBbrDN.s:424    .text.lv_btn_set_state:0000000000000014 $d
+  D:\Temp\cchBbrDN.s:430    .text.lv_btn_set_state:000000000000001a $t
+  D:\Temp\cchBbrDN.s:523    .text.lv_btn_set_state:000000000000008c $d
+  D:\Temp\cchBbrDN.s:528    .text.lv_btn_toggle:0000000000000000 $t
+  D:\Temp\cchBbrDN.s:535    .text.lv_btn_toggle:0000000000000000 lv_btn_toggle
+  D:\Temp\cchBbrDN.s:597    .text.lv_btn_toggle:0000000000000038 $d
+  D:\Temp\cchBbrDN.s:602    .text.lv_btn_get_state:0000000000000000 $t
+  D:\Temp\cchBbrDN.s:609    .text.lv_btn_get_state:0000000000000000 lv_btn_get_state
+  D:\Temp\cchBbrDN.s:712    .text.lv_btn_get_state:0000000000000054 $d
+  D:\Temp\cchBbrDN.s:717    .text.lv_btn_get_checkable:0000000000000000 $t
+  D:\Temp\cchBbrDN.s:724    .text.lv_btn_get_checkable:0000000000000000 lv_btn_get_checkable
+  D:\Temp\cchBbrDN.s:774    .text.lv_btn_get_checkable:0000000000000024 $d
+  D:\Temp\cchBbrDN.s:779    .text.lv_btn_signal:0000000000000000 $t
+  D:\Temp\cchBbrDN.s:1014   .text.lv_btn_signal:00000000000000e4 $d
+  D:\Temp\cchBbrDN.s:1022   .bss.ancestor_design:0000000000000000 $d
+  D:\Temp\cchBbrDN.s:1026   .bss.ancestor_design:0000000000000000 ancestor_design
+  D:\Temp\cchBbrDN.s:1029   .bss.ancestor_signal:0000000000000000 $d
+  D:\Temp\cchBbrDN.s:1033   .bss.ancestor_signal:0000000000000000 ancestor_signal
+  D:\Temp\cchBbrDN.s:1036   .rodata.lv_btn_create.str1.4:0000000000000000 $d
+  D:\Temp\cchBbrDN.s:1040   .rodata.lv_btn_set_checkable.str1.4:0000000000000000 $d
+  D:\Temp\cchBbrDN.s:1044   .rodata.lv_btn_signal.str1.4:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+lv_cont_create
+lv_debug_check_null
+lv_obj_allocate_ext_attr
+lv_obj_set_signal_cb
+lv_obj_set_design_cb
+lv_obj_get_ext_attr
+lv_obj_refresh_style
+lv_debug_log_error
+lv_obj_get_signal_cb
+lv_obj_get_design_cb
+lv_obj_del
+lv_obj_set_size
+lv_cont_set_layout
+lv_obj_set_click
+lv_theme_apply
+lv_obj_clear_state
+lv_obj_add_state
+lv_obj_get_state
+lv_obj_handle_get_type_signal
+lv_indev_is_dragging
+ARM GAS  D:\Temp\cchBbrDN.s 			page 33
+
+
+lv_event_send

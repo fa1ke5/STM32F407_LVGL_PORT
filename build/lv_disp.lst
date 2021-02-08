@@ -1,0 +1,3636 @@
+ARM GAS  D:\Temp\ccElHyXh.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_disp.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.scr_anim_ready,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	scr_anim_ready:
+  26              	.LVL0:
+  27              	.LFB479:
+  28              		.file 1 "lvgl/src/lv_core/lv_disp.c"
+   1:lvgl/src/lv_core/lv_disp.c **** /**
+   2:lvgl/src/lv_core/lv_disp.c ****  * @file lv_disp.c
+   3:lvgl/src/lv_core/lv_disp.c ****  *
+   4:lvgl/src/lv_core/lv_disp.c ****  */
+   5:lvgl/src/lv_core/lv_disp.c **** 
+   6:lvgl/src/lv_core/lv_disp.c **** /*********************
+   7:lvgl/src/lv_core/lv_disp.c ****  *      INCLUDES
+   8:lvgl/src/lv_core/lv_disp.c ****  *********************/
+   9:lvgl/src/lv_core/lv_disp.c **** #include "lv_disp.h"
+  10:lvgl/src/lv_core/lv_disp.c **** #include "../lv_misc/lv_math.h"
+  11:lvgl/src/lv_core/lv_disp.c **** #include "../lv_core/lv_refr.h"
+  12:lvgl/src/lv_core/lv_disp.c **** 
+  13:lvgl/src/lv_core/lv_disp.c **** /*********************
+  14:lvgl/src/lv_core/lv_disp.c ****  *      DEFINES
+  15:lvgl/src/lv_core/lv_disp.c ****  *********************/
+  16:lvgl/src/lv_core/lv_disp.c **** 
+  17:lvgl/src/lv_core/lv_disp.c **** /**********************
+  18:lvgl/src/lv_core/lv_disp.c ****  *      TYPEDEFS
+  19:lvgl/src/lv_core/lv_disp.c ****  **********************/
+  20:lvgl/src/lv_core/lv_disp.c **** 
+  21:lvgl/src/lv_core/lv_disp.c **** /**********************
+  22:lvgl/src/lv_core/lv_disp.c ****  *  STATIC PROTOTYPES
+  23:lvgl/src/lv_core/lv_disp.c ****  **********************/
+  24:lvgl/src/lv_core/lv_disp.c **** 
+  25:lvgl/src/lv_core/lv_disp.c **** #if LV_USE_ANIMATION
+  26:lvgl/src/lv_core/lv_disp.c ****     static void scr_load_anim_start(lv_anim_t * a);
+  27:lvgl/src/lv_core/lv_disp.c ****     static void opa_scale_anim(lv_obj_t * obj, lv_anim_value_t v);
+  28:lvgl/src/lv_core/lv_disp.c ****     static void scr_anim_ready(lv_anim_t * a);
+  29:lvgl/src/lv_core/lv_disp.c **** #endif
+  30:lvgl/src/lv_core/lv_disp.c **** 
+ARM GAS  D:\Temp\ccElHyXh.s 			page 2
+
+
+  31:lvgl/src/lv_core/lv_disp.c **** /**********************
+  32:lvgl/src/lv_core/lv_disp.c ****  *  STATIC VARIABLES
+  33:lvgl/src/lv_core/lv_disp.c ****  **********************/
+  34:lvgl/src/lv_core/lv_disp.c **** 
+  35:lvgl/src/lv_core/lv_disp.c **** /**********************
+  36:lvgl/src/lv_core/lv_disp.c ****  *      MACROS
+  37:lvgl/src/lv_core/lv_disp.c ****  **********************/
+  38:lvgl/src/lv_core/lv_disp.c **** 
+  39:lvgl/src/lv_core/lv_disp.c **** /**********************
+  40:lvgl/src/lv_core/lv_disp.c ****  *   GLOBAL FUNCTIONS
+  41:lvgl/src/lv_core/lv_disp.c ****  **********************/
+  42:lvgl/src/lv_core/lv_disp.c **** 
+  43:lvgl/src/lv_core/lv_disp.c **** /**
+  44:lvgl/src/lv_core/lv_disp.c ****  * Return with a pointer to the active screen
+  45:lvgl/src/lv_core/lv_disp.c ****  * @param disp pointer to display which active screen should be get. (NULL to use the default
+  46:lvgl/src/lv_core/lv_disp.c ****  * screen)
+  47:lvgl/src/lv_core/lv_disp.c ****  * @return pointer to the active screen object (loaded by 'lv_scr_load()')
+  48:lvgl/src/lv_core/lv_disp.c ****  */
+  49:lvgl/src/lv_core/lv_disp.c **** lv_obj_t * lv_disp_get_scr_act(lv_disp_t * disp)
+  50:lvgl/src/lv_core/lv_disp.c **** {
+  51:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+  52:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+  53:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("no display registered to get its active screen");
+  54:lvgl/src/lv_core/lv_disp.c ****         return NULL;
+  55:lvgl/src/lv_core/lv_disp.c ****     }
+  56:lvgl/src/lv_core/lv_disp.c **** 
+  57:lvgl/src/lv_core/lv_disp.c ****     return disp->act_scr;
+  58:lvgl/src/lv_core/lv_disp.c **** }
+  59:lvgl/src/lv_core/lv_disp.c **** 
+  60:lvgl/src/lv_core/lv_disp.c **** /**
+  61:lvgl/src/lv_core/lv_disp.c ****  * Return with a pointer to the previous screen. Only used during screen transitions.
+  62:lvgl/src/lv_core/lv_disp.c ****  * @param disp pointer to display which previous screen should be get. (NULL to use the default
+  63:lvgl/src/lv_core/lv_disp.c ****  * screen)
+  64:lvgl/src/lv_core/lv_disp.c ****  * @return pointer to the previous screen object or NULL if not used now
+  65:lvgl/src/lv_core/lv_disp.c ****  */
+  66:lvgl/src/lv_core/lv_disp.c **** lv_obj_t * lv_disp_get_scr_prev(lv_disp_t * disp)
+  67:lvgl/src/lv_core/lv_disp.c **** {
+  68:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+  69:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+  70:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("no display registered to get its previous screen");
+  71:lvgl/src/lv_core/lv_disp.c ****         return NULL;
+  72:lvgl/src/lv_core/lv_disp.c ****     }
+  73:lvgl/src/lv_core/lv_disp.c **** 
+  74:lvgl/src/lv_core/lv_disp.c ****     return disp->prev_scr;
+  75:lvgl/src/lv_core/lv_disp.c **** }
+  76:lvgl/src/lv_core/lv_disp.c **** 
+  77:lvgl/src/lv_core/lv_disp.c **** /**
+  78:lvgl/src/lv_core/lv_disp.c ****  * Make a screen active
+  79:lvgl/src/lv_core/lv_disp.c ****  * @param scr pointer to a screen
+  80:lvgl/src/lv_core/lv_disp.c ****  */
+  81:lvgl/src/lv_core/lv_disp.c **** void lv_disp_load_scr(lv_obj_t * scr)
+  82:lvgl/src/lv_core/lv_disp.c **** {
+  83:lvgl/src/lv_core/lv_disp.c ****     lv_disp_t * d = lv_obj_get_disp(scr);
+  84:lvgl/src/lv_core/lv_disp.c ****     if(!d) return;  /*Shouldn't happen, just to be sure*/
+  85:lvgl/src/lv_core/lv_disp.c ****     d->act_scr = scr;
+  86:lvgl/src/lv_core/lv_disp.c **** 
+  87:lvgl/src/lv_core/lv_disp.c ****     lv_obj_invalidate(scr);
+ARM GAS  D:\Temp\ccElHyXh.s 			page 3
+
+
+  88:lvgl/src/lv_core/lv_disp.c **** }
+  89:lvgl/src/lv_core/lv_disp.c **** 
+  90:lvgl/src/lv_core/lv_disp.c **** /**
+  91:lvgl/src/lv_core/lv_disp.c ****  * Return with the top layer. (Same on every screen and it is above the normal screen layer)
+  92:lvgl/src/lv_core/lv_disp.c ****  * @param disp pointer to display which top layer should be get. (NULL to use the default screen)
+  93:lvgl/src/lv_core/lv_disp.c ****  * @return pointer to the top layer object  (transparent screen sized lv_obj)
+  94:lvgl/src/lv_core/lv_disp.c ****  */
+  95:lvgl/src/lv_core/lv_disp.c **** lv_obj_t * lv_disp_get_layer_top(lv_disp_t * disp)
+  96:lvgl/src/lv_core/lv_disp.c **** {
+  97:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+  98:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+  99:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_layer_top: no display registered to get its top layer");
+ 100:lvgl/src/lv_core/lv_disp.c ****         return NULL;
+ 101:lvgl/src/lv_core/lv_disp.c ****     }
+ 102:lvgl/src/lv_core/lv_disp.c **** 
+ 103:lvgl/src/lv_core/lv_disp.c ****     return disp->top_layer;
+ 104:lvgl/src/lv_core/lv_disp.c **** }
+ 105:lvgl/src/lv_core/lv_disp.c **** 
+ 106:lvgl/src/lv_core/lv_disp.c **** /**
+ 107:lvgl/src/lv_core/lv_disp.c ****  * Return with the sys. layer. (Same on every screen and it is above the normal screen and the top
+ 108:lvgl/src/lv_core/lv_disp.c ****  * layer)
+ 109:lvgl/src/lv_core/lv_disp.c ****  * @param disp pointer to display which sys. layer should be get. (NULL to use the default screen)
+ 110:lvgl/src/lv_core/lv_disp.c ****  * @return pointer to the sys layer object  (transparent screen sized lv_obj)
+ 111:lvgl/src/lv_core/lv_disp.c ****  */
+ 112:lvgl/src/lv_core/lv_disp.c **** lv_obj_t * lv_disp_get_layer_sys(lv_disp_t * disp)
+ 113:lvgl/src/lv_core/lv_disp.c **** {
+ 114:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 115:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 116:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_layer_sys: no display registered to get its sys. layer");
+ 117:lvgl/src/lv_core/lv_disp.c ****         return NULL;
+ 118:lvgl/src/lv_core/lv_disp.c ****     }
+ 119:lvgl/src/lv_core/lv_disp.c **** 
+ 120:lvgl/src/lv_core/lv_disp.c ****     return disp->sys_layer;
+ 121:lvgl/src/lv_core/lv_disp.c **** }
+ 122:lvgl/src/lv_core/lv_disp.c **** 
+ 123:lvgl/src/lv_core/lv_disp.c **** /**
+ 124:lvgl/src/lv_core/lv_disp.c ****  * Assign a screen to a display.
+ 125:lvgl/src/lv_core/lv_disp.c ****  * @param disp pointer to a display where to assign the screen
+ 126:lvgl/src/lv_core/lv_disp.c ****  * @param scr pointer to a screen object to assign
+ 127:lvgl/src/lv_core/lv_disp.c ****  */
+ 128:lvgl/src/lv_core/lv_disp.c **** void lv_disp_assign_screen(lv_disp_t * disp, lv_obj_t * scr)
+ 129:lvgl/src/lv_core/lv_disp.c **** {
+ 130:lvgl/src/lv_core/lv_disp.c ****     if(lv_obj_get_parent(scr) != NULL) {
+ 131:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_disp_assign_screen: try to assign a non-screen object");
+ 132:lvgl/src/lv_core/lv_disp.c ****         return;
+ 133:lvgl/src/lv_core/lv_disp.c ****     }
+ 134:lvgl/src/lv_core/lv_disp.c **** 
+ 135:lvgl/src/lv_core/lv_disp.c ****     lv_disp_t * old_disp = lv_obj_get_disp(scr);
+ 136:lvgl/src/lv_core/lv_disp.c **** 
+ 137:lvgl/src/lv_core/lv_disp.c ****     if(old_disp == disp) return;
+ 138:lvgl/src/lv_core/lv_disp.c **** 
+ 139:lvgl/src/lv_core/lv_disp.c ****     _lv_ll_chg_list(&old_disp->scr_ll, &disp->scr_ll, scr, true);
+ 140:lvgl/src/lv_core/lv_disp.c **** }
+ 141:lvgl/src/lv_core/lv_disp.c **** 
+ 142:lvgl/src/lv_core/lv_disp.c **** /**
+ 143:lvgl/src/lv_core/lv_disp.c ****  * Set the background color of a display
+ 144:lvgl/src/lv_core/lv_disp.c ****  * @param disp pointer to a display
+ARM GAS  D:\Temp\ccElHyXh.s 			page 4
+
+
+ 145:lvgl/src/lv_core/lv_disp.c ****  * @param color color of the background
+ 146:lvgl/src/lv_core/lv_disp.c ****  */
+ 147:lvgl/src/lv_core/lv_disp.c **** void lv_disp_set_bg_color(lv_disp_t * disp, lv_color_t color)
+ 148:lvgl/src/lv_core/lv_disp.c **** {
+ 149:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 150:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 151:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("no display registered");
+ 152:lvgl/src/lv_core/lv_disp.c ****         return;
+ 153:lvgl/src/lv_core/lv_disp.c ****     }
+ 154:lvgl/src/lv_core/lv_disp.c **** 
+ 155:lvgl/src/lv_core/lv_disp.c ****     disp->bg_color = color;
+ 156:lvgl/src/lv_core/lv_disp.c **** 
+ 157:lvgl/src/lv_core/lv_disp.c ****     lv_area_t a;
+ 158:lvgl/src/lv_core/lv_disp.c ****     lv_area_set(&a, 0, 0, lv_disp_get_hor_res(disp) - 1, lv_disp_get_ver_res(disp) - 1);
+ 159:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 160:lvgl/src/lv_core/lv_disp.c **** 
+ 161:lvgl/src/lv_core/lv_disp.c **** }
+ 162:lvgl/src/lv_core/lv_disp.c **** 
+ 163:lvgl/src/lv_core/lv_disp.c **** /**
+ 164:lvgl/src/lv_core/lv_disp.c ****  * Set the background image of a display
+ 165:lvgl/src/lv_core/lv_disp.c ****  * @param disp pointer to a display
+ 166:lvgl/src/lv_core/lv_disp.c ****  * @param img_src path to file or pointer to an `lv_img_dsc_t` variable
+ 167:lvgl/src/lv_core/lv_disp.c ****  */
+ 168:lvgl/src/lv_core/lv_disp.c **** void lv_disp_set_bg_image(lv_disp_t * disp, const void  * img_src)
+ 169:lvgl/src/lv_core/lv_disp.c **** {
+ 170:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 171:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 172:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("no display registered");
+ 173:lvgl/src/lv_core/lv_disp.c ****         return;
+ 174:lvgl/src/lv_core/lv_disp.c ****     }
+ 175:lvgl/src/lv_core/lv_disp.c **** 
+ 176:lvgl/src/lv_core/lv_disp.c ****     disp->bg_img = img_src;
+ 177:lvgl/src/lv_core/lv_disp.c **** 
+ 178:lvgl/src/lv_core/lv_disp.c ****     lv_area_t a;
+ 179:lvgl/src/lv_core/lv_disp.c ****     lv_area_set(&a, 0, 0, lv_disp_get_hor_res(disp) - 1, lv_disp_get_ver_res(disp) - 1);
+ 180:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 181:lvgl/src/lv_core/lv_disp.c **** }
+ 182:lvgl/src/lv_core/lv_disp.c **** 
+ 183:lvgl/src/lv_core/lv_disp.c **** /**
+ 184:lvgl/src/lv_core/lv_disp.c ****  * Opacity of the background
+ 185:lvgl/src/lv_core/lv_disp.c ****  * @param disp pointer to a display
+ 186:lvgl/src/lv_core/lv_disp.c ****  * @param opa opacity (0..255)
+ 187:lvgl/src/lv_core/lv_disp.c ****  */
+ 188:lvgl/src/lv_core/lv_disp.c **** void lv_disp_set_bg_opa(lv_disp_t * disp, lv_opa_t opa)
+ 189:lvgl/src/lv_core/lv_disp.c **** {
+ 190:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 191:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 192:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("no display registered");
+ 193:lvgl/src/lv_core/lv_disp.c ****         return;
+ 194:lvgl/src/lv_core/lv_disp.c ****     }
+ 195:lvgl/src/lv_core/lv_disp.c **** 
+ 196:lvgl/src/lv_core/lv_disp.c ****     disp->bg_opa = opa;
+ 197:lvgl/src/lv_core/lv_disp.c **** 
+ 198:lvgl/src/lv_core/lv_disp.c ****     lv_area_t a;
+ 199:lvgl/src/lv_core/lv_disp.c ****     lv_area_set(&a, 0, 0, lv_disp_get_hor_res(disp) - 1, lv_disp_get_ver_res(disp) - 1);
+ 200:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 201:lvgl/src/lv_core/lv_disp.c **** }
+ARM GAS  D:\Temp\ccElHyXh.s 			page 5
+
+
+ 202:lvgl/src/lv_core/lv_disp.c **** 
+ 203:lvgl/src/lv_core/lv_disp.c **** #if LV_USE_ANIMATION
+ 204:lvgl/src/lv_core/lv_disp.c **** 
+ 205:lvgl/src/lv_core/lv_disp.c **** /**
+ 206:lvgl/src/lv_core/lv_disp.c ****  * Switch screen with animation
+ 207:lvgl/src/lv_core/lv_disp.c ****  * @param scr pointer to the new screen to load
+ 208:lvgl/src/lv_core/lv_disp.c ****  * @param anim_type type of the animation from `lv_scr_load_anim_t`. E.g.  `LV_SCR_LOAD_ANIM_MOVE_L
+ 209:lvgl/src/lv_core/lv_disp.c ****  * @param time time of the animation
+ 210:lvgl/src/lv_core/lv_disp.c ****  * @param delay delay before the transition
+ 211:lvgl/src/lv_core/lv_disp.c ****  * @param auto_del true: automatically delete the old screen
+ 212:lvgl/src/lv_core/lv_disp.c ****  */
+ 213:lvgl/src/lv_core/lv_disp.c **** void lv_scr_load_anim(lv_obj_t * new_scr, lv_scr_load_anim_t anim_type, uint32_t time, uint32_t del
+ 214:lvgl/src/lv_core/lv_disp.c **** {
+ 215:lvgl/src/lv_core/lv_disp.c ****     lv_disp_t * d = lv_obj_get_disp(new_scr);
+ 216:lvgl/src/lv_core/lv_disp.c ****     lv_obj_t * act_scr = lv_scr_act();
+ 217:lvgl/src/lv_core/lv_disp.c **** 
+ 218:lvgl/src/lv_core/lv_disp.c ****     if(d->del_prev && act_scr != d->scr_to_load && d->scr_to_load) {
+ 219:lvgl/src/lv_core/lv_disp.c ****         lv_obj_del(act_scr);
+ 220:lvgl/src/lv_core/lv_disp.c ****         lv_disp_load_scr(d->scr_to_load);
+ 221:lvgl/src/lv_core/lv_disp.c ****         lv_anim_del(d->scr_to_load, NULL);
+ 222:lvgl/src/lv_core/lv_disp.c ****         lv_obj_set_pos(d->scr_to_load, 0, 0);
+ 223:lvgl/src/lv_core/lv_disp.c ****         lv_style_remove_prop(lv_obj_get_local_style(d->scr_to_load, LV_OBJ_PART_MAIN), LV_STYLE_OPA
+ 224:lvgl/src/lv_core/lv_disp.c **** 
+ 225:lvgl/src/lv_core/lv_disp.c ****         act_scr = d->scr_to_load;
+ 226:lvgl/src/lv_core/lv_disp.c ****     }
+ 227:lvgl/src/lv_core/lv_disp.c **** 
+ 228:lvgl/src/lv_core/lv_disp.c ****     d->scr_to_load = new_scr;
+ 229:lvgl/src/lv_core/lv_disp.c **** 
+ 230:lvgl/src/lv_core/lv_disp.c ****     if(d->prev_scr && d->del_prev) {
+ 231:lvgl/src/lv_core/lv_disp.c ****         lv_obj_del(d->prev_scr);
+ 232:lvgl/src/lv_core/lv_disp.c ****         d->prev_scr = NULL;
+ 233:lvgl/src/lv_core/lv_disp.c ****     }
+ 234:lvgl/src/lv_core/lv_disp.c **** 
+ 235:lvgl/src/lv_core/lv_disp.c ****     d->del_prev = auto_del;
+ 236:lvgl/src/lv_core/lv_disp.c **** 
+ 237:lvgl/src/lv_core/lv_disp.c ****     /*Be sure there is no other animation on the screens*/
+ 238:lvgl/src/lv_core/lv_disp.c ****     lv_anim_del(new_scr, NULL);
+ 239:lvgl/src/lv_core/lv_disp.c ****     lv_anim_del(lv_scr_act(), NULL);
+ 240:lvgl/src/lv_core/lv_disp.c **** 
+ 241:lvgl/src/lv_core/lv_disp.c ****     /*Be sure both screens are in a normal position*/
+ 242:lvgl/src/lv_core/lv_disp.c ****     lv_obj_set_pos(new_scr, 0, 0);
+ 243:lvgl/src/lv_core/lv_disp.c ****     lv_obj_set_pos(lv_scr_act(), 0, 0);
+ 244:lvgl/src/lv_core/lv_disp.c ****     lv_style_remove_prop(lv_obj_get_local_style(new_scr, LV_OBJ_PART_MAIN), LV_STYLE_OPA_SCALE);
+ 245:lvgl/src/lv_core/lv_disp.c ****     lv_style_remove_prop(lv_obj_get_local_style(lv_scr_act(), LV_OBJ_PART_MAIN), LV_STYLE_OPA_SCALE
+ 246:lvgl/src/lv_core/lv_disp.c **** 
+ 247:lvgl/src/lv_core/lv_disp.c ****     lv_anim_t a_new;
+ 248:lvgl/src/lv_core/lv_disp.c ****     lv_anim_init(&a_new);
+ 249:lvgl/src/lv_core/lv_disp.c ****     lv_anim_set_var(&a_new, new_scr);
+ 250:lvgl/src/lv_core/lv_disp.c ****     lv_anim_set_start_cb(&a_new, scr_load_anim_start);
+ 251:lvgl/src/lv_core/lv_disp.c ****     lv_anim_set_ready_cb(&a_new, scr_anim_ready);
+ 252:lvgl/src/lv_core/lv_disp.c ****     lv_anim_set_time(&a_new, time);
+ 253:lvgl/src/lv_core/lv_disp.c ****     lv_anim_set_delay(&a_new, delay);
+ 254:lvgl/src/lv_core/lv_disp.c **** 
+ 255:lvgl/src/lv_core/lv_disp.c ****     lv_anim_t a_old;
+ 256:lvgl/src/lv_core/lv_disp.c ****     lv_anim_init(&a_old);
+ 257:lvgl/src/lv_core/lv_disp.c ****     lv_anim_set_var(&a_old, d->act_scr);
+ 258:lvgl/src/lv_core/lv_disp.c ****     lv_anim_set_time(&a_old, time);
+ARM GAS  D:\Temp\ccElHyXh.s 			page 6
+
+
+ 259:lvgl/src/lv_core/lv_disp.c ****     lv_anim_set_delay(&a_old, delay);
+ 260:lvgl/src/lv_core/lv_disp.c **** 
+ 261:lvgl/src/lv_core/lv_disp.c ****     switch(anim_type) {
+ 262:lvgl/src/lv_core/lv_disp.c ****         case LV_SCR_LOAD_ANIM_NONE:
+ 263:lvgl/src/lv_core/lv_disp.c ****             /* Create a dummy animation to apply the delay*/
+ 264:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_exec_cb(&a_new, (lv_anim_exec_xcb_t) lv_obj_set_x);
+ 265:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, 0, 0);
+ 266:lvgl/src/lv_core/lv_disp.c ****             break;
+ 267:lvgl/src/lv_core/lv_disp.c ****         case LV_SCR_LOAD_ANIM_OVER_LEFT:
+ 268:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_exec_cb(&a_new, (lv_anim_exec_xcb_t) lv_obj_set_x);
+ 269:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, lv_disp_get_hor_res(d), 0);
+ 270:lvgl/src/lv_core/lv_disp.c ****             break;
+ 271:lvgl/src/lv_core/lv_disp.c ****         case LV_SCR_LOAD_ANIM_OVER_RIGHT:
+ 272:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_exec_cb(&a_new, (lv_anim_exec_xcb_t) lv_obj_set_x);
+ 273:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, -lv_disp_get_hor_res(d), 0);
+ 274:lvgl/src/lv_core/lv_disp.c ****             break;
+ 275:lvgl/src/lv_core/lv_disp.c ****         case LV_SCR_LOAD_ANIM_OVER_TOP:
+ 276:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_exec_cb(&a_new, (lv_anim_exec_xcb_t) lv_obj_set_y);
+ 277:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, lv_disp_get_ver_res(d), 0);
+ 278:lvgl/src/lv_core/lv_disp.c ****             break;
+ 279:lvgl/src/lv_core/lv_disp.c ****         case LV_SCR_LOAD_ANIM_OVER_BOTTOM:
+ 280:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_exec_cb(&a_new, (lv_anim_exec_xcb_t) lv_obj_set_y);
+ 281:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, -lv_disp_get_ver_res(d), 0);
+ 282:lvgl/src/lv_core/lv_disp.c ****             break;
+ 283:lvgl/src/lv_core/lv_disp.c ****         case LV_SCR_LOAD_ANIM_MOVE_LEFT:
+ 284:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_exec_cb(&a_new, (lv_anim_exec_xcb_t) lv_obj_set_x);
+ 285:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, lv_disp_get_hor_res(d), 0);
+ 286:lvgl/src/lv_core/lv_disp.c **** 
+ 287:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_exec_cb(&a_old, (lv_anim_exec_xcb_t) lv_obj_set_x);
+ 288:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_old, 0, -lv_disp_get_hor_res(d));
+ 289:lvgl/src/lv_core/lv_disp.c ****             break;
+ 290:lvgl/src/lv_core/lv_disp.c ****         case LV_SCR_LOAD_ANIM_MOVE_RIGHT:
+ 291:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_exec_cb(&a_new, (lv_anim_exec_xcb_t) lv_obj_set_x);
+ 292:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, -lv_disp_get_hor_res(d), 0);
+ 293:lvgl/src/lv_core/lv_disp.c **** 
+ 294:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_exec_cb(&a_old, (lv_anim_exec_xcb_t) lv_obj_set_x);
+ 295:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_old, 0, lv_disp_get_hor_res(d));
+ 296:lvgl/src/lv_core/lv_disp.c ****             break;
+ 297:lvgl/src/lv_core/lv_disp.c ****         case LV_SCR_LOAD_ANIM_MOVE_TOP:
+ 298:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_exec_cb(&a_new, (lv_anim_exec_xcb_t) lv_obj_set_y);
+ 299:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, lv_disp_get_ver_res(d), 0);
+ 300:lvgl/src/lv_core/lv_disp.c **** 
+ 301:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_exec_cb(&a_old, (lv_anim_exec_xcb_t) lv_obj_set_y);
+ 302:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_old, 0, -lv_disp_get_ver_res(d));
+ 303:lvgl/src/lv_core/lv_disp.c ****             break;
+ 304:lvgl/src/lv_core/lv_disp.c ****         case LV_SCR_LOAD_ANIM_MOVE_BOTTOM:
+ 305:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_exec_cb(&a_new, (lv_anim_exec_xcb_t) lv_obj_set_y);
+ 306:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, -lv_disp_get_ver_res(d), 0);
+ 307:lvgl/src/lv_core/lv_disp.c **** 
+ 308:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_exec_cb(&a_old, (lv_anim_exec_xcb_t) lv_obj_set_y);
+ 309:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_old, 0, lv_disp_get_ver_res(d));
+ 310:lvgl/src/lv_core/lv_disp.c ****             break;
+ 311:lvgl/src/lv_core/lv_disp.c **** 
+ 312:lvgl/src/lv_core/lv_disp.c ****         case LV_SCR_LOAD_ANIM_FADE_ON:
+ 313:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_exec_cb(&a_new, (lv_anim_exec_xcb_t) opa_scale_anim);
+ 314:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, LV_OPA_TRANSP, LV_OPA_COVER);
+ 315:lvgl/src/lv_core/lv_disp.c ****             break;
+ARM GAS  D:\Temp\ccElHyXh.s 			page 7
+
+
+ 316:lvgl/src/lv_core/lv_disp.c ****     }
+ 317:lvgl/src/lv_core/lv_disp.c **** 
+ 318:lvgl/src/lv_core/lv_disp.c ****     lv_anim_start(&a_new);
+ 319:lvgl/src/lv_core/lv_disp.c ****     lv_anim_start(&a_old);
+ 320:lvgl/src/lv_core/lv_disp.c **** }
+ 321:lvgl/src/lv_core/lv_disp.c **** 
+ 322:lvgl/src/lv_core/lv_disp.c **** #endif
+ 323:lvgl/src/lv_core/lv_disp.c **** 
+ 324:lvgl/src/lv_core/lv_disp.c **** /**
+ 325:lvgl/src/lv_core/lv_disp.c ****  * Get elapsed time since last user activity on a display (e.g. click)
+ 326:lvgl/src/lv_core/lv_disp.c ****  * @param disp pointer to an display (NULL to get the overall smallest inactivity)
+ 327:lvgl/src/lv_core/lv_disp.c ****  * @return elapsed ticks (milliseconds) since the last activity
+ 328:lvgl/src/lv_core/lv_disp.c ****  */
+ 329:lvgl/src/lv_core/lv_disp.c **** uint32_t lv_disp_get_inactive_time(const lv_disp_t * disp)
+ 330:lvgl/src/lv_core/lv_disp.c **** {
+ 331:lvgl/src/lv_core/lv_disp.c ****     if(disp) return lv_tick_elaps(disp->last_activity_time);
+ 332:lvgl/src/lv_core/lv_disp.c **** 
+ 333:lvgl/src/lv_core/lv_disp.c ****     lv_disp_t * d;
+ 334:lvgl/src/lv_core/lv_disp.c ****     uint32_t t = UINT32_MAX;
+ 335:lvgl/src/lv_core/lv_disp.c ****     d          = lv_disp_get_next(NULL);
+ 336:lvgl/src/lv_core/lv_disp.c ****     while(d) {
+ 337:lvgl/src/lv_core/lv_disp.c ****         uint32_t elaps = lv_tick_elaps(d->last_activity_time);
+ 338:lvgl/src/lv_core/lv_disp.c ****         t = LV_MATH_MIN(t, elaps);
+ 339:lvgl/src/lv_core/lv_disp.c ****         d = lv_disp_get_next(d);
+ 340:lvgl/src/lv_core/lv_disp.c ****     }
+ 341:lvgl/src/lv_core/lv_disp.c **** 
+ 342:lvgl/src/lv_core/lv_disp.c ****     return t;
+ 343:lvgl/src/lv_core/lv_disp.c **** }
+ 344:lvgl/src/lv_core/lv_disp.c **** 
+ 345:lvgl/src/lv_core/lv_disp.c **** /**
+ 346:lvgl/src/lv_core/lv_disp.c ****  * Manually trigger an activity on a display
+ 347:lvgl/src/lv_core/lv_disp.c ****  * @param disp pointer to an display (NULL to use the default display)
+ 348:lvgl/src/lv_core/lv_disp.c ****  */
+ 349:lvgl/src/lv_core/lv_disp.c **** void lv_disp_trig_activity(lv_disp_t * disp)
+ 350:lvgl/src/lv_core/lv_disp.c **** {
+ 351:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 352:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 353:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_disp_trig_activity: no display registered");
+ 354:lvgl/src/lv_core/lv_disp.c ****         return;
+ 355:lvgl/src/lv_core/lv_disp.c ****     }
+ 356:lvgl/src/lv_core/lv_disp.c **** 
+ 357:lvgl/src/lv_core/lv_disp.c ****     disp->last_activity_time = lv_tick_get();
+ 358:lvgl/src/lv_core/lv_disp.c **** }
+ 359:lvgl/src/lv_core/lv_disp.c **** 
+ 360:lvgl/src/lv_core/lv_disp.c **** /**
+ 361:lvgl/src/lv_core/lv_disp.c ****  * Clean any CPU cache that is related to the display.
+ 362:lvgl/src/lv_core/lv_disp.c ****  * @param disp pointer to an display (NULL to use the default display)
+ 363:lvgl/src/lv_core/lv_disp.c ****  */
+ 364:lvgl/src/lv_core/lv_disp.c **** void lv_disp_clean_dcache(lv_disp_t * disp)
+ 365:lvgl/src/lv_core/lv_disp.c **** {
+ 366:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 367:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 368:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_disp_clean_dcache: no display registered");
+ 369:lvgl/src/lv_core/lv_disp.c ****         return;
+ 370:lvgl/src/lv_core/lv_disp.c ****     }
+ 371:lvgl/src/lv_core/lv_disp.c **** 
+ 372:lvgl/src/lv_core/lv_disp.c ****     if(disp->driver.clean_dcache_cb)
+ARM GAS  D:\Temp\ccElHyXh.s 			page 8
+
+
+ 373:lvgl/src/lv_core/lv_disp.c ****         disp->driver.clean_dcache_cb(&disp->driver);
+ 374:lvgl/src/lv_core/lv_disp.c **** }
+ 375:lvgl/src/lv_core/lv_disp.c **** 
+ 376:lvgl/src/lv_core/lv_disp.c **** /**
+ 377:lvgl/src/lv_core/lv_disp.c ****  * Get a pointer to the screen refresher task to
+ 378:lvgl/src/lv_core/lv_disp.c ****  * modify its parameters with `lv_task_...` functions.
+ 379:lvgl/src/lv_core/lv_disp.c ****  * @param disp pointer to a display
+ 380:lvgl/src/lv_core/lv_disp.c ****  * @return pointer to the display refresher task. (NULL on error)
+ 381:lvgl/src/lv_core/lv_disp.c ****  */
+ 382:lvgl/src/lv_core/lv_disp.c **** lv_task_t * _lv_disp_get_refr_task(lv_disp_t * disp)
+ 383:lvgl/src/lv_core/lv_disp.c **** {
+ 384:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 385:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 386:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_disp_get_refr_task: no display registered");
+ 387:lvgl/src/lv_core/lv_disp.c ****         return NULL;
+ 388:lvgl/src/lv_core/lv_disp.c ****     }
+ 389:lvgl/src/lv_core/lv_disp.c **** 
+ 390:lvgl/src/lv_core/lv_disp.c ****     return disp->refr_task;
+ 391:lvgl/src/lv_core/lv_disp.c **** }
+ 392:lvgl/src/lv_core/lv_disp.c **** 
+ 393:lvgl/src/lv_core/lv_disp.c **** /**********************
+ 394:lvgl/src/lv_core/lv_disp.c ****  *   STATIC FUNCTIONS
+ 395:lvgl/src/lv_core/lv_disp.c ****  **********************/
+ 396:lvgl/src/lv_core/lv_disp.c **** 
+ 397:lvgl/src/lv_core/lv_disp.c **** #if LV_USE_ANIMATION
+ 398:lvgl/src/lv_core/lv_disp.c **** static void scr_load_anim_start(lv_anim_t * a)
+ 399:lvgl/src/lv_core/lv_disp.c **** {
+ 400:lvgl/src/lv_core/lv_disp.c ****     lv_disp_t * d = lv_obj_get_disp(a->var);
+ 401:lvgl/src/lv_core/lv_disp.c ****     d->prev_scr = lv_scr_act();
+ 402:lvgl/src/lv_core/lv_disp.c **** 
+ 403:lvgl/src/lv_core/lv_disp.c ****     lv_disp_load_scr(a->var);
+ 404:lvgl/src/lv_core/lv_disp.c **** }
+ 405:lvgl/src/lv_core/lv_disp.c **** 
+ 406:lvgl/src/lv_core/lv_disp.c **** static void opa_scale_anim(lv_obj_t * obj, lv_anim_value_t v)
+ 407:lvgl/src/lv_core/lv_disp.c **** {
+ 408:lvgl/src/lv_core/lv_disp.c ****     lv_obj_set_style_local_opa_scale(obj, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, v);
+ 409:lvgl/src/lv_core/lv_disp.c **** }
+ 410:lvgl/src/lv_core/lv_disp.c **** 
+ 411:lvgl/src/lv_core/lv_disp.c **** static void scr_anim_ready(lv_anim_t * a)
+ 412:lvgl/src/lv_core/lv_disp.c **** {
+  29              		.loc 1 412 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 412 1 is_stmt 0 view .LVU1
+  34 0000 38B5     		push	{r3, r4, r5, lr}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 16
+  37              		.cfi_offset 3, -16
+  38              		.cfi_offset 4, -12
+  39              		.cfi_offset 5, -8
+  40              		.cfi_offset 14, -4
+  41 0002 0546     		mov	r5, r0
+ 413:lvgl/src/lv_core/lv_disp.c ****     lv_disp_t * d = lv_obj_get_disp(a->var);
+  42              		.loc 1 413 5 is_stmt 1 view .LVU2
+  43              		.loc 1 413 21 is_stmt 0 view .LVU3
+  44 0004 0068     		ldr	r0, [r0]
+ARM GAS  D:\Temp\ccElHyXh.s 			page 9
+
+
+  45              	.LVL1:
+  46              		.loc 1 413 21 view .LVU4
+  47 0006 FFF7FEFF 		bl	lv_obj_get_disp
+  48              	.LVL2:
+  49 000a 0446     		mov	r4, r0
+  50              	.LVL3:
+ 414:lvgl/src/lv_core/lv_disp.c **** 
+ 415:lvgl/src/lv_core/lv_disp.c ****     if(d->prev_scr && d->del_prev) lv_obj_del(d->prev_scr);
+  51              		.loc 1 415 5 is_stmt 1 view .LVU5
+  52              		.loc 1 415 9 is_stmt 0 view .LVU6
+  53 000c 806C     		ldr	r0, [r0, #72]
+  54              	.LVL4:
+  55              		.loc 1 415 7 view .LVU7
+  56 000e 20B1     		cbz	r0, .L2
+  57              		.loc 1 415 20 discriminator 1 view .LVU8
+  58 0010 94F85830 		ldrb	r3, [r4, #88]	@ zero_extendqisi2
+  59 0014 13F0010F 		tst	r3, #1
+  60 0018 0AD1     		bne	.L4
+  61              	.L2:
+ 416:lvgl/src/lv_core/lv_disp.c ****     d->prev_scr = NULL;
+  62              		.loc 1 416 5 is_stmt 1 view .LVU9
+  63              		.loc 1 416 17 is_stmt 0 view .LVU10
+  64 001a 0021     		movs	r1, #0
+  65 001c A164     		str	r1, [r4, #72]
+ 417:lvgl/src/lv_core/lv_disp.c ****     d->scr_to_load = NULL;
+  66              		.loc 1 417 5 is_stmt 1 view .LVU11
+  67              		.loc 1 417 20 is_stmt 0 view .LVU12
+  68 001e E164     		str	r1, [r4, #76]
+ 418:lvgl/src/lv_core/lv_disp.c ****     lv_style_remove_prop(lv_obj_get_local_style(a->var, LV_OBJ_PART_MAIN), LV_STYLE_OPA_SCALE);
+  69              		.loc 1 418 5 is_stmt 1 view .LVU13
+  70 0020 2868     		ldr	r0, [r5]
+  71 0022 FFF7FEFF 		bl	lv_obj_get_local_style
+  72              	.LVL5:
+  73 0026 48F20C01 		movw	r1, #32780
+  74 002a FFF7FEFF 		bl	lv_style_remove_prop
+  75              	.LVL6:
+ 419:lvgl/src/lv_core/lv_disp.c **** }
+  76              		.loc 1 419 1 is_stmt 0 view .LVU14
+  77 002e 38BD     		pop	{r3, r4, r5, pc}
+  78              	.LVL7:
+  79              	.L4:
+ 415:lvgl/src/lv_core/lv_disp.c ****     d->prev_scr = NULL;
+  80              		.loc 1 415 36 is_stmt 1 discriminator 2 view .LVU15
+  81 0030 FFF7FEFF 		bl	lv_obj_del
+  82              	.LVL8:
+  83 0034 F1E7     		b	.L2
+  84              		.cfi_endproc
+  85              	.LFE479:
+  87              		.section	.text.opa_scale_anim,"ax",%progbits
+  88              		.align	1
+  89              		.syntax unified
+  90              		.thumb
+  91              		.thumb_func
+  92              		.fpu fpv4-sp-d16
+  94              	opa_scale_anim:
+  95              	.LVL9:
+  96              	.LFB478:
+ARM GAS  D:\Temp\ccElHyXh.s 			page 10
+
+
+ 407:lvgl/src/lv_core/lv_disp.c ****     lv_obj_set_style_local_opa_scale(obj, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, v);
+  97              		.loc 1 407 1 view -0
+  98              		.cfi_startproc
+  99              		@ args = 0, pretend = 0, frame = 0
+ 100              		@ frame_needed = 0, uses_anonymous_args = 0
+ 407:lvgl/src/lv_core/lv_disp.c ****     lv_obj_set_style_local_opa_scale(obj, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, v);
+ 101              		.loc 1 407 1 is_stmt 0 view .LVU17
+ 102 0000 08B5     		push	{r3, lr}
+ 103              	.LCFI1:
+ 104              		.cfi_def_cfa_offset 8
+ 105              		.cfi_offset 3, -8
+ 106              		.cfi_offset 14, -4
+ 408:lvgl/src/lv_core/lv_disp.c **** }
+ 107              		.loc 1 408 5 is_stmt 1 view .LVU18
+ 108              	.LVL10:
+ 109              	.LBB86:
+ 110              	.LBI86:
+ 111              		.file 2 "lvgl/src/lv_core/lv_obj_style_dec.h"
+   1:lvgl/src/lv_core/lv_obj_style_dec.h **** 
+   2:lvgl/src/lv_core/lv_obj_style_dec.h **** /**
+   3:lvgl/src/lv_core/lv_obj_style_dec.h ****  * @file lv_obj_style_dec.h
+   4:lvgl/src/lv_core/lv_obj_style_dec.h ****  *
+   5:lvgl/src/lv_core/lv_obj_style_dec.h ****  */
+   6:lvgl/src/lv_core/lv_obj_style_dec.h **** 
+   7:lvgl/src/lv_core/lv_obj_style_dec.h **** #ifndef LV_OBJ_STYLE_DEC_H
+   8:lvgl/src/lv_core/lv_obj_style_dec.h **** #define LV_OBJ_STYLE_DEC_H
+   9:lvgl/src/lv_core/lv_obj_style_dec.h **** 
+  10:lvgl/src/lv_core/lv_obj_style_dec.h **** #ifdef __cplusplus
+  11:lvgl/src/lv_core/lv_obj_style_dec.h **** extern "C" {
+  12:lvgl/src/lv_core/lv_obj_style_dec.h **** #endif
+  13:lvgl/src/lv_core/lv_obj_style_dec.h **** 
+  14:lvgl/src/lv_core/lv_obj_style_dec.h **** /*********************
+  15:lvgl/src/lv_core/lv_obj_style_dec.h ****  *      DEFINES
+  16:lvgl/src/lv_core/lv_obj_style_dec.h ****  *********************/
+  17:lvgl/src/lv_core/lv_obj_style_dec.h **** 
+  18:lvgl/src/lv_core/lv_obj_style_dec.h **** /**
+  19:lvgl/src/lv_core/lv_obj_style_dec.h ****  * Macro to declare the most important style set/get API functions.
+  20:lvgl/src/lv_core/lv_obj_style_dec.h ****  *
+  21:lvgl/src/lv_core/lv_obj_style_dec.h ****  * Get the value of a style property from an object in the object's current state
+  22:lvgl/src/lv_core/lv_obj_style_dec.h ****  * -----------------------------------------------------------------------------
+  23:lvgl/src/lv_core/lv_obj_style_dec.h ****  *  - Get the value of a style property from an object in the object's current state.
+  24:lvgl/src/lv_core/lv_obj_style_dec.h ****  *  - Transition animation is taken into account.
+  25:lvgl/src/lv_core/lv_obj_style_dec.h ****  *  - If the property is not set in the object's styles check the parent(s) if the property can be 
+  26:lvgl/src/lv_core/lv_obj_style_dec.h ****  *  - If still not found return a default value.
+  27:lvgl/src/lv_core/lv_obj_style_dec.h ****  *  - For example:
+  28:lvgl/src/lv_core/lv_obj_style_dec.h ****  *      `lv_style_int_t w = lv_obj_get_style_border_width(btn1, LV_BTN_PART_MAIN);`
+  29:lvgl/src/lv_core/lv_obj_style_dec.h ****  *
+  30:lvgl/src/lv_core/lv_obj_style_dec.h ****  * Set a local style property for an object in a given state
+  31:lvgl/src/lv_core/lv_obj_style_dec.h ****  * ---------------------------------------------------------
+  32:lvgl/src/lv_core/lv_obj_style_dec.h ****  *  - For example:
+  33:lvgl/src/lv_core/lv_obj_style_dec.h ****  *      `lv_obj_set_style_local_border_width(btn1, LV_BTN_PART_MAIN, LV_STATE_PRESSED, 2);`
+  34:lvgl/src/lv_core/lv_obj_style_dec.h ****  *
+  35:lvgl/src/lv_core/lv_obj_style_dec.h ****  * Get a local style property's value of an object in a given state
+  36:lvgl/src/lv_core/lv_obj_style_dec.h ****  * ----------------------------------------------------------------
+  37:lvgl/src/lv_core/lv_obj_style_dec.h ****  *  - Return the best matching property in the given state.
+  38:lvgl/src/lv_core/lv_obj_style_dec.h ****  *  - E.g. if `state` parameter is LV_STATE_PRESSED | LV_STATE_CHECKED` but the property defined on
+  39:lvgl/src/lv_core/lv_obj_style_dec.h ****  *    `LV_STATE_PRESSED` and `LV_STATE_DEFAULT` the best matching state is `LV_STATE_PRESSED`
+ARM GAS  D:\Temp\ccElHyXh.s 			page 11
+
+
+  40:lvgl/src/lv_core/lv_obj_style_dec.h ****  *    (because it has higher precedence) and it will be returned.
+  41:lvgl/src/lv_core/lv_obj_style_dec.h ****  *  - If the property is not found even in `LV_STATE_DEFAULT` `-1` is returned.
+  42:lvgl/src/lv_core/lv_obj_style_dec.h ****  *  - For example:
+  43:lvgl/src/lv_core/lv_obj_style_dec.h ****  *      `//Type of result should be lv_style_int_t/lv_opa_t/lv_color_t/const void * according to th
+  44:lvgl/src/lv_core/lv_obj_style_dec.h ****  *      `lv_style_int_t result;`
+  45:lvgl/src/lv_core/lv_obj_style_dec.h ****  *      `lv_obj_get_style_local_border_width(btn1, LV_BTN_PART_MAIN, LV_STATE_PRESSED, &result);`
+  46:lvgl/src/lv_core/lv_obj_style_dec.h ****  *      `if(weight > 0) ...the property is found and loaded into result...`
+  47:lvgl/src/lv_core/lv_obj_style_dec.h ****  *
+  48:lvgl/src/lv_core/lv_obj_style_dec.h ****  * Get the value from a style in a given state
+  49:lvgl/src/lv_core/lv_obj_style_dec.h ****  * -------------------------------------------
+  50:lvgl/src/lv_core/lv_obj_style_dec.h ****  * - The same rules applies to the return value then for "lv_obj_get_style_local_...()" above
+  51:lvgl/src/lv_core/lv_obj_style_dec.h ****  * - For example
+  52:lvgl/src/lv_core/lv_obj_style_dec.h ****  *      `int16_t weight = lv_style_get_border_width(&style1, LV_STATE_PRESSED, &result);`
+  53:lvgl/src/lv_core/lv_obj_style_dec.h ****  *      `if(weight > 0) ...the property is found and loaded into result...`
+  54:lvgl/src/lv_core/lv_obj_style_dec.h **** 
+  55:lvgl/src/lv_core/lv_obj_style_dec.h ****  * Set a value in a style in a given state
+  56:lvgl/src/lv_core/lv_obj_style_dec.h ****  * ---------------------------------------
+  57:lvgl/src/lv_core/lv_obj_style_dec.h ****  * - For example
+  58:lvgl/src/lv_core/lv_obj_style_dec.h ****  *      `lv_style_set_border_width(&style1, LV_STATE_PRESSED, 2);`
+  59:lvgl/src/lv_core/lv_obj_style_dec.h ****  */
+  60:lvgl/src/lv_core/lv_obj_style_dec.h **** 
+  61:lvgl/src/lv_core/lv_obj_style_dec.h **** #define _OBJ_GET_STYLE_scalar(prop_name, func_name, value_type, style_type)                        
+  62:lvgl/src/lv_core/lv_obj_style_dec.h ****     static inline value_type lv_obj_get_style_##func_name (const lv_obj_t * obj, uint8_t part)     
+  63:lvgl/src/lv_core/lv_obj_style_dec.h ****     {                                                                                              
+  64:lvgl/src/lv_core/lv_obj_style_dec.h ****         return (value_type) _lv_obj_get_style##style_type (obj, part, LV_STYLE_##prop_name);       
+  65:lvgl/src/lv_core/lv_obj_style_dec.h ****     }
+  66:lvgl/src/lv_core/lv_obj_style_dec.h **** 
+  67:lvgl/src/lv_core/lv_obj_style_dec.h **** #define _OBJ_GET_STYLE_nonscalar(prop_name, func_name, value_type, style_type)                     
+  68:lvgl/src/lv_core/lv_obj_style_dec.h ****     static inline value_type lv_obj_get_style_##func_name (const lv_obj_t * obj, uint8_t part)     
+  69:lvgl/src/lv_core/lv_obj_style_dec.h ****     {                                                                                              
+  70:lvgl/src/lv_core/lv_obj_style_dec.h ****         return _lv_obj_get_style##style_type (obj, part, LV_STYLE_##prop_name);                    
+  71:lvgl/src/lv_core/lv_obj_style_dec.h ****     }
+  72:lvgl/src/lv_core/lv_obj_style_dec.h **** 
+  73:lvgl/src/lv_core/lv_obj_style_dec.h **** #define _OBJ_SET_STYLE_LOCAL_scalar(prop_name, func_name, value_type, style_type)                  
+  74:lvgl/src/lv_core/lv_obj_style_dec.h ****     static inline void lv_obj_set_style_local_##func_name (lv_obj_t * obj, uint8_t part, lv_state_t
+  75:lvgl/src/lv_core/lv_obj_style_dec.h ****     {                                                                                              
+  76:lvgl/src/lv_core/lv_obj_style_dec.h ****         _lv_obj_set_style_local##style_type (obj, part, LV_STYLE_##prop_name | (state << LV_STYLE_S
+  77:lvgl/src/lv_core/lv_obj_style_dec.h ****     }
+  78:lvgl/src/lv_core/lv_obj_style_dec.h **** 
+  79:lvgl/src/lv_core/lv_obj_style_dec.h **** #define _OBJ_SET_STYLE_LOCAL_nonscalar(prop_name, func_name, value_type, style_type)               
+  80:lvgl/src/lv_core/lv_obj_style_dec.h ****     static inline void lv_obj_set_style_local_##func_name (lv_obj_t * obj, uint8_t part, lv_state_t
+  81:lvgl/src/lv_core/lv_obj_style_dec.h ****     {                                                                                              
+  82:lvgl/src/lv_core/lv_obj_style_dec.h ****         _lv_obj_set_style_local##style_type (obj, part, LV_STYLE_##prop_name | (state << LV_STYLE_S
+  83:lvgl/src/lv_core/lv_obj_style_dec.h ****     }
+  84:lvgl/src/lv_core/lv_obj_style_dec.h **** 
+  85:lvgl/src/lv_core/lv_obj_style_dec.h **** #define _OBJ_SET_STYLE_scalar(prop_name, func_name, value_type, style_type)                        
+  86:lvgl/src/lv_core/lv_obj_style_dec.h ****     static inline void lv_style_set_##func_name (lv_style_t * style, lv_state_t state, value_type v
+  87:lvgl/src/lv_core/lv_obj_style_dec.h ****     {                                                                                              
+  88:lvgl/src/lv_core/lv_obj_style_dec.h ****         _lv_style_set##style_type (style, LV_STYLE_##prop_name | (state << LV_STYLE_STATE_POS), val
+  89:lvgl/src/lv_core/lv_obj_style_dec.h ****     }
+  90:lvgl/src/lv_core/lv_obj_style_dec.h **** 
+  91:lvgl/src/lv_core/lv_obj_style_dec.h **** #define _OBJ_SET_STYLE_nonscalar(prop_name, func_name, value_type, style_type)                     
+  92:lvgl/src/lv_core/lv_obj_style_dec.h ****     static inline void lv_style_set_##func_name (lv_style_t * style, lv_state_t state, value_type v
+  93:lvgl/src/lv_core/lv_obj_style_dec.h ****     {                                                                                              
+  94:lvgl/src/lv_core/lv_obj_style_dec.h ****         _lv_style_set##style_type (style, LV_STYLE_##prop_name | (state << LV_STYLE_STATE_POS), val
+  95:lvgl/src/lv_core/lv_obj_style_dec.h ****     }
+  96:lvgl/src/lv_core/lv_obj_style_dec.h **** 
+ARM GAS  D:\Temp\ccElHyXh.s 			page 12
+
+
+  97:lvgl/src/lv_core/lv_obj_style_dec.h **** #define _LV_OBJ_STYLE_SET_GET_DECLARE(prop_name, func_name, value_type, style_type, scalar)        
+  98:lvgl/src/lv_core/lv_obj_style_dec.h ****     _OBJ_GET_STYLE_##scalar(prop_name, func_name, value_type, style_type)                          
+  99:lvgl/src/lv_core/lv_obj_style_dec.h ****     _OBJ_SET_STYLE_LOCAL_##scalar(prop_name, func_name, value_type, style_type)                    
+ 100:lvgl/src/lv_core/lv_obj_style_dec.h ****     _OBJ_SET_STYLE_##scalar(prop_name, func_name, value_type, style_type)
+ 101:lvgl/src/lv_core/lv_obj_style_dec.h **** 
+ 102:lvgl/src/lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(RADIUS, radius, lv_style_int_t, _int, scalar)
+ 103:lvgl/src/lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(CLIP_CORNER, clip_corner, bool, _int, scalar)
+ 104:lvgl/src/lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(SIZE, size, lv_style_int_t, _int, scalar)
+ 105:lvgl/src/lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(TRANSFORM_WIDTH, transform_width, lv_style_int_t, _int, scalar)
+ 106:lvgl/src/lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(TRANSFORM_HEIGHT, transform_height, lv_style_int_t, _int, scalar)
+ 107:lvgl/src/lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(TRANSFORM_ANGLE, transform_angle, lv_style_int_t, _int, scalar)
+ 108:lvgl/src/lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(TRANSFORM_ZOOM, transform_zoom, lv_style_int_t, _int, scalar)
+ 109:lvgl/src/lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(OPA_SCALE, opa_scale, lv_opa_t, _opa, scalar)
+ 112              		.loc 2 109 1 view .LVU19
+ 113              	.LBB87:
+ 114              		.loc 2 109 1 view .LVU20
+ 115 0002 CBB2     		uxtb	r3, r1
+ 116 0004 48F20C02 		movw	r2, #32780
+ 117 0008 0021     		movs	r1, #0
+ 118              	.LVL11:
+ 119              		.loc 2 109 1 is_stmt 0 view .LVU21
+ 120 000a FFF7FEFF 		bl	_lv_obj_set_style_local_opa
+ 121              	.LVL12:
+ 122              		.loc 2 109 1 view .LVU22
+ 123              	.LBE87:
+ 124              	.LBE86:
+ 409:lvgl/src/lv_core/lv_disp.c **** 
+ 125              		.loc 1 409 1 view .LVU23
+ 126 000e 08BD     		pop	{r3, pc}
+ 127              		.cfi_endproc
+ 128              	.LFE478:
+ 130              		.section	.text.lv_disp_get_scr_act,"ax",%progbits
+ 131              		.align	1
+ 132              		.global	lv_disp_get_scr_act
+ 133              		.syntax unified
+ 134              		.thumb
+ 135              		.thumb_func
+ 136              		.fpu fpv4-sp-d16
+ 138              	lv_disp_get_scr_act:
+ 139              	.LVL13:
+ 140              	.LFB463:
+  50:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 141              		.loc 1 50 1 is_stmt 1 view -0
+ 142              		.cfi_startproc
+ 143              		@ args = 0, pretend = 0, frame = 0
+ 144              		@ frame_needed = 0, uses_anonymous_args = 0
+  50:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 145              		.loc 1 50 1 is_stmt 0 view .LVU25
+ 146 0000 08B5     		push	{r3, lr}
+ 147              	.LCFI2:
+ 148              		.cfi_def_cfa_offset 8
+ 149              		.cfi_offset 3, -8
+ 150              		.cfi_offset 14, -4
+  51:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 151              		.loc 1 51 5 is_stmt 1 view .LVU26
+  51:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 152              		.loc 1 51 7 is_stmt 0 view .LVU27
+ARM GAS  D:\Temp\ccElHyXh.s 			page 13
+
+
+ 153 0002 0346     		mov	r3, r0
+ 154 0004 10B1     		cbz	r0, .L12
+ 155              	.L8:
+  52:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("no display registered to get its active screen");
+ 156              		.loc 1 52 5 is_stmt 1 view .LVU28
+  52:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("no display registered to get its active screen");
+ 157              		.loc 1 52 7 is_stmt 0 view .LVU29
+ 158 0006 2BB1     		cbz	r3, .L10
+  57:lvgl/src/lv_core/lv_disp.c **** }
+ 159              		.loc 1 57 5 is_stmt 1 view .LVU30
+  57:lvgl/src/lv_core/lv_disp.c **** }
+ 160              		.loc 1 57 16 is_stmt 0 view .LVU31
+ 161 0008 586C     		ldr	r0, [r3, #68]
+ 162              	.LVL14:
+ 163              	.L7:
+  58:lvgl/src/lv_core/lv_disp.c **** 
+ 164              		.loc 1 58 1 view .LVU32
+ 165 000a 08BD     		pop	{r3, pc}
+ 166              	.LVL15:
+ 167              	.L12:
+  51:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 168              		.loc 1 51 15 is_stmt 1 discriminator 1 view .LVU33
+  51:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 169              		.loc 1 51 22 is_stmt 0 discriminator 1 view .LVU34
+ 170 000c FFF7FEFF 		bl	lv_disp_get_default
+ 171              	.LVL16:
+  51:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 172              		.loc 1 51 22 discriminator 1 view .LVU35
+ 173 0010 0346     		mov	r3, r0
+ 174              	.LVL17:
+  51:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 175              		.loc 1 51 22 discriminator 1 view .LVU36
+ 176 0012 F8E7     		b	.L8
+ 177              	.L10:
+  54:lvgl/src/lv_core/lv_disp.c ****     }
+ 178              		.loc 1 54 16 view .LVU37
+ 179 0014 0020     		movs	r0, #0
+ 180              	.LVL18:
+  54:lvgl/src/lv_core/lv_disp.c ****     }
+ 181              		.loc 1 54 16 view .LVU38
+ 182 0016 F8E7     		b	.L7
+ 183              		.cfi_endproc
+ 184              	.LFE463:
+ 186              		.section	.text.lv_disp_get_scr_prev,"ax",%progbits
+ 187              		.align	1
+ 188              		.global	lv_disp_get_scr_prev
+ 189              		.syntax unified
+ 190              		.thumb
+ 191              		.thumb_func
+ 192              		.fpu fpv4-sp-d16
+ 194              	lv_disp_get_scr_prev:
+ 195              	.LVL19:
+ 196              	.LFB464:
+  67:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 197              		.loc 1 67 1 is_stmt 1 view -0
+ 198              		.cfi_startproc
+ 199              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  D:\Temp\ccElHyXh.s 			page 14
+
+
+ 200              		@ frame_needed = 0, uses_anonymous_args = 0
+  67:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 201              		.loc 1 67 1 is_stmt 0 view .LVU40
+ 202 0000 08B5     		push	{r3, lr}
+ 203              	.LCFI3:
+ 204              		.cfi_def_cfa_offset 8
+ 205              		.cfi_offset 3, -8
+ 206              		.cfi_offset 14, -4
+  68:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 207              		.loc 1 68 5 is_stmt 1 view .LVU41
+  68:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 208              		.loc 1 68 7 is_stmt 0 view .LVU42
+ 209 0002 0346     		mov	r3, r0
+ 210 0004 10B1     		cbz	r0, .L18
+ 211              	.L14:
+  69:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("no display registered to get its previous screen");
+ 212              		.loc 1 69 5 is_stmt 1 view .LVU43
+  69:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("no display registered to get its previous screen");
+ 213              		.loc 1 69 7 is_stmt 0 view .LVU44
+ 214 0006 2BB1     		cbz	r3, .L16
+  74:lvgl/src/lv_core/lv_disp.c **** }
+ 215              		.loc 1 74 5 is_stmt 1 view .LVU45
+  74:lvgl/src/lv_core/lv_disp.c **** }
+ 216              		.loc 1 74 16 is_stmt 0 view .LVU46
+ 217 0008 986C     		ldr	r0, [r3, #72]
+ 218              	.LVL20:
+ 219              	.L13:
+  75:lvgl/src/lv_core/lv_disp.c **** 
+ 220              		.loc 1 75 1 view .LVU47
+ 221 000a 08BD     		pop	{r3, pc}
+ 222              	.LVL21:
+ 223              	.L18:
+  68:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 224              		.loc 1 68 15 is_stmt 1 discriminator 1 view .LVU48
+  68:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 225              		.loc 1 68 22 is_stmt 0 discriminator 1 view .LVU49
+ 226 000c FFF7FEFF 		bl	lv_disp_get_default
+ 227              	.LVL22:
+  68:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 228              		.loc 1 68 22 discriminator 1 view .LVU50
+ 229 0010 0346     		mov	r3, r0
+ 230              	.LVL23:
+  68:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 231              		.loc 1 68 22 discriminator 1 view .LVU51
+ 232 0012 F8E7     		b	.L14
+ 233              	.L16:
+  71:lvgl/src/lv_core/lv_disp.c ****     }
+ 234              		.loc 1 71 16 view .LVU52
+ 235 0014 0020     		movs	r0, #0
+ 236              	.LVL24:
+  71:lvgl/src/lv_core/lv_disp.c ****     }
+ 237              		.loc 1 71 16 view .LVU53
+ 238 0016 F8E7     		b	.L13
+ 239              		.cfi_endproc
+ 240              	.LFE464:
+ 242              		.section	.text.lv_disp_load_scr,"ax",%progbits
+ 243              		.align	1
+ARM GAS  D:\Temp\ccElHyXh.s 			page 15
+
+
+ 244              		.global	lv_disp_load_scr
+ 245              		.syntax unified
+ 246              		.thumb
+ 247              		.thumb_func
+ 248              		.fpu fpv4-sp-d16
+ 250              	lv_disp_load_scr:
+ 251              	.LVL25:
+ 252              	.LFB465:
+  82:lvgl/src/lv_core/lv_disp.c ****     lv_disp_t * d = lv_obj_get_disp(scr);
+ 253              		.loc 1 82 1 is_stmt 1 view -0
+ 254              		.cfi_startproc
+ 255              		@ args = 0, pretend = 0, frame = 0
+ 256              		@ frame_needed = 0, uses_anonymous_args = 0
+  82:lvgl/src/lv_core/lv_disp.c ****     lv_disp_t * d = lv_obj_get_disp(scr);
+ 257              		.loc 1 82 1 is_stmt 0 view .LVU55
+ 258 0000 10B5     		push	{r4, lr}
+ 259              	.LCFI4:
+ 260              		.cfi_def_cfa_offset 8
+ 261              		.cfi_offset 4, -8
+ 262              		.cfi_offset 14, -4
+ 263 0002 0446     		mov	r4, r0
+  83:lvgl/src/lv_core/lv_disp.c ****     if(!d) return;  /*Shouldn't happen, just to be sure*/
+ 264              		.loc 1 83 5 is_stmt 1 view .LVU56
+  83:lvgl/src/lv_core/lv_disp.c ****     if(!d) return;  /*Shouldn't happen, just to be sure*/
+ 265              		.loc 1 83 21 is_stmt 0 view .LVU57
+ 266 0004 FFF7FEFF 		bl	lv_obj_get_disp
+ 267              	.LVL26:
+  84:lvgl/src/lv_core/lv_disp.c ****     d->act_scr = scr;
+ 268              		.loc 1 84 5 is_stmt 1 view .LVU58
+  84:lvgl/src/lv_core/lv_disp.c ****     d->act_scr = scr;
+ 269              		.loc 1 84 7 is_stmt 0 view .LVU59
+ 270 0008 18B1     		cbz	r0, .L19
+  85:lvgl/src/lv_core/lv_disp.c **** 
+ 271              		.loc 1 85 5 is_stmt 1 view .LVU60
+  85:lvgl/src/lv_core/lv_disp.c **** 
+ 272              		.loc 1 85 16 is_stmt 0 view .LVU61
+ 273 000a 4464     		str	r4, [r0, #68]
+  87:lvgl/src/lv_core/lv_disp.c **** }
+ 274              		.loc 1 87 5 is_stmt 1 view .LVU62
+ 275 000c 2046     		mov	r0, r4
+ 276              	.LVL27:
+  87:lvgl/src/lv_core/lv_disp.c **** }
+ 277              		.loc 1 87 5 is_stmt 0 view .LVU63
+ 278 000e FFF7FEFF 		bl	lv_obj_invalidate
+ 279              	.LVL28:
+ 280              	.L19:
+  88:lvgl/src/lv_core/lv_disp.c **** 
+ 281              		.loc 1 88 1 view .LVU64
+ 282 0012 10BD     		pop	{r4, pc}
+  88:lvgl/src/lv_core/lv_disp.c **** 
+ 283              		.loc 1 88 1 view .LVU65
+ 284              		.cfi_endproc
+ 285              	.LFE465:
+ 287              		.section	.text.scr_load_anim_start,"ax",%progbits
+ 288              		.align	1
+ 289              		.syntax unified
+ 290              		.thumb
+ARM GAS  D:\Temp\ccElHyXh.s 			page 16
+
+
+ 291              		.thumb_func
+ 292              		.fpu fpv4-sp-d16
+ 294              	scr_load_anim_start:
+ 295              	.LVL29:
+ 296              	.LFB477:
+ 399:lvgl/src/lv_core/lv_disp.c ****     lv_disp_t * d = lv_obj_get_disp(a->var);
+ 297              		.loc 1 399 1 is_stmt 1 view -0
+ 298              		.cfi_startproc
+ 299              		@ args = 0, pretend = 0, frame = 0
+ 300              		@ frame_needed = 0, uses_anonymous_args = 0
+ 399:lvgl/src/lv_core/lv_disp.c ****     lv_disp_t * d = lv_obj_get_disp(a->var);
+ 301              		.loc 1 399 1 is_stmt 0 view .LVU67
+ 302 0000 38B5     		push	{r3, r4, r5, lr}
+ 303              	.LCFI5:
+ 304              		.cfi_def_cfa_offset 16
+ 305              		.cfi_offset 3, -16
+ 306              		.cfi_offset 4, -12
+ 307              		.cfi_offset 5, -8
+ 308              		.cfi_offset 14, -4
+ 309 0002 0446     		mov	r4, r0
+ 400:lvgl/src/lv_core/lv_disp.c ****     d->prev_scr = lv_scr_act();
+ 310              		.loc 1 400 5 is_stmt 1 view .LVU68
+ 400:lvgl/src/lv_core/lv_disp.c ****     d->prev_scr = lv_scr_act();
+ 311              		.loc 1 400 21 is_stmt 0 view .LVU69
+ 312 0004 0068     		ldr	r0, [r0]
+ 313              	.LVL30:
+ 400:lvgl/src/lv_core/lv_disp.c ****     d->prev_scr = lv_scr_act();
+ 314              		.loc 1 400 21 view .LVU70
+ 315 0006 FFF7FEFF 		bl	lv_obj_get_disp
+ 316              	.LVL31:
+ 317 000a 0546     		mov	r5, r0
+ 318              	.LVL32:
+ 401:lvgl/src/lv_core/lv_disp.c **** 
+ 319              		.loc 1 401 5 is_stmt 1 view .LVU71
+ 320              	.LBB88:
+ 321              	.LBI88:
+ 322              		.file 3 "lvgl/src/lv_core/lv_disp.h"
+   1:lvgl/src/lv_core/lv_disp.h **** /**
+   2:lvgl/src/lv_core/lv_disp.h ****  * @file lv_disp.h
+   3:lvgl/src/lv_core/lv_disp.h ****  *
+   4:lvgl/src/lv_core/lv_disp.h ****  */
+   5:lvgl/src/lv_core/lv_disp.h **** 
+   6:lvgl/src/lv_core/lv_disp.h **** #ifndef LV_DISP_H
+   7:lvgl/src/lv_core/lv_disp.h **** #define LV_DISP_H
+   8:lvgl/src/lv_core/lv_disp.h **** 
+   9:lvgl/src/lv_core/lv_disp.h **** #ifdef __cplusplus
+  10:lvgl/src/lv_core/lv_disp.h **** extern "C" {
+  11:lvgl/src/lv_core/lv_disp.h **** #endif
+  12:lvgl/src/lv_core/lv_disp.h **** 
+  13:lvgl/src/lv_core/lv_disp.h **** /*********************
+  14:lvgl/src/lv_core/lv_disp.h ****  *      INCLUDES
+  15:lvgl/src/lv_core/lv_disp.h ****  *********************/
+  16:lvgl/src/lv_core/lv_disp.h **** #include "../lv_hal/lv_hal.h"
+  17:lvgl/src/lv_core/lv_disp.h **** #include "lv_obj.h"
+  18:lvgl/src/lv_core/lv_disp.h **** 
+  19:lvgl/src/lv_core/lv_disp.h **** /*********************
+  20:lvgl/src/lv_core/lv_disp.h ****  *      DEFINES
+ARM GAS  D:\Temp\ccElHyXh.s 			page 17
+
+
+  21:lvgl/src/lv_core/lv_disp.h ****  *********************/
+  22:lvgl/src/lv_core/lv_disp.h **** 
+  23:lvgl/src/lv_core/lv_disp.h **** /**********************
+  24:lvgl/src/lv_core/lv_disp.h ****  *      TYPEDEFS
+  25:lvgl/src/lv_core/lv_disp.h ****  **********************/
+  26:lvgl/src/lv_core/lv_disp.h **** 
+  27:lvgl/src/lv_core/lv_disp.h **** typedef enum {
+  28:lvgl/src/lv_core/lv_disp.h ****     LV_SCR_LOAD_ANIM_NONE,
+  29:lvgl/src/lv_core/lv_disp.h ****     LV_SCR_LOAD_ANIM_OVER_LEFT,
+  30:lvgl/src/lv_core/lv_disp.h ****     LV_SCR_LOAD_ANIM_OVER_RIGHT,
+  31:lvgl/src/lv_core/lv_disp.h ****     LV_SCR_LOAD_ANIM_OVER_TOP,
+  32:lvgl/src/lv_core/lv_disp.h ****     LV_SCR_LOAD_ANIM_OVER_BOTTOM,
+  33:lvgl/src/lv_core/lv_disp.h ****     LV_SCR_LOAD_ANIM_MOVE_LEFT,
+  34:lvgl/src/lv_core/lv_disp.h ****     LV_SCR_LOAD_ANIM_MOVE_RIGHT,
+  35:lvgl/src/lv_core/lv_disp.h ****     LV_SCR_LOAD_ANIM_MOVE_TOP,
+  36:lvgl/src/lv_core/lv_disp.h ****     LV_SCR_LOAD_ANIM_MOVE_BOTTOM,
+  37:lvgl/src/lv_core/lv_disp.h ****     LV_SCR_LOAD_ANIM_FADE_ON,
+  38:lvgl/src/lv_core/lv_disp.h **** } lv_scr_load_anim_t;
+  39:lvgl/src/lv_core/lv_disp.h **** 
+  40:lvgl/src/lv_core/lv_disp.h **** /**********************
+  41:lvgl/src/lv_core/lv_disp.h ****  * GLOBAL PROTOTYPES
+  42:lvgl/src/lv_core/lv_disp.h ****  **********************/
+  43:lvgl/src/lv_core/lv_disp.h **** 
+  44:lvgl/src/lv_core/lv_disp.h **** /**
+  45:lvgl/src/lv_core/lv_disp.h ****  * Return with a pointer to the active screen
+  46:lvgl/src/lv_core/lv_disp.h ****  * @param disp pointer to display which active screen should be get. (NULL to use the default
+  47:lvgl/src/lv_core/lv_disp.h ****  * screen)
+  48:lvgl/src/lv_core/lv_disp.h ****  * @return pointer to the active screen object (loaded by 'lv_scr_load()')
+  49:lvgl/src/lv_core/lv_disp.h ****  */
+  50:lvgl/src/lv_core/lv_disp.h **** lv_obj_t * lv_disp_get_scr_act(lv_disp_t * disp);
+  51:lvgl/src/lv_core/lv_disp.h **** 
+  52:lvgl/src/lv_core/lv_disp.h **** /**
+  53:lvgl/src/lv_core/lv_disp.h ****  * Return with a pointer to the previous screen. Only used during screen transitions.
+  54:lvgl/src/lv_core/lv_disp.h ****  * @param disp pointer to display which previous screen should be get. (NULL to use the default
+  55:lvgl/src/lv_core/lv_disp.h ****  * screen)
+  56:lvgl/src/lv_core/lv_disp.h ****  * @return pointer to the previous screen object or NULL if not used now
+  57:lvgl/src/lv_core/lv_disp.h ****  */
+  58:lvgl/src/lv_core/lv_disp.h **** lv_obj_t * lv_disp_get_scr_prev(lv_disp_t * disp);
+  59:lvgl/src/lv_core/lv_disp.h **** 
+  60:lvgl/src/lv_core/lv_disp.h **** /**
+  61:lvgl/src/lv_core/lv_disp.h ****  * Make a screen active
+  62:lvgl/src/lv_core/lv_disp.h ****  * @param scr pointer to a screen
+  63:lvgl/src/lv_core/lv_disp.h ****  */
+  64:lvgl/src/lv_core/lv_disp.h **** void lv_disp_load_scr(lv_obj_t * scr);
+  65:lvgl/src/lv_core/lv_disp.h **** 
+  66:lvgl/src/lv_core/lv_disp.h **** /**
+  67:lvgl/src/lv_core/lv_disp.h ****  * Return with the top layer. (Same on every screen and it is above the normal screen layer)
+  68:lvgl/src/lv_core/lv_disp.h ****  * @param disp pointer to display which top layer should be get. (NULL to use the default screen)
+  69:lvgl/src/lv_core/lv_disp.h ****  * @return pointer to the top layer object  (transparent screen sized lv_obj)
+  70:lvgl/src/lv_core/lv_disp.h ****  */
+  71:lvgl/src/lv_core/lv_disp.h **** lv_obj_t * lv_disp_get_layer_top(lv_disp_t * disp);
+  72:lvgl/src/lv_core/lv_disp.h **** 
+  73:lvgl/src/lv_core/lv_disp.h **** /**
+  74:lvgl/src/lv_core/lv_disp.h ****  * Return with the sys. layer. (Same on every screen and it is above the normal screen and the top
+  75:lvgl/src/lv_core/lv_disp.h ****  * layer)
+  76:lvgl/src/lv_core/lv_disp.h ****  * @param disp pointer to display which sys. layer should be get. (NULL to use the default screen)
+  77:lvgl/src/lv_core/lv_disp.h ****  * @return pointer to the sys layer object  (transparent screen sized lv_obj)
+ARM GAS  D:\Temp\ccElHyXh.s 			page 18
+
+
+  78:lvgl/src/lv_core/lv_disp.h ****  */
+  79:lvgl/src/lv_core/lv_disp.h **** lv_obj_t * lv_disp_get_layer_sys(lv_disp_t * disp);
+  80:lvgl/src/lv_core/lv_disp.h **** 
+  81:lvgl/src/lv_core/lv_disp.h **** /**
+  82:lvgl/src/lv_core/lv_disp.h ****  * Assign a screen to a display.
+  83:lvgl/src/lv_core/lv_disp.h ****  * @param disp pointer to a display where to assign the screen
+  84:lvgl/src/lv_core/lv_disp.h ****  * @param scr pointer to a screen object to assign
+  85:lvgl/src/lv_core/lv_disp.h ****  */
+  86:lvgl/src/lv_core/lv_disp.h **** void lv_disp_assign_screen(lv_disp_t * disp, lv_obj_t * scr);
+  87:lvgl/src/lv_core/lv_disp.h **** 
+  88:lvgl/src/lv_core/lv_disp.h **** /**
+  89:lvgl/src/lv_core/lv_disp.h ****  * Set the background color of a display
+  90:lvgl/src/lv_core/lv_disp.h ****  * @param disp pointer to a display
+  91:lvgl/src/lv_core/lv_disp.h ****  * @param color color of the background
+  92:lvgl/src/lv_core/lv_disp.h ****  */
+  93:lvgl/src/lv_core/lv_disp.h **** void lv_disp_set_bg_color(lv_disp_t * disp, lv_color_t color);
+  94:lvgl/src/lv_core/lv_disp.h **** 
+  95:lvgl/src/lv_core/lv_disp.h **** /**
+  96:lvgl/src/lv_core/lv_disp.h ****  * Set the background image of a display
+  97:lvgl/src/lv_core/lv_disp.h ****  * @param disp pointer to a display
+  98:lvgl/src/lv_core/lv_disp.h ****  * @param img_src path to file or pointer to an `lv_img_dsc_t` variable
+  99:lvgl/src/lv_core/lv_disp.h ****  */
+ 100:lvgl/src/lv_core/lv_disp.h **** void lv_disp_set_bg_image(lv_disp_t * disp, const void  * img_src);
+ 101:lvgl/src/lv_core/lv_disp.h **** 
+ 102:lvgl/src/lv_core/lv_disp.h **** /**
+ 103:lvgl/src/lv_core/lv_disp.h ****  * Opacity of the background
+ 104:lvgl/src/lv_core/lv_disp.h ****  * @param disp pointer to a display
+ 105:lvgl/src/lv_core/lv_disp.h ****  * @param opa opacity (0..255)
+ 106:lvgl/src/lv_core/lv_disp.h ****  */
+ 107:lvgl/src/lv_core/lv_disp.h **** void lv_disp_set_bg_opa(lv_disp_t * disp, lv_opa_t opa);
+ 108:lvgl/src/lv_core/lv_disp.h **** 
+ 109:lvgl/src/lv_core/lv_disp.h **** #if LV_USE_ANIMATION
+ 110:lvgl/src/lv_core/lv_disp.h **** 
+ 111:lvgl/src/lv_core/lv_disp.h **** /**
+ 112:lvgl/src/lv_core/lv_disp.h ****  * Switch screen with animation
+ 113:lvgl/src/lv_core/lv_disp.h ****  * @param scr pointer to the new screen to load
+ 114:lvgl/src/lv_core/lv_disp.h ****  * @param anim_type type of the animation from `lv_scr_load_anim_t`. E.g.  `LV_SCR_LOAD_ANIM_MOVE_L
+ 115:lvgl/src/lv_core/lv_disp.h ****  * @param time time of the animation
+ 116:lvgl/src/lv_core/lv_disp.h ****  * @param delay delay before the transition
+ 117:lvgl/src/lv_core/lv_disp.h ****  * @param auto_del true: automatically delete the old screen
+ 118:lvgl/src/lv_core/lv_disp.h ****  */
+ 119:lvgl/src/lv_core/lv_disp.h **** void lv_scr_load_anim(lv_obj_t * scr, lv_scr_load_anim_t anim_type, uint32_t time, uint32_t delay, 
+ 120:lvgl/src/lv_core/lv_disp.h **** 
+ 121:lvgl/src/lv_core/lv_disp.h **** #endif
+ 122:lvgl/src/lv_core/lv_disp.h **** /**
+ 123:lvgl/src/lv_core/lv_disp.h ****  * Get elapsed time since last user activity on a display (e.g. click)
+ 124:lvgl/src/lv_core/lv_disp.h ****  * @param disp pointer to an display (NULL to get the overall smallest inactivity)
+ 125:lvgl/src/lv_core/lv_disp.h ****  * @return elapsed ticks (milliseconds) since the last activity
+ 126:lvgl/src/lv_core/lv_disp.h ****  */
+ 127:lvgl/src/lv_core/lv_disp.h **** uint32_t lv_disp_get_inactive_time(const lv_disp_t * disp);
+ 128:lvgl/src/lv_core/lv_disp.h **** 
+ 129:lvgl/src/lv_core/lv_disp.h **** /**
+ 130:lvgl/src/lv_core/lv_disp.h ****  * Manually trigger an activity on a display
+ 131:lvgl/src/lv_core/lv_disp.h ****  * @param disp pointer to an display (NULL to use the default display)
+ 132:lvgl/src/lv_core/lv_disp.h ****  */
+ 133:lvgl/src/lv_core/lv_disp.h **** void lv_disp_trig_activity(lv_disp_t * disp);
+ 134:lvgl/src/lv_core/lv_disp.h **** 
+ARM GAS  D:\Temp\ccElHyXh.s 			page 19
+
+
+ 135:lvgl/src/lv_core/lv_disp.h **** /**
+ 136:lvgl/src/lv_core/lv_disp.h ****  * Clean any CPU cache that is related to the display.
+ 137:lvgl/src/lv_core/lv_disp.h ****  * @param disp pointer to an display (NULL to use the default display)
+ 138:lvgl/src/lv_core/lv_disp.h ****  */
+ 139:lvgl/src/lv_core/lv_disp.h **** void lv_disp_clean_dcache(lv_disp_t * disp);
+ 140:lvgl/src/lv_core/lv_disp.h **** 
+ 141:lvgl/src/lv_core/lv_disp.h **** /**
+ 142:lvgl/src/lv_core/lv_disp.h ****  * Get a pointer to the screen refresher task to
+ 143:lvgl/src/lv_core/lv_disp.h ****  * modify its parameters with `lv_task_...` functions.
+ 144:lvgl/src/lv_core/lv_disp.h ****  * @param disp pointer to a display
+ 145:lvgl/src/lv_core/lv_disp.h ****  * @return pointer to the display refresher task. (NULL on error)
+ 146:lvgl/src/lv_core/lv_disp.h ****  */
+ 147:lvgl/src/lv_core/lv_disp.h **** lv_task_t * _lv_disp_get_refr_task(lv_disp_t * disp);
+ 148:lvgl/src/lv_core/lv_disp.h **** 
+ 149:lvgl/src/lv_core/lv_disp.h **** /*------------------------------------------------
+ 150:lvgl/src/lv_core/lv_disp.h ****  * To improve backward compatibility
+ 151:lvgl/src/lv_core/lv_disp.h ****  * Recommended only if you have one display
+ 152:lvgl/src/lv_core/lv_disp.h ****  *------------------------------------------------*/
+ 153:lvgl/src/lv_core/lv_disp.h **** 
+ 154:lvgl/src/lv_core/lv_disp.h **** /**
+ 155:lvgl/src/lv_core/lv_disp.h ****  * Get the active screen of the default display
+ 156:lvgl/src/lv_core/lv_disp.h ****  * @return pointer to the active screen
+ 157:lvgl/src/lv_core/lv_disp.h ****  */
+ 158:lvgl/src/lv_core/lv_disp.h **** static inline lv_obj_t * lv_scr_act(void)
+ 323              		.loc 3 158 26 view .LVU72
+ 324              	.LBB89:
+ 159:lvgl/src/lv_core/lv_disp.h **** {
+ 160:lvgl/src/lv_core/lv_disp.h ****     return lv_disp_get_scr_act(lv_disp_get_default());
+ 325              		.loc 3 160 5 view .LVU73
+ 326              		.loc 3 160 12 is_stmt 0 view .LVU74
+ 327 000c FFF7FEFF 		bl	lv_disp_get_default
+ 328              	.LVL33:
+ 329              		.loc 3 160 12 view .LVU75
+ 330 0010 FFF7FEFF 		bl	lv_disp_get_scr_act
+ 331              	.LVL34:
+ 332              	.LBE89:
+ 333              	.LBE88:
+ 401:lvgl/src/lv_core/lv_disp.c **** 
+ 334              		.loc 1 401 17 view .LVU76
+ 335 0014 A864     		str	r0, [r5, #72]
+ 403:lvgl/src/lv_core/lv_disp.c **** }
+ 336              		.loc 1 403 5 is_stmt 1 view .LVU77
+ 337 0016 2068     		ldr	r0, [r4]
+ 338 0018 FFF7FEFF 		bl	lv_disp_load_scr
+ 339              	.LVL35:
+ 404:lvgl/src/lv_core/lv_disp.c **** 
+ 340              		.loc 1 404 1 is_stmt 0 view .LVU78
+ 341 001c 38BD     		pop	{r3, r4, r5, pc}
+ 404:lvgl/src/lv_core/lv_disp.c **** 
+ 342              		.loc 1 404 1 view .LVU79
+ 343              		.cfi_endproc
+ 344              	.LFE477:
+ 346              		.section	.text.lv_disp_get_layer_top,"ax",%progbits
+ 347              		.align	1
+ 348              		.global	lv_disp_get_layer_top
+ 349              		.syntax unified
+ 350              		.thumb
+ARM GAS  D:\Temp\ccElHyXh.s 			page 20
+
+
+ 351              		.thumb_func
+ 352              		.fpu fpv4-sp-d16
+ 354              	lv_disp_get_layer_top:
+ 355              	.LVL36:
+ 356              	.LFB466:
+  96:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 357              		.loc 1 96 1 is_stmt 1 view -0
+ 358              		.cfi_startproc
+ 359              		@ args = 0, pretend = 0, frame = 0
+ 360              		@ frame_needed = 0, uses_anonymous_args = 0
+  96:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 361              		.loc 1 96 1 is_stmt 0 view .LVU81
+ 362 0000 08B5     		push	{r3, lr}
+ 363              	.LCFI6:
+ 364              		.cfi_def_cfa_offset 8
+ 365              		.cfi_offset 3, -8
+ 366              		.cfi_offset 14, -4
+  97:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 367              		.loc 1 97 5 is_stmt 1 view .LVU82
+  97:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 368              		.loc 1 97 7 is_stmt 0 view .LVU83
+ 369 0002 0346     		mov	r3, r0
+ 370 0004 10B1     		cbz	r0, .L29
+ 371              	.L25:
+  98:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_layer_top: no display registered to get its top layer");
+ 372              		.loc 1 98 5 is_stmt 1 view .LVU84
+  98:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_layer_top: no display registered to get its top layer");
+ 373              		.loc 1 98 7 is_stmt 0 view .LVU85
+ 374 0006 2BB1     		cbz	r3, .L27
+ 103:lvgl/src/lv_core/lv_disp.c **** }
+ 375              		.loc 1 103 5 is_stmt 1 view .LVU86
+ 103:lvgl/src/lv_core/lv_disp.c **** }
+ 376              		.loc 1 103 16 is_stmt 0 view .LVU87
+ 377 0008 186D     		ldr	r0, [r3, #80]
+ 378              	.LVL37:
+ 379              	.L24:
+ 104:lvgl/src/lv_core/lv_disp.c **** 
+ 380              		.loc 1 104 1 view .LVU88
+ 381 000a 08BD     		pop	{r3, pc}
+ 382              	.LVL38:
+ 383              	.L29:
+  97:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 384              		.loc 1 97 15 is_stmt 1 discriminator 1 view .LVU89
+  97:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 385              		.loc 1 97 22 is_stmt 0 discriminator 1 view .LVU90
+ 386 000c FFF7FEFF 		bl	lv_disp_get_default
+ 387              	.LVL39:
+  97:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 388              		.loc 1 97 22 discriminator 1 view .LVU91
+ 389 0010 0346     		mov	r3, r0
+ 390              	.LVL40:
+  97:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 391              		.loc 1 97 22 discriminator 1 view .LVU92
+ 392 0012 F8E7     		b	.L25
+ 393              	.L27:
+ 100:lvgl/src/lv_core/lv_disp.c ****     }
+ 394              		.loc 1 100 16 view .LVU93
+ARM GAS  D:\Temp\ccElHyXh.s 			page 21
+
+
+ 395 0014 0020     		movs	r0, #0
+ 396              	.LVL41:
+ 100:lvgl/src/lv_core/lv_disp.c ****     }
+ 397              		.loc 1 100 16 view .LVU94
+ 398 0016 F8E7     		b	.L24
+ 399              		.cfi_endproc
+ 400              	.LFE466:
+ 402              		.section	.text.lv_disp_get_layer_sys,"ax",%progbits
+ 403              		.align	1
+ 404              		.global	lv_disp_get_layer_sys
+ 405              		.syntax unified
+ 406              		.thumb
+ 407              		.thumb_func
+ 408              		.fpu fpv4-sp-d16
+ 410              	lv_disp_get_layer_sys:
+ 411              	.LVL42:
+ 412              	.LFB467:
+ 113:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 413              		.loc 1 113 1 is_stmt 1 view -0
+ 414              		.cfi_startproc
+ 415              		@ args = 0, pretend = 0, frame = 0
+ 416              		@ frame_needed = 0, uses_anonymous_args = 0
+ 113:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 417              		.loc 1 113 1 is_stmt 0 view .LVU96
+ 418 0000 08B5     		push	{r3, lr}
+ 419              	.LCFI7:
+ 420              		.cfi_def_cfa_offset 8
+ 421              		.cfi_offset 3, -8
+ 422              		.cfi_offset 14, -4
+ 114:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 423              		.loc 1 114 5 is_stmt 1 view .LVU97
+ 114:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 424              		.loc 1 114 7 is_stmt 0 view .LVU98
+ 425 0002 0346     		mov	r3, r0
+ 426 0004 10B1     		cbz	r0, .L35
+ 427              	.L31:
+ 115:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_layer_sys: no display registered to get its sys. layer");
+ 428              		.loc 1 115 5 is_stmt 1 view .LVU99
+ 115:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_layer_sys: no display registered to get its sys. layer");
+ 429              		.loc 1 115 7 is_stmt 0 view .LVU100
+ 430 0006 2BB1     		cbz	r3, .L33
+ 120:lvgl/src/lv_core/lv_disp.c **** }
+ 431              		.loc 1 120 5 is_stmt 1 view .LVU101
+ 120:lvgl/src/lv_core/lv_disp.c **** }
+ 432              		.loc 1 120 16 is_stmt 0 view .LVU102
+ 433 0008 586D     		ldr	r0, [r3, #84]
+ 434              	.LVL43:
+ 435              	.L30:
+ 121:lvgl/src/lv_core/lv_disp.c **** 
+ 436              		.loc 1 121 1 view .LVU103
+ 437 000a 08BD     		pop	{r3, pc}
+ 438              	.LVL44:
+ 439              	.L35:
+ 114:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 440              		.loc 1 114 15 is_stmt 1 discriminator 1 view .LVU104
+ 114:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 441              		.loc 1 114 22 is_stmt 0 discriminator 1 view .LVU105
+ARM GAS  D:\Temp\ccElHyXh.s 			page 22
+
+
+ 442 000c FFF7FEFF 		bl	lv_disp_get_default
+ 443              	.LVL45:
+ 114:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 444              		.loc 1 114 22 discriminator 1 view .LVU106
+ 445 0010 0346     		mov	r3, r0
+ 446              	.LVL46:
+ 114:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 447              		.loc 1 114 22 discriminator 1 view .LVU107
+ 448 0012 F8E7     		b	.L31
+ 449              	.L33:
+ 117:lvgl/src/lv_core/lv_disp.c ****     }
+ 450              		.loc 1 117 16 view .LVU108
+ 451 0014 0020     		movs	r0, #0
+ 452              	.LVL47:
+ 117:lvgl/src/lv_core/lv_disp.c ****     }
+ 453              		.loc 1 117 16 view .LVU109
+ 454 0016 F8E7     		b	.L30
+ 455              		.cfi_endproc
+ 456              	.LFE467:
+ 458              		.section	.text.lv_disp_assign_screen,"ax",%progbits
+ 459              		.align	1
+ 460              		.global	lv_disp_assign_screen
+ 461              		.syntax unified
+ 462              		.thumb
+ 463              		.thumb_func
+ 464              		.fpu fpv4-sp-d16
+ 466              	lv_disp_assign_screen:
+ 467              	.LVL48:
+ 468              	.LFB468:
+ 129:lvgl/src/lv_core/lv_disp.c ****     if(lv_obj_get_parent(scr) != NULL) {
+ 469              		.loc 1 129 1 is_stmt 1 view -0
+ 470              		.cfi_startproc
+ 471              		@ args = 0, pretend = 0, frame = 0
+ 472              		@ frame_needed = 0, uses_anonymous_args = 0
+ 129:lvgl/src/lv_core/lv_disp.c ****     if(lv_obj_get_parent(scr) != NULL) {
+ 473              		.loc 1 129 1 is_stmt 0 view .LVU111
+ 474 0000 38B5     		push	{r3, r4, r5, lr}
+ 475              	.LCFI8:
+ 476              		.cfi_def_cfa_offset 16
+ 477              		.cfi_offset 3, -16
+ 478              		.cfi_offset 4, -12
+ 479              		.cfi_offset 5, -8
+ 480              		.cfi_offset 14, -4
+ 481 0002 0546     		mov	r5, r0
+ 482 0004 0C46     		mov	r4, r1
+ 130:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_disp_assign_screen: try to assign a non-screen object");
+ 483              		.loc 1 130 5 is_stmt 1 view .LVU112
+ 130:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_disp_assign_screen: try to assign a non-screen object");
+ 484              		.loc 1 130 8 is_stmt 0 view .LVU113
+ 485 0006 0846     		mov	r0, r1
+ 486              	.LVL49:
+ 130:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_disp_assign_screen: try to assign a non-screen object");
+ 487              		.loc 1 130 8 view .LVU114
+ 488 0008 FFF7FEFF 		bl	lv_obj_get_parent
+ 489              	.LVL50:
+ 130:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_disp_assign_screen: try to assign a non-screen object");
+ 490              		.loc 1 130 7 view .LVU115
+ARM GAS  D:\Temp\ccElHyXh.s 			page 23
+
+
+ 491 000c 00B1     		cbz	r0, .L39
+ 492              	.L36:
+ 140:lvgl/src/lv_core/lv_disp.c **** 
+ 493              		.loc 1 140 1 view .LVU116
+ 494 000e 38BD     		pop	{r3, r4, r5, pc}
+ 495              	.LVL51:
+ 496              	.L39:
+ 135:lvgl/src/lv_core/lv_disp.c **** 
+ 497              		.loc 1 135 5 is_stmt 1 view .LVU117
+ 135:lvgl/src/lv_core/lv_disp.c **** 
+ 498              		.loc 1 135 28 is_stmt 0 view .LVU118
+ 499 0010 2046     		mov	r0, r4
+ 500 0012 FFF7FEFF 		bl	lv_obj_get_disp
+ 501              	.LVL52:
+ 137:lvgl/src/lv_core/lv_disp.c **** 
+ 502              		.loc 1 137 5 is_stmt 1 view .LVU119
+ 137:lvgl/src/lv_core/lv_disp.c **** 
+ 503              		.loc 1 137 7 is_stmt 0 view .LVU120
+ 504 0016 A842     		cmp	r0, r5
+ 505 0018 F9D0     		beq	.L36
+ 139:lvgl/src/lv_core/lv_disp.c **** }
+ 506              		.loc 1 139 5 is_stmt 1 view .LVU121
+ 507 001a 0123     		movs	r3, #1
+ 508 001c 2246     		mov	r2, r4
+ 509 001e 05F13801 		add	r1, r5, #56
+ 510 0022 3830     		adds	r0, r0, #56
+ 511              	.LVL53:
+ 139:lvgl/src/lv_core/lv_disp.c **** }
+ 512              		.loc 1 139 5 is_stmt 0 view .LVU122
+ 513 0024 FFF7FEFF 		bl	_lv_ll_chg_list
+ 514              	.LVL54:
+ 139:lvgl/src/lv_core/lv_disp.c **** }
+ 515              		.loc 1 139 5 view .LVU123
+ 516 0028 F1E7     		b	.L36
+ 517              		.cfi_endproc
+ 518              	.LFE468:
+ 520              		.section	.text.lv_disp_set_bg_color,"ax",%progbits
+ 521              		.align	1
+ 522              		.global	lv_disp_set_bg_color
+ 523              		.syntax unified
+ 524              		.thumb
+ 525              		.thumb_func
+ 526              		.fpu fpv4-sp-d16
+ 528              	lv_disp_set_bg_color:
+ 529              	.LVL55:
+ 530              	.LFB469:
+ 148:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 531              		.loc 1 148 1 is_stmt 1 view -0
+ 532              		.cfi_startproc
+ 533              		@ args = 0, pretend = 0, frame = 8
+ 534              		@ frame_needed = 0, uses_anonymous_args = 0
+ 148:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 535              		.loc 1 148 1 is_stmt 0 view .LVU125
+ 536 0000 30B5     		push	{r4, r5, lr}
+ 537              	.LCFI9:
+ 538              		.cfi_def_cfa_offset 12
+ 539              		.cfi_offset 4, -12
+ARM GAS  D:\Temp\ccElHyXh.s 			page 24
+
+
+ 540              		.cfi_offset 5, -8
+ 541              		.cfi_offset 14, -4
+ 542 0002 85B0     		sub	sp, sp, #20
+ 543              	.LCFI10:
+ 544              		.cfi_def_cfa_offset 32
+ 545 0004 0D46     		mov	r5, r1	@ movhi
+ 149:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 546              		.loc 1 149 5 is_stmt 1 view .LVU126
+ 149:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 547              		.loc 1 149 7 is_stmt 0 view .LVU127
+ 548 0006 0446     		mov	r4, r0
+ 549 0008 D8B1     		cbz	r0, .L45
+ 550              	.L41:
+ 150:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("no display registered");
+ 551              		.loc 1 150 5 is_stmt 1 view .LVU128
+ 150:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("no display registered");
+ 552              		.loc 1 150 7 is_stmt 0 view .LVU129
+ 553 000a C4B1     		cbz	r4, .L40
+ 155:lvgl/src/lv_core/lv_disp.c **** 
+ 554              		.loc 1 155 5 is_stmt 1 view .LVU130
+ 555              	.LVL56:
+ 155:lvgl/src/lv_core/lv_disp.c **** 
+ 556              		.loc 1 155 20 is_stmt 0 view .LVU131
+ 557 000c A4F85A50 		strh	r5, [r4, #90]	@ movhi
+ 157:lvgl/src/lv_core/lv_disp.c ****     lv_area_set(&a, 0, 0, lv_disp_get_hor_res(disp) - 1, lv_disp_get_ver_res(disp) - 1);
+ 558              		.loc 1 157 5 is_stmt 1 view .LVU132
+ 158:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 559              		.loc 1 158 5 view .LVU133
+ 158:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 560              		.loc 1 158 27 is_stmt 0 view .LVU134
+ 561 0010 2046     		mov	r0, r4
+ 158:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 562              		.loc 1 158 27 view .LVU135
+ 563 0012 FFF7FEFF 		bl	lv_disp_get_hor_res
+ 564              	.LVL57:
+ 158:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 565              		.loc 1 158 27 view .LVU136
+ 566 0016 85B2     		uxth	r5, r0
+ 567              	.LVL58:
+ 158:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 568              		.loc 1 158 53 view .LVU137
+ 569 0018 013D     		subs	r5, r5, #1
+ 570 001a ADB2     		uxth	r5, r5
+ 158:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 571              		.loc 1 158 58 view .LVU138
+ 572 001c 2046     		mov	r0, r4
+ 573 001e FFF7FEFF 		bl	lv_disp_get_ver_res
+ 574              	.LVL59:
+ 575 0022 80B2     		uxth	r0, r0
+ 158:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 576              		.loc 1 158 84 view .LVU139
+ 577 0024 0138     		subs	r0, r0, #1
+ 158:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 578              		.loc 1 158 5 view .LVU140
+ 579 0026 00B2     		sxth	r0, r0
+ 580 0028 0090     		str	r0, [sp]
+ 581 002a 2BB2     		sxth	r3, r5
+ARM GAS  D:\Temp\ccElHyXh.s 			page 25
+
+
+ 582 002c 0022     		movs	r2, #0
+ 583 002e 1146     		mov	r1, r2
+ 584 0030 02A8     		add	r0, sp, #8
+ 585 0032 FFF7FEFF 		bl	lv_area_set
+ 586              	.LVL60:
+ 159:lvgl/src/lv_core/lv_disp.c **** 
+ 587              		.loc 1 159 5 is_stmt 1 view .LVU141
+ 588 0036 02A9     		add	r1, sp, #8
+ 589 0038 2046     		mov	r0, r4
+ 590 003a FFF7FEFF 		bl	_lv_inv_area
+ 591              	.LVL61:
+ 592              	.L40:
+ 161:lvgl/src/lv_core/lv_disp.c **** 
+ 593              		.loc 1 161 1 is_stmt 0 view .LVU142
+ 594 003e 05B0     		add	sp, sp, #20
+ 595              	.LCFI11:
+ 596              		.cfi_remember_state
+ 597              		.cfi_def_cfa_offset 12
+ 598              		@ sp needed
+ 599 0040 30BD     		pop	{r4, r5, pc}
+ 600              	.LVL62:
+ 601              	.L45:
+ 602              	.LCFI12:
+ 603              		.cfi_restore_state
+ 149:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 604              		.loc 1 149 15 is_stmt 1 discriminator 1 view .LVU143
+ 149:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 605              		.loc 1 149 22 is_stmt 0 discriminator 1 view .LVU144
+ 606 0042 FFF7FEFF 		bl	lv_disp_get_default
+ 607              	.LVL63:
+ 149:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 608              		.loc 1 149 22 discriminator 1 view .LVU145
+ 609 0046 0446     		mov	r4, r0
+ 610              	.LVL64:
+ 149:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 611              		.loc 1 149 22 discriminator 1 view .LVU146
+ 612 0048 DFE7     		b	.L41
+ 613              		.cfi_endproc
+ 614              	.LFE469:
+ 616              		.section	.text.lv_disp_set_bg_image,"ax",%progbits
+ 617              		.align	1
+ 618              		.global	lv_disp_set_bg_image
+ 619              		.syntax unified
+ 620              		.thumb
+ 621              		.thumb_func
+ 622              		.fpu fpv4-sp-d16
+ 624              	lv_disp_set_bg_image:
+ 625              	.LVL65:
+ 626              	.LFB470:
+ 169:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 627              		.loc 1 169 1 is_stmt 1 view -0
+ 628              		.cfi_startproc
+ 629              		@ args = 0, pretend = 0, frame = 8
+ 630              		@ frame_needed = 0, uses_anonymous_args = 0
+ 169:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 631              		.loc 1 169 1 is_stmt 0 view .LVU148
+ 632 0000 30B5     		push	{r4, r5, lr}
+ARM GAS  D:\Temp\ccElHyXh.s 			page 26
+
+
+ 633              	.LCFI13:
+ 634              		.cfi_def_cfa_offset 12
+ 635              		.cfi_offset 4, -12
+ 636              		.cfi_offset 5, -8
+ 637              		.cfi_offset 14, -4
+ 638 0002 85B0     		sub	sp, sp, #20
+ 639              	.LCFI14:
+ 640              		.cfi_def_cfa_offset 32
+ 641 0004 0D46     		mov	r5, r1
+ 170:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 642              		.loc 1 170 5 is_stmt 1 view .LVU149
+ 170:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 643              		.loc 1 170 7 is_stmt 0 view .LVU150
+ 644 0006 0446     		mov	r4, r0
+ 645 0008 D0B1     		cbz	r0, .L51
+ 646              	.LVL66:
+ 647              	.L47:
+ 171:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("no display registered");
+ 648              		.loc 1 171 5 is_stmt 1 view .LVU151
+ 171:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("no display registered");
+ 649              		.loc 1 171 7 is_stmt 0 view .LVU152
+ 650 000a BCB1     		cbz	r4, .L46
+ 176:lvgl/src/lv_core/lv_disp.c **** 
+ 651              		.loc 1 176 5 is_stmt 1 view .LVU153
+ 176:lvgl/src/lv_core/lv_disp.c **** 
+ 652              		.loc 1 176 18 is_stmt 0 view .LVU154
+ 653 000c E565     		str	r5, [r4, #92]
+ 178:lvgl/src/lv_core/lv_disp.c ****     lv_area_set(&a, 0, 0, lv_disp_get_hor_res(disp) - 1, lv_disp_get_ver_res(disp) - 1);
+ 654              		.loc 1 178 5 is_stmt 1 view .LVU155
+ 179:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 655              		.loc 1 179 5 view .LVU156
+ 179:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 656              		.loc 1 179 27 is_stmt 0 view .LVU157
+ 657 000e 2046     		mov	r0, r4
+ 179:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 658              		.loc 1 179 27 view .LVU158
+ 659 0010 FFF7FEFF 		bl	lv_disp_get_hor_res
+ 660              	.LVL67:
+ 179:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 661              		.loc 1 179 27 view .LVU159
+ 662 0014 85B2     		uxth	r5, r0
+ 663              	.LVL68:
+ 179:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 664              		.loc 1 179 53 view .LVU160
+ 665 0016 013D     		subs	r5, r5, #1
+ 666 0018 ADB2     		uxth	r5, r5
+ 179:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 667              		.loc 1 179 58 view .LVU161
+ 668 001a 2046     		mov	r0, r4
+ 669 001c FFF7FEFF 		bl	lv_disp_get_ver_res
+ 670              	.LVL69:
+ 671 0020 80B2     		uxth	r0, r0
+ 179:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 672              		.loc 1 179 84 view .LVU162
+ 673 0022 0138     		subs	r0, r0, #1
+ 179:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 674              		.loc 1 179 5 view .LVU163
+ARM GAS  D:\Temp\ccElHyXh.s 			page 27
+
+
+ 675 0024 00B2     		sxth	r0, r0
+ 676 0026 0090     		str	r0, [sp]
+ 677 0028 2BB2     		sxth	r3, r5
+ 678 002a 0022     		movs	r2, #0
+ 679 002c 1146     		mov	r1, r2
+ 680 002e 02A8     		add	r0, sp, #8
+ 681 0030 FFF7FEFF 		bl	lv_area_set
+ 682              	.LVL70:
+ 180:lvgl/src/lv_core/lv_disp.c **** }
+ 683              		.loc 1 180 5 is_stmt 1 view .LVU164
+ 684 0034 02A9     		add	r1, sp, #8
+ 685 0036 2046     		mov	r0, r4
+ 686 0038 FFF7FEFF 		bl	_lv_inv_area
+ 687              	.LVL71:
+ 688              	.L46:
+ 181:lvgl/src/lv_core/lv_disp.c **** 
+ 689              		.loc 1 181 1 is_stmt 0 view .LVU165
+ 690 003c 05B0     		add	sp, sp, #20
+ 691              	.LCFI15:
+ 692              		.cfi_remember_state
+ 693              		.cfi_def_cfa_offset 12
+ 694              		@ sp needed
+ 695 003e 30BD     		pop	{r4, r5, pc}
+ 696              	.LVL72:
+ 697              	.L51:
+ 698              	.LCFI16:
+ 699              		.cfi_restore_state
+ 170:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 700              		.loc 1 170 15 is_stmt 1 discriminator 1 view .LVU166
+ 170:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 701              		.loc 1 170 22 is_stmt 0 discriminator 1 view .LVU167
+ 702 0040 FFF7FEFF 		bl	lv_disp_get_default
+ 703              	.LVL73:
+ 170:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 704              		.loc 1 170 22 discriminator 1 view .LVU168
+ 705 0044 0446     		mov	r4, r0
+ 706              	.LVL74:
+ 170:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 707              		.loc 1 170 22 discriminator 1 view .LVU169
+ 708 0046 E0E7     		b	.L47
+ 709              		.cfi_endproc
+ 710              	.LFE470:
+ 712              		.section	.text.lv_disp_set_bg_opa,"ax",%progbits
+ 713              		.align	1
+ 714              		.global	lv_disp_set_bg_opa
+ 715              		.syntax unified
+ 716              		.thumb
+ 717              		.thumb_func
+ 718              		.fpu fpv4-sp-d16
+ 720              	lv_disp_set_bg_opa:
+ 721              	.LVL75:
+ 722              	.LFB471:
+ 189:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 723              		.loc 1 189 1 is_stmt 1 view -0
+ 724              		.cfi_startproc
+ 725              		@ args = 0, pretend = 0, frame = 8
+ 726              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  D:\Temp\ccElHyXh.s 			page 28
+
+
+ 189:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 727              		.loc 1 189 1 is_stmt 0 view .LVU171
+ 728 0000 30B5     		push	{r4, r5, lr}
+ 729              	.LCFI17:
+ 730              		.cfi_def_cfa_offset 12
+ 731              		.cfi_offset 4, -12
+ 732              		.cfi_offset 5, -8
+ 733              		.cfi_offset 14, -4
+ 734 0002 85B0     		sub	sp, sp, #20
+ 735              	.LCFI18:
+ 736              		.cfi_def_cfa_offset 32
+ 737 0004 0D46     		mov	r5, r1
+ 190:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 738              		.loc 1 190 5 is_stmt 1 view .LVU172
+ 190:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 739              		.loc 1 190 7 is_stmt 0 view .LVU173
+ 740 0006 0446     		mov	r4, r0
+ 741 0008 D8B1     		cbz	r0, .L57
+ 742              	.LVL76:
+ 743              	.L53:
+ 191:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("no display registered");
+ 744              		.loc 1 191 5 is_stmt 1 view .LVU174
+ 191:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("no display registered");
+ 745              		.loc 1 191 7 is_stmt 0 view .LVU175
+ 746 000a C4B1     		cbz	r4, .L52
+ 196:lvgl/src/lv_core/lv_disp.c **** 
+ 747              		.loc 1 196 5 is_stmt 1 view .LVU176
+ 196:lvgl/src/lv_core/lv_disp.c **** 
+ 748              		.loc 1 196 18 is_stmt 0 view .LVU177
+ 749 000c 84F86050 		strb	r5, [r4, #96]
+ 198:lvgl/src/lv_core/lv_disp.c ****     lv_area_set(&a, 0, 0, lv_disp_get_hor_res(disp) - 1, lv_disp_get_ver_res(disp) - 1);
+ 750              		.loc 1 198 5 is_stmt 1 view .LVU178
+ 199:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 751              		.loc 1 199 5 view .LVU179
+ 199:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 752              		.loc 1 199 27 is_stmt 0 view .LVU180
+ 753 0010 2046     		mov	r0, r4
+ 199:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 754              		.loc 1 199 27 view .LVU181
+ 755 0012 FFF7FEFF 		bl	lv_disp_get_hor_res
+ 756              	.LVL77:
+ 199:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 757              		.loc 1 199 27 view .LVU182
+ 758 0016 85B2     		uxth	r5, r0
+ 199:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 759              		.loc 1 199 53 view .LVU183
+ 760 0018 013D     		subs	r5, r5, #1
+ 761 001a ADB2     		uxth	r5, r5
+ 199:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 762              		.loc 1 199 58 view .LVU184
+ 763 001c 2046     		mov	r0, r4
+ 764 001e FFF7FEFF 		bl	lv_disp_get_ver_res
+ 765              	.LVL78:
+ 766 0022 80B2     		uxth	r0, r0
+ 199:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 767              		.loc 1 199 84 view .LVU185
+ 768 0024 0138     		subs	r0, r0, #1
+ARM GAS  D:\Temp\ccElHyXh.s 			page 29
+
+
+ 199:lvgl/src/lv_core/lv_disp.c ****     _lv_inv_area(disp, &a);
+ 769              		.loc 1 199 5 view .LVU186
+ 770 0026 00B2     		sxth	r0, r0
+ 771 0028 0090     		str	r0, [sp]
+ 772 002a 2BB2     		sxth	r3, r5
+ 773 002c 0022     		movs	r2, #0
+ 774 002e 1146     		mov	r1, r2
+ 775 0030 02A8     		add	r0, sp, #8
+ 776 0032 FFF7FEFF 		bl	lv_area_set
+ 777              	.LVL79:
+ 200:lvgl/src/lv_core/lv_disp.c **** }
+ 778              		.loc 1 200 5 is_stmt 1 view .LVU187
+ 779 0036 02A9     		add	r1, sp, #8
+ 780 0038 2046     		mov	r0, r4
+ 781 003a FFF7FEFF 		bl	_lv_inv_area
+ 782              	.LVL80:
+ 783              	.L52:
+ 201:lvgl/src/lv_core/lv_disp.c **** 
+ 784              		.loc 1 201 1 is_stmt 0 view .LVU188
+ 785 003e 05B0     		add	sp, sp, #20
+ 786              	.LCFI19:
+ 787              		.cfi_remember_state
+ 788              		.cfi_def_cfa_offset 12
+ 789              		@ sp needed
+ 790 0040 30BD     		pop	{r4, r5, pc}
+ 791              	.LVL81:
+ 792              	.L57:
+ 793              	.LCFI20:
+ 794              		.cfi_restore_state
+ 190:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 795              		.loc 1 190 15 is_stmt 1 discriminator 1 view .LVU189
+ 190:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 796              		.loc 1 190 22 is_stmt 0 discriminator 1 view .LVU190
+ 797 0042 FFF7FEFF 		bl	lv_disp_get_default
+ 798              	.LVL82:
+ 190:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 799              		.loc 1 190 22 discriminator 1 view .LVU191
+ 800 0046 0446     		mov	r4, r0
+ 801              	.LVL83:
+ 190:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 802              		.loc 1 190 22 discriminator 1 view .LVU192
+ 803 0048 DFE7     		b	.L53
+ 804              		.cfi_endproc
+ 805              	.LFE471:
+ 807              		.section	.text.lv_scr_load_anim,"ax",%progbits
+ 808              		.align	1
+ 809              		.global	lv_scr_load_anim
+ 810              		.syntax unified
+ 811              		.thumb
+ 812              		.thumb_func
+ 813              		.fpu fpv4-sp-d16
+ 815              	lv_scr_load_anim:
+ 816              	.LVL84:
+ 817              	.LFB472:
+ 214:lvgl/src/lv_core/lv_disp.c ****     lv_disp_t * d = lv_obj_get_disp(new_scr);
+ 818              		.loc 1 214 1 is_stmt 1 view -0
+ 819              		.cfi_startproc
+ARM GAS  D:\Temp\ccElHyXh.s 			page 30
+
+
+ 820              		@ args = 4, pretend = 0, frame = 136
+ 821              		@ frame_needed = 0, uses_anonymous_args = 0
+ 214:lvgl/src/lv_core/lv_disp.c ****     lv_disp_t * d = lv_obj_get_disp(new_scr);
+ 822              		.loc 1 214 1 is_stmt 0 view .LVU194
+ 823 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 824              	.LCFI21:
+ 825              		.cfi_def_cfa_offset 24
+ 826              		.cfi_offset 4, -24
+ 827              		.cfi_offset 5, -20
+ 828              		.cfi_offset 6, -16
+ 829              		.cfi_offset 7, -12
+ 830              		.cfi_offset 8, -8
+ 831              		.cfi_offset 14, -4
+ 832 0004 A2B0     		sub	sp, sp, #136
+ 833              	.LCFI22:
+ 834              		.cfi_def_cfa_offset 160
+ 835 0006 0546     		mov	r5, r0
+ 836 0008 0F46     		mov	r7, r1
+ 837 000a 9046     		mov	r8, r2
+ 838 000c 1E46     		mov	r6, r3
+ 215:lvgl/src/lv_core/lv_disp.c ****     lv_obj_t * act_scr = lv_scr_act();
+ 839              		.loc 1 215 5 is_stmt 1 view .LVU195
+ 215:lvgl/src/lv_core/lv_disp.c ****     lv_obj_t * act_scr = lv_scr_act();
+ 840              		.loc 1 215 21 is_stmt 0 view .LVU196
+ 841 000e FFF7FEFF 		bl	lv_obj_get_disp
+ 842              	.LVL85:
+ 215:lvgl/src/lv_core/lv_disp.c ****     lv_obj_t * act_scr = lv_scr_act();
+ 843              		.loc 1 215 21 view .LVU197
+ 844 0012 0446     		mov	r4, r0
+ 845              	.LVL86:
+ 216:lvgl/src/lv_core/lv_disp.c **** 
+ 846              		.loc 1 216 5 is_stmt 1 view .LVU198
+ 847              	.LBB90:
+ 848              	.LBI90:
+ 158:lvgl/src/lv_core/lv_disp.h **** {
+ 849              		.loc 3 158 26 view .LVU199
+ 850              	.LBB91:
+ 851              		.loc 3 160 5 view .LVU200
+ 852              		.loc 3 160 12 is_stmt 0 view .LVU201
+ 853 0014 FFF7FEFF 		bl	lv_disp_get_default
+ 854              	.LVL87:
+ 855              		.loc 3 160 12 view .LVU202
+ 856 0018 FFF7FEFF 		bl	lv_disp_get_scr_act
+ 857              	.LVL88:
+ 858              		.loc 3 160 12 view .LVU203
+ 859              	.LBE91:
+ 860              	.LBE90:
+ 218:lvgl/src/lv_core/lv_disp.c ****         lv_obj_del(act_scr);
+ 861              		.loc 1 218 5 is_stmt 1 view .LVU204
+ 218:lvgl/src/lv_core/lv_disp.c ****         lv_obj_del(act_scr);
+ 862              		.loc 1 218 8 is_stmt 0 view .LVU205
+ 863 001c 94F85830 		ldrb	r3, [r4, #88]	@ zero_extendqisi2
+ 218:lvgl/src/lv_core/lv_disp.c ****         lv_obj_del(act_scr);
+ 864              		.loc 1 218 7 view .LVU206
+ 865 0020 13F0010F 		tst	r3, #1
+ 866 0024 19D0     		beq	.L59
+ 218:lvgl/src/lv_core/lv_disp.c ****         lv_obj_del(act_scr);
+ARM GAS  D:\Temp\ccElHyXh.s 			page 31
+
+
+ 867              		.loc 1 218 35 discriminator 1 view .LVU207
+ 868 0026 E36C     		ldr	r3, [r4, #76]
+ 218:lvgl/src/lv_core/lv_disp.c ****         lv_obj_del(act_scr);
+ 869              		.loc 1 218 20 discriminator 1 view .LVU208
+ 870 0028 8342     		cmp	r3, r0
+ 871 002a 16D0     		beq	.L59
+ 218:lvgl/src/lv_core/lv_disp.c ****         lv_obj_del(act_scr);
+ 872              		.loc 1 218 49 discriminator 2 view .LVU209
+ 873 002c ABB1     		cbz	r3, .L59
+ 219:lvgl/src/lv_core/lv_disp.c ****         lv_disp_load_scr(d->scr_to_load);
+ 874              		.loc 1 219 9 is_stmt 1 view .LVU210
+ 875 002e FFF7FEFF 		bl	lv_obj_del
+ 876              	.LVL89:
+ 220:lvgl/src/lv_core/lv_disp.c ****         lv_anim_del(d->scr_to_load, NULL);
+ 877              		.loc 1 220 9 view .LVU211
+ 878 0032 E06C     		ldr	r0, [r4, #76]
+ 879 0034 FFF7FEFF 		bl	lv_disp_load_scr
+ 880              	.LVL90:
+ 221:lvgl/src/lv_core/lv_disp.c ****         lv_obj_set_pos(d->scr_to_load, 0, 0);
+ 881              		.loc 1 221 9 view .LVU212
+ 882 0038 0021     		movs	r1, #0
+ 883 003a E06C     		ldr	r0, [r4, #76]
+ 884 003c FFF7FEFF 		bl	lv_anim_del
+ 885              	.LVL91:
+ 222:lvgl/src/lv_core/lv_disp.c ****         lv_style_remove_prop(lv_obj_get_local_style(d->scr_to_load, LV_OBJ_PART_MAIN), LV_STYLE_OPA
+ 886              		.loc 1 222 9 view .LVU213
+ 887 0040 0022     		movs	r2, #0
+ 888 0042 1146     		mov	r1, r2
+ 889 0044 E06C     		ldr	r0, [r4, #76]
+ 890 0046 FFF7FEFF 		bl	lv_obj_set_pos
+ 891              	.LVL92:
+ 223:lvgl/src/lv_core/lv_disp.c **** 
+ 892              		.loc 1 223 9 view .LVU214
+ 893 004a 0021     		movs	r1, #0
+ 894 004c E06C     		ldr	r0, [r4, #76]
+ 895 004e FFF7FEFF 		bl	lv_obj_get_local_style
+ 896              	.LVL93:
+ 897 0052 48F20C01 		movw	r1, #32780
+ 898 0056 FFF7FEFF 		bl	lv_style_remove_prop
+ 899              	.LVL94:
+ 225:lvgl/src/lv_core/lv_disp.c ****     }
+ 900              		.loc 1 225 9 view .LVU215
+ 901              	.L59:
+ 228:lvgl/src/lv_core/lv_disp.c **** 
+ 902              		.loc 1 228 5 view .LVU216
+ 228:lvgl/src/lv_core/lv_disp.c **** 
+ 903              		.loc 1 228 20 is_stmt 0 view .LVU217
+ 904 005a E564     		str	r5, [r4, #76]
+ 230:lvgl/src/lv_core/lv_disp.c ****         lv_obj_del(d->prev_scr);
+ 905              		.loc 1 230 5 is_stmt 1 view .LVU218
+ 230:lvgl/src/lv_core/lv_disp.c ****         lv_obj_del(d->prev_scr);
+ 906              		.loc 1 230 9 is_stmt 0 view .LVU219
+ 907 005c A06C     		ldr	r0, [r4, #72]
+ 230:lvgl/src/lv_core/lv_disp.c ****         lv_obj_del(d->prev_scr);
+ 908              		.loc 1 230 7 view .LVU220
+ 909 005e 20B1     		cbz	r0, .L60
+ 230:lvgl/src/lv_core/lv_disp.c ****         lv_obj_del(d->prev_scr);
+ARM GAS  D:\Temp\ccElHyXh.s 			page 32
+
+
+ 910              		.loc 1 230 20 discriminator 1 view .LVU221
+ 911 0060 94F85830 		ldrb	r3, [r4, #88]	@ zero_extendqisi2
+ 912 0064 13F0010F 		tst	r3, #1
+ 913 0068 4FD1     		bne	.L74
+ 914              	.L60:
+ 235:lvgl/src/lv_core/lv_disp.c **** 
+ 915              		.loc 1 235 5 is_stmt 1 view .LVU222
+ 235:lvgl/src/lv_core/lv_disp.c **** 
+ 916              		.loc 1 235 17 is_stmt 0 view .LVU223
+ 917 006a 94F85830 		ldrb	r3, [r4, #88]	@ zero_extendqisi2
+ 918 006e 9DF8A020 		ldrb	r2, [sp, #160]	@ zero_extendqisi2
+ 919 0072 62F30003 		bfi	r3, r2, #0, #1
+ 920 0076 84F85830 		strb	r3, [r4, #88]
+ 238:lvgl/src/lv_core/lv_disp.c ****     lv_anim_del(lv_scr_act(), NULL);
+ 921              		.loc 1 238 5 is_stmt 1 view .LVU224
+ 922 007a 0021     		movs	r1, #0
+ 923 007c 2846     		mov	r0, r5
+ 924 007e FFF7FEFF 		bl	lv_anim_del
+ 925              	.LVL95:
+ 239:lvgl/src/lv_core/lv_disp.c **** 
+ 926              		.loc 1 239 5 view .LVU225
+ 927              	.LBB92:
+ 928              	.LBI92:
+ 158:lvgl/src/lv_core/lv_disp.h **** {
+ 929              		.loc 3 158 26 view .LVU226
+ 930              	.LBB93:
+ 931              		.loc 3 160 5 view .LVU227
+ 932              		.loc 3 160 12 is_stmt 0 view .LVU228
+ 933 0082 FFF7FEFF 		bl	lv_disp_get_default
+ 934              	.LVL96:
+ 935 0086 FFF7FEFF 		bl	lv_disp_get_scr_act
+ 936              	.LVL97:
+ 937              	.LBE93:
+ 938              	.LBE92:
+ 239:lvgl/src/lv_core/lv_disp.c **** 
+ 939              		.loc 1 239 5 view .LVU229
+ 940 008a 0021     		movs	r1, #0
+ 941 008c FFF7FEFF 		bl	lv_anim_del
+ 942              	.LVL98:
+ 242:lvgl/src/lv_core/lv_disp.c ****     lv_obj_set_pos(lv_scr_act(), 0, 0);
+ 943              		.loc 1 242 5 is_stmt 1 view .LVU230
+ 944 0090 0022     		movs	r2, #0
+ 945 0092 1146     		mov	r1, r2
+ 946 0094 2846     		mov	r0, r5
+ 947 0096 FFF7FEFF 		bl	lv_obj_set_pos
+ 948              	.LVL99:
+ 243:lvgl/src/lv_core/lv_disp.c ****     lv_style_remove_prop(lv_obj_get_local_style(new_scr, LV_OBJ_PART_MAIN), LV_STYLE_OPA_SCALE);
+ 949              		.loc 1 243 5 view .LVU231
+ 950              	.LBB94:
+ 951              	.LBI94:
+ 158:lvgl/src/lv_core/lv_disp.h **** {
+ 952              		.loc 3 158 26 view .LVU232
+ 953              	.LBB95:
+ 954              		.loc 3 160 5 view .LVU233
+ 955              		.loc 3 160 12 is_stmt 0 view .LVU234
+ 956 009a FFF7FEFF 		bl	lv_disp_get_default
+ 957              	.LVL100:
+ARM GAS  D:\Temp\ccElHyXh.s 			page 33
+
+
+ 958 009e FFF7FEFF 		bl	lv_disp_get_scr_act
+ 959              	.LVL101:
+ 960              	.LBE95:
+ 961              	.LBE94:
+ 243:lvgl/src/lv_core/lv_disp.c ****     lv_style_remove_prop(lv_obj_get_local_style(new_scr, LV_OBJ_PART_MAIN), LV_STYLE_OPA_SCALE);
+ 962              		.loc 1 243 5 view .LVU235
+ 963 00a2 0022     		movs	r2, #0
+ 964 00a4 1146     		mov	r1, r2
+ 965 00a6 FFF7FEFF 		bl	lv_obj_set_pos
+ 966              	.LVL102:
+ 244:lvgl/src/lv_core/lv_disp.c ****     lv_style_remove_prop(lv_obj_get_local_style(lv_scr_act(), LV_OBJ_PART_MAIN), LV_STYLE_OPA_SCALE
+ 967              		.loc 1 244 5 is_stmt 1 view .LVU236
+ 968 00aa 0021     		movs	r1, #0
+ 969 00ac 2846     		mov	r0, r5
+ 970 00ae FFF7FEFF 		bl	lv_obj_get_local_style
+ 971              	.LVL103:
+ 972 00b2 48F20C01 		movw	r1, #32780
+ 973 00b6 FFF7FEFF 		bl	lv_style_remove_prop
+ 974              	.LVL104:
+ 245:lvgl/src/lv_core/lv_disp.c **** 
+ 975              		.loc 1 245 5 view .LVU237
+ 976              	.LBB96:
+ 977              	.LBI96:
+ 158:lvgl/src/lv_core/lv_disp.h **** {
+ 978              		.loc 3 158 26 view .LVU238
+ 979              	.LBB97:
+ 980              		.loc 3 160 5 view .LVU239
+ 981              		.loc 3 160 12 is_stmt 0 view .LVU240
+ 982 00ba FFF7FEFF 		bl	lv_disp_get_default
+ 983              	.LVL105:
+ 984 00be FFF7FEFF 		bl	lv_disp_get_scr_act
+ 985              	.LVL106:
+ 986              	.LBE97:
+ 987              	.LBE96:
+ 245:lvgl/src/lv_core/lv_disp.c **** 
+ 988              		.loc 1 245 5 view .LVU241
+ 989 00c2 0021     		movs	r1, #0
+ 990 00c4 FFF7FEFF 		bl	lv_obj_get_local_style
+ 991              	.LVL107:
+ 992 00c8 48F20C01 		movw	r1, #32780
+ 993 00cc FFF7FEFF 		bl	lv_style_remove_prop
+ 994              	.LVL108:
+ 247:lvgl/src/lv_core/lv_disp.c ****     lv_anim_init(&a_new);
+ 995              		.loc 1 247 5 is_stmt 1 view .LVU242
+ 248:lvgl/src/lv_core/lv_disp.c ****     lv_anim_set_var(&a_new, new_scr);
+ 996              		.loc 1 248 5 view .LVU243
+ 997 00d0 11A8     		add	r0, sp, #68
+ 998 00d2 FFF7FEFF 		bl	lv_anim_init
+ 999              	.LVL109:
+ 249:lvgl/src/lv_core/lv_disp.c ****     lv_anim_set_start_cb(&a_new, scr_load_anim_start);
+ 1000              		.loc 1 249 5 view .LVU244
+ 1001              	.LBB98:
+ 1002              	.LBI98:
+ 1003              		.file 4 "lvgl/src/lv_core/../lv_misc/lv_anim.h"
+   1:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /**
+   2:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @file anim.h
+   3:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  *
+ARM GAS  D:\Temp\ccElHyXh.s 			page 34
+
+
+   4:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  */
+   5:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+   6:lvgl/src/lv_core/../lv_misc/lv_anim.h **** #ifndef ANIM_H
+   7:lvgl/src/lv_core/../lv_misc/lv_anim.h **** #define ANIM_H
+   8:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+   9:lvgl/src/lv_core/../lv_misc/lv_anim.h **** #ifdef __cplusplus
+  10:lvgl/src/lv_core/../lv_misc/lv_anim.h **** extern "C" {
+  11:lvgl/src/lv_core/../lv_misc/lv_anim.h **** #endif
+  12:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+  13:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /*********************
+  14:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  *      INCLUDES
+  15:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  *********************/
+  16:lvgl/src/lv_core/../lv_misc/lv_anim.h **** #include "../lv_conf_internal.h"
+  17:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+  18:lvgl/src/lv_core/../lv_misc/lv_anim.h **** #include <stdint.h>
+  19:lvgl/src/lv_core/../lv_misc/lv_anim.h **** #include <stdbool.h>
+  20:lvgl/src/lv_core/../lv_misc/lv_anim.h **** #include <string.h>
+  21:lvgl/src/lv_core/../lv_misc/lv_anim.h **** #include "lv_mem.h"
+  22:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+  23:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /*********************
+  24:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  *      DEFINES
+  25:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  *********************/
+  26:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+  27:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /**********************
+  28:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  *      TYPEDEFS
+  29:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  **********************/
+  30:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+  31:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /** Can be used to indicate if animations are enabled or disabled in a case*/
+  32:lvgl/src/lv_core/../lv_misc/lv_anim.h **** enum {
+  33:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     LV_ANIM_OFF,
+  34:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     LV_ANIM_ON,
+  35:lvgl/src/lv_core/../lv_misc/lv_anim.h **** };
+  36:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+  37:lvgl/src/lv_core/../lv_misc/lv_anim.h **** typedef uint8_t lv_anim_enable_t;
+  38:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+  39:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /** Type of the animated value*/
+  40:lvgl/src/lv_core/../lv_misc/lv_anim.h **** typedef lv_coord_t lv_anim_value_t;
+  41:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+  42:lvgl/src/lv_core/../lv_misc/lv_anim.h **** #if LV_USE_ANIMATION
+  43:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+  44:lvgl/src/lv_core/../lv_misc/lv_anim.h **** #define LV_ANIM_REPEAT_INFINITE      0xFFFF
+  45:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+  46:lvgl/src/lv_core/../lv_misc/lv_anim.h **** struct _lv_anim_t;
+  47:lvgl/src/lv_core/../lv_misc/lv_anim.h **** struct _lv_anim_path_t;
+  48:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /** Get the current value during an animation*/
+  49:lvgl/src/lv_core/../lv_misc/lv_anim.h **** typedef lv_anim_value_t (*lv_anim_path_cb_t)(const struct _lv_anim_path_t *, const struct _lv_anim_
+  50:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+  51:lvgl/src/lv_core/../lv_misc/lv_anim.h **** typedef struct _lv_anim_path_t {
+  52:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     lv_anim_path_cb_t cb;
+  53:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     void * user_data;
+  54:lvgl/src/lv_core/../lv_misc/lv_anim.h **** } lv_anim_path_t;
+  55:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+  56:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /** Generic prototype of "animator" functions.
+  57:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * First parameter is the variable to animate.
+  58:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * Second parameter is the value to set.
+  59:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * Compatible with `lv_xxx_set_yyy(obj, value)` functions
+  60:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * The `x` in `_xcb_t` means its not a fully generic prototype because
+ARM GAS  D:\Temp\ccElHyXh.s 			page 35
+
+
+  61:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * it doesn't receive `lv_anim_t *` as its first argument*/
+  62:lvgl/src/lv_core/../lv_misc/lv_anim.h **** typedef void (*lv_anim_exec_xcb_t)(void *, lv_anim_value_t);
+  63:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+  64:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /** Same as `lv_anim_exec_xcb_t` but receives `lv_anim_t *` as the first parameter.
+  65:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * It's more consistent but less convenient. Might be used by binding generator functions.*/
+  66:lvgl/src/lv_core/../lv_misc/lv_anim.h **** typedef void (*lv_anim_custom_exec_cb_t)(struct _lv_anim_t *, lv_anim_value_t);
+  67:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+  68:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /** Callback to call when the animation is ready*/
+  69:lvgl/src/lv_core/../lv_misc/lv_anim.h **** typedef void (*lv_anim_ready_cb_t)(struct _lv_anim_t *);
+  70:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+  71:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /** Callback to call when the animation really stars (considering `delay`)*/
+  72:lvgl/src/lv_core/../lv_misc/lv_anim.h **** typedef void (*lv_anim_start_cb_t)(struct _lv_anim_t *);
+  73:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+  74:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /** Describes an animation*/
+  75:lvgl/src/lv_core/../lv_misc/lv_anim.h **** typedef struct _lv_anim_t {
+  76:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     void * var;                  /**<Variable to animate*/
+  77:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     lv_anim_exec_xcb_t exec_cb;   /**< Function to execute to animate*/
+  78:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     lv_anim_start_cb_t start_cb; /**< Call it when the animation is starts (considering `delay`)*/
+  79:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     lv_anim_ready_cb_t ready_cb; /**< Call it when the animation is ready*/
+  80:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     lv_anim_path_t path;         /**< Describe the path (curve) of animations*/
+  81:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     int32_t start;               /**< Start value*/
+  82:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     int32_t current;             /**< Current value */
+  83:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     int32_t end;                 /**< End value*/
+  84:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     int32_t time;               /**< Animation time in ms*/
+  85:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     int32_t act_time;            /**< Current time in animation. Set to negative to make delay.*/
+  86:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     uint32_t playback_delay;     /**< Wait before play back*/
+  87:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     uint32_t playback_time;      /**< Duration of playback animation*/
+  88:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     uint32_t repeat_delay;       /**< Wait before repeat*/
+  89:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     uint16_t repeat_cnt;         /**< Repeat count for the animation*/
+  90:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     uint8_t early_apply  : 1;    /**< 1: Apply start value immediately even is there is `delay` */
+  91:lvgl/src/lv_core/../lv_misc/lv_anim.h **** #if LV_USE_USER_DATA
+  92:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     lv_anim_user_data_t user_data; /**< Custom user data*/
+  93:lvgl/src/lv_core/../lv_misc/lv_anim.h **** #endif
+  94:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+  95:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     /*Animation system use these - user shouldn't set*/
+  96:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     uint32_t time_orig;
+  97:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     uint8_t playback_now : 1; /**< Play back is in progress*/
+  98:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     uint32_t has_run : 1;     /**< Indicates the animation has run in this round*/
+  99:lvgl/src/lv_core/../lv_misc/lv_anim.h **** } lv_anim_t;
+ 100:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+ 101:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /**********************
+ 102:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * GLOBAL PROTOTYPES
+ 103:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  **********************/
+ 104:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+ 105:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /**
+ 106:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * Init. the animation module
+ 107:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  */
+ 108:lvgl/src/lv_core/../lv_misc/lv_anim.h **** void _lv_anim_core_init(void);
+ 109:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+ 110:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /**
+ 111:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * Initialize an animation variable.
+ 112:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * E.g.:
+ 113:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * lv_anim_t a;
+ 114:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * lv_anim_init(&a);
+ 115:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * lv_anim_set_...(&a);
+ 116:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an `lv_anim_t` variable to initialize
+ 117:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  */
+ARM GAS  D:\Temp\ccElHyXh.s 			page 36
+
+
+ 118:lvgl/src/lv_core/../lv_misc/lv_anim.h **** void lv_anim_init(lv_anim_t * a);
+ 119:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+ 120:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /**
+ 121:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * Set a variable to animate
+ 122:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 123:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param var pointer to a variable to animate
+ 124:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  */
+ 125:lvgl/src/lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_var(lv_anim_t * a, void * var)
+ 1004              		.loc 4 125 20 view .LVU245
+ 1005              	.LBB99:
+ 126:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 127:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->var     = var;
+ 1006              		.loc 4 127 5 view .LVU246
+ 1007              		.loc 4 127 16 is_stmt 0 view .LVU247
+ 1008 00d6 1195     		str	r5, [sp, #68]
+ 1009              	.LVL110:
+ 1010              		.loc 4 127 16 view .LVU248
+ 1011              	.LBE99:
+ 1012              	.LBE98:
+ 250:lvgl/src/lv_core/lv_disp.c ****     lv_anim_set_ready_cb(&a_new, scr_anim_ready);
+ 1013              		.loc 1 250 5 is_stmt 1 view .LVU249
+ 1014              	.LBB100:
+ 1015              	.LBI100:
+ 128:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 129:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+ 130:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /**
+ 131:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * Set a function to animate `var`
+ 132:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 133:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param exec_cb a function to execute during animation
+ 134:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  *                LittelvGL's built-in functions can be used.
+ 135:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  *                E.g. lv_obj_set_x
+ 136:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  */
+ 137:lvgl/src/lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_exec_cb(lv_anim_t * a, lv_anim_exec_xcb_t exec_cb)
+ 138:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->exec_cb = exec_cb;
+ 140:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 141:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+ 142:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /**
+ 143:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * Set the duration of an animation
+ 144:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 145:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param duration duration of the animation in milliseconds
+ 146:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  */
+ 147:lvgl/src/lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_time(lv_anim_t * a, uint32_t duration)
+ 148:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 149:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->time     = duration;
+ 150:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 151:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+ 152:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /**
+ 153:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * Set a delay before starting the animation
+ 154:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 155:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param delay delay before the animation in milliseconds
+ 156:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  */
+ 157:lvgl/src/lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_delay(lv_anim_t * a, uint32_t delay)
+ 158:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 159:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->act_time = -(int32_t)(delay);
+ 160:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 161:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+ARM GAS  D:\Temp\ccElHyXh.s 			page 37
+
+
+ 162:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /**
+ 163:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * Set the start and end values of an animation
+ 164:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 165:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param start the start value
+ 166:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param end the end value
+ 167:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  */
+ 168:lvgl/src/lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_values(lv_anim_t * a, lv_anim_value_t start, lv_anim_value_t end)
+ 169:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->start = start;
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 173:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 174:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+ 175:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /**
+ 176:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * Similar to `lv_anim_set_exec_cb` but `lv_anim_custom_exec_cb_t` receives
+ 177:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * `lv_anim_t * ` as its first parameter instead of `void *`.
+ 178:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * This function might be used when LVGL is binded to other languages because
+ 179:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * it's more consistent to have `lv_anim_t *` as first parameter.
+ 180:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * The variable to animate can be stored in the animation's `user_sata`
+ 181:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 182:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param exec_cb a function to execute.
+ 183:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  */
+ 184:lvgl/src/lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_custom_exec_cb(lv_anim_t * a, lv_anim_custom_exec_cb_t exec_cb)
+ 185:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 186:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->var     = a;
+ 187:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->exec_cb = (lv_anim_exec_xcb_t)exec_cb;
+ 188:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 189:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+ 190:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /**
+ 191:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * Set the path (curve) of the animation.
+ 192:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 193:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param path_cb a function the get the current value of the animation.
+ 194:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  *                The built in functions starts with `lv_anim_path_...`
+ 195:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  */
+ 196:lvgl/src/lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_path(lv_anim_t * a, const lv_anim_path_t * path)
+ 197:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 198:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     _lv_memcpy_small(&a->path, path, sizeof(lv_anim_path_t));
+ 199:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 200:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+ 201:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /**
+ 202:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * Set a function call when the animation really starts (considering `delay`)
+ 203:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 204:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param start_cb a function call when the animation starts
+ 205:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  */
+ 206:lvgl/src/lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_start_cb(lv_anim_t * a, lv_anim_ready_cb_t start_cb)
+ 1016              		.loc 4 206 20 view .LVU250
+ 1017              	.LBB101:
+ 207:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 208:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->start_cb = start_cb;
+ 1018              		.loc 4 208 5 view .LVU251
+ 1019              		.loc 4 208 17 is_stmt 0 view .LVU252
+ 1020 00d8 594B     		ldr	r3, .L75
+ 1021 00da 1393     		str	r3, [sp, #76]
+ 1022              	.LVL111:
+ 1023              		.loc 4 208 17 view .LVU253
+ 1024              	.LBE101:
+ 1025              	.LBE100:
+ARM GAS  D:\Temp\ccElHyXh.s 			page 38
+
+
+ 251:lvgl/src/lv_core/lv_disp.c ****     lv_anim_set_time(&a_new, time);
+ 1026              		.loc 1 251 5 is_stmt 1 view .LVU254
+ 1027              	.LBB102:
+ 1028              	.LBI102:
+ 209:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 210:lvgl/src/lv_core/../lv_misc/lv_anim.h **** 
+ 211:lvgl/src/lv_core/../lv_misc/lv_anim.h **** /**
+ 212:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * Set a function call when the animation is ready
+ 213:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 214:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  * @param ready_cb a function call when the animation is ready
+ 215:lvgl/src/lv_core/../lv_misc/lv_anim.h ****  */
+ 216:lvgl/src/lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_ready_cb(lv_anim_t * a, lv_anim_ready_cb_t ready_cb)
+ 1029              		.loc 4 216 20 view .LVU255
+ 1030              	.LBB103:
+ 217:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 218:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->ready_cb = ready_cb;
+ 1031              		.loc 4 218 5 view .LVU256
+ 1032              		.loc 4 218 17 is_stmt 0 view .LVU257
+ 1033 00dc 594B     		ldr	r3, .L75+4
+ 1034 00de 1493     		str	r3, [sp, #80]
+ 1035              	.LVL112:
+ 1036              		.loc 4 218 17 view .LVU258
+ 1037              	.LBE103:
+ 1038              	.LBE102:
+ 252:lvgl/src/lv_core/lv_disp.c ****     lv_anim_set_delay(&a_new, delay);
+ 1039              		.loc 1 252 5 is_stmt 1 view .LVU259
+ 1040              	.LBB104:
+ 1041              	.LBI104:
+ 147:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1042              		.loc 4 147 20 view .LVU260
+ 1043              	.LBB105:
+ 149:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1044              		.loc 4 149 5 view .LVU261
+ 149:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1045              		.loc 4 149 17 is_stmt 0 view .LVU262
+ 1046 00e0 CDF86880 		str	r8, [sp, #104]
+ 1047              	.LVL113:
+ 149:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1048              		.loc 4 149 17 view .LVU263
+ 1049              	.LBE105:
+ 1050              	.LBE104:
+ 253:lvgl/src/lv_core/lv_disp.c **** 
+ 1051              		.loc 1 253 5 is_stmt 1 view .LVU264
+ 1052              	.LBB106:
+ 1053              	.LBI106:
+ 157:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1054              		.loc 4 157 20 view .LVU265
+ 1055              	.LBB107:
+ 159:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1056              		.loc 4 159 5 view .LVU266
+ 159:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1057              		.loc 4 159 19 is_stmt 0 view .LVU267
+ 1058 00e4 7642     		rsbs	r6, r6, #0
+ 1059              	.LVL114:
+ 159:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1060              		.loc 4 159 17 view .LVU268
+ 1061 00e6 1B96     		str	r6, [sp, #108]
+ARM GAS  D:\Temp\ccElHyXh.s 			page 39
+
+
+ 1062              	.LVL115:
+ 159:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1063              		.loc 4 159 17 view .LVU269
+ 1064              	.LBE107:
+ 1065              	.LBE106:
+ 255:lvgl/src/lv_core/lv_disp.c ****     lv_anim_init(&a_old);
+ 1066              		.loc 1 255 5 is_stmt 1 view .LVU270
+ 256:lvgl/src/lv_core/lv_disp.c ****     lv_anim_set_var(&a_old, d->act_scr);
+ 1067              		.loc 1 256 5 view .LVU271
+ 1068 00e8 6846     		mov	r0, sp
+ 1069 00ea FFF7FEFF 		bl	lv_anim_init
+ 1070              	.LVL116:
+ 257:lvgl/src/lv_core/lv_disp.c ****     lv_anim_set_time(&a_old, time);
+ 1071              		.loc 1 257 5 view .LVU272
+ 257:lvgl/src/lv_core/lv_disp.c ****     lv_anim_set_time(&a_old, time);
+ 1072              		.loc 1 257 30 is_stmt 0 view .LVU273
+ 1073 00ee 636C     		ldr	r3, [r4, #68]
+ 1074              	.LVL117:
+ 1075              	.LBB108:
+ 1076              	.LBI108:
+ 125:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1077              		.loc 4 125 20 is_stmt 1 view .LVU274
+ 1078              	.LBB109:
+ 127:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1079              		.loc 4 127 5 view .LVU275
+ 127:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1080              		.loc 4 127 16 is_stmt 0 view .LVU276
+ 1081 00f0 0093     		str	r3, [sp]
+ 1082              	.LVL118:
+ 127:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1083              		.loc 4 127 16 view .LVU277
+ 1084              	.LBE109:
+ 1085              	.LBE108:
+ 258:lvgl/src/lv_core/lv_disp.c ****     lv_anim_set_delay(&a_old, delay);
+ 1086              		.loc 1 258 5 is_stmt 1 view .LVU278
+ 1087              	.LBB110:
+ 1088              	.LBI110:
+ 147:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1089              		.loc 4 147 20 view .LVU279
+ 1090              	.LBB111:
+ 149:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1091              		.loc 4 149 5 view .LVU280
+ 149:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1092              		.loc 4 149 17 is_stmt 0 view .LVU281
+ 1093 00f2 CDF82480 		str	r8, [sp, #36]
+ 1094              	.LVL119:
+ 149:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1095              		.loc 4 149 17 view .LVU282
+ 1096              	.LBE111:
+ 1097              	.LBE110:
+ 259:lvgl/src/lv_core/lv_disp.c **** 
+ 1098              		.loc 1 259 5 is_stmt 1 view .LVU283
+ 1099              	.LBB112:
+ 1100              	.LBI112:
+ 157:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1101              		.loc 4 157 20 view .LVU284
+ 1102              	.LBB113:
+ARM GAS  D:\Temp\ccElHyXh.s 			page 40
+
+
+ 159:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1103              		.loc 4 159 5 view .LVU285
+ 159:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1104              		.loc 4 159 17 is_stmt 0 view .LVU286
+ 1105 00f6 0A96     		str	r6, [sp, #40]
+ 1106              	.LVL120:
+ 159:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1107              		.loc 4 159 17 view .LVU287
+ 1108              	.LBE113:
+ 1109              	.LBE112:
+ 261:lvgl/src/lv_core/lv_disp.c ****         case LV_SCR_LOAD_ANIM_NONE:
+ 1110              		.loc 1 261 5 is_stmt 1 view .LVU288
+ 1111 00f8 092F     		cmp	r7, #9
+ 1112 00fa 11D8     		bhi	.L61
+ 1113 00fc DFE807F0 		tbb	[pc, r7]
+ 1114              	.L63:
+ 1115 0100 0A       		.byte	(.L72-.L63)/2
+ 1116 0101 19       		.byte	(.L71-.L63)/2
+ 1117 0102 23       		.byte	(.L70-.L63)/2
+ 1118 0103 30       		.byte	(.L69-.L63)/2
+ 1119 0104 3A       		.byte	(.L68-.L63)/2
+ 1120 0105 47       		.byte	(.L67-.L63)/2
+ 1121 0106 5B       		.byte	(.L66-.L63)/2
+ 1122 0107 6F       		.byte	(.L65-.L63)/2
+ 1123 0108 83       		.byte	(.L64-.L63)/2
+ 1124 0109 97       		.byte	(.L62-.L63)/2
+ 1125              	.LVL121:
+ 1126              		.p2align 1
+ 1127              	.L74:
+ 231:lvgl/src/lv_core/lv_disp.c ****         d->prev_scr = NULL;
+ 1128              		.loc 1 231 9 view .LVU289
+ 1129 010a FFF7FEFF 		bl	lv_obj_del
+ 1130              	.LVL122:
+ 232:lvgl/src/lv_core/lv_disp.c ****     }
+ 1131              		.loc 1 232 9 view .LVU290
+ 232:lvgl/src/lv_core/lv_disp.c ****     }
+ 1132              		.loc 1 232 21 is_stmt 0 view .LVU291
+ 1133 010e 0023     		movs	r3, #0
+ 1134 0110 A364     		str	r3, [r4, #72]
+ 1135 0112 AAE7     		b	.L60
+ 1136              	.LVL123:
+ 1137              	.L72:
+ 264:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, 0, 0);
+ 1138              		.loc 1 264 13 is_stmt 1 view .LVU292
+ 1139              	.LBB114:
+ 1140              	.LBI114:
+ 137:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1141              		.loc 4 137 20 view .LVU293
+ 1142              	.LBB115:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1143              		.loc 4 139 5 view .LVU294
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1144              		.loc 4 139 16 is_stmt 0 view .LVU295
+ 1145 0114 4C4B     		ldr	r3, .L75+8
+ 1146 0116 1293     		str	r3, [sp, #72]
+ 1147              	.LVL124:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ARM GAS  D:\Temp\ccElHyXh.s 			page 41
+
+
+ 1148              		.loc 4 139 16 view .LVU296
+ 1149              	.LBE115:
+ 1150              	.LBE114:
+ 265:lvgl/src/lv_core/lv_disp.c ****             break;
+ 1151              		.loc 1 265 13 is_stmt 1 view .LVU297
+ 1152              	.LBB116:
+ 1153              	.LBI116:
+ 168:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1154              		.loc 4 168 20 view .LVU298
+ 1155              	.LBB117:
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1156              		.loc 4 170 5 view .LVU299
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1157              		.loc 4 170 14 is_stmt 0 view .LVU300
+ 1158 0118 0023     		movs	r3, #0
+ 1159 011a 1793     		str	r3, [sp, #92]
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1160              		.loc 4 171 5 is_stmt 1 view .LVU301
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1161              		.loc 4 171 16 is_stmt 0 view .LVU302
+ 1162 011c 1893     		str	r3, [sp, #96]
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1163              		.loc 4 172 5 is_stmt 1 view .LVU303
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1164              		.loc 4 172 14 is_stmt 0 view .LVU304
+ 1165 011e 1993     		str	r3, [sp, #100]
+ 1166              	.LVL125:
+ 1167              	.L61:
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1168              		.loc 4 172 14 view .LVU305
+ 1169              	.LBE117:
+ 1170              	.LBE116:
+ 318:lvgl/src/lv_core/lv_disp.c ****     lv_anim_start(&a_old);
+ 1171              		.loc 1 318 5 is_stmt 1 view .LVU306
+ 1172 0120 11A8     		add	r0, sp, #68
+ 1173 0122 FFF7FEFF 		bl	lv_anim_start
+ 1174              	.LVL126:
+ 319:lvgl/src/lv_core/lv_disp.c **** }
+ 1175              		.loc 1 319 5 view .LVU307
+ 1176 0126 6846     		mov	r0, sp
+ 1177 0128 FFF7FEFF 		bl	lv_anim_start
+ 1178              	.LVL127:
+ 320:lvgl/src/lv_core/lv_disp.c **** 
+ 1179              		.loc 1 320 1 is_stmt 0 view .LVU308
+ 1180 012c 22B0     		add	sp, sp, #136
+ 1181              	.LCFI23:
+ 1182              		.cfi_remember_state
+ 1183              		.cfi_def_cfa_offset 24
+ 1184              		@ sp needed
+ 1185 012e BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 1186              	.LVL128:
+ 1187              	.L71:
+ 1188              	.LCFI24:
+ 1189              		.cfi_restore_state
+ 268:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, lv_disp_get_hor_res(d), 0);
+ 1190              		.loc 1 268 13 is_stmt 1 view .LVU309
+ 1191              	.LBB118:
+ARM GAS  D:\Temp\ccElHyXh.s 			page 42
+
+
+ 1192              	.LBI118:
+ 137:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1193              		.loc 4 137 20 view .LVU310
+ 1194              	.LBB119:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1195              		.loc 4 139 5 view .LVU311
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1196              		.loc 4 139 16 is_stmt 0 view .LVU312
+ 1197 0132 454B     		ldr	r3, .L75+8
+ 1198 0134 1293     		str	r3, [sp, #72]
+ 1199              	.LVL129:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1200              		.loc 4 139 16 view .LVU313
+ 1201              	.LBE119:
+ 1202              	.LBE118:
+ 269:lvgl/src/lv_core/lv_disp.c ****             break;
+ 1203              		.loc 1 269 13 is_stmt 1 view .LVU314
+ 1204 0136 2046     		mov	r0, r4
+ 1205 0138 FFF7FEFF 		bl	lv_disp_get_hor_res
+ 1206              	.LVL130:
+ 1207              	.LBB120:
+ 1208              	.LBI120:
+ 168:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1209              		.loc 4 168 20 view .LVU315
+ 1210              	.LBB121:
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1211              		.loc 4 170 5 view .LVU316
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1212              		.loc 4 170 14 is_stmt 0 view .LVU317
+ 1213 013c 1790     		str	r0, [sp, #92]
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1214              		.loc 4 171 5 is_stmt 1 view .LVU318
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1215              		.loc 4 171 16 is_stmt 0 view .LVU319
+ 1216 013e 1890     		str	r0, [sp, #96]
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1217              		.loc 4 172 5 is_stmt 1 view .LVU320
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1218              		.loc 4 172 14 is_stmt 0 view .LVU321
+ 1219 0140 0023     		movs	r3, #0
+ 1220 0142 1993     		str	r3, [sp, #100]
+ 1221 0144 ECE7     		b	.L61
+ 1222              	.LVL131:
+ 1223              	.L70:
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1224              		.loc 4 172 14 view .LVU322
+ 1225              	.LBE121:
+ 1226              	.LBE120:
+ 272:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, -lv_disp_get_hor_res(d), 0);
+ 1227              		.loc 1 272 13 is_stmt 1 view .LVU323
+ 1228              	.LBB122:
+ 1229              	.LBI122:
+ 137:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1230              		.loc 4 137 20 view .LVU324
+ 1231              	.LBB123:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1232              		.loc 4 139 5 view .LVU325
+ARM GAS  D:\Temp\ccElHyXh.s 			page 43
+
+
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1233              		.loc 4 139 16 is_stmt 0 view .LVU326
+ 1234 0146 404B     		ldr	r3, .L75+8
+ 1235 0148 1293     		str	r3, [sp, #72]
+ 1236              	.LVL132:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1237              		.loc 4 139 16 view .LVU327
+ 1238              	.LBE123:
+ 1239              	.LBE122:
+ 273:lvgl/src/lv_core/lv_disp.c ****             break;
+ 1240              		.loc 1 273 13 is_stmt 1 view .LVU328
+ 273:lvgl/src/lv_core/lv_disp.c ****             break;
+ 1241              		.loc 1 273 41 is_stmt 0 view .LVU329
+ 1242 014a 2046     		mov	r0, r4
+ 1243 014c FFF7FEFF 		bl	lv_disp_get_hor_res
+ 1244              	.LVL133:
+ 1245 0150 80B2     		uxth	r0, r0
+ 273:lvgl/src/lv_core/lv_disp.c ****             break;
+ 1246              		.loc 1 273 13 view .LVU330
+ 1247 0152 4042     		rsbs	r0, r0, #0
+ 1248 0154 00B2     		sxth	r0, r0
+ 1249              	.LVL134:
+ 1250              	.LBB124:
+ 1251              	.LBI124:
+ 168:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1252              		.loc 4 168 20 is_stmt 1 view .LVU331
+ 1253              	.LBB125:
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1254              		.loc 4 170 5 view .LVU332
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1255              		.loc 4 170 14 is_stmt 0 view .LVU333
+ 1256 0156 1790     		str	r0, [sp, #92]
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1257              		.loc 4 171 5 is_stmt 1 view .LVU334
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1258              		.loc 4 171 16 is_stmt 0 view .LVU335
+ 1259 0158 1890     		str	r0, [sp, #96]
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1260              		.loc 4 172 5 is_stmt 1 view .LVU336
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1261              		.loc 4 172 14 is_stmt 0 view .LVU337
+ 1262 015a 0023     		movs	r3, #0
+ 1263 015c 1993     		str	r3, [sp, #100]
+ 1264 015e DFE7     		b	.L61
+ 1265              	.LVL135:
+ 1266              	.L69:
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1267              		.loc 4 172 14 view .LVU338
+ 1268              	.LBE125:
+ 1269              	.LBE124:
+ 276:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, lv_disp_get_ver_res(d), 0);
+ 1270              		.loc 1 276 13 is_stmt 1 view .LVU339
+ 1271              	.LBB126:
+ 1272              	.LBI126:
+ 137:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1273              		.loc 4 137 20 view .LVU340
+ 1274              	.LBB127:
+ARM GAS  D:\Temp\ccElHyXh.s 			page 44
+
+
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1275              		.loc 4 139 5 view .LVU341
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1276              		.loc 4 139 16 is_stmt 0 view .LVU342
+ 1277 0160 3A4B     		ldr	r3, .L75+12
+ 1278 0162 1293     		str	r3, [sp, #72]
+ 1279              	.LVL136:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1280              		.loc 4 139 16 view .LVU343
+ 1281              	.LBE127:
+ 1282              	.LBE126:
+ 277:lvgl/src/lv_core/lv_disp.c ****             break;
+ 1283              		.loc 1 277 13 is_stmt 1 view .LVU344
+ 1284 0164 2046     		mov	r0, r4
+ 1285 0166 FFF7FEFF 		bl	lv_disp_get_ver_res
+ 1286              	.LVL137:
+ 1287              	.LBB128:
+ 1288              	.LBI128:
+ 168:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1289              		.loc 4 168 20 view .LVU345
+ 1290              	.LBB129:
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1291              		.loc 4 170 5 view .LVU346
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1292              		.loc 4 170 14 is_stmt 0 view .LVU347
+ 1293 016a 1790     		str	r0, [sp, #92]
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1294              		.loc 4 171 5 is_stmt 1 view .LVU348
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1295              		.loc 4 171 16 is_stmt 0 view .LVU349
+ 1296 016c 1890     		str	r0, [sp, #96]
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1297              		.loc 4 172 5 is_stmt 1 view .LVU350
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1298              		.loc 4 172 14 is_stmt 0 view .LVU351
+ 1299 016e 0023     		movs	r3, #0
+ 1300 0170 1993     		str	r3, [sp, #100]
+ 1301 0172 D5E7     		b	.L61
+ 1302              	.LVL138:
+ 1303              	.L68:
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1304              		.loc 4 172 14 view .LVU352
+ 1305              	.LBE129:
+ 1306              	.LBE128:
+ 280:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, -lv_disp_get_ver_res(d), 0);
+ 1307              		.loc 1 280 13 is_stmt 1 view .LVU353
+ 1308              	.LBB130:
+ 1309              	.LBI130:
+ 137:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1310              		.loc 4 137 20 view .LVU354
+ 1311              	.LBB131:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1312              		.loc 4 139 5 view .LVU355
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1313              		.loc 4 139 16 is_stmt 0 view .LVU356
+ 1314 0174 354B     		ldr	r3, .L75+12
+ 1315 0176 1293     		str	r3, [sp, #72]
+ARM GAS  D:\Temp\ccElHyXh.s 			page 45
+
+
+ 1316              	.LVL139:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1317              		.loc 4 139 16 view .LVU357
+ 1318              	.LBE131:
+ 1319              	.LBE130:
+ 281:lvgl/src/lv_core/lv_disp.c ****             break;
+ 1320              		.loc 1 281 13 is_stmt 1 view .LVU358
+ 281:lvgl/src/lv_core/lv_disp.c ****             break;
+ 1321              		.loc 1 281 41 is_stmt 0 view .LVU359
+ 1322 0178 2046     		mov	r0, r4
+ 1323 017a FFF7FEFF 		bl	lv_disp_get_ver_res
+ 1324              	.LVL140:
+ 1325 017e 80B2     		uxth	r0, r0
+ 281:lvgl/src/lv_core/lv_disp.c ****             break;
+ 1326              		.loc 1 281 13 view .LVU360
+ 1327 0180 4042     		rsbs	r0, r0, #0
+ 1328 0182 00B2     		sxth	r0, r0
+ 1329              	.LVL141:
+ 1330              	.LBB132:
+ 1331              	.LBI132:
+ 168:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1332              		.loc 4 168 20 is_stmt 1 view .LVU361
+ 1333              	.LBB133:
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1334              		.loc 4 170 5 view .LVU362
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1335              		.loc 4 170 14 is_stmt 0 view .LVU363
+ 1336 0184 1790     		str	r0, [sp, #92]
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1337              		.loc 4 171 5 is_stmt 1 view .LVU364
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1338              		.loc 4 171 16 is_stmt 0 view .LVU365
+ 1339 0186 1890     		str	r0, [sp, #96]
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1340              		.loc 4 172 5 is_stmt 1 view .LVU366
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1341              		.loc 4 172 14 is_stmt 0 view .LVU367
+ 1342 0188 0023     		movs	r3, #0
+ 1343 018a 1993     		str	r3, [sp, #100]
+ 1344 018c C8E7     		b	.L61
+ 1345              	.LVL142:
+ 1346              	.L67:
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1347              		.loc 4 172 14 view .LVU368
+ 1348              	.LBE133:
+ 1349              	.LBE132:
+ 284:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, lv_disp_get_hor_res(d), 0);
+ 1350              		.loc 1 284 13 is_stmt 1 view .LVU369
+ 1351              	.LBB134:
+ 1352              	.LBI134:
+ 137:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1353              		.loc 4 137 20 view .LVU370
+ 1354              	.LBB135:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1355              		.loc 4 139 5 view .LVU371
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1356              		.loc 4 139 16 is_stmt 0 view .LVU372
+ARM GAS  D:\Temp\ccElHyXh.s 			page 46
+
+
+ 1357 018e 2E4E     		ldr	r6, .L75+8
+ 1358 0190 1296     		str	r6, [sp, #72]
+ 1359              	.LVL143:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1360              		.loc 4 139 16 view .LVU373
+ 1361              	.LBE135:
+ 1362              	.LBE134:
+ 285:lvgl/src/lv_core/lv_disp.c **** 
+ 1363              		.loc 1 285 13 is_stmt 1 view .LVU374
+ 1364 0192 2046     		mov	r0, r4
+ 1365 0194 FFF7FEFF 		bl	lv_disp_get_hor_res
+ 1366              	.LVL144:
+ 1367              	.LBB136:
+ 1368              	.LBI136:
+ 168:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1369              		.loc 4 168 20 view .LVU375
+ 1370              	.LBB137:
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1371              		.loc 4 170 5 view .LVU376
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1372              		.loc 4 170 14 is_stmt 0 view .LVU377
+ 1373 0198 1790     		str	r0, [sp, #92]
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1374              		.loc 4 171 5 is_stmt 1 view .LVU378
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1375              		.loc 4 171 16 is_stmt 0 view .LVU379
+ 1376 019a 1890     		str	r0, [sp, #96]
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1377              		.loc 4 172 5 is_stmt 1 view .LVU380
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1378              		.loc 4 172 14 is_stmt 0 view .LVU381
+ 1379 019c 0025     		movs	r5, #0
+ 1380              	.LVL145:
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1381              		.loc 4 172 14 view .LVU382
+ 1382 019e 1995     		str	r5, [sp, #100]
+ 1383              	.LVL146:
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1384              		.loc 4 172 14 view .LVU383
+ 1385              	.LBE137:
+ 1386              	.LBE136:
+ 287:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_old, 0, -lv_disp_get_hor_res(d));
+ 1387              		.loc 1 287 13 is_stmt 1 view .LVU384
+ 1388              	.LBB138:
+ 1389              	.LBI138:
+ 137:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1390              		.loc 4 137 20 view .LVU385
+ 1391              	.LBB139:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1392              		.loc 4 139 5 view .LVU386
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1393              		.loc 4 139 16 is_stmt 0 view .LVU387
+ 1394 01a0 0196     		str	r6, [sp, #4]
+ 1395              	.LVL147:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1396              		.loc 4 139 16 view .LVU388
+ 1397              	.LBE139:
+ARM GAS  D:\Temp\ccElHyXh.s 			page 47
+
+
+ 1398              	.LBE138:
+ 288:lvgl/src/lv_core/lv_disp.c ****             break;
+ 1399              		.loc 1 288 13 is_stmt 1 view .LVU389
+ 288:lvgl/src/lv_core/lv_disp.c ****             break;
+ 1400              		.loc 1 288 44 is_stmt 0 view .LVU390
+ 1401 01a2 2046     		mov	r0, r4
+ 1402 01a4 FFF7FEFF 		bl	lv_disp_get_hor_res
+ 1403              	.LVL148:
+ 1404 01a8 80B2     		uxth	r0, r0
+ 288:lvgl/src/lv_core/lv_disp.c ****             break;
+ 1405              		.loc 1 288 13 view .LVU391
+ 1406 01aa 4042     		rsbs	r0, r0, #0
+ 1407 01ac 00B2     		sxth	r0, r0
+ 1408              	.LVL149:
+ 1409              	.LBB140:
+ 1410              	.LBI140:
+ 168:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1411              		.loc 4 168 20 is_stmt 1 view .LVU392
+ 1412              	.LBB141:
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1413              		.loc 4 170 5 view .LVU393
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1414              		.loc 4 170 14 is_stmt 0 view .LVU394
+ 1415 01ae 0695     		str	r5, [sp, #24]
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1416              		.loc 4 171 5 is_stmt 1 view .LVU395
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1417              		.loc 4 171 16 is_stmt 0 view .LVU396
+ 1418 01b0 0795     		str	r5, [sp, #28]
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1419              		.loc 4 172 5 is_stmt 1 view .LVU397
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1420              		.loc 4 172 14 is_stmt 0 view .LVU398
+ 1421 01b2 0890     		str	r0, [sp, #32]
+ 1422 01b4 B4E7     		b	.L61
+ 1423              	.LVL150:
+ 1424              	.L66:
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1425              		.loc 4 172 14 view .LVU399
+ 1426              	.LBE141:
+ 1427              	.LBE140:
+ 291:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, -lv_disp_get_hor_res(d), 0);
+ 1428              		.loc 1 291 13 is_stmt 1 view .LVU400
+ 1429              	.LBB142:
+ 1430              	.LBI142:
+ 137:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1431              		.loc 4 137 20 view .LVU401
+ 1432              	.LBB143:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1433              		.loc 4 139 5 view .LVU402
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1434              		.loc 4 139 16 is_stmt 0 view .LVU403
+ 1435 01b6 244E     		ldr	r6, .L75+8
+ 1436 01b8 1296     		str	r6, [sp, #72]
+ 1437              	.LVL151:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1438              		.loc 4 139 16 view .LVU404
+ARM GAS  D:\Temp\ccElHyXh.s 			page 48
+
+
+ 1439              	.LBE143:
+ 1440              	.LBE142:
+ 292:lvgl/src/lv_core/lv_disp.c **** 
+ 1441              		.loc 1 292 13 is_stmt 1 view .LVU405
+ 292:lvgl/src/lv_core/lv_disp.c **** 
+ 1442              		.loc 1 292 41 is_stmt 0 view .LVU406
+ 1443 01ba 2046     		mov	r0, r4
+ 1444 01bc FFF7FEFF 		bl	lv_disp_get_hor_res
+ 1445              	.LVL152:
+ 1446 01c0 80B2     		uxth	r0, r0
+ 292:lvgl/src/lv_core/lv_disp.c **** 
+ 1447              		.loc 1 292 13 view .LVU407
+ 1448 01c2 4042     		rsbs	r0, r0, #0
+ 1449 01c4 00B2     		sxth	r0, r0
+ 1450              	.LVL153:
+ 1451              	.LBB144:
+ 1452              	.LBI144:
+ 168:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1453              		.loc 4 168 20 is_stmt 1 view .LVU408
+ 1454              	.LBB145:
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1455              		.loc 4 170 5 view .LVU409
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1456              		.loc 4 170 14 is_stmt 0 view .LVU410
+ 1457 01c6 1790     		str	r0, [sp, #92]
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1458              		.loc 4 171 5 is_stmt 1 view .LVU411
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1459              		.loc 4 171 16 is_stmt 0 view .LVU412
+ 1460 01c8 1890     		str	r0, [sp, #96]
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1461              		.loc 4 172 5 is_stmt 1 view .LVU413
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1462              		.loc 4 172 14 is_stmt 0 view .LVU414
+ 1463 01ca 0025     		movs	r5, #0
+ 1464              	.LVL154:
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1465              		.loc 4 172 14 view .LVU415
+ 1466 01cc 1995     		str	r5, [sp, #100]
+ 1467              	.LVL155:
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1468              		.loc 4 172 14 view .LVU416
+ 1469              	.LBE145:
+ 1470              	.LBE144:
+ 294:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_old, 0, lv_disp_get_hor_res(d));
+ 1471              		.loc 1 294 13 is_stmt 1 view .LVU417
+ 1472              	.LBB146:
+ 1473              	.LBI146:
+ 137:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1474              		.loc 4 137 20 view .LVU418
+ 1475              	.LBB147:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1476              		.loc 4 139 5 view .LVU419
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1477              		.loc 4 139 16 is_stmt 0 view .LVU420
+ 1478 01ce 0196     		str	r6, [sp, #4]
+ 1479              	.LVL156:
+ARM GAS  D:\Temp\ccElHyXh.s 			page 49
+
+
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1480              		.loc 4 139 16 view .LVU421
+ 1481              	.LBE147:
+ 1482              	.LBE146:
+ 295:lvgl/src/lv_core/lv_disp.c ****             break;
+ 1483              		.loc 1 295 13 is_stmt 1 view .LVU422
+ 1484 01d0 2046     		mov	r0, r4
+ 1485 01d2 FFF7FEFF 		bl	lv_disp_get_hor_res
+ 1486              	.LVL157:
+ 1487              	.LBB148:
+ 1488              	.LBI148:
+ 168:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1489              		.loc 4 168 20 view .LVU423
+ 1490              	.LBB149:
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1491              		.loc 4 170 5 view .LVU424
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1492              		.loc 4 170 14 is_stmt 0 view .LVU425
+ 1493 01d6 0695     		str	r5, [sp, #24]
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1494              		.loc 4 171 5 is_stmt 1 view .LVU426
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1495              		.loc 4 171 16 is_stmt 0 view .LVU427
+ 1496 01d8 0795     		str	r5, [sp, #28]
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1497              		.loc 4 172 5 is_stmt 1 view .LVU428
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1498              		.loc 4 172 14 is_stmt 0 view .LVU429
+ 1499 01da 0890     		str	r0, [sp, #32]
+ 1500 01dc A0E7     		b	.L61
+ 1501              	.LVL158:
+ 1502              	.L65:
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1503              		.loc 4 172 14 view .LVU430
+ 1504              	.LBE149:
+ 1505              	.LBE148:
+ 298:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, lv_disp_get_ver_res(d), 0);
+ 1506              		.loc 1 298 13 is_stmt 1 view .LVU431
+ 1507              	.LBB150:
+ 1508              	.LBI150:
+ 137:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1509              		.loc 4 137 20 view .LVU432
+ 1510              	.LBB151:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1511              		.loc 4 139 5 view .LVU433
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1512              		.loc 4 139 16 is_stmt 0 view .LVU434
+ 1513 01de 1B4E     		ldr	r6, .L75+12
+ 1514 01e0 1296     		str	r6, [sp, #72]
+ 1515              	.LVL159:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1516              		.loc 4 139 16 view .LVU435
+ 1517              	.LBE151:
+ 1518              	.LBE150:
+ 299:lvgl/src/lv_core/lv_disp.c **** 
+ 1519              		.loc 1 299 13 is_stmt 1 view .LVU436
+ 1520 01e2 2046     		mov	r0, r4
+ARM GAS  D:\Temp\ccElHyXh.s 			page 50
+
+
+ 1521 01e4 FFF7FEFF 		bl	lv_disp_get_ver_res
+ 1522              	.LVL160:
+ 1523              	.LBB152:
+ 1524              	.LBI152:
+ 168:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1525              		.loc 4 168 20 view .LVU437
+ 1526              	.LBB153:
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1527              		.loc 4 170 5 view .LVU438
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1528              		.loc 4 170 14 is_stmt 0 view .LVU439
+ 1529 01e8 1790     		str	r0, [sp, #92]
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1530              		.loc 4 171 5 is_stmt 1 view .LVU440
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1531              		.loc 4 171 16 is_stmt 0 view .LVU441
+ 1532 01ea 1890     		str	r0, [sp, #96]
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1533              		.loc 4 172 5 is_stmt 1 view .LVU442
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1534              		.loc 4 172 14 is_stmt 0 view .LVU443
+ 1535 01ec 0025     		movs	r5, #0
+ 1536              	.LVL161:
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1537              		.loc 4 172 14 view .LVU444
+ 1538 01ee 1995     		str	r5, [sp, #100]
+ 1539              	.LVL162:
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1540              		.loc 4 172 14 view .LVU445
+ 1541              	.LBE153:
+ 1542              	.LBE152:
+ 301:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_old, 0, -lv_disp_get_ver_res(d));
+ 1543              		.loc 1 301 13 is_stmt 1 view .LVU446
+ 1544              	.LBB154:
+ 1545              	.LBI154:
+ 137:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1546              		.loc 4 137 20 view .LVU447
+ 1547              	.LBB155:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1548              		.loc 4 139 5 view .LVU448
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1549              		.loc 4 139 16 is_stmt 0 view .LVU449
+ 1550 01f0 0196     		str	r6, [sp, #4]
+ 1551              	.LVL163:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1552              		.loc 4 139 16 view .LVU450
+ 1553              	.LBE155:
+ 1554              	.LBE154:
+ 302:lvgl/src/lv_core/lv_disp.c ****             break;
+ 1555              		.loc 1 302 13 is_stmt 1 view .LVU451
+ 302:lvgl/src/lv_core/lv_disp.c ****             break;
+ 1556              		.loc 1 302 44 is_stmt 0 view .LVU452
+ 1557 01f2 2046     		mov	r0, r4
+ 1558 01f4 FFF7FEFF 		bl	lv_disp_get_ver_res
+ 1559              	.LVL164:
+ 1560 01f8 80B2     		uxth	r0, r0
+ 302:lvgl/src/lv_core/lv_disp.c ****             break;
+ARM GAS  D:\Temp\ccElHyXh.s 			page 51
+
+
+ 1561              		.loc 1 302 13 view .LVU453
+ 1562 01fa 4042     		rsbs	r0, r0, #0
+ 1563 01fc 00B2     		sxth	r0, r0
+ 1564              	.LVL165:
+ 1565              	.LBB156:
+ 1566              	.LBI156:
+ 168:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1567              		.loc 4 168 20 is_stmt 1 view .LVU454
+ 1568              	.LBB157:
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1569              		.loc 4 170 5 view .LVU455
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1570              		.loc 4 170 14 is_stmt 0 view .LVU456
+ 1571 01fe 0695     		str	r5, [sp, #24]
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1572              		.loc 4 171 5 is_stmt 1 view .LVU457
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1573              		.loc 4 171 16 is_stmt 0 view .LVU458
+ 1574 0200 0795     		str	r5, [sp, #28]
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1575              		.loc 4 172 5 is_stmt 1 view .LVU459
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1576              		.loc 4 172 14 is_stmt 0 view .LVU460
+ 1577 0202 0890     		str	r0, [sp, #32]
+ 1578 0204 8CE7     		b	.L61
+ 1579              	.LVL166:
+ 1580              	.L64:
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1581              		.loc 4 172 14 view .LVU461
+ 1582              	.LBE157:
+ 1583              	.LBE156:
+ 305:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, -lv_disp_get_ver_res(d), 0);
+ 1584              		.loc 1 305 13 is_stmt 1 view .LVU462
+ 1585              	.LBB158:
+ 1586              	.LBI158:
+ 137:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1587              		.loc 4 137 20 view .LVU463
+ 1588              	.LBB159:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1589              		.loc 4 139 5 view .LVU464
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1590              		.loc 4 139 16 is_stmt 0 view .LVU465
+ 1591 0206 114E     		ldr	r6, .L75+12
+ 1592 0208 1296     		str	r6, [sp, #72]
+ 1593              	.LVL167:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1594              		.loc 4 139 16 view .LVU466
+ 1595              	.LBE159:
+ 1596              	.LBE158:
+ 306:lvgl/src/lv_core/lv_disp.c **** 
+ 1597              		.loc 1 306 13 is_stmt 1 view .LVU467
+ 306:lvgl/src/lv_core/lv_disp.c **** 
+ 1598              		.loc 1 306 41 is_stmt 0 view .LVU468
+ 1599 020a 2046     		mov	r0, r4
+ 1600 020c FFF7FEFF 		bl	lv_disp_get_ver_res
+ 1601              	.LVL168:
+ 1602 0210 80B2     		uxth	r0, r0
+ARM GAS  D:\Temp\ccElHyXh.s 			page 52
+
+
+ 306:lvgl/src/lv_core/lv_disp.c **** 
+ 1603              		.loc 1 306 13 view .LVU469
+ 1604 0212 4042     		rsbs	r0, r0, #0
+ 1605 0214 00B2     		sxth	r0, r0
+ 1606              	.LVL169:
+ 1607              	.LBB160:
+ 1608              	.LBI160:
+ 168:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1609              		.loc 4 168 20 is_stmt 1 view .LVU470
+ 1610              	.LBB161:
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1611              		.loc 4 170 5 view .LVU471
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1612              		.loc 4 170 14 is_stmt 0 view .LVU472
+ 1613 0216 1790     		str	r0, [sp, #92]
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1614              		.loc 4 171 5 is_stmt 1 view .LVU473
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1615              		.loc 4 171 16 is_stmt 0 view .LVU474
+ 1616 0218 1890     		str	r0, [sp, #96]
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1617              		.loc 4 172 5 is_stmt 1 view .LVU475
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1618              		.loc 4 172 14 is_stmt 0 view .LVU476
+ 1619 021a 0025     		movs	r5, #0
+ 1620              	.LVL170:
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1621              		.loc 4 172 14 view .LVU477
+ 1622 021c 1995     		str	r5, [sp, #100]
+ 1623              	.LVL171:
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1624              		.loc 4 172 14 view .LVU478
+ 1625              	.LBE161:
+ 1626              	.LBE160:
+ 308:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_old, 0, lv_disp_get_ver_res(d));
+ 1627              		.loc 1 308 13 is_stmt 1 view .LVU479
+ 1628              	.LBB162:
+ 1629              	.LBI162:
+ 137:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1630              		.loc 4 137 20 view .LVU480
+ 1631              	.LBB163:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1632              		.loc 4 139 5 view .LVU481
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1633              		.loc 4 139 16 is_stmt 0 view .LVU482
+ 1634 021e 0196     		str	r6, [sp, #4]
+ 1635              	.LVL172:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1636              		.loc 4 139 16 view .LVU483
+ 1637              	.LBE163:
+ 1638              	.LBE162:
+ 309:lvgl/src/lv_core/lv_disp.c ****             break;
+ 1639              		.loc 1 309 13 is_stmt 1 view .LVU484
+ 1640 0220 2046     		mov	r0, r4
+ 1641 0222 FFF7FEFF 		bl	lv_disp_get_ver_res
+ 1642              	.LVL173:
+ 1643              	.LBB164:
+ARM GAS  D:\Temp\ccElHyXh.s 			page 53
+
+
+ 1644              	.LBI164:
+ 168:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1645              		.loc 4 168 20 view .LVU485
+ 1646              	.LBB165:
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1647              		.loc 4 170 5 view .LVU486
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1648              		.loc 4 170 14 is_stmt 0 view .LVU487
+ 1649 0226 0695     		str	r5, [sp, #24]
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1650              		.loc 4 171 5 is_stmt 1 view .LVU488
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1651              		.loc 4 171 16 is_stmt 0 view .LVU489
+ 1652 0228 0795     		str	r5, [sp, #28]
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1653              		.loc 4 172 5 is_stmt 1 view .LVU490
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1654              		.loc 4 172 14 is_stmt 0 view .LVU491
+ 1655 022a 0890     		str	r0, [sp, #32]
+ 1656 022c 78E7     		b	.L61
+ 1657              	.LVL174:
+ 1658              	.L62:
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1659              		.loc 4 172 14 view .LVU492
+ 1660              	.LBE165:
+ 1661              	.LBE164:
+ 313:lvgl/src/lv_core/lv_disp.c ****             lv_anim_set_values(&a_new, LV_OPA_TRANSP, LV_OPA_COVER);
+ 1662              		.loc 1 313 13 is_stmt 1 view .LVU493
+ 1663              	.LBB166:
+ 1664              	.LBI166:
+ 137:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1665              		.loc 4 137 20 view .LVU494
+ 1666              	.LBB167:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1667              		.loc 4 139 5 view .LVU495
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1668              		.loc 4 139 16 is_stmt 0 view .LVU496
+ 1669 022e 084B     		ldr	r3, .L75+16
+ 1670 0230 1293     		str	r3, [sp, #72]
+ 1671              	.LVL175:
+ 139:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1672              		.loc 4 139 16 view .LVU497
+ 1673              	.LBE167:
+ 1674              	.LBE166:
+ 314:lvgl/src/lv_core/lv_disp.c ****             break;
+ 1675              		.loc 1 314 13 is_stmt 1 view .LVU498
+ 1676              	.LBB168:
+ 1677              	.LBI168:
+ 168:lvgl/src/lv_core/../lv_misc/lv_anim.h **** {
+ 1678              		.loc 4 168 20 view .LVU499
+ 1679              	.LBB169:
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1680              		.loc 4 170 5 view .LVU500
+ 170:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 1681              		.loc 4 170 14 is_stmt 0 view .LVU501
+ 1682 0232 0023     		movs	r3, #0
+ 1683 0234 1793     		str	r3, [sp, #92]
+ARM GAS  D:\Temp\ccElHyXh.s 			page 54
+
+
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1684              		.loc 4 171 5 is_stmt 1 view .LVU502
+ 171:lvgl/src/lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 1685              		.loc 4 171 16 is_stmt 0 view .LVU503
+ 1686 0236 1893     		str	r3, [sp, #96]
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1687              		.loc 4 172 5 is_stmt 1 view .LVU504
+ 172:lvgl/src/lv_core/../lv_misc/lv_anim.h **** }
+ 1688              		.loc 4 172 14 is_stmt 0 view .LVU505
+ 1689 0238 FF23     		movs	r3, #255
+ 1690 023a 1993     		str	r3, [sp, #100]
+ 1691 023c 70E7     		b	.L61
+ 1692              	.L76:
+ 1693 023e 00BF     		.align	2
+ 1694              	.L75:
+ 1695 0240 00000000 		.word	scr_load_anim_start
+ 1696 0244 00000000 		.word	scr_anim_ready
+ 1697 0248 00000000 		.word	lv_obj_set_x
+ 1698 024c 00000000 		.word	lv_obj_set_y
+ 1699 0250 00000000 		.word	opa_scale_anim
+ 1700              	.LBE169:
+ 1701              	.LBE168:
+ 1702              		.cfi_endproc
+ 1703              	.LFE472:
+ 1705              		.section	.text.lv_disp_get_inactive_time,"ax",%progbits
+ 1706              		.align	1
+ 1707              		.global	lv_disp_get_inactive_time
+ 1708              		.syntax unified
+ 1709              		.thumb
+ 1710              		.thumb_func
+ 1711              		.fpu fpv4-sp-d16
+ 1713              	lv_disp_get_inactive_time:
+ 1714              	.LVL176:
+ 1715              	.LFB473:
+ 330:lvgl/src/lv_core/lv_disp.c ****     if(disp) return lv_tick_elaps(disp->last_activity_time);
+ 1716              		.loc 1 330 1 is_stmt 1 view -0
+ 1717              		.cfi_startproc
+ 1718              		@ args = 0, pretend = 0, frame = 0
+ 1719              		@ frame_needed = 0, uses_anonymous_args = 0
+ 330:lvgl/src/lv_core/lv_disp.c ****     if(disp) return lv_tick_elaps(disp->last_activity_time);
+ 1720              		.loc 1 330 1 is_stmt 0 view .LVU507
+ 1721 0000 38B5     		push	{r3, r4, r5, lr}
+ 1722              	.LCFI25:
+ 1723              		.cfi_def_cfa_offset 16
+ 1724              		.cfi_offset 3, -16
+ 1725              		.cfi_offset 4, -12
+ 1726              		.cfi_offset 5, -8
+ 1727              		.cfi_offset 14, -4
+ 331:lvgl/src/lv_core/lv_disp.c **** 
+ 1728              		.loc 1 331 5 is_stmt 1 view .LVU508
+ 331:lvgl/src/lv_core/lv_disp.c **** 
+ 1729              		.loc 1 331 7 is_stmt 0 view .LVU509
+ 1730 0002 30B1     		cbz	r0, .L78
+ 331:lvgl/src/lv_core/lv_disp.c **** 
+ 1731              		.loc 1 331 14 is_stmt 1 discriminator 1 view .LVU510
+ 331:lvgl/src/lv_core/lv_disp.c **** 
+ 1732              		.loc 1 331 21 is_stmt 0 discriminator 1 view .LVU511
+ARM GAS  D:\Temp\ccElHyXh.s 			page 55
+
+
+ 1733 0004 D0F88401 		ldr	r0, [r0, #388]
+ 1734              	.LVL177:
+ 331:lvgl/src/lv_core/lv_disp.c **** 
+ 1735              		.loc 1 331 21 discriminator 1 view .LVU512
+ 1736 0008 FFF7FEFF 		bl	lv_tick_elaps
+ 1737              	.LVL178:
+ 1738 000c 0546     		mov	r5, r0
+ 1739              	.L77:
+ 343:lvgl/src/lv_core/lv_disp.c **** 
+ 1740              		.loc 1 343 1 view .LVU513
+ 1741 000e 2846     		mov	r0, r5
+ 1742 0010 38BD     		pop	{r3, r4, r5, pc}
+ 1743              	.LVL179:
+ 1744              	.L78:
+ 333:lvgl/src/lv_core/lv_disp.c ****     uint32_t t = UINT32_MAX;
+ 1745              		.loc 1 333 5 is_stmt 1 view .LVU514
+ 334:lvgl/src/lv_core/lv_disp.c ****     d          = lv_disp_get_next(NULL);
+ 1746              		.loc 1 334 5 view .LVU515
+ 335:lvgl/src/lv_core/lv_disp.c ****     while(d) {
+ 1747              		.loc 1 335 5 view .LVU516
+ 335:lvgl/src/lv_core/lv_disp.c ****     while(d) {
+ 1748              		.loc 1 335 18 is_stmt 0 view .LVU517
+ 1749 0012 0020     		movs	r0, #0
+ 1750              	.LVL180:
+ 335:lvgl/src/lv_core/lv_disp.c ****     while(d) {
+ 1751              		.loc 1 335 18 view .LVU518
+ 1752 0014 FFF7FEFF 		bl	lv_disp_get_next
+ 1753              	.LVL181:
+ 1754 0018 0446     		mov	r4, r0
+ 1755              	.LVL182:
+ 336:lvgl/src/lv_core/lv_disp.c ****         uint32_t elaps = lv_tick_elaps(d->last_activity_time);
+ 1756              		.loc 1 336 5 is_stmt 1 view .LVU519
+ 334:lvgl/src/lv_core/lv_disp.c ****     d          = lv_disp_get_next(NULL);
+ 1757              		.loc 1 334 14 is_stmt 0 view .LVU520
+ 1758 001a 4FF0FF35 		mov	r5, #-1
+ 1759              	.LVL183:
+ 1760              	.L80:
+ 336:lvgl/src/lv_core/lv_disp.c ****         uint32_t elaps = lv_tick_elaps(d->last_activity_time);
+ 1761              		.loc 1 336 10 view .LVU521
+ 1762 001e 002C     		cmp	r4, #0
+ 1763 0020 F5D0     		beq	.L77
+ 1764              	.LBB170:
+ 337:lvgl/src/lv_core/lv_disp.c ****         t = LV_MATH_MIN(t, elaps);
+ 1765              		.loc 1 337 9 is_stmt 1 view .LVU522
+ 337:lvgl/src/lv_core/lv_disp.c ****         t = LV_MATH_MIN(t, elaps);
+ 1766              		.loc 1 337 26 is_stmt 0 view .LVU523
+ 1767 0022 D4F88401 		ldr	r0, [r4, #388]
+ 1768              	.LVL184:
+ 337:lvgl/src/lv_core/lv_disp.c ****         t = LV_MATH_MIN(t, elaps);
+ 1769              		.loc 1 337 26 view .LVU524
+ 1770 0026 FFF7FEFF 		bl	lv_tick_elaps
+ 1771              	.LVL185:
+ 338:lvgl/src/lv_core/lv_disp.c ****         d = lv_disp_get_next(d);
+ 1772              		.loc 1 338 9 is_stmt 1 view .LVU525
+ 338:lvgl/src/lv_core/lv_disp.c ****         d = lv_disp_get_next(d);
+ 1773              		.loc 1 338 11 is_stmt 0 view .LVU526
+ 1774 002a 8542     		cmp	r5, r0
+ARM GAS  D:\Temp\ccElHyXh.s 			page 56
+
+
+ 1775 002c 28BF     		it	cs
+ 1776 002e 0546     		movcs	r5, r0
+ 1777              	.LVL186:
+ 339:lvgl/src/lv_core/lv_disp.c ****     }
+ 1778              		.loc 1 339 9 is_stmt 1 view .LVU527
+ 339:lvgl/src/lv_core/lv_disp.c ****     }
+ 1779              		.loc 1 339 13 is_stmt 0 view .LVU528
+ 1780 0030 2046     		mov	r0, r4
+ 1781              	.LVL187:
+ 339:lvgl/src/lv_core/lv_disp.c ****     }
+ 1782              		.loc 1 339 13 view .LVU529
+ 1783 0032 FFF7FEFF 		bl	lv_disp_get_next
+ 1784              	.LVL188:
+ 1785 0036 0446     		mov	r4, r0
+ 1786              	.LVL189:
+ 339:lvgl/src/lv_core/lv_disp.c ****     }
+ 1787              		.loc 1 339 13 view .LVU530
+ 1788 0038 F1E7     		b	.L80
+ 1789              	.LBE170:
+ 1790              		.cfi_endproc
+ 1791              	.LFE473:
+ 1793              		.section	.text.lv_disp_trig_activity,"ax",%progbits
+ 1794              		.align	1
+ 1795              		.global	lv_disp_trig_activity
+ 1796              		.syntax unified
+ 1797              		.thumb
+ 1798              		.thumb_func
+ 1799              		.fpu fpv4-sp-d16
+ 1801              	lv_disp_trig_activity:
+ 1802              	.LVL190:
+ 1803              	.LFB474:
+ 350:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 1804              		.loc 1 350 1 is_stmt 1 view -0
+ 1805              		.cfi_startproc
+ 1806              		@ args = 0, pretend = 0, frame = 0
+ 1807              		@ frame_needed = 0, uses_anonymous_args = 0
+ 350:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 1808              		.loc 1 350 1 is_stmt 0 view .LVU532
+ 1809 0000 10B5     		push	{r4, lr}
+ 1810              	.LCFI26:
+ 1811              		.cfi_def_cfa_offset 8
+ 1812              		.cfi_offset 4, -8
+ 1813              		.cfi_offset 14, -4
+ 351:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1814              		.loc 1 351 5 is_stmt 1 view .LVU533
+ 351:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1815              		.loc 1 351 7 is_stmt 0 view .LVU534
+ 1816 0002 0446     		mov	r4, r0
+ 1817 0004 28B1     		cbz	r0, .L87
+ 1818              	.L84:
+ 352:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_disp_trig_activity: no display registered");
+ 1819              		.loc 1 352 5 is_stmt 1 view .LVU535
+ 352:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_disp_trig_activity: no display registered");
+ 1820              		.loc 1 352 7 is_stmt 0 view .LVU536
+ 1821 0006 1CB1     		cbz	r4, .L83
+ 357:lvgl/src/lv_core/lv_disp.c **** }
+ 1822              		.loc 1 357 5 is_stmt 1 view .LVU537
+ARM GAS  D:\Temp\ccElHyXh.s 			page 57
+
+
+ 357:lvgl/src/lv_core/lv_disp.c **** }
+ 1823              		.loc 1 357 32 is_stmt 0 view .LVU538
+ 1824 0008 FFF7FEFF 		bl	lv_tick_get
+ 1825              	.LVL191:
+ 357:lvgl/src/lv_core/lv_disp.c **** }
+ 1826              		.loc 1 357 30 view .LVU539
+ 1827 000c C4F88401 		str	r0, [r4, #388]
+ 1828              	.L83:
+ 358:lvgl/src/lv_core/lv_disp.c **** 
+ 1829              		.loc 1 358 1 view .LVU540
+ 1830 0010 10BD     		pop	{r4, pc}
+ 1831              	.LVL192:
+ 1832              	.L87:
+ 351:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1833              		.loc 1 351 15 is_stmt 1 discriminator 1 view .LVU541
+ 351:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1834              		.loc 1 351 22 is_stmt 0 discriminator 1 view .LVU542
+ 1835 0012 FFF7FEFF 		bl	lv_disp_get_default
+ 1836              	.LVL193:
+ 351:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1837              		.loc 1 351 22 discriminator 1 view .LVU543
+ 1838 0016 0446     		mov	r4, r0
+ 1839              	.LVL194:
+ 351:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1840              		.loc 1 351 22 discriminator 1 view .LVU544
+ 1841 0018 F5E7     		b	.L84
+ 1842              		.cfi_endproc
+ 1843              	.LFE474:
+ 1845              		.section	.text.lv_disp_clean_dcache,"ax",%progbits
+ 1846              		.align	1
+ 1847              		.global	lv_disp_clean_dcache
+ 1848              		.syntax unified
+ 1849              		.thumb
+ 1850              		.thumb_func
+ 1851              		.fpu fpv4-sp-d16
+ 1853              	lv_disp_clean_dcache:
+ 1854              	.LVL195:
+ 1855              	.LFB475:
+ 365:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 1856              		.loc 1 365 1 is_stmt 1 view -0
+ 1857              		.cfi_startproc
+ 1858              		@ args = 0, pretend = 0, frame = 0
+ 1859              		@ frame_needed = 0, uses_anonymous_args = 0
+ 365:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 1860              		.loc 1 365 1 is_stmt 0 view .LVU546
+ 1861 0000 08B5     		push	{r3, lr}
+ 1862              	.LCFI27:
+ 1863              		.cfi_def_cfa_offset 8
+ 1864              		.cfi_offset 3, -8
+ 1865              		.cfi_offset 14, -4
+ 366:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1866              		.loc 1 366 5 is_stmt 1 view .LVU547
+ 366:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1867              		.loc 1 366 7 is_stmt 0 view .LVU548
+ 1868 0002 0346     		mov	r3, r0
+ 1869 0004 28B1     		cbz	r0, .L92
+ 1870              	.L89:
+ARM GAS  D:\Temp\ccElHyXh.s 			page 58
+
+
+ 367:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_disp_clean_dcache: no display registered");
+ 1871              		.loc 1 367 5 is_stmt 1 view .LVU549
+ 367:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_disp_clean_dcache: no display registered");
+ 1872              		.loc 1 367 7 is_stmt 0 view .LVU550
+ 1873 0006 1BB1     		cbz	r3, .L88
+ 372:lvgl/src/lv_core/lv_disp.c ****         disp->driver.clean_dcache_cb(&disp->driver);
+ 1874              		.loc 1 372 5 is_stmt 1 view .LVU551
+ 372:lvgl/src/lv_core/lv_disp.c ****         disp->driver.clean_dcache_cb(&disp->driver);
+ 1875              		.loc 1 372 20 is_stmt 0 view .LVU552
+ 1876 0008 1A6A     		ldr	r2, [r3, #32]
+ 372:lvgl/src/lv_core/lv_disp.c ****         disp->driver.clean_dcache_cb(&disp->driver);
+ 1877              		.loc 1 372 7 view .LVU553
+ 1878 000a 0AB1     		cbz	r2, .L88
+ 373:lvgl/src/lv_core/lv_disp.c **** }
+ 1879              		.loc 1 373 9 is_stmt 1 view .LVU554
+ 1880 000c 1846     		mov	r0, r3
+ 373:lvgl/src/lv_core/lv_disp.c **** }
+ 1881              		.loc 1 373 9 is_stmt 0 view .LVU555
+ 1882 000e 9047     		blx	r2
+ 1883              	.LVL196:
+ 1884              	.L88:
+ 374:lvgl/src/lv_core/lv_disp.c **** 
+ 1885              		.loc 1 374 1 view .LVU556
+ 1886 0010 08BD     		pop	{r3, pc}
+ 1887              	.LVL197:
+ 1888              	.L92:
+ 366:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1889              		.loc 1 366 15 is_stmt 1 discriminator 1 view .LVU557
+ 366:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1890              		.loc 1 366 22 is_stmt 0 discriminator 1 view .LVU558
+ 1891 0012 FFF7FEFF 		bl	lv_disp_get_default
+ 1892              	.LVL198:
+ 366:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1893              		.loc 1 366 22 discriminator 1 view .LVU559
+ 1894 0016 0346     		mov	r3, r0
+ 1895              	.LVL199:
+ 366:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1896              		.loc 1 366 22 discriminator 1 view .LVU560
+ 1897 0018 F5E7     		b	.L89
+ 1898              		.cfi_endproc
+ 1899              	.LFE475:
+ 1901              		.section	.text._lv_disp_get_refr_task,"ax",%progbits
+ 1902              		.align	1
+ 1903              		.global	_lv_disp_get_refr_task
+ 1904              		.syntax unified
+ 1905              		.thumb
+ 1906              		.thumb_func
+ 1907              		.fpu fpv4-sp-d16
+ 1909              	_lv_disp_get_refr_task:
+ 1910              	.LVL200:
+ 1911              	.LFB476:
+ 383:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ 1912              		.loc 1 383 1 is_stmt 1 view -0
+ 1913              		.cfi_startproc
+ 1914              		@ args = 0, pretend = 0, frame = 0
+ 1915              		@ frame_needed = 0, uses_anonymous_args = 0
+ 383:lvgl/src/lv_core/lv_disp.c ****     if(!disp) disp = lv_disp_get_default();
+ARM GAS  D:\Temp\ccElHyXh.s 			page 59
+
+
+ 1916              		.loc 1 383 1 is_stmt 0 view .LVU562
+ 1917 0000 08B5     		push	{r3, lr}
+ 1918              	.LCFI28:
+ 1919              		.cfi_def_cfa_offset 8
+ 1920              		.cfi_offset 3, -8
+ 1921              		.cfi_offset 14, -4
+ 384:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1922              		.loc 1 384 5 is_stmt 1 view .LVU563
+ 384:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1923              		.loc 1 384 7 is_stmt 0 view .LVU564
+ 1924 0002 0346     		mov	r3, r0
+ 1925 0004 10B1     		cbz	r0, .L98
+ 1926              	.L94:
+ 385:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_disp_get_refr_task: no display registered");
+ 1927              		.loc 1 385 5 is_stmt 1 view .LVU565
+ 385:lvgl/src/lv_core/lv_disp.c ****         LV_LOG_WARN("lv_disp_get_refr_task: no display registered");
+ 1928              		.loc 1 385 7 is_stmt 0 view .LVU566
+ 1929 0006 2BB1     		cbz	r3, .L96
+ 390:lvgl/src/lv_core/lv_disp.c **** }
+ 1930              		.loc 1 390 5 is_stmt 1 view .LVU567
+ 390:lvgl/src/lv_core/lv_disp.c **** }
+ 1931              		.loc 1 390 16 is_stmt 0 view .LVU568
+ 1932 0008 586B     		ldr	r0, [r3, #52]
+ 1933              	.LVL201:
+ 1934              	.L93:
+ 391:lvgl/src/lv_core/lv_disp.c **** 
+ 1935              		.loc 1 391 1 view .LVU569
+ 1936 000a 08BD     		pop	{r3, pc}
+ 1937              	.LVL202:
+ 1938              	.L98:
+ 384:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1939              		.loc 1 384 15 is_stmt 1 discriminator 1 view .LVU570
+ 384:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1940              		.loc 1 384 22 is_stmt 0 discriminator 1 view .LVU571
+ 1941 000c FFF7FEFF 		bl	lv_disp_get_default
+ 1942              	.LVL203:
+ 384:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1943              		.loc 1 384 22 discriminator 1 view .LVU572
+ 1944 0010 0346     		mov	r3, r0
+ 1945              	.LVL204:
+ 384:lvgl/src/lv_core/lv_disp.c ****     if(!disp) {
+ 1946              		.loc 1 384 22 discriminator 1 view .LVU573
+ 1947 0012 F8E7     		b	.L94
+ 1948              	.L96:
+ 387:lvgl/src/lv_core/lv_disp.c ****     }
+ 1949              		.loc 1 387 16 view .LVU574
+ 1950 0014 0020     		movs	r0, #0
+ 1951              	.LVL205:
+ 387:lvgl/src/lv_core/lv_disp.c ****     }
+ 1952              		.loc 1 387 16 view .LVU575
+ 1953 0016 F8E7     		b	.L93
+ 1954              		.cfi_endproc
+ 1955              	.LFE476:
+ 1957              		.text
+ 1958              	.Letext0:
+ 1959              		.file 5 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1960              		.file 6 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ARM GAS  D:\Temp\ccElHyXh.s 			page 60
+
+
+ 1961              		.file 7 "Drivers/CMSIS/Include/core_cm4.h"
+ 1962              		.file 8 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 1963              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 1964              		.file 10 "lvgl/lv_conf.h"
+ 1965              		.file 11 "lvgl/src/lv_core/../lv_hal/../lv_misc/lv_color.h"
+ 1966              		.file 12 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1967              		.file 13 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1968              		.file 14 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-non
+ 1969              		.file 15 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1970              		.file 16 "lvgl/src/lv_core/../lv_hal/../lv_misc/lv_types.h"
+ 1971              		.file 17 "lvgl/src/lv_core/../lv_hal/../lv_misc/lv_mem.h"
+ 1972              		.file 18 "lvgl/src/lv_core/../lv_hal/../lv_misc/lv_area.h"
+ 1973              		.file 19 "lvgl/src/lv_core/../lv_hal/../lv_misc/lv_ll.h"
+ 1974              		.file 20 "lvgl/src/lv_core/../lv_hal/../lv_misc/lv_task.h"
+ 1975              		.file 21 "lvgl/src/lv_core/../lv_hal/lv_hal_disp.h"
+ 1976              		.file 22 "lvgl/src/lv_core/lv_obj.h"
+ 1977              		.file 23 "lvgl/src/lv_core/../lv_hal/lv_hal_indev.h"
+ 1978              		.file 24 "lvgl/src/lv_core/../lv_font/lv_font.h"
+ 1979              		.file 25 "lvgl/src/lv_core/lv_style.h"
+ 1980              		.file 26 "lvgl/src/lv_core/../lv_draw/../lv_misc/lv_bidi.h"
+ 1981              		.file 27 "lvgl/src/lv_core/../lv_draw/../lv_misc/lv_txt.h"
+ 1982              		.file 28 "lvgl/src/lv_core/../lv_draw/lv_draw_label.h"
+ 1983              		.file 29 "lvgl/src/lv_core/../lv_hal/lv_hal_tick.h"
+ 1984              		.file 30 "lvgl/src/lv_core/../lv_core/lv_refr.h"
+ARM GAS  D:\Temp\ccElHyXh.s 			page 61
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_disp.c
+  D:\Temp\ccElHyXh.s:18     .text.scr_anim_ready:0000000000000000 $t
+  D:\Temp\ccElHyXh.s:25     .text.scr_anim_ready:0000000000000000 scr_anim_ready
+  D:\Temp\ccElHyXh.s:88     .text.opa_scale_anim:0000000000000000 $t
+  D:\Temp\ccElHyXh.s:94     .text.opa_scale_anim:0000000000000000 opa_scale_anim
+  D:\Temp\ccElHyXh.s:131    .text.lv_disp_get_scr_act:0000000000000000 $t
+  D:\Temp\ccElHyXh.s:138    .text.lv_disp_get_scr_act:0000000000000000 lv_disp_get_scr_act
+  D:\Temp\ccElHyXh.s:187    .text.lv_disp_get_scr_prev:0000000000000000 $t
+  D:\Temp\ccElHyXh.s:194    .text.lv_disp_get_scr_prev:0000000000000000 lv_disp_get_scr_prev
+  D:\Temp\ccElHyXh.s:243    .text.lv_disp_load_scr:0000000000000000 $t
+  D:\Temp\ccElHyXh.s:250    .text.lv_disp_load_scr:0000000000000000 lv_disp_load_scr
+  D:\Temp\ccElHyXh.s:288    .text.scr_load_anim_start:0000000000000000 $t
+  D:\Temp\ccElHyXh.s:294    .text.scr_load_anim_start:0000000000000000 scr_load_anim_start
+  D:\Temp\ccElHyXh.s:347    .text.lv_disp_get_layer_top:0000000000000000 $t
+  D:\Temp\ccElHyXh.s:354    .text.lv_disp_get_layer_top:0000000000000000 lv_disp_get_layer_top
+  D:\Temp\ccElHyXh.s:403    .text.lv_disp_get_layer_sys:0000000000000000 $t
+  D:\Temp\ccElHyXh.s:410    .text.lv_disp_get_layer_sys:0000000000000000 lv_disp_get_layer_sys
+  D:\Temp\ccElHyXh.s:459    .text.lv_disp_assign_screen:0000000000000000 $t
+  D:\Temp\ccElHyXh.s:466    .text.lv_disp_assign_screen:0000000000000000 lv_disp_assign_screen
+  D:\Temp\ccElHyXh.s:521    .text.lv_disp_set_bg_color:0000000000000000 $t
+  D:\Temp\ccElHyXh.s:528    .text.lv_disp_set_bg_color:0000000000000000 lv_disp_set_bg_color
+  D:\Temp\ccElHyXh.s:617    .text.lv_disp_set_bg_image:0000000000000000 $t
+  D:\Temp\ccElHyXh.s:624    .text.lv_disp_set_bg_image:0000000000000000 lv_disp_set_bg_image
+  D:\Temp\ccElHyXh.s:713    .text.lv_disp_set_bg_opa:0000000000000000 $t
+  D:\Temp\ccElHyXh.s:720    .text.lv_disp_set_bg_opa:0000000000000000 lv_disp_set_bg_opa
+  D:\Temp\ccElHyXh.s:808    .text.lv_scr_load_anim:0000000000000000 $t
+  D:\Temp\ccElHyXh.s:815    .text.lv_scr_load_anim:0000000000000000 lv_scr_load_anim
+  D:\Temp\ccElHyXh.s:1115   .text.lv_scr_load_anim:0000000000000100 $d
+  D:\Temp\ccElHyXh.s:1126   .text.lv_scr_load_anim:000000000000010a $t
+  D:\Temp\ccElHyXh.s:1695   .text.lv_scr_load_anim:0000000000000240 $d
+  D:\Temp\ccElHyXh.s:1706   .text.lv_disp_get_inactive_time:0000000000000000 $t
+  D:\Temp\ccElHyXh.s:1713   .text.lv_disp_get_inactive_time:0000000000000000 lv_disp_get_inactive_time
+  D:\Temp\ccElHyXh.s:1794   .text.lv_disp_trig_activity:0000000000000000 $t
+  D:\Temp\ccElHyXh.s:1801   .text.lv_disp_trig_activity:0000000000000000 lv_disp_trig_activity
+  D:\Temp\ccElHyXh.s:1846   .text.lv_disp_clean_dcache:0000000000000000 $t
+  D:\Temp\ccElHyXh.s:1853   .text.lv_disp_clean_dcache:0000000000000000 lv_disp_clean_dcache
+  D:\Temp\ccElHyXh.s:1902   .text._lv_disp_get_refr_task:0000000000000000 $t
+  D:\Temp\ccElHyXh.s:1909   .text._lv_disp_get_refr_task:0000000000000000 _lv_disp_get_refr_task
+
+UNDEFINED SYMBOLS
+lv_obj_get_disp
+lv_obj_get_local_style
+lv_style_remove_prop
+lv_obj_del
+_lv_obj_set_style_local_opa
+lv_disp_get_default
+lv_obj_invalidate
+lv_obj_get_parent
+_lv_ll_chg_list
+lv_disp_get_hor_res
+lv_disp_get_ver_res
+lv_area_set
+_lv_inv_area
+lv_anim_del
+lv_obj_set_pos
+lv_anim_init
+ARM GAS  D:\Temp\ccElHyXh.s 			page 62
+
+
+lv_anim_start
+lv_obj_set_x
+lv_obj_set_y
+lv_tick_elaps
+lv_disp_get_next
+lv_tick_get

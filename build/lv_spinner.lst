@@ -1,0 +1,2946 @@
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_spinner.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.lv_spinner_set_arc_length,"ax",%progbits
+  18              		.align	1
+  19              		.global	lv_spinner_set_arc_length
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	lv_spinner_set_arc_length:
+  27              	.LVL0:
+  28              	.LFB459:
+  29              		.file 1 "lvgl/src/lv_widgets/lv_spinner.c"
+   1:lvgl/src/lv_widgets/lv_spinner.c **** /**
+   2:lvgl/src/lv_widgets/lv_spinner.c ****  * @file lv_spinner.c
+   3:lvgl/src/lv_widgets/lv_spinner.c ****  *
+   4:lvgl/src/lv_widgets/lv_spinner.c ****  */
+   5:lvgl/src/lv_widgets/lv_spinner.c **** 
+   6:lvgl/src/lv_widgets/lv_spinner.c **** /*********************
+   7:lvgl/src/lv_widgets/lv_spinner.c ****  *      INCLUDES
+   8:lvgl/src/lv_widgets/lv_spinner.c ****  *********************/
+   9:lvgl/src/lv_widgets/lv_spinner.c **** #include "lv_spinner.h"
+  10:lvgl/src/lv_widgets/lv_spinner.c **** #if LV_USE_SPINNER != 0
+  11:lvgl/src/lv_widgets/lv_spinner.c **** 
+  12:lvgl/src/lv_widgets/lv_spinner.c **** #include "../lv_misc/lv_debug.h"
+  13:lvgl/src/lv_widgets/lv_spinner.c **** #include "../lv_misc/lv_math.h"
+  14:lvgl/src/lv_widgets/lv_spinner.c **** #include "../lv_draw/lv_draw_rect.h"
+  15:lvgl/src/lv_widgets/lv_spinner.c **** #include "../lv_draw/lv_draw_arc.h"
+  16:lvgl/src/lv_widgets/lv_spinner.c **** #include "../lv_themes/lv_theme.h"
+  17:lvgl/src/lv_widgets/lv_spinner.c **** 
+  18:lvgl/src/lv_widgets/lv_spinner.c **** /*********************
+  19:lvgl/src/lv_widgets/lv_spinner.c ****  *      DEFINES
+  20:lvgl/src/lv_widgets/lv_spinner.c ****  *********************/
+  21:lvgl/src/lv_widgets/lv_spinner.c **** #define LV_OBJX_NAME "lv_spinner"
+  22:lvgl/src/lv_widgets/lv_spinner.c **** 
+  23:lvgl/src/lv_widgets/lv_spinner.c **** #ifndef LV_SPINNER_DEF_ARC_LENGTH
+  24:lvgl/src/lv_widgets/lv_spinner.c ****     #define LV_SPINNER_DEF_ARC_LENGTH 60 /*[deg]*/
+  25:lvgl/src/lv_widgets/lv_spinner.c **** #endif
+  26:lvgl/src/lv_widgets/lv_spinner.c **** 
+  27:lvgl/src/lv_widgets/lv_spinner.c **** #ifndef LV_SPINNER_DEF_SPIN_TIME
+  28:lvgl/src/lv_widgets/lv_spinner.c ****     #define LV_SPINNER_DEF_SPIN_TIME 1000 /*[ms]*/
+  29:lvgl/src/lv_widgets/lv_spinner.c **** #endif
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 2
+
+
+  30:lvgl/src/lv_widgets/lv_spinner.c **** 
+  31:lvgl/src/lv_widgets/lv_spinner.c **** #ifndef LV_SPINNER_DEF_ANIM
+  32:lvgl/src/lv_widgets/lv_spinner.c ****     #define LV_SPINNER_DEF_ANIM LV_SPINNER_TYPE_SPINNING_ARC /*animation type*/
+  33:lvgl/src/lv_widgets/lv_spinner.c **** #endif
+  34:lvgl/src/lv_widgets/lv_spinner.c **** 
+  35:lvgl/src/lv_widgets/lv_spinner.c **** /**********************
+  36:lvgl/src/lv_widgets/lv_spinner.c ****  *      TYPEDEFS
+  37:lvgl/src/lv_widgets/lv_spinner.c ****  **********************/
+  38:lvgl/src/lv_widgets/lv_spinner.c **** 
+  39:lvgl/src/lv_widgets/lv_spinner.c **** /**********************
+  40:lvgl/src/lv_widgets/lv_spinner.c ****  *  STATIC PROTOTYPES
+  41:lvgl/src/lv_widgets/lv_spinner.c ****  **********************/
+  42:lvgl/src/lv_widgets/lv_spinner.c **** static lv_res_t lv_spinner_signal(lv_obj_t * spinner, lv_signal_t sign, void * param);
+  43:lvgl/src/lv_widgets/lv_spinner.c **** 
+  44:lvgl/src/lv_widgets/lv_spinner.c **** /**********************
+  45:lvgl/src/lv_widgets/lv_spinner.c ****  *  STATIC VARIABLES
+  46:lvgl/src/lv_widgets/lv_spinner.c ****  **********************/
+  47:lvgl/src/lv_widgets/lv_spinner.c **** static lv_signal_cb_t ancestor_signal;
+  48:lvgl/src/lv_widgets/lv_spinner.c **** static lv_design_cb_t ancestor_design;
+  49:lvgl/src/lv_widgets/lv_spinner.c **** 
+  50:lvgl/src/lv_widgets/lv_spinner.c **** /**********************
+  51:lvgl/src/lv_widgets/lv_spinner.c ****  *      MACROS
+  52:lvgl/src/lv_widgets/lv_spinner.c ****  **********************/
+  53:lvgl/src/lv_widgets/lv_spinner.c **** 
+  54:lvgl/src/lv_widgets/lv_spinner.c **** /**********************
+  55:lvgl/src/lv_widgets/lv_spinner.c ****  *   GLOBAL FUNCTIONS
+  56:lvgl/src/lv_widgets/lv_spinner.c ****  **********************/
+  57:lvgl/src/lv_widgets/lv_spinner.c **** 
+  58:lvgl/src/lv_widgets/lv_spinner.c **** /**
+  59:lvgl/src/lv_widgets/lv_spinner.c ****  * Create a spinner object
+  60:lvgl/src/lv_widgets/lv_spinner.c ****  * @param par pointer to an object, it will be the parent of the new spinner
+  61:lvgl/src/lv_widgets/lv_spinner.c ****  * @param copy pointer to a spinner object, if not NULL then the new object will be copied from
+  62:lvgl/src/lv_widgets/lv_spinner.c ****  * it
+  63:lvgl/src/lv_widgets/lv_spinner.c ****  * @return pointer to the created spinner
+  64:lvgl/src/lv_widgets/lv_spinner.c ****  */
+  65:lvgl/src/lv_widgets/lv_spinner.c **** lv_obj_t * lv_spinner_create(lv_obj_t * par, const lv_obj_t * copy)
+  66:lvgl/src/lv_widgets/lv_spinner.c **** {
+  67:lvgl/src/lv_widgets/lv_spinner.c ****     LV_LOG_TRACE("spinner create started");
+  68:lvgl/src/lv_widgets/lv_spinner.c **** 
+  69:lvgl/src/lv_widgets/lv_spinner.c ****     /*Create the ancestor of spinner*/
+  70:lvgl/src/lv_widgets/lv_spinner.c ****     lv_obj_t * spinner = lv_arc_create(par, copy);
+  71:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_MEM(spinner);
+  72:lvgl/src/lv_widgets/lv_spinner.c ****     if(spinner == NULL) return NULL;
+  73:lvgl/src/lv_widgets/lv_spinner.c **** 
+  74:lvgl/src/lv_widgets/lv_spinner.c ****     /*Allocate the spinner type specific extended data*/
+  75:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_ext_t * ext = lv_obj_allocate_ext_attr(spinner, sizeof(lv_spinner_ext_t));
+  76:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_MEM(ext);
+  77:lvgl/src/lv_widgets/lv_spinner.c ****     if(ext == NULL) {
+  78:lvgl/src/lv_widgets/lv_spinner.c ****         lv_obj_del(spinner);
+  79:lvgl/src/lv_widgets/lv_spinner.c ****         return NULL;
+  80:lvgl/src/lv_widgets/lv_spinner.c ****     }
+  81:lvgl/src/lv_widgets/lv_spinner.c **** 
+  82:lvgl/src/lv_widgets/lv_spinner.c ****     if(ancestor_signal == NULL) ancestor_signal = lv_obj_get_signal_cb(spinner);
+  83:lvgl/src/lv_widgets/lv_spinner.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(spinner);
+  84:lvgl/src/lv_widgets/lv_spinner.c **** 
+  85:lvgl/src/lv_widgets/lv_spinner.c ****     /*Initialize the allocated 'ext' */
+  86:lvgl/src/lv_widgets/lv_spinner.c ****     ext->arc_length = LV_SPINNER_DEF_ARC_LENGTH;
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 3
+
+
+  87:lvgl/src/lv_widgets/lv_spinner.c ****     ext->anim_type  = LV_SPINNER_DEF_ANIM;
+  88:lvgl/src/lv_widgets/lv_spinner.c ****     ext->anim_dir   = LV_SPINNER_DIR_FORWARD;
+  89:lvgl/src/lv_widgets/lv_spinner.c ****     ext->time = LV_SPINNER_DEF_SPIN_TIME;
+  90:lvgl/src/lv_widgets/lv_spinner.c **** 
+  91:lvgl/src/lv_widgets/lv_spinner.c ****     /*The signal and design functions are not copied so set them here*/
+  92:lvgl/src/lv_widgets/lv_spinner.c ****     lv_obj_set_signal_cb(spinner, lv_spinner_signal);
+  93:lvgl/src/lv_widgets/lv_spinner.c **** 
+  94:lvgl/src/lv_widgets/lv_spinner.c ****     /*Init the new spinner spinner*/
+  95:lvgl/src/lv_widgets/lv_spinner.c ****     if(copy == NULL) {
+  96:lvgl/src/lv_widgets/lv_spinner.c ****         ext->arc.bg_angle_start = 0;
+  97:lvgl/src/lv_widgets/lv_spinner.c ****         ext->arc.bg_angle_end = 360;
+  98:lvgl/src/lv_widgets/lv_spinner.c ****         lv_obj_set_size(spinner, LV_DPI, LV_DPI);
+  99:lvgl/src/lv_widgets/lv_spinner.c ****         lv_theme_apply(spinner, LV_THEME_SPINNER);
+ 100:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 101:lvgl/src/lv_widgets/lv_spinner.c ****     }
+ 102:lvgl/src/lv_widgets/lv_spinner.c ****     /*Copy an existing spinner*/
+ 103:lvgl/src/lv_widgets/lv_spinner.c ****     else {
+ 104:lvgl/src/lv_widgets/lv_spinner.c ****         lv_spinner_ext_t * copy_ext = lv_obj_get_ext_attr(copy);
+ 105:lvgl/src/lv_widgets/lv_spinner.c ****         ext->arc_length             = copy_ext->arc_length;
+ 106:lvgl/src/lv_widgets/lv_spinner.c ****         ext->time                   = copy_ext->time;
+ 107:lvgl/src/lv_widgets/lv_spinner.c ****         ext->anim_dir               = copy_ext->anim_dir;
+ 108:lvgl/src/lv_widgets/lv_spinner.c ****         /*Refresh the style with new signal function*/
+ 109:lvgl/src/lv_widgets/lv_spinner.c ****         lv_obj_refresh_style(spinner, LV_OBJ_PART_ALL, LV_STYLE_PROP_ALL);
+ 110:lvgl/src/lv_widgets/lv_spinner.c ****     }
+ 111:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 112:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_set_type(spinner, ext->anim_type);
+ 113:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 114:lvgl/src/lv_widgets/lv_spinner.c ****     LV_LOG_INFO("spinner created");
+ 115:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 116:lvgl/src/lv_widgets/lv_spinner.c ****     return spinner;
+ 117:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 118:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 119:lvgl/src/lv_widgets/lv_spinner.c **** /*======================
+ 120:lvgl/src/lv_widgets/lv_spinner.c ****  * Add/remove functions
+ 121:lvgl/src/lv_widgets/lv_spinner.c ****  *=====================*/
+ 122:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 123:lvgl/src/lv_widgets/lv_spinner.c **** /**
+ 124:lvgl/src/lv_widgets/lv_spinner.c ****  * Set the length of the spinning arc in degrees
+ 125:lvgl/src/lv_widgets/lv_spinner.c ****  * @param spinner pointer to a spinner object
+ 126:lvgl/src/lv_widgets/lv_spinner.c ****  * @param deg length of the arc
+ 127:lvgl/src/lv_widgets/lv_spinner.c ****  */
+ 128:lvgl/src/lv_widgets/lv_spinner.c **** void lv_spinner_set_arc_length(lv_obj_t * spinner, lv_anim_value_t deg)
+ 129:lvgl/src/lv_widgets/lv_spinner.c **** {
+  30              		.loc 1 129 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 129 1 is_stmt 0 view .LVU1
+  35 0000 38B5     		push	{r3, r4, r5, lr}
+  36              	.LCFI0:
+  37              		.cfi_def_cfa_offset 16
+  38              		.cfi_offset 3, -16
+  39              		.cfi_offset 4, -12
+  40              		.cfi_offset 5, -8
+  41              		.cfi_offset 14, -4
+  42 0002 0446     		mov	r4, r0
+  43 0004 0D46     		mov	r5, r1
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 4
+
+
+ 130:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+  44              		.loc 1 130 5 is_stmt 1 view .LVU2
+  45              		.loc 1 130 5 view .LVU3
+  46 0006 FFF7FEFF 		bl	lv_debug_check_null
+  47              	.LVL1:
+  48              		.loc 1 130 5 is_stmt 0 view .LVU4
+  49 000a 28B9     		cbnz	r0, .L2
+  50              		.loc 1 130 5 is_stmt 1 discriminator 1 view .LVU5
+  51              		.loc 1 130 5 discriminator 1 view .LVU6
+  52 000c 2246     		mov	r2, r4
+  53 000e 0023     		movs	r3, #0
+  54 0010 0448     		ldr	r0, .L5
+  55 0012 FFF7FEFF 		bl	lv_debug_log_error
+  56              	.LVL2:
+  57              	.L3:
+  58              		.loc 1 130 5 discriminator 1 view .LVU7
+  59              		.loc 1 130 5 discriminator 1 view .LVU8
+  60 0016 FEE7     		b	.L3
+  61              	.L2:
+  62              		.loc 1 130 41 discriminator 2 view .LVU9
+ 131:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 132:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_ext_t * ext = lv_obj_get_ext_attr(spinner);
+  63              		.loc 1 132 5 discriminator 2 view .LVU10
+  64              		.loc 1 132 30 is_stmt 0 discriminator 2 view .LVU11
+  65 0018 2046     		mov	r0, r4
+  66 001a FFF7FEFF 		bl	lv_obj_get_ext_attr
+  67              	.LVL3:
+ 133:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 134:lvgl/src/lv_widgets/lv_spinner.c ****     ext->arc_length = deg;
+  68              		.loc 1 134 5 is_stmt 1 discriminator 2 view .LVU12
+  69              		.loc 1 134 21 is_stmt 0 discriminator 2 view .LVU13
+  70 001e 0586     		strh	r5, [r0, #48]	@ movhi
+ 135:lvgl/src/lv_widgets/lv_spinner.c **** }
+  71              		.loc 1 135 1 discriminator 2 view .LVU14
+  72 0020 38BD     		pop	{r3, r4, r5, pc}
+  73              	.LVL4:
+  74              	.L6:
+  75              		.loc 1 135 1 discriminator 2 view .LVU15
+  76 0022 00BF     		.align	2
+  77              	.L5:
+  78 0024 00000000 		.word	.LC0
+  79              		.cfi_endproc
+  80              	.LFE459:
+  82              		.section	.text.lv_spinner_signal,"ax",%progbits
+  83              		.align	1
+  84              		.syntax unified
+  85              		.thumb
+  86              		.thumb_func
+  87              		.fpu fpv4-sp-d16
+  89              	lv_spinner_signal:
+  90              	.LVL5:
+  91              	.LFB468:
+ 136:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 137:lvgl/src/lv_widgets/lv_spinner.c **** /**
+ 138:lvgl/src/lv_widgets/lv_spinner.c ****  * Set the spin time of the arc
+ 139:lvgl/src/lv_widgets/lv_spinner.c ****  * @param spinner pointer to a spinner object
+ 140:lvgl/src/lv_widgets/lv_spinner.c ****  * @param time time of one round in milliseconds
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 5
+
+
+ 141:lvgl/src/lv_widgets/lv_spinner.c ****  */
+ 142:lvgl/src/lv_widgets/lv_spinner.c **** void lv_spinner_set_spin_time(lv_obj_t * spinner, uint16_t time)
+ 143:lvgl/src/lv_widgets/lv_spinner.c **** {
+ 144:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 145:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 146:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_ext_t * ext = lv_obj_get_ext_attr(spinner);
+ 147:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 148:lvgl/src/lv_widgets/lv_spinner.c ****     ext->time = time;
+ 149:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_set_type(spinner, ext->anim_type);
+ 150:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 151:lvgl/src/lv_widgets/lv_spinner.c **** /*=====================
+ 152:lvgl/src/lv_widgets/lv_spinner.c ****  * Setter functions
+ 153:lvgl/src/lv_widgets/lv_spinner.c ****  *====================*/
+ 154:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 155:lvgl/src/lv_widgets/lv_spinner.c **** /**
+ 156:lvgl/src/lv_widgets/lv_spinner.c ****  * Set the animation type of a spinner.
+ 157:lvgl/src/lv_widgets/lv_spinner.c ****  * @param spinner pointer to spinner object
+ 158:lvgl/src/lv_widgets/lv_spinner.c ****  * @param type animation type of the spinner
+ 159:lvgl/src/lv_widgets/lv_spinner.c ****  *  */
+ 160:lvgl/src/lv_widgets/lv_spinner.c **** void lv_spinner_set_type(lv_obj_t * spinner, lv_spinner_type_t type)
+ 161:lvgl/src/lv_widgets/lv_spinner.c **** {
+ 162:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 163:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 164:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_ext_t * ext = lv_obj_get_ext_attr(spinner);
+ 165:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 166:lvgl/src/lv_widgets/lv_spinner.c ****     /*delete previous animation*/
+ 167:lvgl/src/lv_widgets/lv_spinner.c ****     lv_anim_del(spinner, NULL);
+ 168:lvgl/src/lv_widgets/lv_spinner.c ****     switch(type) {
+ 169:lvgl/src/lv_widgets/lv_spinner.c ****         case LV_SPINNER_TYPE_FILLSPIN_ARC: {
+ 170:lvgl/src/lv_widgets/lv_spinner.c ****                 ext->anim_type = LV_SPINNER_TYPE_FILLSPIN_ARC;
+ 171:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_path_t path;
+ 172:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_path_init(&path);
+ 173:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_path_set_cb(&path, lv_anim_path_ease_in_out);
+ 174:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 175:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_t a;
+ 176:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_init(&a);
+ 177:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_var(&a, spinner);
+ 178:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_exec_cb(&a, (lv_anim_exec_xcb_t)lv_spinner_anim_cb);
+ 179:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_path(&a, &path);
+ 180:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_repeat_count(&a, LV_ANIM_REPEAT_INFINITE);
+ 181:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_time(&a, ext->time);
+ 182:lvgl/src/lv_widgets/lv_spinner.c ****                 if(ext->anim_dir == LV_SPINNER_DIR_FORWARD) lv_anim_set_values(&a, 0, 360);
+ 183:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360, 0);
+ 184:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_start(&a);
+ 185:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 186:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_exec_cb(&a, (lv_anim_exec_xcb_t)lv_spinner_set_arc_length);
+ 187:lvgl/src/lv_widgets/lv_spinner.c ****                 if(ext->anim_dir == LV_SPINNER_DIR_FORWARD) lv_anim_set_values(&a, ext->arc_length,
+ 188:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360 - ext->arc_length, ext->arc_length);
+ 189:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 190:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_playback_time(&a, ext->time);
+ 191:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_start(&a);
+ 192:lvgl/src/lv_widgets/lv_spinner.c ****                 break;
+ 193:lvgl/src/lv_widgets/lv_spinner.c ****             }
+ 194:lvgl/src/lv_widgets/lv_spinner.c ****         case LV_SPINNER_TYPE_CONSTANT_ARC:
+ 195:lvgl/src/lv_widgets/lv_spinner.c ****         case LV_SPINNER_TYPE_SPINNING_ARC:
+ 196:lvgl/src/lv_widgets/lv_spinner.c ****         default: {
+ 197:lvgl/src/lv_widgets/lv_spinner.c ****                 ext->anim_type = type;
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 6
+
+
+ 198:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 199:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_path_t path;
+ 200:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_path_init(&path);
+ 201:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_path_set_cb(&path, (LV_SPINNER_TYPE_CONSTANT_ARC == type ? lv_anim_path_lin
+ 202:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 203:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_t a;
+ 204:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_init(&a);
+ 205:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_var(&a, spinner);
+ 206:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_exec_cb(&a, (lv_anim_exec_xcb_t)lv_spinner_anim_cb);
+ 207:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_time(&a, ext->time);
+ 208:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_path(&a, &path);
+ 209:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_repeat_count(&a, LV_ANIM_REPEAT_INFINITE);
+ 210:lvgl/src/lv_widgets/lv_spinner.c ****                 if(ext->anim_dir == LV_SPINNER_DIR_FORWARD) lv_anim_set_values(&a, 0, 360);
+ 211:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360, 0);
+ 212:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_start(&a);
+ 213:lvgl/src/lv_widgets/lv_spinner.c ****                 break;
+ 214:lvgl/src/lv_widgets/lv_spinner.c ****             }
+ 215:lvgl/src/lv_widgets/lv_spinner.c ****     }
+ 216:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 217:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 218:lvgl/src/lv_widgets/lv_spinner.c **** void lv_spinner_set_dir(lv_obj_t * spinner, lv_spinner_dir_t dir)
+ 219:lvgl/src/lv_widgets/lv_spinner.c **** {
+ 220:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 221:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 222:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_ext_t * ext = lv_obj_get_ext_attr(spinner);
+ 223:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 224:lvgl/src/lv_widgets/lv_spinner.c ****     ext->anim_dir = dir;
+ 225:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_set_type(spinner, ext->anim_type);
+ 226:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 227:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 228:lvgl/src/lv_widgets/lv_spinner.c **** /*=====================
+ 229:lvgl/src/lv_widgets/lv_spinner.c ****  * Getter functions
+ 230:lvgl/src/lv_widgets/lv_spinner.c ****  *====================*/
+ 231:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 232:lvgl/src/lv_widgets/lv_spinner.c **** /**
+ 233:lvgl/src/lv_widgets/lv_spinner.c ****  * Get the arc length [degree] of the a spinner
+ 234:lvgl/src/lv_widgets/lv_spinner.c ****  * @param spinner pointer to a spinner object
+ 235:lvgl/src/lv_widgets/lv_spinner.c ****  */
+ 236:lvgl/src/lv_widgets/lv_spinner.c **** lv_anim_value_t lv_spinner_get_arc_length(const lv_obj_t * spinner)
+ 237:lvgl/src/lv_widgets/lv_spinner.c **** {
+ 238:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 239:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 240:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_ext_t * ext = lv_obj_get_ext_attr(spinner);
+ 241:lvgl/src/lv_widgets/lv_spinner.c ****     return ext->arc_length;
+ 242:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 243:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 244:lvgl/src/lv_widgets/lv_spinner.c **** /**
+ 245:lvgl/src/lv_widgets/lv_spinner.c ****  * Get the spin time of the arc
+ 246:lvgl/src/lv_widgets/lv_spinner.c ****  * @param spinner pointer to a spinner object [milliseconds]
+ 247:lvgl/src/lv_widgets/lv_spinner.c ****  */
+ 248:lvgl/src/lv_widgets/lv_spinner.c **** uint16_t lv_spinner_get_spin_time(const lv_obj_t * spinner)
+ 249:lvgl/src/lv_widgets/lv_spinner.c **** {
+ 250:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 251:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 252:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_ext_t * ext = lv_obj_get_ext_attr(spinner);
+ 253:lvgl/src/lv_widgets/lv_spinner.c ****     return ext->time;
+ 254:lvgl/src/lv_widgets/lv_spinner.c **** }
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 7
+
+
+ 255:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 256:lvgl/src/lv_widgets/lv_spinner.c **** /**
+ 257:lvgl/src/lv_widgets/lv_spinner.c ****  * Get the animation type of a spinner.
+ 258:lvgl/src/lv_widgets/lv_spinner.c ****  * @param spinner pointer to spinner object
+ 259:lvgl/src/lv_widgets/lv_spinner.c ****  * @return animation type
+ 260:lvgl/src/lv_widgets/lv_spinner.c ****  *  */
+ 261:lvgl/src/lv_widgets/lv_spinner.c **** lv_spinner_type_t lv_spinner_get_type(lv_obj_t * spinner)
+ 262:lvgl/src/lv_widgets/lv_spinner.c **** {
+ 263:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 264:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 265:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_ext_t * ext = lv_obj_get_ext_attr(spinner);
+ 266:lvgl/src/lv_widgets/lv_spinner.c ****     return ext->anim_type;
+ 267:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 268:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 269:lvgl/src/lv_widgets/lv_spinner.c **** lv_spinner_dir_t lv_spinner_get_dir(lv_obj_t * spinner)
+ 270:lvgl/src/lv_widgets/lv_spinner.c **** {
+ 271:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_ext_t * ext = lv_obj_get_ext_attr(spinner);
+ 272:lvgl/src/lv_widgets/lv_spinner.c ****     return ext->anim_dir;
+ 273:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 274:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 275:lvgl/src/lv_widgets/lv_spinner.c **** /*=====================
+ 276:lvgl/src/lv_widgets/lv_spinner.c ****  * Other functions
+ 277:lvgl/src/lv_widgets/lv_spinner.c ****  *====================*/
+ 278:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 279:lvgl/src/lv_widgets/lv_spinner.c **** /**
+ 280:lvgl/src/lv_widgets/lv_spinner.c ****  * Animator function  (exec_cb) to rotate the arc of spinner.
+ 281:lvgl/src/lv_widgets/lv_spinner.c ****  * @param ptr pointer to spinner
+ 282:lvgl/src/lv_widgets/lv_spinner.c ****  * @param val the current desired value [0..360]
+ 283:lvgl/src/lv_widgets/lv_spinner.c ****  */
+ 284:lvgl/src/lv_widgets/lv_spinner.c **** void lv_spinner_anim_cb(void * ptr, lv_anim_value_t val)
+ 285:lvgl/src/lv_widgets/lv_spinner.c **** {
+ 286:lvgl/src/lv_widgets/lv_spinner.c ****     lv_obj_t * spinner     = ptr;
+ 287:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_ext_t * ext = lv_obj_get_ext_attr(spinner);
+ 288:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 289:lvgl/src/lv_widgets/lv_spinner.c ****     int16_t angle_start = val - ext->arc_length / 2 - 90;
+ 290:lvgl/src/lv_widgets/lv_spinner.c ****     if(angle_start < 0) angle_start += 360;
+ 291:lvgl/src/lv_widgets/lv_spinner.c ****     int16_t angle_end   = angle_start + ext->arc_length;
+ 292:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 293:lvgl/src/lv_widgets/lv_spinner.c ****     angle_start = angle_start % 360;
+ 294:lvgl/src/lv_widgets/lv_spinner.c ****     angle_end   = angle_end % 360;
+ 295:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 296:lvgl/src/lv_widgets/lv_spinner.c ****     lv_arc_set_angles(spinner, angle_start, angle_end);
+ 297:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 298:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 299:lvgl/src/lv_widgets/lv_spinner.c **** /**********************
+ 300:lvgl/src/lv_widgets/lv_spinner.c ****  *   STATIC FUNCTIONS
+ 301:lvgl/src/lv_widgets/lv_spinner.c ****  **********************/
+ 302:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 303:lvgl/src/lv_widgets/lv_spinner.c **** /**
+ 304:lvgl/src/lv_widgets/lv_spinner.c ****  * Signal function of the spinner
+ 305:lvgl/src/lv_widgets/lv_spinner.c ****  * @param spinner pointer to a spinner object
+ 306:lvgl/src/lv_widgets/lv_spinner.c ****  * @param sign a signal type from lv_signal_t enum
+ 307:lvgl/src/lv_widgets/lv_spinner.c ****  * @param param pointer to a signal specific variable
+ 308:lvgl/src/lv_widgets/lv_spinner.c ****  * @return LV_RES_OK: the object is not deleted in the function; LV_RES_INV: the object is deleted
+ 309:lvgl/src/lv_widgets/lv_spinner.c ****  */
+ 310:lvgl/src/lv_widgets/lv_spinner.c **** static lv_res_t lv_spinner_signal(lv_obj_t * spinner, lv_signal_t sign, void * param)
+ 311:lvgl/src/lv_widgets/lv_spinner.c **** {
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 8
+
+
+  92              		.loc 1 311 1 is_stmt 1 view -0
+  93              		.cfi_startproc
+  94              		@ args = 0, pretend = 0, frame = 0
+  95              		@ frame_needed = 0, uses_anonymous_args = 0
+  96              		.loc 1 311 1 is_stmt 0 view .LVU17
+  97 0000 38B5     		push	{r3, r4, r5, lr}
+  98              	.LCFI1:
+  99              		.cfi_def_cfa_offset 16
+ 100              		.cfi_offset 3, -16
+ 101              		.cfi_offset 4, -12
+ 102              		.cfi_offset 5, -8
+ 103              		.cfi_offset 14, -4
+ 104 0002 0C46     		mov	r4, r1
+ 105 0004 1546     		mov	r5, r2
+ 312:lvgl/src/lv_widgets/lv_spinner.c ****     lv_res_t res;
+ 106              		.loc 1 312 5 is_stmt 1 view .LVU18
+ 313:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 314:lvgl/src/lv_widgets/lv_spinner.c ****     /* Include the ancient signal function */
+ 315:lvgl/src/lv_widgets/lv_spinner.c ****     res = ancestor_signal(spinner, sign, param);
+ 107              		.loc 1 315 5 view .LVU19
+ 108              		.loc 1 315 11 is_stmt 0 view .LVU20
+ 109 0006 064B     		ldr	r3, .L11
+ 110 0008 1B68     		ldr	r3, [r3]
+ 111 000a 9847     		blx	r3
+ 112              	.LVL6:
+ 316:lvgl/src/lv_widgets/lv_spinner.c ****     if(res != LV_RES_OK) return res;
+ 113              		.loc 1 316 5 is_stmt 1 view .LVU21
+ 114              		.loc 1 316 7 is_stmt 0 view .LVU22
+ 115 000c 0128     		cmp	r0, #1
+ 116 000e 01D1     		bne	.L8
+ 317:lvgl/src/lv_widgets/lv_spinner.c ****     if(sign == LV_SIGNAL_GET_TYPE) return lv_obj_handle_get_type_signal(param, LV_OBJX_NAME);
+ 117              		.loc 1 317 5 is_stmt 1 view .LVU23
+ 118              		.loc 1 317 7 is_stmt 0 view .LVU24
+ 119 0010 072C     		cmp	r4, #7
+ 120 0012 00D0     		beq	.L10
+ 121              	.LVL7:
+ 122              	.L8:
+ 318:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 319:lvgl/src/lv_widgets/lv_spinner.c ****     if(sign == LV_SIGNAL_CLEANUP) {
+ 320:lvgl/src/lv_widgets/lv_spinner.c ****         /*Nothing to cleanup. (No dynamically allocated memory in 'ext')*/
+ 321:lvgl/src/lv_widgets/lv_spinner.c ****     }
+ 322:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 323:lvgl/src/lv_widgets/lv_spinner.c ****     return res;
+ 324:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 123              		.loc 1 324 1 view .LVU25
+ 124 0014 38BD     		pop	{r3, r4, r5, pc}
+ 125              	.LVL8:
+ 126              	.L10:
+ 317:lvgl/src/lv_widgets/lv_spinner.c ****     if(sign == LV_SIGNAL_GET_TYPE) return lv_obj_handle_get_type_signal(param, LV_OBJX_NAME);
+ 127              		.loc 1 317 36 is_stmt 1 discriminator 1 view .LVU26
+ 317:lvgl/src/lv_widgets/lv_spinner.c ****     if(sign == LV_SIGNAL_GET_TYPE) return lv_obj_handle_get_type_signal(param, LV_OBJX_NAME);
+ 128              		.loc 1 317 43 is_stmt 0 discriminator 1 view .LVU27
+ 129 0016 0349     		ldr	r1, .L11+4
+ 130 0018 2846     		mov	r0, r5
+ 131              	.LVL9:
+ 317:lvgl/src/lv_widgets/lv_spinner.c ****     if(sign == LV_SIGNAL_GET_TYPE) return lv_obj_handle_get_type_signal(param, LV_OBJX_NAME);
+ 132              		.loc 1 317 43 discriminator 1 view .LVU28
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 9
+
+
+ 133 001a FFF7FEFF 		bl	lv_obj_handle_get_type_signal
+ 134              	.LVL10:
+ 135 001e F9E7     		b	.L8
+ 136              	.L12:
+ 137              		.align	2
+ 138              	.L11:
+ 139 0020 00000000 		.word	.LANCHOR0
+ 140 0024 00000000 		.word	.LC1
+ 141              		.cfi_endproc
+ 142              	.LFE468:
+ 144              		.section	.text.lv_spinner_anim_cb,"ax",%progbits
+ 145              		.align	1
+ 146              		.global	lv_spinner_anim_cb
+ 147              		.syntax unified
+ 148              		.thumb
+ 149              		.thumb_func
+ 150              		.fpu fpv4-sp-d16
+ 152              	lv_spinner_anim_cb:
+ 153              	.LVL11:
+ 154              	.LFB467:
+ 285:lvgl/src/lv_widgets/lv_spinner.c ****     lv_obj_t * spinner     = ptr;
+ 155              		.loc 1 285 1 is_stmt 1 view -0
+ 156              		.cfi_startproc
+ 157              		@ args = 0, pretend = 0, frame = 0
+ 158              		@ frame_needed = 0, uses_anonymous_args = 0
+ 285:lvgl/src/lv_widgets/lv_spinner.c ****     lv_obj_t * spinner     = ptr;
+ 159              		.loc 1 285 1 is_stmt 0 view .LVU30
+ 160 0000 38B5     		push	{r3, r4, r5, lr}
+ 161              	.LCFI2:
+ 162              		.cfi_def_cfa_offset 16
+ 163              		.cfi_offset 3, -16
+ 164              		.cfi_offset 4, -12
+ 165              		.cfi_offset 5, -8
+ 166              		.cfi_offset 14, -4
+ 167 0002 0546     		mov	r5, r0
+ 168 0004 0C46     		mov	r4, r1
+ 286:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_ext_t * ext = lv_obj_get_ext_attr(spinner);
+ 169              		.loc 1 286 5 is_stmt 1 view .LVU31
+ 170              	.LVL12:
+ 287:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 171              		.loc 1 287 5 view .LVU32
+ 287:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 172              		.loc 1 287 30 is_stmt 0 view .LVU33
+ 173 0006 FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 174              	.LVL13:
+ 289:lvgl/src/lv_widgets/lv_spinner.c ****     if(angle_start < 0) angle_start += 360;
+ 175              		.loc 1 289 5 is_stmt 1 view .LVU34
+ 289:lvgl/src/lv_widgets/lv_spinner.c ****     if(angle_start < 0) angle_start += 360;
+ 176              		.loc 1 289 36 is_stmt 0 view .LVU35
+ 177 000a B0F93020 		ldrsh	r2, [r0, #48]
+ 289:lvgl/src/lv_widgets/lv_spinner.c ****     if(angle_start < 0) angle_start += 360;
+ 178              		.loc 1 289 31 view .LVU36
+ 179 000e 02EBD273 		add	r3, r2, r2, lsr #31
+ 180 0012 A4EB6303 		sub	r3, r4, r3, asr #1
+ 181 0016 9BB2     		uxth	r3, r3
+ 289:lvgl/src/lv_widgets/lv_spinner.c ****     if(angle_start < 0) angle_start += 360;
+ 182              		.loc 1 289 53 view .LVU37
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 10
+
+
+ 183 0018 A3F15A01 		sub	r1, r3, #90
+ 289:lvgl/src/lv_widgets/lv_spinner.c ****     if(angle_start < 0) angle_start += 360;
+ 184              		.loc 1 289 13 view .LVU38
+ 185 001c 09B2     		sxth	r1, r1
+ 186              	.LVL14:
+ 290:lvgl/src/lv_widgets/lv_spinner.c ****     int16_t angle_end   = angle_start + ext->arc_length;
+ 187              		.loc 1 290 5 is_stmt 1 view .LVU39
+ 290:lvgl/src/lv_widgets/lv_spinner.c ****     int16_t angle_end   = angle_start + ext->arc_length;
+ 188              		.loc 1 290 7 is_stmt 0 view .LVU40
+ 189 001e 0029     		cmp	r1, #0
+ 190 0020 1BDB     		blt	.L16
+ 191              	.L14:
+ 291:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 192              		.loc 1 291 5 is_stmt 1 view .LVU41
+ 291:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 193              		.loc 1 291 39 is_stmt 0 view .LVU42
+ 194 0022 11FA82F2 		uxtah	r2, r1, r2
+ 291:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 195              		.loc 1 291 13 view .LVU43
+ 196 0026 12B2     		sxth	r2, r2
+ 197              	.LVL15:
+ 293:lvgl/src/lv_widgets/lv_spinner.c ****     angle_end   = angle_end % 360;
+ 198              		.loc 1 293 5 is_stmt 1 view .LVU44
+ 293:lvgl/src/lv_widgets/lv_spinner.c ****     angle_end   = angle_end % 360;
+ 199              		.loc 1 293 17 is_stmt 0 view .LVU45
+ 200 0028 0E4B     		ldr	r3, .L17
+ 201 002a 83FB0140 		smull	r4, r0, r3, r1
+ 202              	.LVL16:
+ 293:lvgl/src/lv_widgets/lv_spinner.c ****     angle_end   = angle_end % 360;
+ 203              		.loc 1 293 17 view .LVU46
+ 204 002e 4418     		adds	r4, r0, r1
+ 205 0030 C817     		asrs	r0, r1, #31
+ 206 0032 C0EB2420 		rsb	r0, r0, r4, asr #8
+ 207 0036 4FF4B474 		mov	r4, #360
+ 208 003a 04FB1011 		mls	r1, r4, r0, r1
+ 209              	.LVL17:
+ 294:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 210              		.loc 1 294 5 is_stmt 1 view .LVU47
+ 294:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 211              		.loc 1 294 17 is_stmt 0 view .LVU48
+ 212 003e 83FB0203 		smull	r0, r3, r3, r2
+ 213 0042 1344     		add	r3, r3, r2
+ 214 0044 D017     		asrs	r0, r2, #31
+ 215 0046 C0EB2323 		rsb	r3, r0, r3, asr #8
+ 216 004a 04FB1322 		mls	r2, r4, r3, r2
+ 217              	.LVL18:
+ 296:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 218              		.loc 1 296 5 is_stmt 1 view .LVU49
+ 219 004e 92B2     		uxth	r2, r2
+ 296:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 220              		.loc 1 296 5 is_stmt 0 view .LVU50
+ 221 0050 89B2     		uxth	r1, r1
+ 296:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 222              		.loc 1 296 5 view .LVU51
+ 223 0052 2846     		mov	r0, r5
+ 224 0054 FFF7FEFF 		bl	lv_arc_set_angles
+ 225              	.LVL19:
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 11
+
+
+ 297:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 226              		.loc 1 297 1 view .LVU52
+ 227 0058 38BD     		pop	{r3, r4, r5, pc}
+ 228              	.LVL20:
+ 229              	.L16:
+ 290:lvgl/src/lv_widgets/lv_spinner.c ****     int16_t angle_end   = angle_start + ext->arc_length;
+ 230              		.loc 1 290 25 is_stmt 1 discriminator 1 view .LVU53
+ 290:lvgl/src/lv_widgets/lv_spinner.c ****     int16_t angle_end   = angle_start + ext->arc_length;
+ 231              		.loc 1 290 37 is_stmt 0 discriminator 1 view .LVU54
+ 232 005a 03F58771 		add	r1, r3, #270
+ 233              	.LVL21:
+ 290:lvgl/src/lv_widgets/lv_spinner.c ****     int16_t angle_end   = angle_start + ext->arc_length;
+ 234              		.loc 1 290 37 discriminator 1 view .LVU55
+ 235 005e 09B2     		sxth	r1, r1
+ 236              	.LVL22:
+ 290:lvgl/src/lv_widgets/lv_spinner.c ****     int16_t angle_end   = angle_start + ext->arc_length;
+ 237              		.loc 1 290 37 discriminator 1 view .LVU56
+ 238 0060 DFE7     		b	.L14
+ 239              	.L18:
+ 240 0062 00BF     		.align	2
+ 241              	.L17:
+ 242 0064 B7600BB6 		.word	-1240768329
+ 243              		.cfi_endproc
+ 244              	.LFE467:
+ 246              		.section	.text.lv_spinner_set_type,"ax",%progbits
+ 247              		.align	1
+ 248              		.global	lv_spinner_set_type
+ 249              		.syntax unified
+ 250              		.thumb
+ 251              		.thumb_func
+ 252              		.fpu fpv4-sp-d16
+ 254              	lv_spinner_set_type:
+ 255              	.LVL23:
+ 256              	.LFB461:
+ 161:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 257              		.loc 1 161 1 is_stmt 1 view -0
+ 258              		.cfi_startproc
+ 259              		@ args = 0, pretend = 0, frame = 80
+ 260              		@ frame_needed = 0, uses_anonymous_args = 0
+ 161:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 261              		.loc 1 161 1 is_stmt 0 view .LVU58
+ 262 0000 70B5     		push	{r4, r5, r6, lr}
+ 263              	.LCFI3:
+ 264              		.cfi_def_cfa_offset 16
+ 265              		.cfi_offset 4, -16
+ 266              		.cfi_offset 5, -12
+ 267              		.cfi_offset 6, -8
+ 268              		.cfi_offset 14, -4
+ 269 0002 94B0     		sub	sp, sp, #80
+ 270              	.LCFI4:
+ 271              		.cfi_def_cfa_offset 96
+ 272 0004 0546     		mov	r5, r0
+ 273 0006 0E46     		mov	r6, r1
+ 162:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 274              		.loc 1 162 5 is_stmt 1 view .LVU59
+ 162:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 275              		.loc 1 162 5 view .LVU60
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 12
+
+
+ 276 0008 FFF7FEFF 		bl	lv_debug_check_null
+ 277              	.LVL24:
+ 162:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 278              		.loc 1 162 5 is_stmt 0 view .LVU61
+ 279 000c 28B9     		cbnz	r0, .L20
+ 162:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 280              		.loc 1 162 5 is_stmt 1 discriminator 1 view .LVU62
+ 162:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 281              		.loc 1 162 5 discriminator 1 view .LVU63
+ 282 000e 2A46     		mov	r2, r5
+ 283 0010 0023     		movs	r3, #0
+ 284 0012 5248     		ldr	r0, .L39
+ 285 0014 FFF7FEFF 		bl	lv_debug_log_error
+ 286              	.LVL25:
+ 287              	.L21:
+ 162:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 288              		.loc 1 162 5 discriminator 1 view .LVU64
+ 162:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 289              		.loc 1 162 5 discriminator 1 view .LVU65
+ 290 0018 FEE7     		b	.L21
+ 291              	.L20:
+ 162:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 292              		.loc 1 162 41 discriminator 2 view .LVU66
+ 164:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 293              		.loc 1 164 5 discriminator 2 view .LVU67
+ 164:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 294              		.loc 1 164 30 is_stmt 0 discriminator 2 view .LVU68
+ 295 001a 2846     		mov	r0, r5
+ 296 001c FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 297              	.LVL26:
+ 298 0020 0446     		mov	r4, r0
+ 299              	.LVL27:
+ 167:lvgl/src/lv_widgets/lv_spinner.c ****     switch(type) {
+ 300              		.loc 1 167 5 is_stmt 1 discriminator 2 view .LVU69
+ 301 0022 0021     		movs	r1, #0
+ 302 0024 2846     		mov	r0, r5
+ 303              	.LVL28:
+ 167:lvgl/src/lv_widgets/lv_spinner.c ****     switch(type) {
+ 304              		.loc 1 167 5 is_stmt 0 discriminator 2 view .LVU70
+ 305 0026 FFF7FEFF 		bl	lv_anim_del
+ 306              	.LVL29:
+ 168:lvgl/src/lv_widgets/lv_spinner.c ****         case LV_SPINNER_TYPE_FILLSPIN_ARC: {
+ 307              		.loc 1 168 5 is_stmt 1 discriminator 2 view .LVU71
+ 308 002a 012E     		cmp	r6, #1
+ 309 002c 19D0     		beq	.L37
+ 310              	.LBB54:
+ 197:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 311              		.loc 1 197 17 view .LVU72
+ 197:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 312              		.loc 1 197 32 is_stmt 0 view .LVU73
+ 313 002e 94F83430 		ldrb	r3, [r4, #52]	@ zero_extendqisi2
+ 314 0032 66F30103 		bfi	r3, r6, #0, #2
+ 315 0036 84F83430 		strb	r3, [r4, #52]
+ 199:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_path_init(&path);
+ 316              		.loc 1 199 17 is_stmt 1 view .LVU74
+ 200:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_path_set_cb(&path, (LV_SPINNER_TYPE_CONSTANT_ARC == type ? lv_anim_path_lin
+ 317              		.loc 1 200 17 view .LVU75
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 13
+
+
+ 318              	.LVL30:
+ 319              	.LBB55:
+ 320              	.LBI55:
+ 321              		.file 2 "lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h"
+   1:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+   2:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @file anim.h
+   3:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  *
+   4:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+   5:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+   6:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** #ifndef ANIM_H
+   7:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** #define ANIM_H
+   8:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+   9:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** #ifdef __cplusplus
+  10:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** extern "C" {
+  11:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** #endif
+  12:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+  13:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /*********************
+  14:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  *      INCLUDES
+  15:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  *********************/
+  16:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** #include "../lv_conf_internal.h"
+  17:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+  18:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** #include <stdint.h>
+  19:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** #include <stdbool.h>
+  20:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** #include <string.h>
+  21:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** #include "lv_mem.h"
+  22:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+  23:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /*********************
+  24:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  *      DEFINES
+  25:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  *********************/
+  26:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+  27:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**********************
+  28:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  *      TYPEDEFS
+  29:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  **********************/
+  30:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+  31:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /** Can be used to indicate if animations are enabled or disabled in a case*/
+  32:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** enum {
+  33:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     LV_ANIM_OFF,
+  34:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     LV_ANIM_ON,
+  35:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** };
+  36:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+  37:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** typedef uint8_t lv_anim_enable_t;
+  38:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+  39:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /** Type of the animated value*/
+  40:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** typedef lv_coord_t lv_anim_value_t;
+  41:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+  42:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** #if LV_USE_ANIMATION
+  43:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+  44:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** #define LV_ANIM_REPEAT_INFINITE      0xFFFF
+  45:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+  46:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** struct _lv_anim_t;
+  47:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** struct _lv_anim_path_t;
+  48:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /** Get the current value during an animation*/
+  49:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** typedef lv_anim_value_t (*lv_anim_path_cb_t)(const struct _lv_anim_path_t *, const struct _lv_anim_
+  50:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+  51:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** typedef struct _lv_anim_path_t {
+  52:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     lv_anim_path_cb_t cb;
+  53:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     void * user_data;
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 14
+
+
+  54:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** } lv_anim_path_t;
+  55:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+  56:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /** Generic prototype of "animator" functions.
+  57:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * First parameter is the variable to animate.
+  58:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Second parameter is the value to set.
+  59:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Compatible with `lv_xxx_set_yyy(obj, value)` functions
+  60:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * The `x` in `_xcb_t` means its not a fully generic prototype because
+  61:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * it doesn't receive `lv_anim_t *` as its first argument*/
+  62:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** typedef void (*lv_anim_exec_xcb_t)(void *, lv_anim_value_t);
+  63:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+  64:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /** Same as `lv_anim_exec_xcb_t` but receives `lv_anim_t *` as the first parameter.
+  65:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * It's more consistent but less convenient. Might be used by binding generator functions.*/
+  66:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** typedef void (*lv_anim_custom_exec_cb_t)(struct _lv_anim_t *, lv_anim_value_t);
+  67:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+  68:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /** Callback to call when the animation is ready*/
+  69:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** typedef void (*lv_anim_ready_cb_t)(struct _lv_anim_t *);
+  70:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+  71:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /** Callback to call when the animation really stars (considering `delay`)*/
+  72:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** typedef void (*lv_anim_start_cb_t)(struct _lv_anim_t *);
+  73:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+  74:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /** Describes an animation*/
+  75:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** typedef struct _lv_anim_t {
+  76:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     void * var;                  /**<Variable to animate*/
+  77:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     lv_anim_exec_xcb_t exec_cb;   /**< Function to execute to animate*/
+  78:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     lv_anim_start_cb_t start_cb; /**< Call it when the animation is starts (considering `delay`)*/
+  79:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     lv_anim_ready_cb_t ready_cb; /**< Call it when the animation is ready*/
+  80:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     lv_anim_path_t path;         /**< Describe the path (curve) of animations*/
+  81:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     int32_t start;               /**< Start value*/
+  82:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     int32_t current;             /**< Current value */
+  83:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     int32_t end;                 /**< End value*/
+  84:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     int32_t time;               /**< Animation time in ms*/
+  85:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     int32_t act_time;            /**< Current time in animation. Set to negative to make delay.*/
+  86:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     uint32_t playback_delay;     /**< Wait before play back*/
+  87:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     uint32_t playback_time;      /**< Duration of playback animation*/
+  88:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     uint32_t repeat_delay;       /**< Wait before repeat*/
+  89:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     uint16_t repeat_cnt;         /**< Repeat count for the animation*/
+  90:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     uint8_t early_apply  : 1;    /**< 1: Apply start value immediately even is there is `delay` */
+  91:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** #if LV_USE_USER_DATA
+  92:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     lv_anim_user_data_t user_data; /**< Custom user data*/
+  93:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** #endif
+  94:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+  95:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     /*Animation system use these - user shouldn't set*/
+  96:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     uint32_t time_orig;
+  97:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     uint8_t playback_now : 1; /**< Play back is in progress*/
+  98:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     uint32_t has_run : 1;     /**< Indicates the animation has run in this round*/
+  99:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** } lv_anim_t;
+ 100:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 101:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**********************
+ 102:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * GLOBAL PROTOTYPES
+ 103:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  **********************/
+ 104:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 105:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ 106:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Init. the animation module
+ 107:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ 108:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** void _lv_anim_core_init(void);
+ 109:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 110:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 15
+
+
+ 111:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Initialize an animation variable.
+ 112:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * E.g.:
+ 113:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * lv_anim_t a;
+ 114:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * lv_anim_init(&a);
+ 115:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * lv_anim_set_...(&a);
+ 116:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an `lv_anim_t` variable to initialize
+ 117:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ 118:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** void lv_anim_init(lv_anim_t * a);
+ 119:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 120:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ 121:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Set a variable to animate
+ 122:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 123:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param var pointer to a variable to animate
+ 124:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ 125:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_var(lv_anim_t * a, void * var)
+ 126:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 127:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->var     = var;
+ 128:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 129:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 130:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ 131:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Set a function to animate `var`
+ 132:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 133:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param exec_cb a function to execute during animation
+ 134:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  *                LittelvGL's built-in functions can be used.
+ 135:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  *                E.g. lv_obj_set_x
+ 136:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ 137:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_exec_cb(lv_anim_t * a, lv_anim_exec_xcb_t exec_cb)
+ 138:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 139:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->exec_cb = exec_cb;
+ 140:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 141:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 142:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ 143:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Set the duration of an animation
+ 144:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 145:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param duration duration of the animation in milliseconds
+ 146:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ 147:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_time(lv_anim_t * a, uint32_t duration)
+ 148:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 149:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->time     = duration;
+ 150:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 151:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 152:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ 153:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Set a delay before starting the animation
+ 154:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 155:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param delay delay before the animation in milliseconds
+ 156:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ 157:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_delay(lv_anim_t * a, uint32_t delay)
+ 158:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 159:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->act_time = -(int32_t)(delay);
+ 160:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 161:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 162:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ 163:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Set the start and end values of an animation
+ 164:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 165:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param start the start value
+ 166:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param end the end value
+ 167:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 16
+
+
+ 168:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_values(lv_anim_t * a, lv_anim_value_t start, lv_anim_value_t end)
+ 169:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 170:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->start = start;
+ 171:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 173:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 174:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 175:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ 176:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Similar to `lv_anim_set_exec_cb` but `lv_anim_custom_exec_cb_t` receives
+ 177:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * `lv_anim_t * ` as its first parameter instead of `void *`.
+ 178:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * This function might be used when LVGL is binded to other languages because
+ 179:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * it's more consistent to have `lv_anim_t *` as first parameter.
+ 180:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * The variable to animate can be stored in the animation's `user_sata`
+ 181:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 182:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param exec_cb a function to execute.
+ 183:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ 184:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_custom_exec_cb(lv_anim_t * a, lv_anim_custom_exec_cb_t exec_cb)
+ 185:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 186:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->var     = a;
+ 187:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->exec_cb = (lv_anim_exec_xcb_t)exec_cb;
+ 188:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 189:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 190:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ 191:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Set the path (curve) of the animation.
+ 192:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 193:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param path_cb a function the get the current value of the animation.
+ 194:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  *                The built in functions starts with `lv_anim_path_...`
+ 195:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ 196:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_path(lv_anim_t * a, const lv_anim_path_t * path)
+ 197:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 198:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     _lv_memcpy_small(&a->path, path, sizeof(lv_anim_path_t));
+ 199:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 200:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 201:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ 202:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Set a function call when the animation really starts (considering `delay`)
+ 203:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 204:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param start_cb a function call when the animation starts
+ 205:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ 206:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_start_cb(lv_anim_t * a, lv_anim_ready_cb_t start_cb)
+ 207:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 208:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->start_cb = start_cb;
+ 209:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 210:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 211:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ 212:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Set a function call when the animation is ready
+ 213:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 214:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param ready_cb a function call when the animation is ready
+ 215:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ 216:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_ready_cb(lv_anim_t * a, lv_anim_ready_cb_t ready_cb)
+ 217:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 218:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->ready_cb = ready_cb;
+ 219:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 220:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 221:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ 222:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Make the animation to play back to when the forward direction is ready
+ 223:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 224:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param time the duration of the playback animation in in milliseconds. 0: disable playback
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 17
+
+
+ 225:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ 226:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_playback_time(lv_anim_t * a, uint16_t time)
+ 227:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 228:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->playback_time = time;
+ 229:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 230:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 231:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ 232:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Make the animation to play back to when the forward direction is ready
+ 233:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 234:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param delay delay in milliseconds before starting the playback animation.
+ 235:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ 236:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_playback_delay(lv_anim_t * a, uint16_t delay)
+ 237:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 238:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->playback_delay = delay;
+ 239:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 240:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 241:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ 242:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Make the animation repeat itself.
+ 243:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 244:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param cnt repeat count or `LV_ANIM_REPEAT_INFINITE` for infinite repetition. 0: to disable repe
+ 245:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ 246:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_repeat_count(lv_anim_t * a, uint16_t cnt)
+ 247:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 248:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->repeat_cnt       = cnt;
+ 249:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 250:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 251:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ 252:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Set a delay before repeating the animation.
+ 253:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param a pointer to an initialized `lv_anim_t` variable
+ 254:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param delay delay in milliseconds before repeating the animation.
+ 255:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ 256:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_set_repeat_delay(lv_anim_t * a, uint16_t delay)
+ 257:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 258:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->repeat_delay = delay;
+ 259:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 260:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 261:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ 262:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Create an animation
+ 263:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param a an initialized 'anim_t' variable. Not required after call.
+ 264:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ 265:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** void lv_anim_start(lv_anim_t * a);
+ 266:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 267:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ 268:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Initialize an animation path
+ 269:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param path pointer to path
+ 270:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ 271:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_path_init(lv_anim_path_t * path)
+ 322              		.loc 2 271 20 view .LVU76
+ 323              	.LBB56:
+ 272:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 273:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     _lv_memset_00(path, sizeof(lv_anim_path_t));
+ 324              		.loc 2 273 5 view .LVU77
+ 325 003a 0821     		movs	r1, #8
+ 326 003c 01A8     		add	r0, sp, #4
+ 327              	.LVL31:
+ 328              		.loc 2 273 5 is_stmt 0 view .LVU78
+ 329 003e FFF7FEFF 		bl	_lv_memset_00
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 18
+
+
+ 330              	.LVL32:
+ 331              		.loc 2 273 5 view .LVU79
+ 332              	.LBE56:
+ 333              	.LBE55:
+ 201:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 334              		.loc 1 201 17 is_stmt 1 view .LVU80
+ 335 0042 022E     		cmp	r6, #2
+ 336 0044 66D0     		beq	.L38
+ 337 0046 464B     		ldr	r3, .L39+4
+ 338              	.L30:
+ 339              	.LVL33:
+ 340              	.LBB57:
+ 341              	.LBI57:
+ 274:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 275:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** 
+ 276:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** /**
+ 277:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * Set a callback for a path
+ 278:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param path pointer to an initialized path
+ 279:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  * @param cb the callback
+ 280:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****  */
+ 281:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** static inline void lv_anim_path_set_cb(lv_anim_path_t * path, lv_anim_path_cb_t cb)
+ 342              		.loc 2 281 20 discriminator 4 view .LVU81
+ 343              	.LBB58:
+ 282:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 283:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     path->cb = cb;
+ 344              		.loc 2 283 5 discriminator 4 view .LVU82
+ 345              		.loc 2 283 14 is_stmt 0 discriminator 4 view .LVU83
+ 346 0048 0193     		str	r3, [sp, #4]
+ 347              	.LVL34:
+ 348              		.loc 2 283 14 discriminator 4 view .LVU84
+ 349              	.LBE58:
+ 350              	.LBE57:
+ 203:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_init(&a);
+ 351              		.loc 1 203 17 is_stmt 1 discriminator 4 view .LVU85
+ 204:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_var(&a, spinner);
+ 352              		.loc 1 204 17 discriminator 4 view .LVU86
+ 353 004a 03A8     		add	r0, sp, #12
+ 354 004c FFF7FEFF 		bl	lv_anim_init
+ 355              	.LVL35:
+ 205:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_exec_cb(&a, (lv_anim_exec_xcb_t)lv_spinner_anim_cb);
+ 356              		.loc 1 205 17 discriminator 4 view .LVU87
+ 357              	.LBB59:
+ 358              	.LBI59:
+ 125:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 359              		.loc 2 125 20 discriminator 4 view .LVU88
+ 360              	.LBB60:
+ 127:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 361              		.loc 2 127 5 discriminator 4 view .LVU89
+ 127:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 362              		.loc 2 127 16 is_stmt 0 discriminator 4 view .LVU90
+ 363 0050 0395     		str	r5, [sp, #12]
+ 364              	.LVL36:
+ 127:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 365              		.loc 2 127 16 discriminator 4 view .LVU91
+ 366              	.LBE60:
+ 367              	.LBE59:
+ 206:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_time(&a, ext->time);
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 19
+
+
+ 368              		.loc 1 206 17 is_stmt 1 discriminator 4 view .LVU92
+ 369              	.LBB61:
+ 370              	.LBI61:
+ 137:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 371              		.loc 2 137 20 discriminator 4 view .LVU93
+ 372              	.LBB62:
+ 139:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 373              		.loc 2 139 5 discriminator 4 view .LVU94
+ 139:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 374              		.loc 2 139 16 is_stmt 0 discriminator 4 view .LVU95
+ 375 0052 444B     		ldr	r3, .L39+8
+ 376 0054 0493     		str	r3, [sp, #16]
+ 377              	.LVL37:
+ 139:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 378              		.loc 2 139 16 discriminator 4 view .LVU96
+ 379              	.LBE62:
+ 380              	.LBE61:
+ 207:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_path(&a, &path);
+ 381              		.loc 1 207 17 is_stmt 1 discriminator 4 view .LVU97
+ 207:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_path(&a, &path);
+ 382              		.loc 1 207 41 is_stmt 0 discriminator 4 view .LVU98
+ 383 0056 638E     		ldrh	r3, [r4, #50]
+ 384              	.LVL38:
+ 385              	.LBB63:
+ 386              	.LBI63:
+ 147:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 387              		.loc 2 147 20 is_stmt 1 discriminator 4 view .LVU99
+ 388              	.LBB64:
+ 149:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 389              		.loc 2 149 5 discriminator 4 view .LVU100
+ 149:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 390              		.loc 2 149 17 is_stmt 0 discriminator 4 view .LVU101
+ 391 0058 0C93     		str	r3, [sp, #48]
+ 392              	.LVL39:
+ 149:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 393              		.loc 2 149 17 discriminator 4 view .LVU102
+ 394              	.LBE64:
+ 395              	.LBE63:
+ 208:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_repeat_count(&a, LV_ANIM_REPEAT_INFINITE);
+ 396              		.loc 1 208 17 is_stmt 1 discriminator 4 view .LVU103
+ 397              	.LBB66:
+ 398              	.LBI66:
+ 196:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 399              		.loc 2 196 20 discriminator 4 view .LVU104
+ 400              	.LBE66:
+ 401              	.LBE54:
+ 198:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 402              		.loc 2 198 5 discriminator 4 view .LVU105
+ 403              	.LBB80:
+ 404              	.LBB71:
+ 405              	.LBB67:
+ 406              	.LBI67:
+ 407              		.file 3 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_mem.h"
+   1:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+   2:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @file lv_mem.h
+   3:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  *
+   4:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 20
+
+
+   5:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+   6:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** #ifndef LV_MEM_H
+   7:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** #define LV_MEM_H
+   8:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+   9:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** #ifdef __cplusplus
+  10:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** extern "C" {
+  11:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** #endif
+  12:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+  13:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /*********************
+  14:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  *      INCLUDES
+  15:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  *********************/
+  16:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** #include "../lv_conf_internal.h"
+  17:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+  18:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** #include <stdint.h>
+  19:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** #include <stddef.h>
+  20:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** #include "lv_log.h"
+  21:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** #include "lv_types.h"
+  22:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+  23:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** #if LV_MEMCPY_MEMSET_STD
+  24:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** #include <string.h>
+  25:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** #endif
+  26:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+  27:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /*********************
+  28:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  *      DEFINES
+  29:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  *********************/
+  30:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+  31:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** #ifndef LV_MEM_BUF_MAX_NUM
+  32:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** #define LV_MEM_BUF_MAX_NUM    16
+  33:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** #endif
+  34:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+  35:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**********************
+  36:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  *      TYPEDEFS
+  37:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  **********************/
+  38:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+  39:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+  40:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Heap information structure.
+  41:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+  42:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** typedef struct {
+  43:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     uint32_t total_size; /**< Total heap size */
+  44:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     uint32_t free_cnt;
+  45:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     uint32_t free_size; /**< Size of available memory */
+  46:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     uint32_t free_biggest_size;
+  47:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     uint32_t used_cnt;
+  48:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     uint32_t max_used; /**< Max size of Heap memory used */
+  49:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     uint8_t used_pct; /**< Percentage used */
+  50:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     uint8_t frag_pct; /**< Amount of fragmentation */
+  51:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** } lv_mem_monitor_t;
+  52:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+  53:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** typedef struct {
+  54:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     void * p;
+  55:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     uint16_t size;
+  56:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     uint8_t used    : 1;
+  57:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** } lv_mem_buf_t;
+  58:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+  59:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** typedef lv_mem_buf_t lv_mem_buf_arr_t[LV_MEM_BUF_MAX_NUM];
+  60:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** extern lv_mem_buf_arr_t _lv_mem_buf;
+  61:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 21
+
+
+  62:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**********************
+  63:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * GLOBAL PROTOTYPES
+  64:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  **********************/
+  65:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+  66:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+  67:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Initialize the dyn_mem module (work memory and other variables)
+  68:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+  69:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** void _lv_mem_init(void);
+  70:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+  71:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+  72:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Clean up the memory buffer which frees all the allocated memories.
+  73:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @note It work only if `LV_MEM_CUSTOM == 0`
+  74:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+  75:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** void _lv_mem_deinit(void);
+  76:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+  77:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+  78:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Allocate a memory dynamically
+  79:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param size size of the memory to allocate in bytes
+  80:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @return pointer to the allocated memory
+  81:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+  82:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** void * lv_mem_alloc(size_t size);
+  83:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+  84:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+  85:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Free an allocated data
+  86:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param data pointer to an allocated memory
+  87:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+  88:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** void lv_mem_free(const void * data);
+  89:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+  90:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+  91:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Reallocate a memory with a new size. The old content will be kept.
+  92:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param data pointer to an allocated memory.
+  93:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Its content will be copied to the new memory block and freed
+  94:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param new_size the desired new size in byte
+  95:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @return pointer to the new memory
+  96:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+  97:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** void * lv_mem_realloc(void * data_p, size_t new_size);
+  98:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+  99:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+ 100:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Join the adjacent free memory blocks
+ 101:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+ 102:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** void lv_mem_defrag(void);
+ 103:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 104:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+ 105:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  *
+ 106:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @return
+ 107:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+ 108:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** lv_res_t lv_mem_test(void);
+ 109:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 110:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+ 111:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Give information about the work memory of dynamic allocation
+ 112:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param mon_p pointer to a dm_mon_p variable,
+ 113:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  *              the result of the analysis will be stored here
+ 114:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+ 115:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** void lv_mem_monitor(lv_mem_monitor_t * mon_p);
+ 116:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 117:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+ 118:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Give the size of an allocated memory
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 22
+
+
+ 119:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param data pointer to an allocated memory
+ 120:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @return the size of data memory in bytes
+ 121:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+ 122:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** uint32_t _lv_mem_get_size(const void * data);
+ 123:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 124:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+ 125:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Get a temporal buffer with the given size.
+ 126:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param size the required size
+ 127:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+ 128:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** void * _lv_mem_buf_get(uint32_t size);
+ 129:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 130:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+ 131:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Release a memory buffer
+ 132:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param p buffer to release
+ 133:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+ 134:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** void _lv_mem_buf_release(void * p);
+ 135:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 136:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+ 137:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Free all memory buffers
+ 138:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+ 139:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** void _lv_mem_buf_free_all(void);
+ 140:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 141:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** //! @cond Doxygen_Suppress
+ 142:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 143:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** #if LV_MEMCPY_MEMSET_STD
+ 144:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 145:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+ 146:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Wrapper for the standard memcpy
+ 147:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param dst pointer to the destination buffer
+ 148:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param src pointer to the source buffer
+ 149:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param len number of byte to copy
+ 150:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+ 151:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** static inline void * _lv_memcpy(void * dst, const void * src, size_t len)
+ 152:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** {
+ 153:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     return memcpy(dst, src, len);
+ 154:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** }
+ 155:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 156:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+ 157:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Wrapper for the standard memcpy
+ 158:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param dst pointer to the destination buffer
+ 159:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param src pointer to the source buffer
+ 160:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param len number of byte to copy
+ 161:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+ 162:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** static inline void * _lv_memcpy_small(void * dst, const void * src, size_t len)
+ 163:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** {
+ 164:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     return memcpy(dst, src, len);
+ 165:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** }
+ 166:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 167:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+ 168:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Wrapper for the standard memset
+ 169:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param dst pointer to the destination buffer
+ 170:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param v value to set [0..255]
+ 171:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param len number of byte to set
+ 172:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+ 173:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** static inline void _lv_memset(void * dst, uint8_t v, size_t len)
+ 174:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** {
+ 175:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     memset(dst, v, len);
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 23
+
+
+ 176:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** }
+ 177:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 178:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+ 179:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Wrapper for the standard memset with fixed 0x00 value
+ 180:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param dst pointer to the destination buffer
+ 181:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param len number of byte to set
+ 182:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+ 183:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** static inline void _lv_memset_00(void * dst, size_t len)
+ 184:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** {
+ 185:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     memset(dst, 0x00, len);
+ 186:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** }
+ 187:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 188:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+ 189:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Wrapper for the standard memset with fixed 0xFF value
+ 190:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param dst pointer to the destination buffer
+ 191:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param len number of byte to set
+ 192:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+ 193:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** static inline void _lv_memset_ff(void * dst, size_t len)
+ 194:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** {
+ 195:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     memset(dst, 0xFF, len);
+ 196:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** }
+ 197:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 198:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** #else
+ 199:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+ 200:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Same as `memcpy` but optimized for 4 byte operation.
+ 201:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param dst pointer to the destination buffer
+ 202:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param src pointer to the source buffer
+ 203:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param len number of byte to copy
+ 204:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+ 205:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** LV_ATTRIBUTE_FAST_MEM void * _lv_memcpy(void * dst, const void * src, size_t len);
+ 206:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 207:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** /**
+ 208:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * Same as `memcpy` but optimized to copy only a few bytes.
+ 209:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param dst pointer to the destination buffer
+ 210:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param src pointer to the source buffer
+ 211:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  * @param len number of byte to copy
+ 212:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****  */
+ 213:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** LV_ATTRIBUTE_FAST_MEM static inline void * _lv_memcpy_small(void * dst, const void * src, size_t le
+ 408              		.loc 3 213 44 discriminator 4 view .LVU106
+ 409              	.LBB68:
+ 214:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** {
+ 215:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     uint8_t * d8 = (uint8_t *)dst;
+ 410              		.loc 3 215 5 discriminator 4 view .LVU107
+ 216:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     const uint8_t * s8 = (const uint8_t *)src;
+ 411              		.loc 3 216 5 discriminator 4 view .LVU108
+ 217:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 218:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     while(len) {
+ 412              		.loc 3 218 5 discriminator 4 view .LVU109
+ 216:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     const uint8_t * s8 = (const uint8_t *)src;
+ 413              		.loc 3 216 21 is_stmt 0 discriminator 4 view .LVU110
+ 414 005a 01A9     		add	r1, sp, #4
+ 415              	.LVL40:
+ 215:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     const uint8_t * s8 = (const uint8_t *)src;
+ 416              		.loc 3 215 15 discriminator 4 view .LVU111
+ 417 005c 07AA     		add	r2, sp, #28
+ 418              	.LVL41:
+ 215:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     const uint8_t * s8 = (const uint8_t *)src;
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 24
+
+
+ 419              		.loc 3 215 15 discriminator 4 view .LVU112
+ 420              	.LBE68:
+ 421              	.LBE67:
+ 422              	.LBE71:
+ 423              	.LBB72:
+ 424              	.LBB65:
+ 149:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 425              		.loc 2 149 17 discriminator 4 view .LVU113
+ 426 005e 0823     		movs	r3, #8
+ 427 0060 5FE0     		b	.L31
+ 428              	.LVL42:
+ 429              	.L37:
+ 149:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 430              		.loc 2 149 17 discriminator 4 view .LVU114
+ 431              	.LBE65:
+ 432              	.LBE72:
+ 433              	.LBE80:
+ 434              	.LBB81:
+ 170:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_path_t path;
+ 435              		.loc 1 170 17 is_stmt 1 view .LVU115
+ 170:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_path_t path;
+ 436              		.loc 1 170 32 is_stmt 0 view .LVU116
+ 437 0062 94F83430 		ldrb	r3, [r4, #52]	@ zero_extendqisi2
+ 438 0066 0122     		movs	r2, #1
+ 439 0068 62F30103 		bfi	r3, r2, #0, #2
+ 440 006c 84F83430 		strb	r3, [r4, #52]
+ 171:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_path_init(&path);
+ 441              		.loc 1 171 17 is_stmt 1 view .LVU117
+ 172:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_path_set_cb(&path, lv_anim_path_ease_in_out);
+ 442              		.loc 1 172 17 view .LVU118
+ 443              	.LVL43:
+ 444              	.LBB82:
+ 445              	.LBI82:
+ 271:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 446              		.loc 2 271 20 view .LVU119
+ 447              	.LBB83:
+ 273:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 448              		.loc 2 273 5 view .LVU120
+ 449 0070 0821     		movs	r1, #8
+ 450 0072 01A8     		add	r0, sp, #4
+ 451              	.LVL44:
+ 273:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 452              		.loc 2 273 5 is_stmt 0 view .LVU121
+ 453 0074 FFF7FEFF 		bl	_lv_memset_00
+ 454              	.LVL45:
+ 273:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 455              		.loc 2 273 5 view .LVU122
+ 456              	.LBE83:
+ 457              	.LBE82:
+ 173:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 458              		.loc 1 173 17 is_stmt 1 view .LVU123
+ 459              	.LBB84:
+ 460              	.LBI84:
+ 281:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 461              		.loc 2 281 20 view .LVU124
+ 462              	.LBB85:
+ 463              		.loc 2 283 5 view .LVU125
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 25
+
+
+ 464              		.loc 2 283 14 is_stmt 0 view .LVU126
+ 465 0078 394B     		ldr	r3, .L39+4
+ 466 007a 0193     		str	r3, [sp, #4]
+ 467              	.LVL46:
+ 468              		.loc 2 283 14 view .LVU127
+ 469              	.LBE85:
+ 470              	.LBE84:
+ 175:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_init(&a);
+ 471              		.loc 1 175 17 is_stmt 1 view .LVU128
+ 176:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_var(&a, spinner);
+ 472              		.loc 1 176 17 view .LVU129
+ 473 007c 03A8     		add	r0, sp, #12
+ 474 007e FFF7FEFF 		bl	lv_anim_init
+ 475              	.LVL47:
+ 177:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_exec_cb(&a, (lv_anim_exec_xcb_t)lv_spinner_anim_cb);
+ 476              		.loc 1 177 17 view .LVU130
+ 477              	.LBB86:
+ 478              	.LBI86:
+ 125:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 479              		.loc 2 125 20 view .LVU131
+ 480              	.LBB87:
+ 127:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 481              		.loc 2 127 5 view .LVU132
+ 127:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 482              		.loc 2 127 16 is_stmt 0 view .LVU133
+ 483 0082 0395     		str	r5, [sp, #12]
+ 484              	.LVL48:
+ 127:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 485              		.loc 2 127 16 view .LVU134
+ 486              	.LBE87:
+ 487              	.LBE86:
+ 178:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_path(&a, &path);
+ 488              		.loc 1 178 17 is_stmt 1 view .LVU135
+ 489              	.LBB88:
+ 490              	.LBI88:
+ 137:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 491              		.loc 2 137 20 view .LVU136
+ 492              	.LBB89:
+ 139:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 493              		.loc 2 139 5 view .LVU137
+ 139:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 494              		.loc 2 139 16 is_stmt 0 view .LVU138
+ 495 0084 374B     		ldr	r3, .L39+8
+ 496 0086 0493     		str	r3, [sp, #16]
+ 497              	.LVL49:
+ 139:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 498              		.loc 2 139 16 view .LVU139
+ 499              	.LBE89:
+ 500              	.LBE88:
+ 179:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_repeat_count(&a, LV_ANIM_REPEAT_INFINITE);
+ 501              		.loc 1 179 17 is_stmt 1 view .LVU140
+ 502              	.LBB91:
+ 503              	.LBI91:
+ 196:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 504              		.loc 2 196 20 view .LVU141
+ 505              	.LBE91:
+ 506              	.LBE81:
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 26
+
+
+ 198:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 507              		.loc 2 198 5 view .LVU142
+ 508              	.LBB115:
+ 509              	.LBB96:
+ 510              	.LBB92:
+ 511              	.LBI92:
+ 213:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** {
+ 512              		.loc 3 213 44 view .LVU143
+ 513              	.LBB93:
+ 215:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     const uint8_t * s8 = (const uint8_t *)src;
+ 514              		.loc 3 215 5 view .LVU144
+ 216:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 515              		.loc 3 216 5 view .LVU145
+ 516              		.loc 3 218 5 view .LVU146
+ 216:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 517              		.loc 3 216 21 is_stmt 0 view .LVU147
+ 518 0088 01AB     		add	r3, sp, #4
+ 519              	.LVL50:
+ 215:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     const uint8_t * s8 = (const uint8_t *)src;
+ 520              		.loc 3 215 15 view .LVU148
+ 521 008a 07A9     		add	r1, sp, #28
+ 522              	.LVL51:
+ 215:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     const uint8_t * s8 = (const uint8_t *)src;
+ 523              		.loc 3 215 15 view .LVU149
+ 524              	.LBE93:
+ 525              	.LBE92:
+ 526              	.LBE96:
+ 527              	.LBB97:
+ 528              	.LBB90:
+ 139:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 529              		.loc 2 139 16 view .LVU150
+ 530 008c 0822     		movs	r2, #8
+ 531 008e 04E0     		b	.L23
+ 532              	.LVL52:
+ 533              	.L24:
+ 139:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 534              		.loc 2 139 16 view .LVU151
+ 535              	.LBE90:
+ 536              	.LBE97:
+ 537              	.LBB98:
+ 538              	.LBB95:
+ 539              	.LBB94:
+ 219:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****         *d8 = *s8;
+ 540              		.loc 3 219 9 is_stmt 1 view .LVU152
+ 541              		.loc 3 219 15 is_stmt 0 view .LVU153
+ 542 0090 13F8010B 		ldrb	r0, [r3], #1	@ zero_extendqisi2
+ 543              	.LVL53:
+ 544              		.loc 3 219 13 view .LVU154
+ 545 0094 01F8010B 		strb	r0, [r1], #1
+ 546              	.LVL54:
+ 220:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****         d8++;
+ 547              		.loc 3 220 9 is_stmt 1 view .LVU155
+ 221:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****         s8++;
+ 548              		.loc 3 221 9 view .LVU156
+ 222:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****         len--;
+ 549              		.loc 3 222 9 view .LVU157
+ 550              		.loc 3 222 12 is_stmt 0 view .LVU158
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 27
+
+
+ 551 0098 013A     		subs	r2, r2, #1
+ 552              	.LVL55:
+ 553              	.L23:
+ 218:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****         *d8 = *s8;
+ 554              		.loc 3 218 10 view .LVU159
+ 555 009a 002A     		cmp	r2, #0
+ 556 009c F8D1     		bne	.L24
+ 223:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     }
+ 224:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h **** 
+ 225:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     return dst;
+ 557              		.loc 3 225 5 is_stmt 1 view .LVU160
+ 558              	.LVL56:
+ 559              		.loc 3 225 5 is_stmt 0 view .LVU161
+ 560              	.LBE94:
+ 561              	.LBE95:
+ 562              	.LBE98:
+ 180:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_set_time(&a, ext->time);
+ 563              		.loc 1 180 17 is_stmt 1 view .LVU162
+ 564              	.LBB99:
+ 565              	.LBI99:
+ 246:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 566              		.loc 2 246 20 view .LVU163
+ 567              	.LBB100:
+ 248:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 568              		.loc 2 248 5 view .LVU164
+ 248:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 569              		.loc 2 248 25 is_stmt 0 view .LVU165
+ 570 009e 4FF6FF73 		movw	r3, #65535
+ 571 00a2 ADF84430 		strh	r3, [sp, #68]	@ movhi
+ 572              	.LVL57:
+ 248:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 573              		.loc 2 248 25 view .LVU166
+ 574              	.LBE100:
+ 575              	.LBE99:
+ 181:lvgl/src/lv_widgets/lv_spinner.c ****                 if(ext->anim_dir == LV_SPINNER_DIR_FORWARD) lv_anim_set_values(&a, 0, 360);
+ 576              		.loc 1 181 17 is_stmt 1 view .LVU167
+ 181:lvgl/src/lv_widgets/lv_spinner.c ****                 if(ext->anim_dir == LV_SPINNER_DIR_FORWARD) lv_anim_set_values(&a, 0, 360);
+ 577              		.loc 1 181 41 is_stmt 0 view .LVU168
+ 578 00a6 638E     		ldrh	r3, [r4, #50]
+ 579              	.LVL58:
+ 580              	.LBB101:
+ 581              	.LBI101:
+ 147:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 582              		.loc 2 147 20 is_stmt 1 view .LVU169
+ 583              	.LBB102:
+ 149:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 584              		.loc 2 149 5 view .LVU170
+ 149:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 585              		.loc 2 149 17 is_stmt 0 view .LVU171
+ 586 00a8 0C93     		str	r3, [sp, #48]
+ 587              	.LVL59:
+ 149:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 588              		.loc 2 149 17 view .LVU172
+ 589              	.LBE102:
+ 590              	.LBE101:
+ 182:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360, 0);
+ 591              		.loc 1 182 17 is_stmt 1 view .LVU173
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 28
+
+
+ 182:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360, 0);
+ 592              		.loc 1 182 34 is_stmt 0 view .LVU174
+ 593 00aa 94F83430 		ldrb	r3, [r4, #52]	@ zero_extendqisi2
+ 182:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360, 0);
+ 594              		.loc 1 182 19 view .LVU175
+ 595 00ae 13F0040F 		tst	r3, #4
+ 596 00b2 1ED1     		bne	.L25
+ 182:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360, 0);
+ 597              		.loc 1 182 61 is_stmt 1 view .LVU176
+ 598              	.LVL60:
+ 599              	.LBB103:
+ 600              	.LBI103:
+ 168:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 601              		.loc 2 168 20 view .LVU177
+ 602              	.LBB104:
+ 170:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 603              		.loc 2 170 5 view .LVU178
+ 170:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 604              		.loc 2 170 14 is_stmt 0 view .LVU179
+ 605 00b4 0023     		movs	r3, #0
+ 606 00b6 0993     		str	r3, [sp, #36]
+ 171:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 607              		.loc 2 171 5 is_stmt 1 view .LVU180
+ 171:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 608              		.loc 2 171 16 is_stmt 0 view .LVU181
+ 609 00b8 0A93     		str	r3, [sp, #40]
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 610              		.loc 2 172 5 is_stmt 1 view .LVU182
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 611              		.loc 2 172 14 is_stmt 0 view .LVU183
+ 612 00ba 4FF4B473 		mov	r3, #360
+ 613 00be 0B93     		str	r3, [sp, #44]
+ 614              	.LVL61:
+ 615              	.L26:
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 616              		.loc 2 172 14 view .LVU184
+ 617              	.LBE104:
+ 618              	.LBE103:
+ 184:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 619              		.loc 1 184 17 is_stmt 1 view .LVU185
+ 620 00c0 03A8     		add	r0, sp, #12
+ 621 00c2 FFF7FEFF 		bl	lv_anim_start
+ 622              	.LVL62:
+ 186:lvgl/src/lv_widgets/lv_spinner.c ****                 if(ext->anim_dir == LV_SPINNER_DIR_FORWARD) lv_anim_set_values(&a, ext->arc_length,
+ 623              		.loc 1 186 17 view .LVU186
+ 624              	.LBB105:
+ 625              	.LBI105:
+ 137:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 626              		.loc 2 137 20 view .LVU187
+ 627              	.LBB106:
+ 139:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 628              		.loc 2 139 5 view .LVU188
+ 139:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 629              		.loc 2 139 16 is_stmt 0 view .LVU189
+ 630 00c6 284B     		ldr	r3, .L39+12
+ 631 00c8 0493     		str	r3, [sp, #16]
+ 632              	.LVL63:
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 29
+
+
+ 139:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 633              		.loc 2 139 16 view .LVU190
+ 634              	.LBE106:
+ 635              	.LBE105:
+ 187:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360 - ext->arc_length, ext->arc_length);
+ 636              		.loc 1 187 17 is_stmt 1 view .LVU191
+ 187:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360 - ext->arc_length, ext->arc_length);
+ 637              		.loc 1 187 34 is_stmt 0 view .LVU192
+ 638 00ca 94F83430 		ldrb	r3, [r4, #52]	@ zero_extendqisi2
+ 187:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360 - ext->arc_length, ext->arc_length);
+ 639              		.loc 1 187 19 view .LVU193
+ 640 00ce 13F0040F 		tst	r3, #4
+ 641 00d2 15D1     		bne	.L27
+ 187:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360 - ext->arc_length, ext->arc_length);
+ 642              		.loc 1 187 61 is_stmt 1 discriminator 1 view .LVU194
+ 643 00d4 B4F93020 		ldrsh	r2, [r4, #48]
+ 187:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360 - ext->arc_length, ext->arc_length);
+ 644              		.loc 1 187 110 is_stmt 0 discriminator 1 view .LVU195
+ 645 00d8 93B2     		uxth	r3, r2
+ 187:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360 - ext->arc_length, ext->arc_length);
+ 646              		.loc 1 187 105 discriminator 1 view .LVU196
+ 647 00da C3F5B473 		rsb	r3, r3, #360
+ 187:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360 - ext->arc_length, ext->arc_length);
+ 648              		.loc 1 187 61 discriminator 1 view .LVU197
+ 649 00de 1BB2     		sxth	r3, r3
+ 650              	.LVL64:
+ 651              	.LBB107:
+ 652              	.LBI107:
+ 168:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 653              		.loc 2 168 20 is_stmt 1 discriminator 1 view .LVU198
+ 654              	.LBB108:
+ 170:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 655              		.loc 2 170 5 discriminator 1 view .LVU199
+ 170:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 656              		.loc 2 170 14 is_stmt 0 discriminator 1 view .LVU200
+ 657 00e0 0992     		str	r2, [sp, #36]
+ 171:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 658              		.loc 2 171 5 is_stmt 1 discriminator 1 view .LVU201
+ 171:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 659              		.loc 2 171 16 is_stmt 0 discriminator 1 view .LVU202
+ 660 00e2 0A92     		str	r2, [sp, #40]
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 661              		.loc 2 172 5 is_stmt 1 discriminator 1 view .LVU203
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 662              		.loc 2 172 14 is_stmt 0 discriminator 1 view .LVU204
+ 663 00e4 0B93     		str	r3, [sp, #44]
+ 664              	.LVL65:
+ 665              	.L28:
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 666              		.loc 2 172 14 discriminator 1 view .LVU205
+ 667              	.LBE108:
+ 668              	.LBE107:
+ 190:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_start(&a);
+ 669              		.loc 1 190 17 is_stmt 1 view .LVU206
+ 670 00e6 638E     		ldrh	r3, [r4, #50]
+ 671              	.LVL66:
+ 672              	.LBB109:
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 30
+
+
+ 673              	.LBI109:
+ 226:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 674              		.loc 2 226 20 view .LVU207
+ 675              	.LBB110:
+ 228:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 676              		.loc 2 228 5 view .LVU208
+ 228:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 677              		.loc 2 228 22 is_stmt 0 view .LVU209
+ 678 00e8 0F93     		str	r3, [sp, #60]
+ 679              	.LVL67:
+ 228:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 680              		.loc 2 228 22 view .LVU210
+ 681              	.LBE110:
+ 682              	.LBE109:
+ 191:lvgl/src/lv_widgets/lv_spinner.c ****                 break;
+ 683              		.loc 1 191 17 is_stmt 1 view .LVU211
+ 684 00ea 03A8     		add	r0, sp, #12
+ 685 00ec FFF7FEFF 		bl	lv_anim_start
+ 686              	.LVL68:
+ 192:lvgl/src/lv_widgets/lv_spinner.c ****             }
+ 687              		.loc 1 192 17 view .LVU212
+ 688 00f0 2BE0     		b	.L19
+ 689              	.L25:
+ 183:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_start(&a);
+ 690              		.loc 1 183 22 view .LVU213
+ 691              	.LVL69:
+ 692              	.LBB111:
+ 693              	.LBI111:
+ 168:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 694              		.loc 2 168 20 view .LVU214
+ 695              	.LBB112:
+ 170:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 696              		.loc 2 170 5 view .LVU215
+ 170:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 697              		.loc 2 170 14 is_stmt 0 view .LVU216
+ 698 00f2 4FF4B473 		mov	r3, #360
+ 699 00f6 0993     		str	r3, [sp, #36]
+ 171:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 700              		.loc 2 171 5 is_stmt 1 view .LVU217
+ 171:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 701              		.loc 2 171 16 is_stmt 0 view .LVU218
+ 702 00f8 0A93     		str	r3, [sp, #40]
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 703              		.loc 2 172 5 is_stmt 1 view .LVU219
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 704              		.loc 2 172 14 is_stmt 0 view .LVU220
+ 705 00fa 0023     		movs	r3, #0
+ 706 00fc 0B93     		str	r3, [sp, #44]
+ 707 00fe DFE7     		b	.L26
+ 708              	.LVL70:
+ 709              	.L27:
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 710              		.loc 2 172 14 view .LVU221
+ 711              	.LBE112:
+ 712              	.LBE111:
+ 188:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 713              		.loc 1 188 22 is_stmt 1 view .LVU222
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 31
+
+
+ 188:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 714              		.loc 1 188 54 is_stmt 0 view .LVU223
+ 715 0100 B4F93020 		ldrsh	r2, [r4, #48]
+ 716 0104 93B2     		uxth	r3, r2
+ 188:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 717              		.loc 1 188 49 view .LVU224
+ 718 0106 C3F5B473 		rsb	r3, r3, #360
+ 188:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 719              		.loc 1 188 22 view .LVU225
+ 720 010a 1BB2     		sxth	r3, r3
+ 721              	.LVL71:
+ 722              	.LBB113:
+ 723              	.LBI113:
+ 168:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 724              		.loc 2 168 20 is_stmt 1 view .LVU226
+ 725              	.LBB114:
+ 170:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 726              		.loc 2 170 5 view .LVU227
+ 170:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 727              		.loc 2 170 14 is_stmt 0 view .LVU228
+ 728 010c 0993     		str	r3, [sp, #36]
+ 171:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 729              		.loc 2 171 5 is_stmt 1 view .LVU229
+ 171:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 730              		.loc 2 171 16 is_stmt 0 view .LVU230
+ 731 010e 0A93     		str	r3, [sp, #40]
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 732              		.loc 2 172 5 is_stmt 1 view .LVU231
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 733              		.loc 2 172 14 is_stmt 0 view .LVU232
+ 734 0110 0B92     		str	r2, [sp, #44]
+ 735 0112 E8E7     		b	.L28
+ 736              	.LVL72:
+ 737              	.L38:
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 738              		.loc 2 172 14 view .LVU233
+ 739              	.LBE114:
+ 740              	.LBE113:
+ 741              	.LBE115:
+ 742              	.LBB116:
+ 201:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 743              		.loc 1 201 17 view .LVU234
+ 744 0114 154B     		ldr	r3, .L39+16
+ 745 0116 97E7     		b	.L30
+ 746              	.LVL73:
+ 747              	.L32:
+ 748              	.LBB73:
+ 749              	.LBB70:
+ 750              	.LBB69:
+ 219:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****         d8++;
+ 751              		.loc 3 219 9 is_stmt 1 view .LVU235
+ 219:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****         d8++;
+ 752              		.loc 3 219 15 is_stmt 0 view .LVU236
+ 753 0118 11F8010B 		ldrb	r0, [r1], #1	@ zero_extendqisi2
+ 754              	.LVL74:
+ 219:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****         d8++;
+ 755              		.loc 3 219 13 view .LVU237
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 32
+
+
+ 756 011c 02F8010B 		strb	r0, [r2], #1
+ 757              	.LVL75:
+ 220:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****         s8++;
+ 758              		.loc 3 220 9 is_stmt 1 view .LVU238
+ 221:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****         len--;
+ 759              		.loc 3 221 9 view .LVU239
+ 222:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     }
+ 760              		.loc 3 222 9 view .LVU240
+ 222:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****     }
+ 761              		.loc 3 222 12 is_stmt 0 view .LVU241
+ 762 0120 013B     		subs	r3, r3, #1
+ 763              	.LVL76:
+ 764              	.L31:
+ 218:d:\_project\stm32\f407\hack_rf_new\lvgl\src\lv_misc\lv_mem.h ****         *d8 = *s8;
+ 765              		.loc 3 218 10 view .LVU242
+ 766 0122 002B     		cmp	r3, #0
+ 767 0124 F8D1     		bne	.L32
+ 768              		.loc 3 225 5 is_stmt 1 view .LVU243
+ 769              	.LVL77:
+ 770              		.loc 3 225 5 is_stmt 0 view .LVU244
+ 771              	.LBE69:
+ 772              	.LBE70:
+ 773              	.LBE73:
+ 209:lvgl/src/lv_widgets/lv_spinner.c ****                 if(ext->anim_dir == LV_SPINNER_DIR_FORWARD) lv_anim_set_values(&a, 0, 360);
+ 774              		.loc 1 209 17 is_stmt 1 view .LVU245
+ 775              	.LBB74:
+ 776              	.LBI74:
+ 246:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 777              		.loc 2 246 20 view .LVU246
+ 778              	.LBB75:
+ 248:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 779              		.loc 2 248 5 view .LVU247
+ 248:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 780              		.loc 2 248 25 is_stmt 0 view .LVU248
+ 781 0126 4FF6FF73 		movw	r3, #65535
+ 782 012a ADF84430 		strh	r3, [sp, #68]	@ movhi
+ 783              	.LVL78:
+ 248:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 784              		.loc 2 248 25 view .LVU249
+ 785              	.LBE75:
+ 786              	.LBE74:
+ 210:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360, 0);
+ 787              		.loc 1 210 17 is_stmt 1 view .LVU250
+ 210:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360, 0);
+ 788              		.loc 1 210 34 is_stmt 0 view .LVU251
+ 789 012e 94F83430 		ldrb	r3, [r4, #52]	@ zero_extendqisi2
+ 210:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360, 0);
+ 790              		.loc 1 210 19 view .LVU252
+ 791 0132 13F0040F 		tst	r3, #4
+ 792 0136 0AD1     		bne	.L33
+ 210:lvgl/src/lv_widgets/lv_spinner.c ****                 else lv_anim_set_values(&a, 360, 0);
+ 793              		.loc 1 210 61 is_stmt 1 view .LVU253
+ 794              	.LVL79:
+ 795              	.LBB76:
+ 796              	.LBI76:
+ 168:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 797              		.loc 2 168 20 view .LVU254
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 33
+
+
+ 798              	.LBB77:
+ 170:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 799              		.loc 2 170 5 view .LVU255
+ 170:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 800              		.loc 2 170 14 is_stmt 0 view .LVU256
+ 801 0138 0023     		movs	r3, #0
+ 802 013a 0993     		str	r3, [sp, #36]
+ 171:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 803              		.loc 2 171 5 is_stmt 1 view .LVU257
+ 171:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 804              		.loc 2 171 16 is_stmt 0 view .LVU258
+ 805 013c 0A93     		str	r3, [sp, #40]
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 806              		.loc 2 172 5 is_stmt 1 view .LVU259
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 807              		.loc 2 172 14 is_stmt 0 view .LVU260
+ 808 013e 4FF4B473 		mov	r3, #360
+ 809 0142 0B93     		str	r3, [sp, #44]
+ 810              	.LVL80:
+ 811              	.L34:
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 812              		.loc 2 172 14 view .LVU261
+ 813              	.LBE77:
+ 814              	.LBE76:
+ 212:lvgl/src/lv_widgets/lv_spinner.c ****                 break;
+ 815              		.loc 1 212 17 is_stmt 1 view .LVU262
+ 816 0144 03A8     		add	r0, sp, #12
+ 817 0146 FFF7FEFF 		bl	lv_anim_start
+ 818              	.LVL81:
+ 213:lvgl/src/lv_widgets/lv_spinner.c ****             }
+ 819              		.loc 1 213 17 view .LVU263
+ 820              	.L19:
+ 213:lvgl/src/lv_widgets/lv_spinner.c ****             }
+ 821              		.loc 1 213 17 is_stmt 0 view .LVU264
+ 822              	.LBE116:
+ 216:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 823              		.loc 1 216 1 view .LVU265
+ 824 014a 14B0     		add	sp, sp, #80
+ 825              	.LCFI5:
+ 826              		.cfi_remember_state
+ 827              		.cfi_def_cfa_offset 16
+ 828              		@ sp needed
+ 829 014c 70BD     		pop	{r4, r5, r6, pc}
+ 830              	.LVL82:
+ 831              	.L33:
+ 832              	.LCFI6:
+ 833              		.cfi_restore_state
+ 834              	.LBB117:
+ 211:lvgl/src/lv_widgets/lv_spinner.c ****                 lv_anim_start(&a);
+ 835              		.loc 1 211 22 is_stmt 1 view .LVU266
+ 836              	.LBB78:
+ 837              	.LBI78:
+ 168:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** {
+ 838              		.loc 2 168 20 view .LVU267
+ 839              	.LBB79:
+ 170:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 840              		.loc 2 170 5 view .LVU268
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 34
+
+
+ 170:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->current = start;
+ 841              		.loc 2 170 14 is_stmt 0 view .LVU269
+ 842 014e 4FF4B473 		mov	r3, #360
+ 843 0152 0993     		str	r3, [sp, #36]
+ 171:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 844              		.loc 2 171 5 is_stmt 1 view .LVU270
+ 171:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h ****     a->end   = end;
+ 845              		.loc 2 171 16 is_stmt 0 view .LVU271
+ 846 0154 0A93     		str	r3, [sp, #40]
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 847              		.loc 2 172 5 is_stmt 1 view .LVU272
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h **** }
+ 848              		.loc 2 172 14 is_stmt 0 view .LVU273
+ 849 0156 0023     		movs	r3, #0
+ 850 0158 0B93     		str	r3, [sp, #44]
+ 851 015a F3E7     		b	.L34
+ 852              	.L40:
+ 853              		.align	2
+ 854              	.L39:
+ 855 015c 00000000 		.word	.LC0
+ 856 0160 00000000 		.word	lv_anim_path_ease_in_out
+ 857 0164 00000000 		.word	lv_spinner_anim_cb
+ 858 0168 00000000 		.word	lv_spinner_set_arc_length
+ 859 016c 00000000 		.word	lv_anim_path_linear
+ 860              	.LBE79:
+ 861              	.LBE78:
+ 862              	.LBE117:
+ 863              		.cfi_endproc
+ 864              	.LFE461:
+ 866              		.section	.text.lv_spinner_create,"ax",%progbits
+ 867              		.align	1
+ 868              		.global	lv_spinner_create
+ 869              		.syntax unified
+ 870              		.thumb
+ 871              		.thumb_func
+ 872              		.fpu fpv4-sp-d16
+ 874              	lv_spinner_create:
+ 875              	.LVL83:
+ 876              	.LFB458:
+  66:lvgl/src/lv_widgets/lv_spinner.c ****     LV_LOG_TRACE("spinner create started");
+ 877              		.loc 1 66 1 is_stmt 1 view -0
+ 878              		.cfi_startproc
+ 879              		@ args = 0, pretend = 0, frame = 0
+ 880              		@ frame_needed = 0, uses_anonymous_args = 0
+  66:lvgl/src/lv_widgets/lv_spinner.c ****     LV_LOG_TRACE("spinner create started");
+ 881              		.loc 1 66 1 is_stmt 0 view .LVU275
+ 882 0000 70B5     		push	{r4, r5, r6, lr}
+ 883              	.LCFI7:
+ 884              		.cfi_def_cfa_offset 16
+ 885              		.cfi_offset 4, -16
+ 886              		.cfi_offset 5, -12
+ 887              		.cfi_offset 6, -8
+ 888              		.cfi_offset 14, -4
+ 889 0002 0E46     		mov	r6, r1
+  67:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 890              		.loc 1 67 43 is_stmt 1 view .LVU276
+  70:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_MEM(spinner);
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 35
+
+
+ 891              		.loc 1 70 5 view .LVU277
+  70:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_MEM(spinner);
+ 892              		.loc 1 70 26 is_stmt 0 view .LVU278
+ 893 0004 FFF7FEFF 		bl	lv_arc_create
+ 894              	.LVL84:
+  70:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_MEM(spinner);
+ 895              		.loc 1 70 26 view .LVU279
+ 896 0008 0446     		mov	r4, r0
+ 897              	.LVL85:
+  71:lvgl/src/lv_widgets/lv_spinner.c ****     if(spinner == NULL) return NULL;
+ 898              		.loc 1 71 5 is_stmt 1 view .LVU280
+  71:lvgl/src/lv_widgets/lv_spinner.c ****     if(spinner == NULL) return NULL;
+ 899              		.loc 1 71 5 view .LVU281
+ 900 000a FFF7FEFF 		bl	lv_debug_check_null
+ 901              	.LVL86:
+  71:lvgl/src/lv_widgets/lv_spinner.c ****     if(spinner == NULL) return NULL;
+ 902              		.loc 1 71 5 is_stmt 0 view .LVU282
+ 903 000e 0028     		cmp	r0, #0
+ 904 0010 47D0     		beq	.L53
+  71:lvgl/src/lv_widgets/lv_spinner.c ****     if(spinner == NULL) return NULL;
+ 905              		.loc 1 71 27 is_stmt 1 discriminator 2 view .LVU283
+  72:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 906              		.loc 1 72 5 discriminator 2 view .LVU284
+  72:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 907              		.loc 1 72 7 is_stmt 0 discriminator 2 view .LVU285
+ 908 0012 002C     		cmp	r4, #0
+ 909 0014 43D0     		beq	.L41
+  75:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_MEM(ext);
+ 910              		.loc 1 75 5 is_stmt 1 view .LVU286
+  75:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_MEM(ext);
+ 911              		.loc 1 75 30 is_stmt 0 view .LVU287
+ 912 0016 3821     		movs	r1, #56
+ 913 0018 2046     		mov	r0, r4
+ 914 001a FFF7FEFF 		bl	lv_obj_allocate_ext_attr
+ 915              	.LVL87:
+ 916 001e 0546     		mov	r5, r0
+ 917              	.LVL88:
+  76:lvgl/src/lv_widgets/lv_spinner.c ****     if(ext == NULL) {
+ 918              		.loc 1 76 5 is_stmt 1 view .LVU288
+  76:lvgl/src/lv_widgets/lv_spinner.c ****     if(ext == NULL) {
+ 919              		.loc 1 76 5 view .LVU289
+ 920 0020 FFF7FEFF 		bl	lv_debug_check_null
+ 921              	.LVL89:
+  76:lvgl/src/lv_widgets/lv_spinner.c ****     if(ext == NULL) {
+ 922              		.loc 1 76 5 is_stmt 0 view .LVU290
+ 923 0024 0028     		cmp	r0, #0
+ 924 0026 42D0     		beq	.L54
+  76:lvgl/src/lv_widgets/lv_spinner.c ****     if(ext == NULL) {
+ 925              		.loc 1 76 23 is_stmt 1 discriminator 2 view .LVU291
+  77:lvgl/src/lv_widgets/lv_spinner.c ****         lv_obj_del(spinner);
+ 926              		.loc 1 77 5 discriminator 2 view .LVU292
+  77:lvgl/src/lv_widgets/lv_spinner.c ****         lv_obj_del(spinner);
+ 927              		.loc 1 77 7 is_stmt 0 discriminator 2 view .LVU293
+ 928 0028 002D     		cmp	r5, #0
+ 929 002a 46D0     		beq	.L55
+  82:lvgl/src/lv_widgets/lv_spinner.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(spinner);
+ 930              		.loc 1 82 5 is_stmt 1 view .LVU294
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 36
+
+
+  82:lvgl/src/lv_widgets/lv_spinner.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(spinner);
+ 931              		.loc 1 82 24 is_stmt 0 view .LVU295
+ 932 002c 334B     		ldr	r3, .L59
+ 933 002e 1B68     		ldr	r3, [r3]
+  82:lvgl/src/lv_widgets/lv_spinner.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(spinner);
+ 934              		.loc 1 82 7 view .LVU296
+ 935 0030 002B     		cmp	r3, #0
+ 936 0032 47D0     		beq	.L56
+ 937              	.L48:
+  83:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 938              		.loc 1 83 5 is_stmt 1 view .LVU297
+  83:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 939              		.loc 1 83 24 is_stmt 0 view .LVU298
+ 940 0034 324B     		ldr	r3, .L59+4
+ 941 0036 1B68     		ldr	r3, [r3]
+  83:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 942              		.loc 1 83 7 view .LVU299
+ 943 0038 002B     		cmp	r3, #0
+ 944 003a 49D0     		beq	.L57
+ 945              	.L49:
+  86:lvgl/src/lv_widgets/lv_spinner.c ****     ext->anim_type  = LV_SPINNER_DEF_ANIM;
+ 946              		.loc 1 86 5 is_stmt 1 view .LVU300
+  86:lvgl/src/lv_widgets/lv_spinner.c ****     ext->anim_type  = LV_SPINNER_DEF_ANIM;
+ 947              		.loc 1 86 21 is_stmt 0 view .LVU301
+ 948 003c 3C23     		movs	r3, #60
+ 949 003e 2B86     		strh	r3, [r5, #48]	@ movhi
+  87:lvgl/src/lv_widgets/lv_spinner.c ****     ext->anim_dir   = LV_SPINNER_DIR_FORWARD;
+ 950              		.loc 1 87 5 is_stmt 1 view .LVU302
+  87:lvgl/src/lv_widgets/lv_spinner.c ****     ext->anim_dir   = LV_SPINNER_DIR_FORWARD;
+ 951              		.loc 1 87 21 is_stmt 0 view .LVU303
+ 952 0040 95F83430 		ldrb	r3, [r5, #52]	@ zero_extendqisi2
+  88:lvgl/src/lv_widgets/lv_spinner.c ****     ext->time = LV_SPINNER_DEF_SPIN_TIME;
+ 953              		.loc 1 88 5 is_stmt 1 view .LVU304
+  88:lvgl/src/lv_widgets/lv_spinner.c ****     ext->time = LV_SPINNER_DEF_SPIN_TIME;
+ 954              		.loc 1 88 21 is_stmt 0 view .LVU305
+ 955 0044 03F0FC03 		and	r3, r3, #252
+ 956 0048 6FF38203 		bfc	r3, #2, #1
+ 957 004c 85F83430 		strb	r3, [r5, #52]
+  89:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 958              		.loc 1 89 5 is_stmt 1 view .LVU306
+  89:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 959              		.loc 1 89 15 is_stmt 0 view .LVU307
+ 960 0050 4FF47A73 		mov	r3, #1000
+ 961 0054 6B86     		strh	r3, [r5, #50]	@ movhi
+  92:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 962              		.loc 1 92 5 is_stmt 1 view .LVU308
+ 963 0056 2B49     		ldr	r1, .L59+8
+ 964 0058 2046     		mov	r0, r4
+ 965 005a FFF7FEFF 		bl	lv_obj_set_signal_cb
+ 966              	.LVL90:
+  95:lvgl/src/lv_widgets/lv_spinner.c ****         ext->arc.bg_angle_start = 0;
+ 967              		.loc 1 95 5 view .LVU309
+  95:lvgl/src/lv_widgets/lv_spinner.c ****         ext->arc.bg_angle_start = 0;
+ 968              		.loc 1 95 7 is_stmt 0 view .LVU310
+ 969 005e 002E     		cmp	r6, #0
+ 970 0060 3CD0     		beq	.L58
+ 971              	.LBB118:
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 37
+
+
+ 104:lvgl/src/lv_widgets/lv_spinner.c ****         ext->arc_length             = copy_ext->arc_length;
+ 972              		.loc 1 104 9 is_stmt 1 view .LVU311
+ 104:lvgl/src/lv_widgets/lv_spinner.c ****         ext->arc_length             = copy_ext->arc_length;
+ 973              		.loc 1 104 39 is_stmt 0 view .LVU312
+ 974 0062 3046     		mov	r0, r6
+ 975 0064 FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 976              	.LVL91:
+ 105:lvgl/src/lv_widgets/lv_spinner.c ****         ext->time                   = copy_ext->time;
+ 977              		.loc 1 105 9 is_stmt 1 view .LVU313
+ 105:lvgl/src/lv_widgets/lv_spinner.c ****         ext->time                   = copy_ext->time;
+ 978              		.loc 1 105 47 is_stmt 0 view .LVU314
+ 979 0068 B0F93030 		ldrsh	r3, [r0, #48]
+ 105:lvgl/src/lv_widgets/lv_spinner.c ****         ext->time                   = copy_ext->time;
+ 980              		.loc 1 105 37 view .LVU315
+ 981 006c 2B86     		strh	r3, [r5, #48]	@ movhi
+ 106:lvgl/src/lv_widgets/lv_spinner.c ****         ext->anim_dir               = copy_ext->anim_dir;
+ 982              		.loc 1 106 9 is_stmt 1 view .LVU316
+ 106:lvgl/src/lv_widgets/lv_spinner.c ****         ext->anim_dir               = copy_ext->anim_dir;
+ 983              		.loc 1 106 47 is_stmt 0 view .LVU317
+ 984 006e 438E     		ldrh	r3, [r0, #50]
+ 106:lvgl/src/lv_widgets/lv_spinner.c ****         ext->anim_dir               = copy_ext->anim_dir;
+ 985              		.loc 1 106 37 view .LVU318
+ 986 0070 6B86     		strh	r3, [r5, #50]	@ movhi
+ 107:lvgl/src/lv_widgets/lv_spinner.c ****         /*Refresh the style with new signal function*/
+ 987              		.loc 1 107 9 is_stmt 1 view .LVU319
+ 107:lvgl/src/lv_widgets/lv_spinner.c ****         /*Refresh the style with new signal function*/
+ 988              		.loc 1 107 47 is_stmt 0 view .LVU320
+ 989 0072 90F83430 		ldrb	r3, [r0, #52]	@ zero_extendqisi2
+ 990 0076 C3F38003 		ubfx	r3, r3, #2, #1
+ 107:lvgl/src/lv_widgets/lv_spinner.c ****         /*Refresh the style with new signal function*/
+ 991              		.loc 1 107 37 view .LVU321
+ 992 007a 95F83420 		ldrb	r2, [r5, #52]	@ zero_extendqisi2
+ 993 007e 63F38202 		bfi	r2, r3, #2, #1
+ 994 0082 85F83420 		strb	r2, [r5, #52]
+ 109:lvgl/src/lv_widgets/lv_spinner.c ****     }
+ 995              		.loc 1 109 9 is_stmt 1 view .LVU322
+ 996 0086 FF22     		movs	r2, #255
+ 997 0088 1146     		mov	r1, r2
+ 998 008a 2046     		mov	r0, r4
+ 999              	.LVL92:
+ 109:lvgl/src/lv_widgets/lv_spinner.c ****     }
+ 1000              		.loc 1 109 9 is_stmt 0 view .LVU323
+ 1001 008c FFF7FEFF 		bl	lv_obj_refresh_style
+ 1002              	.LVL93:
+ 1003              	.L51:
+ 109:lvgl/src/lv_widgets/lv_spinner.c ****     }
+ 1004              		.loc 1 109 9 view .LVU324
+ 1005              	.LBE118:
+ 112:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1006              		.loc 1 112 5 is_stmt 1 view .LVU325
+ 112:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1007              		.loc 1 112 37 is_stmt 0 view .LVU326
+ 1008 0090 95F83410 		ldrb	r1, [r5, #52]	@ zero_extendqisi2
+ 112:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1009              		.loc 1 112 5 view .LVU327
+ 1010 0094 01F00301 		and	r1, r1, #3
+ 1011 0098 2046     		mov	r0, r4
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 38
+
+
+ 1012 009a FFF7FEFF 		bl	lv_spinner_set_type
+ 1013              	.LVL94:
+ 114:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1014              		.loc 1 114 35 is_stmt 1 view .LVU328
+ 116:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 1015              		.loc 1 116 5 view .LVU329
+ 1016              	.L41:
+ 117:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1017              		.loc 1 117 1 is_stmt 0 view .LVU330
+ 1018 009e 2046     		mov	r0, r4
+ 1019 00a0 70BD     		pop	{r4, r5, r6, pc}
+ 1020              	.LVL95:
+ 1021              	.L53:
+  71:lvgl/src/lv_widgets/lv_spinner.c ****     if(spinner == NULL) return NULL;
+ 1022              		.loc 1 71 5 is_stmt 1 discriminator 1 view .LVU331
+  71:lvgl/src/lv_widgets/lv_spinner.c ****     if(spinner == NULL) return NULL;
+ 1023              		.loc 1 71 5 discriminator 1 view .LVU332
+ 1024 00a2 2246     		mov	r2, r4
+ 1025 00a4 0023     		movs	r3, #0
+ 1026 00a6 1848     		ldr	r0, .L59+12
+ 1027 00a8 FFF7FEFF 		bl	lv_debug_log_error
+ 1028              	.LVL96:
+ 1029              	.L43:
+  71:lvgl/src/lv_widgets/lv_spinner.c ****     if(spinner == NULL) return NULL;
+ 1030              		.loc 1 71 5 discriminator 1 view .LVU333
+  71:lvgl/src/lv_widgets/lv_spinner.c ****     if(spinner == NULL) return NULL;
+ 1031              		.loc 1 71 5 discriminator 1 view .LVU334
+ 1032 00ac FEE7     		b	.L43
+ 1033              	.LVL97:
+ 1034              	.L54:
+  76:lvgl/src/lv_widgets/lv_spinner.c ****     if(ext == NULL) {
+ 1035              		.loc 1 76 5 discriminator 1 view .LVU335
+  76:lvgl/src/lv_widgets/lv_spinner.c ****     if(ext == NULL) {
+ 1036              		.loc 1 76 5 discriminator 1 view .LVU336
+ 1037 00ae 2A46     		mov	r2, r5
+ 1038 00b0 0023     		movs	r3, #0
+ 1039 00b2 1548     		ldr	r0, .L59+12
+ 1040 00b4 FFF7FEFF 		bl	lv_debug_log_error
+ 1041              	.LVL98:
+ 1042              	.L46:
+  76:lvgl/src/lv_widgets/lv_spinner.c ****     if(ext == NULL) {
+ 1043              		.loc 1 76 5 discriminator 2 view .LVU337
+  76:lvgl/src/lv_widgets/lv_spinner.c ****     if(ext == NULL) {
+ 1044              		.loc 1 76 5 discriminator 2 view .LVU338
+ 1045 00b8 FEE7     		b	.L46
+ 1046              	.L55:
+  78:lvgl/src/lv_widgets/lv_spinner.c ****         return NULL;
+ 1047              		.loc 1 78 9 view .LVU339
+ 1048 00ba 2046     		mov	r0, r4
+ 1049 00bc FFF7FEFF 		bl	lv_obj_del
+ 1050              	.LVL99:
+  79:lvgl/src/lv_widgets/lv_spinner.c ****     }
+ 1051              		.loc 1 79 9 view .LVU340
+  79:lvgl/src/lv_widgets/lv_spinner.c ****     }
+ 1052              		.loc 1 79 16 is_stmt 0 view .LVU341
+ 1053 00c0 0024     		movs	r4, #0
+ 1054              	.LVL100:
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 39
+
+
+  79:lvgl/src/lv_widgets/lv_spinner.c ****     }
+ 1055              		.loc 1 79 16 view .LVU342
+ 1056 00c2 ECE7     		b	.L41
+ 1057              	.LVL101:
+ 1058              	.L56:
+  82:lvgl/src/lv_widgets/lv_spinner.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(spinner);
+ 1059              		.loc 1 82 33 is_stmt 1 discriminator 1 view .LVU343
+  82:lvgl/src/lv_widgets/lv_spinner.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(spinner);
+ 1060              		.loc 1 82 51 is_stmt 0 discriminator 1 view .LVU344
+ 1061 00c4 2046     		mov	r0, r4
+ 1062 00c6 FFF7FEFF 		bl	lv_obj_get_signal_cb
+ 1063              	.LVL102:
+  82:lvgl/src/lv_widgets/lv_spinner.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(spinner);
+ 1064              		.loc 1 82 49 discriminator 1 view .LVU345
+ 1065 00ca 0C4B     		ldr	r3, .L59
+ 1066 00cc 1860     		str	r0, [r3]
+ 1067 00ce B1E7     		b	.L48
+ 1068              	.L57:
+  83:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1069              		.loc 1 83 33 is_stmt 1 discriminator 1 view .LVU346
+  83:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1070              		.loc 1 83 51 is_stmt 0 discriminator 1 view .LVU347
+ 1071 00d0 2046     		mov	r0, r4
+ 1072 00d2 FFF7FEFF 		bl	lv_obj_get_design_cb
+ 1073              	.LVL103:
+  83:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1074              		.loc 1 83 49 discriminator 1 view .LVU348
+ 1075 00d6 0A4B     		ldr	r3, .L59+4
+ 1076 00d8 1860     		str	r0, [r3]
+ 1077 00da AFE7     		b	.L49
+ 1078              	.L58:
+  96:lvgl/src/lv_widgets/lv_spinner.c ****         ext->arc.bg_angle_end = 360;
+ 1079              		.loc 1 96 9 is_stmt 1 view .LVU349
+  96:lvgl/src/lv_widgets/lv_spinner.c ****         ext->arc.bg_angle_end = 360;
+ 1080              		.loc 1 96 33 is_stmt 0 view .LVU350
+ 1081 00dc 0023     		movs	r3, #0
+ 1082 00de EB80     		strh	r3, [r5, #6]	@ movhi
+  97:lvgl/src/lv_widgets/lv_spinner.c ****         lv_obj_set_size(spinner, LV_DPI, LV_DPI);
+ 1083              		.loc 1 97 9 is_stmt 1 view .LVU351
+  97:lvgl/src/lv_widgets/lv_spinner.c ****         lv_obj_set_size(spinner, LV_DPI, LV_DPI);
+ 1084              		.loc 1 97 31 is_stmt 0 view .LVU352
+ 1085 00e0 4FF4B473 		mov	r3, #360
+ 1086 00e4 2B81     		strh	r3, [r5, #8]	@ movhi
+  98:lvgl/src/lv_widgets/lv_spinner.c ****         lv_theme_apply(spinner, LV_THEME_SPINNER);
+ 1087              		.loc 1 98 9 is_stmt 1 view .LVU353
+ 1088 00e6 5022     		movs	r2, #80
+ 1089 00e8 1146     		mov	r1, r2
+ 1090 00ea 2046     		mov	r0, r4
+ 1091 00ec FFF7FEFF 		bl	lv_obj_set_size
+ 1092              	.LVL104:
+  99:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1093              		.loc 1 99 9 view .LVU354
+ 1094 00f0 2021     		movs	r1, #32
+ 1095 00f2 2046     		mov	r0, r4
+ 1096 00f4 FFF7FEFF 		bl	lv_theme_apply
+ 1097              	.LVL105:
+ 1098 00f8 CAE7     		b	.L51
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 40
+
+
+ 1099              	.L60:
+ 1100 00fa 00BF     		.align	2
+ 1101              	.L59:
+ 1102 00fc 00000000 		.word	.LANCHOR0
+ 1103 0100 00000000 		.word	.LANCHOR1
+ 1104 0104 00000000 		.word	lv_spinner_signal
+ 1105 0108 00000000 		.word	.LC2
+ 1106              		.cfi_endproc
+ 1107              	.LFE458:
+ 1109              		.section	.text.lv_spinner_set_spin_time,"ax",%progbits
+ 1110              		.align	1
+ 1111              		.global	lv_spinner_set_spin_time
+ 1112              		.syntax unified
+ 1113              		.thumb
+ 1114              		.thumb_func
+ 1115              		.fpu fpv4-sp-d16
+ 1117              	lv_spinner_set_spin_time:
+ 1118              	.LVL106:
+ 1119              	.LFB460:
+ 143:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 1120              		.loc 1 143 1 view -0
+ 1121              		.cfi_startproc
+ 1122              		@ args = 0, pretend = 0, frame = 0
+ 1123              		@ frame_needed = 0, uses_anonymous_args = 0
+ 143:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 1124              		.loc 1 143 1 is_stmt 0 view .LVU356
+ 1125 0000 38B5     		push	{r3, r4, r5, lr}
+ 1126              	.LCFI8:
+ 1127              		.cfi_def_cfa_offset 16
+ 1128              		.cfi_offset 3, -16
+ 1129              		.cfi_offset 4, -12
+ 1130              		.cfi_offset 5, -8
+ 1131              		.cfi_offset 14, -4
+ 1132 0002 0446     		mov	r4, r0
+ 1133 0004 0D46     		mov	r5, r1
+ 144:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1134              		.loc 1 144 5 is_stmt 1 view .LVU357
+ 144:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1135              		.loc 1 144 5 view .LVU358
+ 1136 0006 FFF7FEFF 		bl	lv_debug_check_null
+ 1137              	.LVL107:
+ 144:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1138              		.loc 1 144 5 is_stmt 0 view .LVU359
+ 1139 000a 28B9     		cbnz	r0, .L62
+ 144:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1140              		.loc 1 144 5 is_stmt 1 discriminator 1 view .LVU360
+ 144:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1141              		.loc 1 144 5 discriminator 1 view .LVU361
+ 1142 000c 2246     		mov	r2, r4
+ 1143 000e 0023     		movs	r3, #0
+ 1144 0010 0748     		ldr	r0, .L65
+ 1145 0012 FFF7FEFF 		bl	lv_debug_log_error
+ 1146              	.LVL108:
+ 1147              	.L63:
+ 144:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1148              		.loc 1 144 5 discriminator 1 view .LVU362
+ 144:lvgl/src/lv_widgets/lv_spinner.c **** 
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 41
+
+
+ 1149              		.loc 1 144 5 discriminator 1 view .LVU363
+ 1150 0016 FEE7     		b	.L63
+ 1151              	.L62:
+ 144:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1152              		.loc 1 144 41 discriminator 2 view .LVU364
+ 146:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1153              		.loc 1 146 5 discriminator 2 view .LVU365
+ 146:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1154              		.loc 1 146 30 is_stmt 0 discriminator 2 view .LVU366
+ 1155 0018 2046     		mov	r0, r4
+ 1156 001a FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 1157              	.LVL109:
+ 148:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_set_type(spinner, ext->anim_type);
+ 1158              		.loc 1 148 5 is_stmt 1 discriminator 2 view .LVU367
+ 148:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_set_type(spinner, ext->anim_type);
+ 1159              		.loc 1 148 15 is_stmt 0 discriminator 2 view .LVU368
+ 1160 001e 4586     		strh	r5, [r0, #50]	@ movhi
+ 149:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 1161              		.loc 1 149 5 is_stmt 1 discriminator 2 view .LVU369
+ 149:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 1162              		.loc 1 149 37 is_stmt 0 discriminator 2 view .LVU370
+ 1163 0020 90F83410 		ldrb	r1, [r0, #52]	@ zero_extendqisi2
+ 149:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 1164              		.loc 1 149 5 discriminator 2 view .LVU371
+ 1165 0024 01F00301 		and	r1, r1, #3
+ 1166 0028 2046     		mov	r0, r4
+ 1167              	.LVL110:
+ 149:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 1168              		.loc 1 149 5 discriminator 2 view .LVU372
+ 1169 002a FFF7FEFF 		bl	lv_spinner_set_type
+ 1170              	.LVL111:
+ 150:lvgl/src/lv_widgets/lv_spinner.c **** /*=====================
+ 1171              		.loc 1 150 1 discriminator 2 view .LVU373
+ 1172 002e 38BD     		pop	{r3, r4, r5, pc}
+ 1173              	.LVL112:
+ 1174              	.L66:
+ 150:lvgl/src/lv_widgets/lv_spinner.c **** /*=====================
+ 1175              		.loc 1 150 1 discriminator 2 view .LVU374
+ 1176              		.align	2
+ 1177              	.L65:
+ 1178 0030 00000000 		.word	.LC0
+ 1179              		.cfi_endproc
+ 1180              	.LFE460:
+ 1182              		.section	.text.lv_spinner_set_dir,"ax",%progbits
+ 1183              		.align	1
+ 1184              		.global	lv_spinner_set_dir
+ 1185              		.syntax unified
+ 1186              		.thumb
+ 1187              		.thumb_func
+ 1188              		.fpu fpv4-sp-d16
+ 1190              	lv_spinner_set_dir:
+ 1191              	.LVL113:
+ 1192              	.LFB462:
+ 219:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 1193              		.loc 1 219 1 is_stmt 1 view -0
+ 1194              		.cfi_startproc
+ 1195              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 42
+
+
+ 1196              		@ frame_needed = 0, uses_anonymous_args = 0
+ 219:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 1197              		.loc 1 219 1 is_stmt 0 view .LVU376
+ 1198 0000 38B5     		push	{r3, r4, r5, lr}
+ 1199              	.LCFI9:
+ 1200              		.cfi_def_cfa_offset 16
+ 1201              		.cfi_offset 3, -16
+ 1202              		.cfi_offset 4, -12
+ 1203              		.cfi_offset 5, -8
+ 1204              		.cfi_offset 14, -4
+ 1205 0002 0446     		mov	r4, r0
+ 1206 0004 0D46     		mov	r5, r1
+ 220:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1207              		.loc 1 220 5 is_stmt 1 view .LVU377
+ 220:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1208              		.loc 1 220 5 view .LVU378
+ 1209 0006 FFF7FEFF 		bl	lv_debug_check_null
+ 1210              	.LVL114:
+ 220:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1211              		.loc 1 220 5 is_stmt 0 view .LVU379
+ 1212 000a 28B9     		cbnz	r0, .L68
+ 220:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1213              		.loc 1 220 5 is_stmt 1 discriminator 1 view .LVU380
+ 220:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1214              		.loc 1 220 5 discriminator 1 view .LVU381
+ 1215 000c 2246     		mov	r2, r4
+ 1216 000e 0023     		movs	r3, #0
+ 1217 0010 0948     		ldr	r0, .L71
+ 1218 0012 FFF7FEFF 		bl	lv_debug_log_error
+ 1219              	.LVL115:
+ 1220              	.L69:
+ 220:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1221              		.loc 1 220 5 discriminator 1 view .LVU382
+ 220:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1222              		.loc 1 220 5 discriminator 1 view .LVU383
+ 1223 0016 FEE7     		b	.L69
+ 1224              	.L68:
+ 220:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1225              		.loc 1 220 41 discriminator 2 view .LVU384
+ 222:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1226              		.loc 1 222 5 discriminator 2 view .LVU385
+ 222:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1227              		.loc 1 222 30 is_stmt 0 discriminator 2 view .LVU386
+ 1228 0018 2046     		mov	r0, r4
+ 1229 001a FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 1230              	.LVL116:
+ 224:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_set_type(spinner, ext->anim_type);
+ 1231              		.loc 1 224 5 is_stmt 1 discriminator 2 view .LVU387
+ 224:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_set_type(spinner, ext->anim_type);
+ 1232              		.loc 1 224 19 is_stmt 0 discriminator 2 view .LVU388
+ 1233 001e 90F83410 		ldrb	r1, [r0, #52]	@ zero_extendqisi2
+ 1234 0022 65F38201 		bfi	r1, r5, #2, #1
+ 1235 0026 80F83410 		strb	r1, [r0, #52]
+ 225:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 1236              		.loc 1 225 5 is_stmt 1 discriminator 2 view .LVU389
+ 1237 002a 01F00301 		and	r1, r1, #3
+ 1238 002e 2046     		mov	r0, r4
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 43
+
+
+ 1239              	.LVL117:
+ 225:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 1240              		.loc 1 225 5 is_stmt 0 discriminator 2 view .LVU390
+ 1241 0030 FFF7FEFF 		bl	lv_spinner_set_type
+ 1242              	.LVL118:
+ 226:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1243              		.loc 1 226 1 discriminator 2 view .LVU391
+ 1244 0034 38BD     		pop	{r3, r4, r5, pc}
+ 1245              	.LVL119:
+ 1246              	.L72:
+ 226:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1247              		.loc 1 226 1 discriminator 2 view .LVU392
+ 1248 0036 00BF     		.align	2
+ 1249              	.L71:
+ 1250 0038 00000000 		.word	.LC0
+ 1251              		.cfi_endproc
+ 1252              	.LFE462:
+ 1254              		.section	.text.lv_spinner_get_arc_length,"ax",%progbits
+ 1255              		.align	1
+ 1256              		.global	lv_spinner_get_arc_length
+ 1257              		.syntax unified
+ 1258              		.thumb
+ 1259              		.thumb_func
+ 1260              		.fpu fpv4-sp-d16
+ 1262              	lv_spinner_get_arc_length:
+ 1263              	.LVL120:
+ 1264              	.LFB463:
+ 237:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 1265              		.loc 1 237 1 is_stmt 1 view -0
+ 1266              		.cfi_startproc
+ 1267              		@ args = 0, pretend = 0, frame = 0
+ 1268              		@ frame_needed = 0, uses_anonymous_args = 0
+ 237:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 1269              		.loc 1 237 1 is_stmt 0 view .LVU394
+ 1270 0000 10B5     		push	{r4, lr}
+ 1271              	.LCFI10:
+ 1272              		.cfi_def_cfa_offset 8
+ 1273              		.cfi_offset 4, -8
+ 1274              		.cfi_offset 14, -4
+ 1275 0002 0446     		mov	r4, r0
+ 238:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1276              		.loc 1 238 5 is_stmt 1 view .LVU395
+ 238:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1277              		.loc 1 238 5 view .LVU396
+ 1278 0004 FFF7FEFF 		bl	lv_debug_check_null
+ 1279              	.LVL121:
+ 238:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1280              		.loc 1 238 5 is_stmt 0 view .LVU397
+ 1281 0008 28B9     		cbnz	r0, .L74
+ 238:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1282              		.loc 1 238 5 is_stmt 1 discriminator 1 view .LVU398
+ 238:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1283              		.loc 1 238 5 discriminator 1 view .LVU399
+ 1284 000a 2246     		mov	r2, r4
+ 1285 000c 0023     		movs	r3, #0
+ 1286 000e 0548     		ldr	r0, .L77
+ 1287 0010 FFF7FEFF 		bl	lv_debug_log_error
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 44
+
+
+ 1288              	.LVL122:
+ 1289              	.L75:
+ 238:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1290              		.loc 1 238 5 discriminator 1 view .LVU400
+ 238:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1291              		.loc 1 238 5 discriminator 1 view .LVU401
+ 1292 0014 FEE7     		b	.L75
+ 1293              	.L74:
+ 238:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1294              		.loc 1 238 41 discriminator 2 view .LVU402
+ 240:lvgl/src/lv_widgets/lv_spinner.c ****     return ext->arc_length;
+ 1295              		.loc 1 240 5 discriminator 2 view .LVU403
+ 240:lvgl/src/lv_widgets/lv_spinner.c ****     return ext->arc_length;
+ 1296              		.loc 1 240 30 is_stmt 0 discriminator 2 view .LVU404
+ 1297 0016 2046     		mov	r0, r4
+ 1298 0018 FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 1299              	.LVL123:
+ 241:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 1300              		.loc 1 241 5 is_stmt 1 discriminator 2 view .LVU405
+ 242:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1301              		.loc 1 242 1 is_stmt 0 discriminator 2 view .LVU406
+ 1302 001c B0F93000 		ldrsh	r0, [r0, #48]
+ 1303              	.LVL124:
+ 242:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1304              		.loc 1 242 1 discriminator 2 view .LVU407
+ 1305 0020 10BD     		pop	{r4, pc}
+ 1306              	.LVL125:
+ 1307              	.L78:
+ 242:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1308              		.loc 1 242 1 discriminator 2 view .LVU408
+ 1309 0022 00BF     		.align	2
+ 1310              	.L77:
+ 1311 0024 00000000 		.word	.LC0
+ 1312              		.cfi_endproc
+ 1313              	.LFE463:
+ 1315              		.section	.text.lv_spinner_get_spin_time,"ax",%progbits
+ 1316              		.align	1
+ 1317              		.global	lv_spinner_get_spin_time
+ 1318              		.syntax unified
+ 1319              		.thumb
+ 1320              		.thumb_func
+ 1321              		.fpu fpv4-sp-d16
+ 1323              	lv_spinner_get_spin_time:
+ 1324              	.LVL126:
+ 1325              	.LFB464:
+ 249:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 1326              		.loc 1 249 1 is_stmt 1 view -0
+ 1327              		.cfi_startproc
+ 1328              		@ args = 0, pretend = 0, frame = 0
+ 1329              		@ frame_needed = 0, uses_anonymous_args = 0
+ 249:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 1330              		.loc 1 249 1 is_stmt 0 view .LVU410
+ 1331 0000 10B5     		push	{r4, lr}
+ 1332              	.LCFI11:
+ 1333              		.cfi_def_cfa_offset 8
+ 1334              		.cfi_offset 4, -8
+ 1335              		.cfi_offset 14, -4
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 45
+
+
+ 1336 0002 0446     		mov	r4, r0
+ 250:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1337              		.loc 1 250 5 is_stmt 1 view .LVU411
+ 250:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1338              		.loc 1 250 5 view .LVU412
+ 1339 0004 FFF7FEFF 		bl	lv_debug_check_null
+ 1340              	.LVL127:
+ 250:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1341              		.loc 1 250 5 is_stmt 0 view .LVU413
+ 1342 0008 28B9     		cbnz	r0, .L80
+ 250:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1343              		.loc 1 250 5 is_stmt 1 discriminator 1 view .LVU414
+ 250:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1344              		.loc 1 250 5 discriminator 1 view .LVU415
+ 1345 000a 2246     		mov	r2, r4
+ 1346 000c 0023     		movs	r3, #0
+ 1347 000e 0448     		ldr	r0, .L83
+ 1348 0010 FFF7FEFF 		bl	lv_debug_log_error
+ 1349              	.LVL128:
+ 1350              	.L81:
+ 250:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1351              		.loc 1 250 5 discriminator 1 view .LVU416
+ 250:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1352              		.loc 1 250 5 discriminator 1 view .LVU417
+ 1353 0014 FEE7     		b	.L81
+ 1354              	.L80:
+ 250:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1355              		.loc 1 250 41 discriminator 2 view .LVU418
+ 252:lvgl/src/lv_widgets/lv_spinner.c ****     return ext->time;
+ 1356              		.loc 1 252 5 discriminator 2 view .LVU419
+ 252:lvgl/src/lv_widgets/lv_spinner.c ****     return ext->time;
+ 1357              		.loc 1 252 30 is_stmt 0 discriminator 2 view .LVU420
+ 1358 0016 2046     		mov	r0, r4
+ 1359 0018 FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 1360              	.LVL129:
+ 253:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 1361              		.loc 1 253 5 is_stmt 1 discriminator 2 view .LVU421
+ 254:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1362              		.loc 1 254 1 is_stmt 0 discriminator 2 view .LVU422
+ 1363 001c 408E     		ldrh	r0, [r0, #50]
+ 1364              	.LVL130:
+ 254:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1365              		.loc 1 254 1 discriminator 2 view .LVU423
+ 1366 001e 10BD     		pop	{r4, pc}
+ 1367              	.LVL131:
+ 1368              	.L84:
+ 254:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1369              		.loc 1 254 1 discriminator 2 view .LVU424
+ 1370              		.align	2
+ 1371              	.L83:
+ 1372 0020 00000000 		.word	.LC0
+ 1373              		.cfi_endproc
+ 1374              	.LFE464:
+ 1376              		.section	.text.lv_spinner_get_type,"ax",%progbits
+ 1377              		.align	1
+ 1378              		.global	lv_spinner_get_type
+ 1379              		.syntax unified
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 46
+
+
+ 1380              		.thumb
+ 1381              		.thumb_func
+ 1382              		.fpu fpv4-sp-d16
+ 1384              	lv_spinner_get_type:
+ 1385              	.LVL132:
+ 1386              	.LFB465:
+ 262:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 1387              		.loc 1 262 1 is_stmt 1 view -0
+ 1388              		.cfi_startproc
+ 1389              		@ args = 0, pretend = 0, frame = 0
+ 1390              		@ frame_needed = 0, uses_anonymous_args = 0
+ 262:lvgl/src/lv_widgets/lv_spinner.c ****     LV_ASSERT_OBJ(spinner, LV_OBJX_NAME);
+ 1391              		.loc 1 262 1 is_stmt 0 view .LVU426
+ 1392 0000 10B5     		push	{r4, lr}
+ 1393              	.LCFI12:
+ 1394              		.cfi_def_cfa_offset 8
+ 1395              		.cfi_offset 4, -8
+ 1396              		.cfi_offset 14, -4
+ 1397 0002 0446     		mov	r4, r0
+ 263:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1398              		.loc 1 263 5 is_stmt 1 view .LVU427
+ 263:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1399              		.loc 1 263 5 view .LVU428
+ 1400 0004 FFF7FEFF 		bl	lv_debug_check_null
+ 1401              	.LVL133:
+ 263:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1402              		.loc 1 263 5 is_stmt 0 view .LVU429
+ 1403 0008 28B9     		cbnz	r0, .L86
+ 263:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1404              		.loc 1 263 5 is_stmt 1 discriminator 1 view .LVU430
+ 263:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1405              		.loc 1 263 5 discriminator 1 view .LVU431
+ 1406 000a 2246     		mov	r2, r4
+ 1407 000c 0023     		movs	r3, #0
+ 1408 000e 0648     		ldr	r0, .L89
+ 1409 0010 FFF7FEFF 		bl	lv_debug_log_error
+ 1410              	.LVL134:
+ 1411              	.L87:
+ 263:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1412              		.loc 1 263 5 discriminator 1 view .LVU432
+ 263:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1413              		.loc 1 263 5 discriminator 1 view .LVU433
+ 1414 0014 FEE7     		b	.L87
+ 1415              	.L86:
+ 263:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1416              		.loc 1 263 41 discriminator 2 view .LVU434
+ 265:lvgl/src/lv_widgets/lv_spinner.c ****     return ext->anim_type;
+ 1417              		.loc 1 265 5 discriminator 2 view .LVU435
+ 265:lvgl/src/lv_widgets/lv_spinner.c ****     return ext->anim_type;
+ 1418              		.loc 1 265 30 is_stmt 0 discriminator 2 view .LVU436
+ 1419 0016 2046     		mov	r0, r4
+ 1420 0018 FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 1421              	.LVL135:
+ 266:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 1422              		.loc 1 266 5 is_stmt 1 discriminator 2 view .LVU437
+ 266:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 1423              		.loc 1 266 15 is_stmt 0 discriminator 2 view .LVU438
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 47
+
+
+ 1424 001c 90F83400 		ldrb	r0, [r0, #52]	@ zero_extendqisi2
+ 1425              	.LVL136:
+ 267:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1426              		.loc 1 267 1 discriminator 2 view .LVU439
+ 1427 0020 00F00300 		and	r0, r0, #3
+ 1428 0024 10BD     		pop	{r4, pc}
+ 1429              	.LVL137:
+ 1430              	.L90:
+ 267:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1431              		.loc 1 267 1 discriminator 2 view .LVU440
+ 1432 0026 00BF     		.align	2
+ 1433              	.L89:
+ 1434 0028 00000000 		.word	.LC0
+ 1435              		.cfi_endproc
+ 1436              	.LFE465:
+ 1438              		.section	.text.lv_spinner_get_dir,"ax",%progbits
+ 1439              		.align	1
+ 1440              		.global	lv_spinner_get_dir
+ 1441              		.syntax unified
+ 1442              		.thumb
+ 1443              		.thumb_func
+ 1444              		.fpu fpv4-sp-d16
+ 1446              	lv_spinner_get_dir:
+ 1447              	.LVL138:
+ 1448              	.LFB466:
+ 270:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_ext_t * ext = lv_obj_get_ext_attr(spinner);
+ 1449              		.loc 1 270 1 is_stmt 1 view -0
+ 1450              		.cfi_startproc
+ 1451              		@ args = 0, pretend = 0, frame = 0
+ 1452              		@ frame_needed = 0, uses_anonymous_args = 0
+ 270:lvgl/src/lv_widgets/lv_spinner.c ****     lv_spinner_ext_t * ext = lv_obj_get_ext_attr(spinner);
+ 1453              		.loc 1 270 1 is_stmt 0 view .LVU442
+ 1454 0000 08B5     		push	{r3, lr}
+ 1455              	.LCFI13:
+ 1456              		.cfi_def_cfa_offset 8
+ 1457              		.cfi_offset 3, -8
+ 1458              		.cfi_offset 14, -4
+ 271:lvgl/src/lv_widgets/lv_spinner.c ****     return ext->anim_dir;
+ 1459              		.loc 1 271 5 is_stmt 1 view .LVU443
+ 271:lvgl/src/lv_widgets/lv_spinner.c ****     return ext->anim_dir;
+ 1460              		.loc 1 271 30 is_stmt 0 view .LVU444
+ 1461 0002 FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 1462              	.LVL139:
+ 272:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 1463              		.loc 1 272 5 is_stmt 1 view .LVU445
+ 272:lvgl/src/lv_widgets/lv_spinner.c **** }
+ 1464              		.loc 1 272 15 is_stmt 0 view .LVU446
+ 1465 0006 90F83400 		ldrb	r0, [r0, #52]	@ zero_extendqisi2
+ 1466              	.LVL140:
+ 273:lvgl/src/lv_widgets/lv_spinner.c **** 
+ 1467              		.loc 1 273 1 view .LVU447
+ 1468 000a C0F38000 		ubfx	r0, r0, #2, #1
+ 1469 000e 08BD     		pop	{r3, pc}
+ 1470              		.cfi_endproc
+ 1471              	.LFE466:
+ 1473              		.section	.bss.ancestor_design,"aw",%nobits
+ 1474              		.align	2
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 48
+
+
+ 1475              		.set	.LANCHOR1,. + 0
+ 1478              	ancestor_design:
+ 1479 0000 00000000 		.space	4
+ 1480              		.section	.bss.ancestor_signal,"aw",%nobits
+ 1481              		.align	2
+ 1482              		.set	.LANCHOR0,. + 0
+ 1485              	ancestor_signal:
+ 1486 0000 00000000 		.space	4
+ 1487              		.section	.rodata.lv_spinner_create.str1.4,"aMS",%progbits,1
+ 1488              		.align	2
+ 1489              	.LC2:
+ 1490 0000 4F757420 		.ascii	"Out of memory\000"
+ 1490      6F66206D 
+ 1490      656D6F72 
+ 1490      7900
+ 1491              		.section	.rodata.lv_spinner_set_arc_length.str1.4,"aMS",%progbits,1
+ 1492              		.align	2
+ 1493              	.LC0:
+ 1494 0000 4E554C4C 		.ascii	"NULL pointer\000"
+ 1494      20706F69 
+ 1494      6E746572 
+ 1494      00
+ 1495              		.section	.rodata.lv_spinner_signal.str1.4,"aMS",%progbits,1
+ 1496              		.align	2
+ 1497              	.LC1:
+ 1498 0000 6C765F73 		.ascii	"lv_spinner\000"
+ 1498      70696E6E 
+ 1498      657200
+ 1499              		.text
+ 1500              	.Letext0:
+ 1501              		.file 4 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1502              		.file 5 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1503              		.file 6 "Drivers/CMSIS/Include/core_cm4.h"
+ 1504              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 1505              		.file 8 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-none
+ 1506              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 1507              		.file 10 "lvgl/lv_conf.h"
+ 1508              		.file 11 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1509              		.file 12 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1510              		.file 13 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1511              		.file 14 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_types.h"
+ 1512              		.file 15 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_area.h"
+ 1513              		.file 16 "lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h"
+ 1514              		.file 17 "lvgl/src/lv_widgets/../lv_core/lv_style.h"
+ 1515              		.file 18 "lvgl/src/lv_widgets/../lv_core/../lv_hal/../lv_misc/lv_ll.h"
+ 1516              		.file 19 "lvgl/src/lv_widgets/../lv_core/lv_obj.h"
+ 1517              		.file 20 "lvgl/src/lv_widgets/../lv_core/../lv_hal/lv_hal_indev.h"
+ 1518              		.file 21 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_bidi.h"
+ 1519              		.file 22 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_txt.h"
+ 1520              		.file 23 "lvgl/src/lv_widgets/../lv_core/../lv_draw/lv_draw_label.h"
+ 1521              		.file 24 "lvgl/src/lv_widgets/lv_arc.h"
+ 1522              		.file 25 "lvgl/src/lv_widgets/lv_spinner.h"
+ 1523              		.file 26 "lvgl/src/lv_widgets/../lv_themes/lv_theme.h"
+ 1524              		.file 27 "lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_debug.h"
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 49
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_spinner.c
+  D:\Temp\ccpvfBgd.s:18     .text.lv_spinner_set_arc_length:0000000000000000 $t
+  D:\Temp\ccpvfBgd.s:26     .text.lv_spinner_set_arc_length:0000000000000000 lv_spinner_set_arc_length
+  D:\Temp\ccpvfBgd.s:78     .text.lv_spinner_set_arc_length:0000000000000024 $d
+  D:\Temp\ccpvfBgd.s:83     .text.lv_spinner_signal:0000000000000000 $t
+  D:\Temp\ccpvfBgd.s:89     .text.lv_spinner_signal:0000000000000000 lv_spinner_signal
+  D:\Temp\ccpvfBgd.s:139    .text.lv_spinner_signal:0000000000000020 $d
+  D:\Temp\ccpvfBgd.s:145    .text.lv_spinner_anim_cb:0000000000000000 $t
+  D:\Temp\ccpvfBgd.s:152    .text.lv_spinner_anim_cb:0000000000000000 lv_spinner_anim_cb
+  D:\Temp\ccpvfBgd.s:242    .text.lv_spinner_anim_cb:0000000000000064 $d
+  D:\Temp\ccpvfBgd.s:247    .text.lv_spinner_set_type:0000000000000000 $t
+  D:\Temp\ccpvfBgd.s:254    .text.lv_spinner_set_type:0000000000000000 lv_spinner_set_type
+  D:\Temp\ccpvfBgd.s:855    .text.lv_spinner_set_type:000000000000015c $d
+  D:\Temp\ccpvfBgd.s:867    .text.lv_spinner_create:0000000000000000 $t
+  D:\Temp\ccpvfBgd.s:874    .text.lv_spinner_create:0000000000000000 lv_spinner_create
+  D:\Temp\ccpvfBgd.s:1102   .text.lv_spinner_create:00000000000000fc $d
+  D:\Temp\ccpvfBgd.s:1110   .text.lv_spinner_set_spin_time:0000000000000000 $t
+  D:\Temp\ccpvfBgd.s:1117   .text.lv_spinner_set_spin_time:0000000000000000 lv_spinner_set_spin_time
+  D:\Temp\ccpvfBgd.s:1178   .text.lv_spinner_set_spin_time:0000000000000030 $d
+  D:\Temp\ccpvfBgd.s:1183   .text.lv_spinner_set_dir:0000000000000000 $t
+  D:\Temp\ccpvfBgd.s:1190   .text.lv_spinner_set_dir:0000000000000000 lv_spinner_set_dir
+  D:\Temp\ccpvfBgd.s:1250   .text.lv_spinner_set_dir:0000000000000038 $d
+  D:\Temp\ccpvfBgd.s:1255   .text.lv_spinner_get_arc_length:0000000000000000 $t
+  D:\Temp\ccpvfBgd.s:1262   .text.lv_spinner_get_arc_length:0000000000000000 lv_spinner_get_arc_length
+  D:\Temp\ccpvfBgd.s:1311   .text.lv_spinner_get_arc_length:0000000000000024 $d
+  D:\Temp\ccpvfBgd.s:1316   .text.lv_spinner_get_spin_time:0000000000000000 $t
+  D:\Temp\ccpvfBgd.s:1323   .text.lv_spinner_get_spin_time:0000000000000000 lv_spinner_get_spin_time
+  D:\Temp\ccpvfBgd.s:1372   .text.lv_spinner_get_spin_time:0000000000000020 $d
+  D:\Temp\ccpvfBgd.s:1377   .text.lv_spinner_get_type:0000000000000000 $t
+  D:\Temp\ccpvfBgd.s:1384   .text.lv_spinner_get_type:0000000000000000 lv_spinner_get_type
+  D:\Temp\ccpvfBgd.s:1434   .text.lv_spinner_get_type:0000000000000028 $d
+  D:\Temp\ccpvfBgd.s:1439   .text.lv_spinner_get_dir:0000000000000000 $t
+  D:\Temp\ccpvfBgd.s:1446   .text.lv_spinner_get_dir:0000000000000000 lv_spinner_get_dir
+  D:\Temp\ccpvfBgd.s:1474   .bss.ancestor_design:0000000000000000 $d
+  D:\Temp\ccpvfBgd.s:1478   .bss.ancestor_design:0000000000000000 ancestor_design
+  D:\Temp\ccpvfBgd.s:1481   .bss.ancestor_signal:0000000000000000 $d
+  D:\Temp\ccpvfBgd.s:1485   .bss.ancestor_signal:0000000000000000 ancestor_signal
+  D:\Temp\ccpvfBgd.s:1488   .rodata.lv_spinner_create.str1.4:0000000000000000 $d
+  D:\Temp\ccpvfBgd.s:1492   .rodata.lv_spinner_set_arc_length.str1.4:0000000000000000 $d
+  D:\Temp\ccpvfBgd.s:1496   .rodata.lv_spinner_signal.str1.4:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+lv_debug_check_null
+lv_debug_log_error
+lv_obj_get_ext_attr
+lv_obj_handle_get_type_signal
+lv_arc_set_angles
+lv_anim_del
+_lv_memset_00
+lv_anim_init
+lv_anim_start
+lv_anim_path_ease_in_out
+lv_anim_path_linear
+lv_arc_create
+lv_obj_allocate_ext_attr
+lv_obj_set_signal_cb
+ARM GAS  D:\Temp\ccpvfBgd.s 			page 50
+
+
+lv_obj_refresh_style
+lv_obj_del
+lv_obj_get_signal_cb
+lv_obj_get_design_cb
+lv_obj_set_size
+lv_theme_apply

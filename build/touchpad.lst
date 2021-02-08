@@ -1,0 +1,198 @@
+ARM GAS  D:\Temp\ccwfr7Qq.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"touchpad.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.lv_touchpad_init,"ax",%progbits
+  18              		.align	1
+  19              		.global	lv_touchpad_init
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	lv_touchpad_init:
+  27              	.LFB560:
+  28              		.file 1 "Drivers/TS/Src/touchpad.c"
+   1:Drivers/TS/Src/touchpad.c **** /**
+   2:Drivers/TS/Src/touchpad.c ****  * @file indev.c
+   3:Drivers/TS/Src/touchpad.c ****  *
+   4:Drivers/TS/Src/touchpad.c ****  */
+   5:Drivers/TS/Src/touchpad.c **** 
+   6:Drivers/TS/Src/touchpad.c **** /*********************
+   7:Drivers/TS/Src/touchpad.c ****  *      INCLUDES
+   8:Drivers/TS/Src/touchpad.c ****  *********************/
+   9:Drivers/TS/Src/touchpad.c **** //#include "hal_stm_lvgl/tft/tft.h"
+  10:Drivers/TS/Src/touchpad.c **** #include "../lvgl/lvgl.h"
+  11:Drivers/TS/Src/touchpad.c **** #include "../lvgl/src/lv_font/lv_symbol_def.h"
+  12:Drivers/TS/Src/touchpad.c **** #include "XPT2046_lv.h"
+  13:Drivers/TS/Src/touchpad.c **** #include "stm32f4xx_hal.h"
+  14:Drivers/TS/Src/touchpad.c **** 
+  15:Drivers/TS/Src/touchpad.c **** /*********************
+  16:Drivers/TS/Src/touchpad.c ****  *      DEFINES
+  17:Drivers/TS/Src/touchpad.c ****  *********************/
+  18:Drivers/TS/Src/touchpad.c **** /**********************
+  19:Drivers/TS/Src/touchpad.c ****  *      TYPEDEFS
+  20:Drivers/TS/Src/touchpad.c ****  **********************/
+  21:Drivers/TS/Src/touchpad.c **** extern SPI_HandleTypeDef hspi2;
+  22:Drivers/TS/Src/touchpad.c **** /**********************
+  23:Drivers/TS/Src/touchpad.c ****  *  STATIC PROTOTYPES
+  24:Drivers/TS/Src/touchpad.c ****  **********************/
+  25:Drivers/TS/Src/touchpad.c **** //static bool touchpad_read_cb(lv_indev_drv_t * drv, lv_indev_data_t *data);
+  26:Drivers/TS/Src/touchpad.c **** 
+  27:Drivers/TS/Src/touchpad.c **** /**********************
+  28:Drivers/TS/Src/touchpad.c ****  *  STATIC VARIABLES
+  29:Drivers/TS/Src/touchpad.c ****  **********************/
+  30:Drivers/TS/Src/touchpad.c **** //static TS_StateTypeDef  TS_State;
+ARM GAS  D:\Temp\ccwfr7Qq.s 			page 2
+
+
+  31:Drivers/TS/Src/touchpad.c **** 
+  32:Drivers/TS/Src/touchpad.c **** /**********************
+  33:Drivers/TS/Src/touchpad.c ****  *      MACROS
+  34:Drivers/TS/Src/touchpad.c ****  **********************/
+  35:Drivers/TS/Src/touchpad.c **** 
+  36:Drivers/TS/Src/touchpad.c **** /**********************
+  37:Drivers/TS/Src/touchpad.c ****  *   GLOBAL FUNCTIONS
+  38:Drivers/TS/Src/touchpad.c ****  **********************/
+  39:Drivers/TS/Src/touchpad.c **** 
+  40:Drivers/TS/Src/touchpad.c **** /**
+  41:Drivers/TS/Src/touchpad.c ****  * Initialize your input devices here
+  42:Drivers/TS/Src/touchpad.c ****  */
+  43:Drivers/TS/Src/touchpad.c **** lv_indev_t * indev_touchpad;
+  44:Drivers/TS/Src/touchpad.c **** void lv_touchpad_init(void)
+  45:Drivers/TS/Src/touchpad.c **** {
+  29              		.loc 1 45 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 32
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 00B5     		push	{lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 4
+  36              		.cfi_offset 14, -4
+  37 0002 89B0     		sub	sp, sp, #36
+  38              	.LCFI1:
+  39              		.cfi_def_cfa_offset 40
+  46:Drivers/TS/Src/touchpad.c **** 
+  47:Drivers/TS/Src/touchpad.c ****   xpt2046_lv_init();
+  40              		.loc 1 47 3 view .LVU1
+  41 0004 FFF7FEFF 		bl	xpt2046_lv_init
+  42              	.LVL0:
+  48:Drivers/TS/Src/touchpad.c ****   lv_indev_drv_t indev_drv;
+  43              		.loc 1 48 3 view .LVU2
+  49:Drivers/TS/Src/touchpad.c ****   lv_indev_drv_init(&indev_drv);
+  44              		.loc 1 49 3 view .LVU3
+  45 0008 01A8     		add	r0, sp, #4
+  46 000a FFF7FEFF 		bl	lv_indev_drv_init
+  47              	.LVL1:
+  50:Drivers/TS/Src/touchpad.c ****   indev_drv.read_cb = xpt2046_read;
+  48              		.loc 1 50 3 view .LVU4
+  49              		.loc 1 50 21 is_stmt 0 view .LVU5
+  50 000e 064B     		ldr	r3, .L3
+  51 0010 0293     		str	r3, [sp, #8]
+  51:Drivers/TS/Src/touchpad.c ****   indev_drv.type = LV_INDEV_TYPE_POINTER;
+  52              		.loc 1 51 3 is_stmt 1 view .LVU6
+  53              		.loc 1 51 18 is_stmt 0 view .LVU7
+  54 0012 0123     		movs	r3, #1
+  55 0014 8DF80430 		strb	r3, [sp, #4]
+  52:Drivers/TS/Src/touchpad.c ****   indev_touchpad = lv_indev_drv_register(&indev_drv);
+  56              		.loc 1 52 3 is_stmt 1 view .LVU8
+  57              		.loc 1 52 20 is_stmt 0 view .LVU9
+  58 0018 01A8     		add	r0, sp, #4
+  59 001a FFF7FEFF 		bl	lv_indev_drv_register
+  60              	.LVL2:
+  61              		.loc 1 52 18 view .LVU10
+  62 001e 034B     		ldr	r3, .L3+4
+  63 0020 1860     		str	r0, [r3]
+ARM GAS  D:\Temp\ccwfr7Qq.s 			page 3
+
+
+  53:Drivers/TS/Src/touchpad.c **** 
+  54:Drivers/TS/Src/touchpad.c **** }
+  64              		.loc 1 54 1 view .LVU11
+  65 0022 09B0     		add	sp, sp, #36
+  66              	.LCFI2:
+  67              		.cfi_def_cfa_offset 4
+  68              		@ sp needed
+  69 0024 5DF804FB 		ldr	pc, [sp], #4
+  70              	.L4:
+  71              		.align	2
+  72              	.L3:
+  73 0028 00000000 		.word	xpt2046_read
+  74 002c 00000000 		.word	indev_touchpad
+  75              		.cfi_endproc
+  76              	.LFE560:
+  78              		.comm	indev_touchpad,4,4
+  79              		.text
+  80              	.Letext0:
+  81              		.file 2 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+  82              		.file 3 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+  83              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+  84              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+  85              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+  86              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+  87              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+  88              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h"
+  89              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+  90              		.file 11 "lvgl/lv_conf.h"
+  91              		.file 12 "Inc/../lvgl/src/lv_misc/lv_types.h"
+  92              		.file 13 "Inc/../lvgl/src/lv_misc/lv_mem.h"
+  93              		.file 14 "Inc/../lvgl/src/lv_misc/lv_ll.h"
+  94              		.file 15 "Inc/../lvgl/src/lv_misc/lv_task.h"
+  95              		.file 16 "Inc/../lvgl/src/lv_hal/../lv_misc/lv_color.h"
+  96              		.file 17 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+  97              		.file 18 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+  98              		.file 19 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-non
+  99              		.file 20 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 100              		.file 21 "Inc/../lvgl/src/lv_hal/../lv_misc/lv_area.h"
+ 101              		.file 22 "Inc/../lvgl/src/lv_hal/lv_hal_disp.h"
+ 102              		.file 23 "Inc/../lvgl/src/lv_core/lv_obj.h"
+ 103              		.file 24 "Inc/../lvgl/src/lv_hal/lv_hal_indev.h"
+ 104              		.file 25 "Inc/../lvgl/src/lv_core/lv_group.h"
+ 105              		.file 26 "Inc/../lvgl/src/lv_core/../lv_font/lv_font.h"
+ 106              		.file 27 "Inc/../lvgl/src/lv_core/../lv_misc/lv_anim.h"
+ 107              		.file 28 "Inc/../lvgl/src/lv_core/lv_style.h"
+ 108              		.file 29 "Inc/../lvgl/src/lv_core/../lv_draw/../lv_misc/lv_bidi.h"
+ 109              		.file 30 "Inc/../lvgl/src/lv_core/../lv_draw/../lv_misc/lv_txt.h"
+ 110              		.file 31 "Inc/../lvgl/src/lv_core/../lv_draw/lv_draw_label.h"
+ 111              		.file 32 "Inc/../lvgl/src/lv_widgets/lv_cont.h"
+ 112              		.file 33 "Inc/../lvgl/src/lv_widgets/lv_btn.h"
+ 113              		.file 34 "Inc/../lvgl/src/lv_widgets/lv_page.h"
+ 114              		.file 35 "Inc/../lvgl/src/lv_widgets/lv_chart.h"
+ 115              		.file 36 "Inc/../lvgl/src/lv_widgets/lv_bar.h"
+ 116              		.file 37 "Inc/../lvgl/src/lv_widgets/lv_textarea.h"
+ 117              		.file 38 "Inc/../lvgl/src/lv_widgets/lv_linemeter.h"
+ 118              		.file 39 "Inc/../lvgl/src/lv_widgets/lv_arc.h"
+ 119              		.file 40 "Drivers/TS/Inc/XPT2046_lv.h"
+ARM GAS  D:\Temp\ccwfr7Qq.s 			page 4
+
+
+ARM GAS  D:\Temp\ccwfr7Qq.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 touchpad.c
+  D:\Temp\ccwfr7Qq.s:18     .text.lv_touchpad_init:0000000000000000 $t
+  D:\Temp\ccwfr7Qq.s:26     .text.lv_touchpad_init:0000000000000000 lv_touchpad_init
+  D:\Temp\ccwfr7Qq.s:73     .text.lv_touchpad_init:0000000000000028 $d
+                            *COM*:0000000000000004 indev_touchpad
+
+UNDEFINED SYMBOLS
+xpt2046_lv_init
+lv_indev_drv_init
+lv_indev_drv_register
+xpt2046_read

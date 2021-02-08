@@ -1,0 +1,1594 @@
+ARM GAS  D:\Temp\ccWHss4k.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_font_montserrat_16_compr_az.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.global	lv_font_montserrat_16_compr_az
+  18              		.section	.data.font_dsc,"aw"
+  19              		.align	2
+  22              	font_dsc:
+  23 0000 00000000 		.word	gylph_bitmap
+  24 0004 00000000 		.word	glyph_dsc
+  25 0008 00000000 		.word	cmaps
+  26 000c 00000000 		.word	kern_classes
+  27 0010 1000     		.short	16
+  28 0012 02       		.byte	2
+  29 0013 50       		.byte	80
+  30 0014 01       		.byte	1
+  31 0015 00000000 		.space	11
+  31      00000000 
+  31      000000
+  32              		.section	.data.lv_font_montserrat_16_compr_az,"aw"
+  33              		.align	2
+  36              	lv_font_montserrat_16_compr_az:
+  37 0000 00000000 		.word	lv_font_get_glyph_dsc_fmt_txt
+  38 0004 00000000 		.word	lv_font_get_bitmap_fmt_txt
+  39 0008 0F00     		.short	15
+  40 000a 0300     		.short	3
+  41 000c 00       		.byte	0
+  42 000d 000000   		.space	3
+  43 0010 00000000 		.word	font_dsc
+  44              		.section	.rodata.cmaps,"a"
+  45              		.align	2
+  48              	cmaps:
+  49 0000 20000000 		.word	32
+  50 0004 0100     		.short	1
+  51 0006 0100     		.short	1
+  52 0008 00000000 		.word	0
+  53 000c 00000000 		.word	0
+  54 0010 0000     		.short	0
+  55 0012 00       		.byte	0
+  56 0013 00       		.space	1
+  57 0014 61000000 		.word	97
+  58 0018 1A00     		.short	26
+  59 001a 0200     		.short	2
+  60 001c 00000000 		.word	0
+  61 0020 00000000 		.word	0
+ARM GAS  D:\Temp\ccWHss4k.s 			page 2
+
+
+  62 0024 0000     		.short	0
+  63 0026 00       		.byte	0
+  64 0027 00       		.space	1
+  65              		.section	.rodata.glyph_dsc,"a"
+  66              		.align	2
+  69              	glyph_dsc:
+  70 0000 00       		.byte	0
+  71 0001 00       		.byte	0
+  72 0002 00       		.byte	0
+  73 0003 00       		.byte	0
+  74 0004 00       		.byte	0
+  75 0005 00       		.byte	0
+  76 0006 00       		.byte	0
+  77 0007 00       		.byte	0
+  78 0008 00       		.byte	0
+  79 0009 00       		.byte	0
+  80 000a 50       		.byte	80
+  81 000b 04       		.byte	4
+  82 000c 00       		.byte	0
+  83 000d 00       		.byte	0
+  84 000e 00       		.byte	0
+  85 000f 00       		.byte	0
+  86 0010 00       		.byte	0
+  87 0011 00       		.byte	0
+  88 0012 90       		.byte	144
+  89 0013 09       		.byte	9
+  90 0014 09       		.byte	9
+  91 0015 09       		.byte	9
+  92 0016 00       		.byte	0
+  93 0017 00       		.byte	0
+  94 0018 28       		.byte	40
+  95 0019 00       		.byte	0
+  96 001a F0       		.byte	240
+  97 001b 0A       		.byte	10
+  98 001c 0A       		.byte	10
+  99 001d 0C       		.byte	12
+ 100 001e 01       		.byte	1
+ 101 001f 00       		.byte	0
+ 102 0020 56       		.byte	86
+ 103 0021 00       		.byte	0
+ 104 0022 20       		.byte	32
+ 105 0023 09       		.byte	9
+ 106 0024 09       		.byte	9
+ 107 0025 09       		.byte	9
+ 108 0026 00       		.byte	0
+ 109 0027 00       		.byte	0
+ 110 0028 7B       		.byte	123
+ 111 0029 00       		.byte	0
+ 112 002a F0       		.byte	240
+ 113 002b 0A       		.byte	10
+ 114 002c 0A       		.byte	10
+ 115 002d 0C       		.byte	12
+ 116 002e 00       		.byte	0
+ 117 002f 00       		.byte	0
+ 118 0030 AB       		.byte	171
+ 119 0031 00       		.byte	0
+ 120 0032 D0       		.byte	208
+ARM GAS  D:\Temp\ccWHss4k.s 			page 3
+
+
+ 121 0033 09       		.byte	9
+ 122 0034 0A       		.byte	10
+ 123 0035 09       		.byte	9
+ 124 0036 00       		.byte	0
+ 125 0037 00       		.byte	0
+ 126 0038 D6       		.byte	214
+ 127 0039 00       		.byte	0
+ 128 003a A0       		.byte	160
+ 129 003b 05       		.byte	5
+ 130 003c 07       		.byte	7
+ 131 003d 0C       		.byte	12
+ 132 003e 00       		.byte	0
+ 133 003f 00       		.byte	0
+ 134 0040 EE       		.byte	238
+ 135 0041 00       		.byte	0
+ 136 0042 10       		.byte	16
+ 137 0043 0B       		.byte	11
+ 138 0044 0A       		.byte	10
+ 139 0045 0C       		.byte	12
+ 140 0046 00       		.byte	0
+ 141 0047 FD       		.byte	-3
+ 142 0048 2A       		.byte	42
+ 143 0049 01       		.byte	1
+ 144 004a E0       		.byte	224
+ 145 004b 0A       		.byte	10
+ 146 004c 09       		.byte	9
+ 147 004d 0C       		.byte	12
+ 148 004e 01       		.byte	1
+ 149 004f 00       		.byte	0
+ 150 0050 47       		.byte	71
+ 151 0051 01       		.byte	1
+ 152 0052 70       		.byte	112
+ 153 0053 04       		.byte	4
+ 154 0054 03       		.byte	3
+ 155 0055 0C       		.byte	12
+ 156 0056 01       		.byte	1
+ 157 0057 00       		.byte	0
+ 158 0058 50       		.byte	80
+ 159 0059 01       		.byte	1
+ 160 005a 90       		.byte	144
+ 161 005b 04       		.byte	4
+ 162 005c 06       		.byte	6
+ 163 005d 0F       		.byte	15
+ 164 005e FE       		.byte	-2
+ 165 005f FD       		.byte	-3
+ 166 0060 66       		.byte	102
+ 167 0061 01       		.byte	1
+ 168 0062 E0       		.byte	224
+ 169 0063 09       		.byte	9
+ 170 0064 09       		.byte	9
+ 171 0065 0C       		.byte	12
+ 172 0066 01       		.byte	1
+ 173 0067 00       		.byte	0
+ 174 0068 8B       		.byte	139
+ 175 0069 01       		.byte	1
+ 176 006a 70       		.byte	112
+ 177 006b 04       		.byte	4
+ARM GAS  D:\Temp\ccWHss4k.s 			page 4
+
+
+ 178 006c 02       		.byte	2
+ 179 006d 0C       		.byte	12
+ 180 006e 01       		.byte	1
+ 181 006f 00       		.byte	0
+ 182 0070 90       		.byte	144
+ 183 0071 01       		.byte	1
+ 184 0072 F0       		.byte	240
+ 185 0073 10       		.byte	16
+ 186 0074 0F       		.byte	15
+ 187 0075 09       		.byte	9
+ 188 0076 01       		.byte	1
+ 189 0077 00       		.byte	0
+ 190 0078 B8       		.byte	184
+ 191 0079 01       		.byte	1
+ 192 007a E0       		.byte	224
+ 193 007b 0A       		.byte	10
+ 194 007c 09       		.byte	9
+ 195 007d 09       		.byte	9
+ 196 007e 01       		.byte	1
+ 197 007f 00       		.byte	0
+ 198 0080 D2       		.byte	210
+ 199 0081 01       		.byte	1
+ 200 0082 30       		.byte	48
+ 201 0083 0A       		.byte	10
+ 202 0084 0A       		.byte	10
+ 203 0085 09       		.byte	9
+ 204 0086 00       		.byte	0
+ 205 0087 00       		.byte	0
+ 206 0088 FD       		.byte	253
+ 207 0089 01       		.byte	1
+ 208 008a F0       		.byte	240
+ 209 008b 0A       		.byte	10
+ 210 008c 0A       		.byte	10
+ 211 008d 0C       		.byte	12
+ 212 008e 01       		.byte	1
+ 213 008f FD       		.byte	-3
+ 214 0090 2F       		.byte	47
+ 215 0091 02       		.byte	2
+ 216 0092 F0       		.byte	240
+ 217 0093 0A       		.byte	10
+ 218 0094 0A       		.byte	10
+ 219 0095 0C       		.byte	12
+ 220 0096 00       		.byte	0
+ 221 0097 FD       		.byte	-3
+ 222 0098 61       		.byte	97
+ 223 0099 02       		.byte	2
+ 224 009a 90       		.byte	144
+ 225 009b 06       		.byte	6
+ 226 009c 06       		.byte	6
+ 227 009d 09       		.byte	9
+ 228 009e 01       		.byte	1
+ 229 009f 00       		.byte	0
+ 230 00a0 71       		.byte	113
+ 231 00a1 02       		.byte	2
+ 232 00a2 00       		.byte	0
+ 233 00a3 08       		.byte	8
+ 234 00a4 08       		.byte	8
+ARM GAS  D:\Temp\ccWHss4k.s 			page 5
+
+
+ 235 00a5 09       		.byte	9
+ 236 00a6 00       		.byte	0
+ 237 00a7 00       		.byte	0
+ 238 00a8 96       		.byte	150
+ 239 00a9 02       		.byte	2
+ 240 00aa A0       		.byte	160
+ 241 00ab 06       		.byte	6
+ 242 00ac 07       		.byte	7
+ 243 00ad 0B       		.byte	11
+ 244 00ae 00       		.byte	0
+ 245 00af 00       		.byte	0
+ 246 00b0 B1       		.byte	177
+ 247 00b1 02       		.byte	2
+ 248 00b2 D0       		.byte	208
+ 249 00b3 0A       		.byte	10
+ 250 00b4 09       		.byte	9
+ 251 00b5 09       		.byte	9
+ 252 00b6 01       		.byte	1
+ 253 00b7 00       		.byte	0
+ 254 00b8 CA       		.byte	202
+ 255 00b9 02       		.byte	2
+ 256 00ba F0       		.byte	240
+ 257 00bb 08       		.byte	8
+ 258 00bc 0A       		.byte	10
+ 259 00bd 09       		.byte	9
+ 260 00be FF       		.byte	-1
+ 261 00bf 00       		.byte	0
+ 262 00c0 F2       		.byte	242
+ 263 00c1 02       		.byte	2
+ 264 00c2 60       		.byte	96
+ 265 00c3 0E       		.byte	14
+ 266 00c4 0F       		.byte	15
+ 267 00c5 09       		.byte	9
+ 268 00c6 00       		.byte	0
+ 269 00c7 00       		.byte	0
+ 270 00c8 33       		.byte	51
+ 271 00c9 03       		.byte	3
+ 272 00ca D0       		.byte	208
+ 273 00cb 08       		.byte	8
+ 274 00cc 09       		.byte	9
+ 275 00cd 09       		.byte	9
+ 276 00ce 00       		.byte	0
+ 277 00cf 00       		.byte	0
+ 278 00d0 59       		.byte	89
+ 279 00d1 03       		.byte	3
+ 280 00d2 F0       		.byte	240
+ 281 00d3 08       		.byte	8
+ 282 00d4 0A       		.byte	10
+ 283 00d5 0C       		.byte	12
+ 284 00d6 FF       		.byte	-1
+ 285 00d7 FD       		.byte	-3
+ 286 00d8 8D       		.byte	141
+ 287 00d9 03       		.byte	3
+ 288 00da 50       		.byte	80
+ 289 00db 08       		.byte	8
+ 290 00dc 08       		.byte	8
+ 291 00dd 09       		.byte	9
+ARM GAS  D:\Temp\ccWHss4k.s 			page 6
+
+
+ 292 00de 00       		.byte	0
+ 293 00df 00       		.byte	0
+ 294              		.section	.rodata.gylph_bitmap,"a"
+ 295              		.align	2
+ 298              	gylph_bitmap:
+ 299 0000 01       		.byte	1
+ 300 0001 9E       		.byte	-98
+ 301 0002 FD       		.byte	-3
+ 302 0003 80       		.byte	-128
+ 303 0004 0B       		.byte	11
+ 304 0005 5D       		.byte	93
+ 305 0006 A1       		.byte	-95
+ 306 0007 DD       		.byte	-35
+ 307 0008 20       		.byte	32
+ 308 0009 0E       		.byte	14
+ 309 000a E4       		.byte	-28
+ 310 000b 3D       		.byte	61
+ 311 000c 2B       		.byte	43
+ 312 000d 00       		.byte	0
+ 313 000e 08       		.byte	8
+ 314 000f 03       		.byte	3
+ 315 0010 60       		.byte	96
+ 316 0011 10       		.byte	16
+ 317 0012 15       		.byte	21
+ 318 0013 F7       		.byte	-9
+ 319 0014 FA       		.byte	-6
+ 320 0015 40       		.byte	64
+ 321 0016 2C       		.byte	44
+ 322 0017 7A       		.byte	122
+ 323 0018 DD       		.byte	-35
+ 324 0019 40       		.byte	64
+ 325 001a 00       		.byte	0
+ 326 001b 86       		.byte	-122
+ 327 001c 50       		.byte	80
+ 328 001d 88       		.byte	-120
+ 329 001e 01       		.byte	1
+ 330 001f 10       		.byte	16
+ 331 0020 CA       		.byte	-54
+ 332 0021 13       		.byte	19
+ 333 0022 C0       		.byte	-64
+ 334 0023 05       		.byte	5
+ 335 0024 8F       		.byte	-113
+ 336 0025 7B       		.byte	123
+ 337 0026 92       		.byte	-110
+ 338 0027 00       		.byte	0
+ 339 0028 8F       		.byte	-113
+ 340 0029 00       		.byte	0
+ 341 002a FF       		.byte	-1
+ 342 002b E9       		.byte	-23
+ 343 002c 15       		.byte	21
+ 344 002d FF       		.byte	-1
+ 345 002e 59       		.byte	89
+ 346 002f 80       		.byte	-128
+ 347 0030 6C       		.byte	108
+ 348 0031 78       		.byte	120
+ 349 0032 65       		.byte	101
+ 350 0033 C3       		.byte	-61
+ARM GAS  D:\Temp\ccWHss4k.s 			page 7
+
+
+ 351 0034 00       		.byte	0
+ 352 0035 93       		.byte	-109
+ 353 0036 1E       		.byte	30
+ 354 0037 3C       		.byte	60
+ 355 0038 7C       		.byte	124
+ 356 0039 02       		.byte	2
+ 357 003a 80       		.byte	-128
+ 358 003b 08       		.byte	8
+ 359 003c 64       		.byte	100
+ 360 003d C4       		.byte	-60
+ 361 003e 00       		.byte	0
+ 362 003f 40       		.byte	64
+ 363 0040 18       		.byte	24
+ 364 0041 80       		.byte	-128
+ 365 0042 80       		.byte	-128
+ 366 0043 04       		.byte	4
+ 367 0044 01       		.byte	1
+ 368 0045 88       		.byte	-120
+ 369 0046 08       		.byte	8
+ 370 0047 01       		.byte	1
+ 371 0048 00       		.byte	0
+ 372 0049 10       		.byte	16
+ 373 004a C9       		.byte	-55
+ 374 004b 08       		.byte	8
+ 375 004c 01       		.byte	1
+ 376 004d 31       		.byte	49
+ 377 004e E3       		.byte	-29
+ 378 004f C7       		.byte	-57
+ 379 0050 80       		.byte	-128
+ 380 0051 03       		.byte	3
+ 381 0052 8F       		.byte	-113
+ 382 0053 0C       		.byte	12
+ 383 0054 B8       		.byte	-72
+ 384 0055 60       		.byte	96
+ 385 0056 00       		.byte	0
+ 386 0057 1D       		.byte	29
+ 387 0058 77       		.byte	119
+ 388 0059 E2       		.byte	-30
+ 389 005a 00       		.byte	0
+ 390 005b 13       		.byte	19
+ 391 005c 1D       		.byte	29
+ 392 005d A0       		.byte	-96
+ 393 005e 2D       		.byte	45
+ 394 005f 02       		.byte	2
+ 395 0060 4B       		.byte	75
+ 396 0061 61       		.byte	97
+ 397 0062 F2       		.byte	-14
+ 398 0063 14       		.byte	20
+ 399 0064 CA       		.byte	-54
+ 400 0065 C0       		.byte	-64
+ 401 0066 33       		.byte	51
+ 402 0067 8B       		.byte	-117
+ 403 0068 82       		.byte	-126
+ 404 0069 80       		.byte	-128
+ 405 006a 79       		.byte	121
+ 406 006b C1       		.byte	-63
+ 407 006c 40       		.byte	64
+ARM GAS  D:\Temp\ccWHss4k.s 			page 8
+
+
+ 408 006d 3C       		.byte	60
+ 409 006e 65       		.byte	101
+ 410 006f 60       		.byte	96
+ 411 0070 19       		.byte	25
+ 412 0071 84       		.byte	-124
+ 413 0072 24       		.byte	36
+ 414 0073 B5       		.byte	-75
+ 415 0074 DD       		.byte	-35
+ 416 0075 92       		.byte	-110
+ 417 0076 A0       		.byte	-96
+ 418 0077 98       		.byte	-104
+ 419 0078 F3       		.byte	-13
+ 420 0079 01       		.byte	1
+ 421 007a 68       		.byte	104
+ 422 007b 00       		.byte	0
+ 423 007c F8       		.byte	-8
+ 424 007d 7D       		.byte	125
+ 425 007e C0       		.byte	-64
+ 426 007f 3F       		.byte	63
+ 427 0080 F9       		.byte	-7
+ 428 0081 47       		.byte	71
+ 429 0082 7F       		.byte	127
+ 430 0083 EA       		.byte	-22
+ 431 0084 20       		.byte	32
+ 432 0085 09       		.byte	9
+ 433 0086 31       		.byte	49
+ 434 0087 9E       		.byte	-98
+ 435 0088 1B       		.byte	27
+ 436 0089 40       		.byte	64
+ 437 008a 2A       		.byte	42
+ 438 008b 2D       		.byte	45
+ 439 008c 87       		.byte	-121
+ 440 008d C5       		.byte	-59
+ 441 008e 00       		.byte	0
+ 442 008f 18       		.byte	24
+ 443 0090 D8       		.byte	-40
+ 444 0091 06       		.byte	6
+ 445 0092 80       		.byte	-128
+ 446 0093 03       		.byte	3
+ 447 0094 82       		.byte	-126
+ 448 0095 80       		.byte	-128
+ 449 0096 62       		.byte	98
+ 450 0097 00       		.byte	0
+ 451 0098 38       		.byte	56
+ 452 0099 30       		.byte	48
+ 453 009a 06       		.byte	6
+ 454 009b 20       		.byte	32
+ 455 009c 01       		.byte	1
+ 456 009d 8C       		.byte	-116
+ 457 009e 80       		.byte	-128
+ 458 009f 69       		.byte	105
+ 459 00a0 00       		.byte	0
+ 460 00a1 A8       		.byte	-88
+ 461 00a2 F1       		.byte	-15
+ 462 00a3 96       		.byte	-106
+ 463 00a4 D0       		.byte	-48
+ 464 00a5 02       		.byte	2
+ARM GAS  D:\Temp\ccWHss4k.s 			page 9
+
+
+ 465 00a6 4C       		.byte	76
+ 466 00a7 79       		.byte	121
+ 467 00a8 A0       		.byte	-96
+ 468 00a9 C0       		.byte	-64
+ 469 00aa 00       		.byte	0
+ 470 00ab 00       		.byte	0
+ 471 00ac 1D       		.byte	29
+ 472 00ad FF       		.byte	-1
+ 473 00ae 51       		.byte	81
+ 474 00af 00       		.byte	0
+ 475 00b0 49       		.byte	73
+ 476 00b1 8F       		.byte	-113
+ 477 00b2 32       		.byte	50
+ 478 00b3 4C       		.byte	76
+ 479 00b4 20       		.byte	32
+ 480 00b5 05       		.byte	5
+ 481 00b6 1E       		.byte	30
+ 482 00b7 33       		.byte	51
+ 483 00b8 F8       		.byte	-8
+ 484 00b9 40       		.byte	64
+ 485 00ba 18       		.byte	24
+ 486 00bb C8       		.byte	-56
+ 487 00bc 04       		.byte	4
+ 488 00bd 32       		.byte	50
+ 489 00be A0       		.byte	-96
+ 490 00bf E1       		.byte	-31
+ 491 00c0 5F       		.byte	95
+ 492 00c1 FA       		.byte	-6
+ 493 00c2 00       		.byte	0
+ 494 00c3 5C       		.byte	92
+ 495 00c4 23       		.byte	35
+ 496 00c5 77       		.byte	119
+ 497 00c6 C2       		.byte	-62
+ 498 00c7 63       		.byte	99
+ 499 00c8 64       		.byte	100
+ 500 00c9 58       		.byte	88
+ 501 00ca 08       		.byte	8
+ 502 00cb 01       		.byte	1
+ 503 00cc 47       		.byte	71
+ 504 00cd B0       		.byte	-80
+ 505 00ce F5       		.byte	-11
+ 506 00cf AA       		.byte	-86
+ 507 00d0 00       		.byte	0
+ 508 00d1 4C       		.byte	76
+ 509 00d2 76       		.byte	118
+ 510 00d3 87       		.byte	-121
+ 511 00d4 95       		.byte	-107
+ 512 00d5 00       		.byte	0
+ 513 00d6 00       		.byte	0
+ 514 00d7 2E       		.byte	46
+ 515 00d8 FE       		.byte	-2
+ 516 00d9 00       		.byte	0
+ 517 00da 0A       		.byte	10
+ 518 00db 9A       		.byte	-102
+ 519 00dc AC       		.byte	-84
+ 520 00dd 00       		.byte	0
+ 521 00de C1       		.byte	-63
+ARM GAS  D:\Temp\ccWHss4k.s 			page 10
+
+
+ 522 00df 0A       		.byte	10
+ 523 00e0 E1       		.byte	-31
+ 524 00e1 96       		.byte	-106
+ 525 00e2 19       		.byte	25
+ 526 00e3 F4       		.byte	-12
+ 527 00e4 10       		.byte	16
+ 528 00e5 E1       		.byte	-31
+ 529 00e6 15       		.byte	21
+ 530 00e7 20       		.byte	32
+ 531 00e8 9A       		.byte	-102
+ 532 00e9 08       		.byte	8
+ 533 00ea A6       		.byte	-90
+ 534 00eb 01       		.byte	1
+ 535 00ec FF       		.byte	-1
+ 536 00ed DF       		.byte	-33
+ 537 00ee 00       		.byte	0
+ 538 00ef 1D       		.byte	29
+ 539 00f0 FF       		.byte	-1
+ 540 00f1 AC       		.byte	-84
+ 541 00f2 BA       		.byte	-70
+ 542 00f3 41       		.byte	65
+ 543 00f4 31       		.byte	49
+ 544 00f5 5E       		.byte	94
+ 545 00f6 1F       		.byte	31
+ 546 00f7 44       		.byte	68
+ 547 00f8 01       		.byte	1
+ 548 00f9 45       		.byte	69
+ 549 00fa F0       		.byte	-16
+ 550 00fb F8       		.byte	-8
+ 551 00fc A0       		.byte	-96
+ 552 00fd 03       		.byte	3
+ 553 00fe 1B       		.byte	27
+ 554 00ff 10       		.byte	16
+ 555 0100 0A       		.byte	10
+ 556 0101 C0       		.byte	-64
+ 557 0102 0E       		.byte	14
+ 558 0103 04       		.byte	4
+ 559 0104 01       		.byte	1
+ 560 0105 84       		.byte	-124
+ 561 0106 00       		.byte	0
+ 562 0107 E0       		.byte	-32
+ 563 0108 40       		.byte	64
+ 564 0109 18       		.byte	24
+ 565 010a 40       		.byte	64
+ 566 010b 06       		.byte	6
+ 567 010c 36       		.byte	54
+ 568 010d 01       		.byte	1
+ 569 010e A0       		.byte	-96
+ 570 010f 02       		.byte	2
+ 571 0110 A2       		.byte	-94
+ 572 0111 D8       		.byte	-40
+ 573 0112 7C       		.byte	124
+ 574 0113 60       		.byte	96
+ 575 0114 10       		.byte	16
+ 576 0115 4C       		.byte	76
+ 577 0116 67       		.byte	103
+ 578 0117 87       		.byte	-121
+ARM GAS  D:\Temp\ccWHss4k.s 			page 11
+
+
+ 579 0118 C0       		.byte	-64
+ 580 0119 F0       		.byte	-16
+ 581 011a 01       		.byte	1
+ 582 011b DF       		.byte	-33
+ 583 011c FA       		.byte	-6
+ 584 011d D8       		.byte	-40
+ 585 011e 0C       		.byte	12
+ 586 011f 27       		.byte	39
+ 587 0120 A5       		.byte	-91
+ 588 0121 DD       		.byte	-35
+ 589 0122 54       		.byte	84
+ 590 0123 44       		.byte	68
+ 591 0124 04       		.byte	4
+ 592 0125 4A       		.byte	74
+ 593 0126 C4       		.byte	-60
+ 594 0127 1D       		.byte	29
+ 595 0128 D6       		.byte	-42
+ 596 0129 00       		.byte	0
+ 597 012a 8F       		.byte	-113
+ 598 012b 00       		.byte	0
+ 599 012c FF       		.byte	-1
+ 600 012d E7       		.byte	-25
+ 601 012e 95       		.byte	-107
+ 602 012f FF       		.byte	-1
+ 603 0130 50       		.byte	80
+ 604 0131 80       		.byte	-128
+ 605 0132 5A       		.byte	90
+ 606 0133 0E       		.byte	14
+ 607 0134 E5       		.byte	-27
+ 608 0135 C0       		.byte	-64
+ 609 0136 09       		.byte	9
+ 610 0137 EE       		.byte	-18
+ 611 0138 26       		.byte	38
+ 612 0139 44       		.byte	68
+ 613 013a 80       		.byte	-128
+ 614 013b 09       		.byte	9
+ 615 013c 00       		.byte	0
+ 616 013d 9C       		.byte	-100
+ 617 013e 0C       		.byte	12
+ 618 013f 00       		.byte	0
+ 619 0140 20       		.byte	32
+ 620 0141 10       		.byte	16
+ 621 0142 87       		.byte	-121
+ 622 0143 80       		.byte	-128
+ 623 0144 7F       		.byte	127
+ 624 0145 F6       		.byte	-10
+ 625 0146 00       		.byte	0
+ 626 0147 9E       		.byte	-98
+ 627 0148 13       		.byte	19
+ 628 0149 13       		.byte	19
+ 629 014a AF       		.byte	-81
+ 630 014b 28       		.byte	40
+ 631 014c F0       		.byte	-16
+ 632 014d 0F       		.byte	15
+ 633 014e FE       		.byte	-2
+ 634 014f 68       		.byte	104
+ 635 0150 00       		.byte	0
+ARM GAS  D:\Temp\ccWHss4k.s 			page 12
+
+
+ 636 0151 9F       		.byte	-97
+ 637 0152 88       		.byte	-120
+ 638 0153 02       		.byte	2
+ 639 0154 E1       		.byte	-31
+ 640 0155 10       		.byte	16
+ 641 0156 05       		.byte	5
+ 642 0157 3E       		.byte	62
+ 643 0158 60       		.byte	96
+ 644 0159 13       		.byte	19
+ 645 015a F8       		.byte	-8
+ 646 015b 80       		.byte	-128
+ 647 015c 7F       		.byte	127
+ 648 015d F9       		.byte	-7
+ 649 015e FC       		.byte	-4
+ 650 015f 04       		.byte	4
+ 651 0160 50       		.byte	80
+ 652 0161 CC       		.byte	-52
+ 653 0162 30       		.byte	48
+ 654 0163 26       		.byte	38
+ 655 0164 92       		.byte	-110
+ 656 0165 E0       		.byte	-32
+ 657 0166 8F       		.byte	-113
+ 658 0167 00       		.byte	0
+ 659 0168 FF       		.byte	-1
+ 660 0169 E9       		.byte	-23
+ 661 016a 0E       		.byte	14
+ 662 016b E8       		.byte	-24
+ 663 016c 40       		.byte	64
+ 664 016d 30       		.byte	48
+ 665 016e E1       		.byte	-31
+ 666 016f F8       		.byte	-8
+ 667 0170 80       		.byte	-128
+ 668 0171 43       		.byte	67
+ 669 0172 87       		.byte	-121
+ 670 0173 84       		.byte	-124
+ 671 0174 01       		.byte	1
+ 672 0175 16       		.byte	22
+ 673 0176 16       		.byte	22
+ 674 0177 90       		.byte	-112
+ 675 0178 06       		.byte	6
+ 676 0179 C2       		.byte	-62
+ 677 017a 04       		.byte	4
+ 678 017b 00       		.byte	0
+ 679 017c F6       		.byte	-10
+ 680 017d A4       		.byte	-92
+ 681 017e 18       		.byte	24
+ 682 017f 06       		.byte	6
+ 683 0180 C2       		.byte	-62
+ 684 0181 A1       		.byte	-95
+ 685 0182 D1       		.byte	-47
+ 686 0183 00       		.byte	0
+ 687 0184 88       		.byte	-120
+ 688 0185 07       		.byte	7
+ 689 0186 46       		.byte	70
+ 690 0187 80       		.byte	-128
+ 691 0188 3C       		.byte	60
+ 692 0189 70       		.byte	112
+ARM GAS  D:\Temp\ccWHss4k.s 			page 13
+
+
+ 693 018a 8E       		.byte	-114
+ 694 018b 8F       		.byte	-113
+ 695 018c 00       		.byte	0
+ 696 018d FF       		.byte	-1
+ 697 018e E5       		.byte	-27
+ 698 018f 00       		.byte	0
+ 699 0190 8E       		.byte	-114
+ 700 0191 3C       		.byte	60
+ 701 0192 FE       		.byte	-2
+ 702 0193 91       		.byte	-111
+ 703 0194 3B       		.byte	59
+ 704 0195 FE       		.byte	-2
+ 705 0196 A2       		.byte	-94
+ 706 0197 00       		.byte	0
+ 707 0198 0E       		.byte	14
+ 708 0199 2C       		.byte	44
+ 709 019a BB       		.byte	-69
+ 710 019b 6E       		.byte	110
+ 711 019c 3C       		.byte	60
+ 712 019d B2       		.byte	-78
+ 713 019e F8       		.byte	-8
+ 714 019f 05       		.byte	5
+ 715 01a0 12       		.byte	18
+ 716 01a1 D2       		.byte	-46
+ 717 01a2 C6       		.byte	-58
+ 718 01a3 6C       		.byte	108
+ 719 01a4 68       		.byte	104
+ 720 01a5 A2       		.byte	-94
+ 721 01a6 50       		.byte	80
+ 722 01a7 03       		.byte	3
+ 723 01a8 00       		.byte	0
+ 724 01a9 58       		.byte	88
+ 725 01aa 14       		.byte	20
+ 726 01ab 01       		.byte	1
+ 727 01ac 20       		.byte	32
+ 728 01ad 10       		.byte	16
+ 729 01ae 00       		.byte	0
+ 730 01af 40       		.byte	64
+ 731 01b0 21       		.byte	33
+ 732 01b1 02       		.byte	2
+ 733 01b2 00       		.byte	0
+ 734 01b3 84       		.byte	-124
+ 735 01b4 3C       		.byte	60
+ 736 01b5 03       		.byte	3
+ 737 01b6 FF       		.byte	-1
+ 738 01b7 E0       		.byte	-32
+ 739 01b8 8E       		.byte	-114
+ 740 01b9 3B       		.byte	59
+ 741 01ba FE       		.byte	-2
+ 742 01bb A1       		.byte	-95
+ 743 01bc 00       		.byte	0
+ 744 01bd 0E       		.byte	14
+ 745 01be 0C       		.byte	12
+ 746 01bf B2       		.byte	-78
+ 747 01c0 E0       		.byte	-32
+ 748 01c1 04       		.byte	4
+ 749 01c2 F4       		.byte	-12
+ARM GAS  D:\Temp\ccWHss4k.s 			page 14
+
+
+ 750 01c3 D1       		.byte	-47
+ 751 01c4 24       		.byte	36
+ 752 01c5 80       		.byte	-128
+ 753 01c6 09       		.byte	9
+ 754 01c7 00       		.byte	0
+ 755 01c8 9C       		.byte	-100
+ 756 01c9 0C       		.byte	12
+ 757 01ca 00       		.byte	0
+ 758 01cb 20       		.byte	32
+ 759 01cc 10       		.byte	16
+ 760 01cd 87       		.byte	-121
+ 761 01ce 80       		.byte	-128
+ 762 01cf 7F       		.byte	127
+ 763 01d0 F6       		.byte	-10
+ 764 01d1 00       		.byte	0
+ 765 01d2 00       		.byte	0
+ 766 01d3 1D       		.byte	29
+ 767 01d4 F7       		.byte	-9
+ 768 01d5 E2       		.byte	-30
+ 769 01d6 00       		.byte	0
+ 770 01d7 49       		.byte	73
+ 771 01d8 8C       		.byte	-116
+ 772 01d9 C8       		.byte	-56
+ 773 01da 0B       		.byte	11
+ 774 01db 60       		.byte	96
+ 775 01dc 05       		.byte	5
+ 776 01dd 16       		.byte	22
+ 777 01de C3       		.byte	-61
+ 778 01df E2       		.byte	-30
+ 779 01e0 48       		.byte	72
+ 780 01e1 98       		.byte	-104
+ 781 01e2 D8       		.byte	-40
+ 782 01e3 06       		.byte	6
+ 783 01e4 80       		.byte	-128
+ 784 01e5 47       		.byte	71
+ 785 01e6 05       		.byte	5
+ 786 01e7 00       		.byte	0
+ 787 01e8 C4       		.byte	-60
+ 788 01e9 04       		.byte	4
+ 789 01ea E0       		.byte	-32
+ 790 01eb A0       		.byte	-96
+ 791 01ec 18       		.byte	24
+ 792 01ed 80       		.byte	-128
+ 793 01ee 8C       		.byte	-116
+ 794 01ef 6C       		.byte	108
+ 795 01f0 03       		.byte	3
+ 796 01f1 40       		.byte	64
+ 797 01f2 20       		.byte	32
+ 798 01f3 51       		.byte	81
+ 799 01f4 6B       		.byte	107
+ 800 01f5 BB       		.byte	-69
+ 801 01f6 12       		.byte	18
+ 802 01f7 44       		.byte	68
+ 803 01f8 13       		.byte	19
+ 804 01f9 1A       		.byte	26
+ 805 01fa 60       		.byte	96
+ 806 01fb 2D       		.byte	45
+ARM GAS  D:\Temp\ccWHss4k.s 			page 15
+
+
+ 807 01fc 80       		.byte	-128
+ 808 01fd 8E       		.byte	-114
+ 809 01fe 3B       		.byte	59
+ 810 01ff FE       		.byte	-2
+ 811 0200 B3       		.byte	-77
+ 812 0201 00       		.byte	0
+ 813 0202 87       		.byte	-121
+ 814 0203 02       		.byte	2
+ 815 0204 A5       		.byte	-91
+ 816 0205 B0       		.byte	-80
+ 817 0206 C0       		.byte	-64
+ 818 0207 26       		.byte	38
+ 819 0208 B5       		.byte	-75
+ 820 0209 7D       		.byte	125
+ 821 020a 2F       		.byte	47
+ 822 020b 00       		.byte	0
+ 823 020c A0       		.byte	-96
+ 824 020d 03       		.byte	3
+ 825 020e 51       		.byte	81
+ 826 020f 88       		.byte	-120
+ 827 0210 00       		.byte	0
+ 828 0211 40       		.byte	64
+ 829 0212 31       		.byte	49
+ 830 0213 01       		.byte	1
+ 831 0214 00       		.byte	0
+ 832 0215 08       		.byte	8
+ 833 0216 03       		.byte	3
+ 834 0217 10       		.byte	16
+ 835 0218 10       		.byte	16
+ 836 0219 02       		.byte	2
+ 837 021a 00       		.byte	0
+ 838 021b 21       		.byte	33
+ 839 021c 92       		.byte	-110
+ 840 021d 10       		.byte	16
+ 841 021e 02       		.byte	2
+ 842 021f 63       		.byte	99
+ 843 0220 C7       		.byte	-57
+ 844 0221 8F       		.byte	-113
+ 845 0222 00       		.byte	0
+ 846 0223 58       		.byte	88
+ 847 0224 F0       		.byte	-16
+ 848 0225 CB       		.byte	-53
+ 849 0226 86       		.byte	-122
+ 850 0227 01       		.byte	1
+ 851 0228 15       		.byte	21
+ 852 0229 FF       		.byte	-1
+ 853 022a 59       		.byte	89
+ 854 022b 80       		.byte	-128
+ 855 022c 7F       		.byte	127
+ 856 022d F2       		.byte	-14
+ 857 022e 80       		.byte	-128
+ 858 022f 00       		.byte	0
+ 859 0230 1D       		.byte	29
+ 860 0231 FF       		.byte	-1
+ 861 0232 A8       		.byte	-88
+ 862 0233 BD       		.byte	-67
+ 863 0234 C1       		.byte	-63
+ARM GAS  D:\Temp\ccWHss4k.s 			page 16
+
+
+ 864 0235 31       		.byte	49
+ 865 0236 9E       		.byte	-98
+ 866 0237 1F       		.byte	31
+ 867 0238 00       		.byte	0
+ 868 0239 2A       		.byte	42
+ 869 023a 2D       		.byte	45
+ 870 023b 87       		.byte	-121
+ 871 023c D5       		.byte	-43
+ 872 023d 00       		.byte	0
+ 873 023e 18       		.byte	24
+ 874 023f D8       		.byte	-40
+ 875 0240 06       		.byte	6
+ 876 0241 80       		.byte	-128
+ 877 0242 03       		.byte	3
+ 878 0243 82       		.byte	-126
+ 879 0244 80       		.byte	-128
+ 880 0245 62       		.byte	98
+ 881 0246 00       		.byte	0
+ 882 0247 38       		.byte	56
+ 883 0248 28       		.byte	40
+ 884 0249 06       		.byte	6
+ 885 024a 20       		.byte	32
+ 886 024b 01       		.byte	1
+ 887 024c 8D       		.byte	-115
+ 888 024d 80       		.byte	-128
+ 889 024e 68       		.byte	104
+ 890 024f 00       		.byte	0
+ 891 0250 A8       		.byte	-88
+ 892 0251 B5       		.byte	-75
+ 893 0252 DD       		.byte	-35
+ 894 0253 8A       		.byte	-118
+ 895 0254 01       		.byte	1
+ 896 0255 26       		.byte	38
+ 897 0256 34       		.byte	52
+ 898 0257 41       		.byte	65
+ 899 0258 B4       		.byte	-76
+ 900 0259 03       		.byte	3
+ 901 025a 1D       		.byte	29
+ 902 025b FF       		.byte	-1
+ 903 025c A8       		.byte	-88
+ 904 025d 80       		.byte	-128
+ 905 025e 3F       		.byte	63
+ 906 025f F9       		.byte	-7
+ 907 0260 40       		.byte	64
+ 908 0261 8E       		.byte	-114
+ 909 0262 2B       		.byte	43
+ 910 0263 F0       		.byte	-16
+ 911 0264 00       		.byte	0
+ 912 0265 E3       		.byte	-29
+ 913 0266 30       		.byte	48
+ 914 0267 02       		.byte	2
+ 915 0268 4D       		.byte	77
+ 916 0269 90       		.byte	-112
+ 917 026a 0A       		.byte	10
+ 918 026b 00       		.byte	0
+ 919 026c 38       		.byte	56
+ 920 026d 80       		.byte	-128
+ARM GAS  D:\Temp\ccWHss4k.s 			page 17
+
+
+ 921 026e 3F       		.byte	63
+ 922 026f F9       		.byte	-7
+ 923 0270 E0       		.byte	-32
+ 924 0271 02       		.byte	2
+ 925 0272 AE       		.byte	-82
+ 926 0273 FD       		.byte	-3
+ 927 0274 91       		.byte	-111
+ 928 0275 16       		.byte	22
+ 929 0276 3C       		.byte	60
+ 930 0277 C9       		.byte	-55
+ 931 0278 10       		.byte	16
+ 932 0279 2A       		.byte	42
+ 933 027a 3C       		.byte	60
+ 934 027b ED       		.byte	-19
+ 935 027c 3A       		.byte	58
+ 936 027d 0C       		.byte	12
+ 937 027e 10       		.byte	16
+ 938 027f 82       		.byte	-126
+ 939 0280 01       		.byte	1
+ 940 0281 14       		.byte	20
+ 941 0282 AD       		.byte	-83
+ 942 0283 F6       		.byte	-10
+ 943 0284 B0       		.byte	-80
+ 944 0285 01       		.byte	1
+ 945 0286 BB       		.byte	-69
+ 946 0287 94       		.byte	-108
+ 947 0288 D2       		.byte	-46
+ 948 0289 A0       		.byte	-96
+ 949 028a 20       		.byte	32
+ 950 028b 2B       		.byte	43
+ 951 028c 60       		.byte	96
+ 952 028d 4B       		.byte	75
+ 953 028e D4       		.byte	-44
+ 954 028f ED       		.byte	-19
+ 955 0290 60       		.byte	96
+ 956 0291 88       		.byte	-120
+ 957 0292 67       		.byte	103
+ 958 0293 88       		.byte	-120
+ 959 0294 3D       		.byte	61
+ 960 0295 98       		.byte	-104
+ 961 0296 05       		.byte	5
+ 962 0297 F3       		.byte	-13
+ 963 0298 00       		.byte	0
+ 964 0299 FF       		.byte	-1
+ 965 029a 65       		.byte	101
+ 966 029b 06       		.byte	6
+ 967 029c 7D       		.byte	125
+ 968 029d 04       		.byte	4
+ 969 029e 38       		.byte	56
+ 970 029f 45       		.byte	69
+ 971 02a0 48       		.byte	72
+ 972 02a1 26       		.byte	38
+ 973 02a2 82       		.byte	-126
+ 974 02a3 29       		.byte	41
+ 975 02a4 80       		.byte	-128
+ 976 02a5 7F       		.byte	127
+ 977 02a6 F2       		.byte	-14
+ARM GAS  D:\Temp\ccWHss4k.s 			page 18
+
+
+ 978 02a7 C4       		.byte	-60
+ 979 02a8 1C       		.byte	28
+ 980 02a9 03       		.byte	3
+ 981 02aa 28       		.byte	40
+ 982 02ab 43       		.byte	67
+ 983 02ac 40       		.byte	64
+ 984 02ad 00       		.byte	0
+ 985 02ae 68       		.byte	104
+ 986 02af 65       		.byte	101
+ 987 02b0 04       		.byte	4
+ 988 02b1 AE       		.byte	-82
+ 989 02b2 00       		.byte	0
+ 990 02b3 C5       		.byte	-59
+ 991 02b4 EA       		.byte	-22
+ 992 02b5 01       		.byte	1
+ 993 02b6 FF       		.byte	-1
+ 994 02b7 D8       		.byte	-40
+ 995 02b8 31       		.byte	49
+ 996 02b9 00       		.byte	0
+ 997 02ba CC       		.byte	-52
+ 998 02bb 00       		.byte	0
+ 999 02bc F0       		.byte	-16
+ 1000 02bd 30       		.byte	48
+ 1001 02be 0B       		.byte	11
+ 1002 02bf 80       		.byte	-128
+ 1003 02c0 0E       		.byte	14
+ 1004 02c1 3A       		.byte	58
+ 1005 02c2 ED       		.byte	-19
+ 1006 02c3 6A       		.byte	106
+ 1007 02c4 00       		.byte	0
+ 1008 02c5 1C       		.byte	28
+ 1009 02c6 59       		.byte	89
+ 1010 02c7 90       		.byte	-112
+ 1011 02c8 60       		.byte	96
+ 1012 02c9 00       		.byte	0
+ 1013 02ca 0D       		.byte	13
+ 1014 02cb C0       		.byte	-64
+ 1015 02cc 0E       		.byte	14
+ 1016 02cd CB       		.byte	-53
+ 1017 02ce 0B       		.byte	11
+ 1018 02cf 32       		.byte	50
+ 1019 02d0 00       		.byte	0
+ 1020 02d1 88       		.byte	-120
+ 1021 02d2 F8       		.byte	-8
+ 1022 02d3 18       		.byte	24
+ 1023 02d4 2C       		.byte	44
+ 1024 02d5 02       		.byte	2
+ 1025 02d6 B1       		.byte	-79
+ 1026 02d7 50       		.byte	80
+ 1027 02d8 03       		.byte	3
+ 1028 02d9 38       		.byte	56
+ 1029 02da 04       		.byte	4
+ 1030 02db CC       		.byte	-52
+ 1031 02dc 00       		.byte	0
+ 1032 02dd AC       		.byte	-84
+ 1033 02de 58       		.byte	88
+ 1034 02df 18       		.byte	24
+ARM GAS  D:\Temp\ccWHss4k.s 			page 19
+
+
+ 1035 02e0 24       		.byte	36
+ 1036 02e1 02       		.byte	2
+ 1037 02e2 23       		.byte	35
+ 1038 02e3 A0       		.byte	-96
+ 1039 02e4 A4       		.byte	-92
+ 1040 02e5 10       		.byte	16
+ 1041 02e6 0D       		.byte	13
+ 1042 02e7 26       		.byte	38
+ 1043 02e8 C7       		.byte	-57
+ 1044 02e9 E0       		.byte	-32
+ 1045 02ea 1C       		.byte	28
+ 1046 02eb A3       		.byte	-93
+ 1047 02ec 24       		.byte	36
+ 1048 02ed 80       		.byte	-128
+ 1049 02ee 1E       		.byte	30
+ 1050 02ef 60       		.byte	96
+ 1051 02f0 A0       		.byte	-96
+ 1052 02f1 08       		.byte	8
+ 1053 02f2 BB       		.byte	-69
+ 1054 02f3 00       		.byte	0
+ 1055 02f4 69       		.byte	105
+ 1056 02f5 F1       		.byte	-15
+ 1057 02f6 00       		.byte	0
+ 1058 02f7 93       		.byte	-109
+ 1059 02f8 C7       		.byte	-57
+ 1060 02f9 50       		.byte	80
+ 1061 02fa 40       		.byte	64
+ 1062 02fb 27       		.byte	39
+ 1063 02fc 07       		.byte	7
+ 1064 02fd 00       		.byte	0
+ 1065 02fe B4       		.byte	-76
+ 1066 02ff C5       		.byte	-59
+ 1067 0300 81       		.byte	-127
+ 1068 0301 C0       		.byte	-64
+ 1069 0302 0A       		.byte	10
+ 1070 0303 27       		.byte	39
+ 1071 0304 A0       		.byte	-96
+ 1072 0305 13       		.byte	19
+ 1073 0306 50       		.byte	80
+ 1074 0307 01       		.byte	1
+ 1075 0308 68       		.byte	104
+ 1076 0309 01       		.byte	1
+ 1077 030a E9       		.byte	-23
+ 1078 030b 28       		.byte	40
+ 1079 030c 20       		.byte	32
+ 1080 030d A0       		.byte	-96
+ 1081 030e E0       		.byte	-32
+ 1082 030f 0F       		.byte	15
+ 1083 0310 31       		.byte	49
+ 1084 0311 05       		.byte	5
+ 1085 0312 E5       		.byte	-27
+ 1086 0313 06       		.byte	6
+ 1087 0314 0F       		.byte	15
+ 1088 0315 41       		.byte	65
+ 1089 0316 00       		.byte	0
+ 1090 0317 28       		.byte	40
+ 1091 0318 33       		.byte	51
+ARM GAS  D:\Temp\ccWHss4k.s 			page 20
+
+
+ 1092 0319 01       		.byte	1
+ 1093 031a 41       		.byte	65
+ 1094 031b AC       		.byte	-84
+ 1095 031c 17       		.byte	23
+ 1096 031d 80       		.byte	-128
+ 1097 031e 32       		.byte	50
+ 1098 031f DE       		.byte	-34
+ 1099 0320 A8       		.byte	-88
+ 1100 0321 03       		.byte	3
+ 1101 0322 4E       		.byte	78
+ 1102 0323 01       		.byte	1
+ 1103 0324 40       		.byte	64
+ 1104 0325 37       		.byte	55
+ 1105 0326 1A       		.byte	26
+ 1106 0327 70       		.byte	112
+ 1107 0328 01       		.byte	1
+ 1108 0329 05       		.byte	5
+ 1109 032a D4       		.byte	-44
+ 1110 032b 03       		.byte	3
+ 1111 032c 90       		.byte	-112
+ 1112 032d 44       		.byte	68
+ 1113 032e 80       		.byte	-128
+ 1114 032f 13       		.byte	19
+ 1115 0330 07       		.byte	7
+ 1116 0331 00       		.byte	0
+ 1117 0332 40       		.byte	64
+ 1118 0333 4F       		.byte	79
+ 1119 0334 70       		.byte	112
+ 1120 0335 0A       		.byte	10
+ 1121 0336 7C       		.byte	124
+ 1122 0337 91       		.byte	-111
+ 1123 0338 E0       		.byte	-32
+ 1124 0339 C1       		.byte	-63
+ 1125 033a 5A       		.byte	90
+ 1126 033b 88       		.byte	-120
+ 1127 033c 20       		.byte	32
+ 1128 033d F8       		.byte	-8
+ 1129 033e AD       		.byte	-83
+ 1130 033f 94       		.byte	-108
+ 1131 0340 02       		.byte	2
+ 1132 0341 E2       		.byte	-30
+ 1133 0342 D3       		.byte	-45
+ 1134 0343 90       		.byte	-112
+ 1135 0344 0C       		.byte	12
+ 1136 0345 4A       		.byte	74
+ 1137 0346 16       		.byte	22
+ 1138 0347 01       		.byte	1
+ 1139 0348 C8       		.byte	-56
+ 1140 0349 A5       		.byte	-91
+ 1141 034a 02       		.byte	2
+ 1142 034b 01       		.byte	1
+ 1143 034c 0D       		.byte	13
+ 1144 034d 26       		.byte	38
+ 1145 034e 9E       		.byte	-98
+ 1146 034f 80       		.byte	-128
+ 1147 0350 54       		.byte	84
+ 1148 0351 14       		.byte	20
+ARM GAS  D:\Temp\ccWHss4k.s 			page 21
+
+
+ 1149 0352 1C       		.byte	28
+ 1150 0353 70       		.byte	112
+ 1151 0354 0C       		.byte	12
+ 1152 0355 94       		.byte	-108
+ 1153 0356 20       		.byte	32
+ 1154 0357 70       		.byte	112
+ 1155 0358 E8       		.byte	-24
+ 1156 0359 0D       		.byte	13
+ 1157 035a C0       		.byte	-64
+ 1158 035b 0E       		.byte	14
+ 1159 035c CB       		.byte	-53
+ 1160 035d 0B       		.byte	11
+ 1161 035e 33       		.byte	51
+ 1162 035f 00       		.byte	0
+ 1163 0360 44       		.byte	68
+ 1164 0361 7E       		.byte	126
+ 1165 0362 0C       		.byte	12
+ 1166 0363 32       		.byte	50
+ 1167 0364 01       		.byte	1
+ 1168 0365 59       		.byte	89
+ 1169 0366 20       		.byte	32
+ 1170 0367 01       		.byte	1
+ 1171 0368 94       		.byte	-108
+ 1172 0369 40       		.byte	64
+ 1173 036a 5A       		.byte	90
+ 1174 036b 80       		.byte	-128
+ 1175 036c 29       		.byte	41
+ 1176 036d 06       		.byte	6
+ 1177 036e 06       		.byte	6
+ 1178 036f 06       		.byte	6
+ 1179 0370 00       		.byte	0
+ 1180 0371 85       		.byte	-123
+ 1181 0372 64       		.byte	100
+ 1182 0373 29       		.byte	41
+ 1183 0374 84       		.byte	-124
+ 1184 0375 03       		.byte	3
+ 1185 0376 48       		.byte	72
+ 1186 0377 C9       		.byte	-55
+ 1187 0378 58       		.byte	88
+ 1188 0379 07       		.byte	7
+ 1189 037a 19       		.byte	25
+ 1190 037b 99       		.byte	-103
+ 1191 037c 08       		.byte	8
+ 1192 037d 03       		.byte	3
+ 1193 037e D4       		.byte	-44
+ 1194 037f 1E       		.byte	30
+ 1195 0380 01       		.byte	1
+ 1196 0381 F6       		.byte	-10
+ 1197 0382 12       		.byte	18
+ 1198 0383 00       		.byte	0
+ 1199 0384 43       		.byte	67
+ 1200 0385 8F       		.byte	-113
+ 1201 0386 2B       		.byte	43
+ 1202 0387 00       		.byte	0
+ 1203 0388 1C       		.byte	28
+ 1204 0389 D2       		.byte	-46
+ 1205 038a F0       		.byte	-16
+ARM GAS  D:\Temp\ccWHss4k.s 			page 22
+
+
+ 1206 038b A0       		.byte	-96
+ 1207 038c 18       		.byte	24
+ 1208 038d 4F       		.byte	79
+ 1209 038e FF       		.byte	-1
+ 1210 038f 4A       		.byte	74
+ 1211 0390 D5       		.byte	-43
+ 1212 0391 64       		.byte	100
+ 1213 0392 0D       		.byte	13
+ 1214 0393 15       		.byte	21
+ 1215 0394 58       		.byte	88
+ 1216 0395 51       		.byte	81
+ 1217 0396 D0       		.byte	-48
+ 1218 0397 02       		.byte	2
+ 1219 0398 1A       		.byte	26
+ 1220 0399 38       		.byte	56
+ 1221 039a 00       		.byte	0
+ 1222 039b D4       		.byte	-44
+ 1223 039c 1A       		.byte	26
+ 1224 039d 01       		.byte	1
+ 1225 039e A1       		.byte	-95
+ 1226 039f 28       		.byte	40
+ 1227 03a0 40       		.byte	64
+ 1228 03a1 24       		.byte	36
+ 1229 03a2 78       		.byte	120
+ 1230 03a3 40       		.byte	64
+ 1231 03a4 08       		.byte	8
+ 1232 03a5 68       		.byte	104
+ 1233 03a6 49       		.byte	73
+ 1234 03a7 56       		.byte	86
+ 1235 03a8 34       		.byte	52
+ 1236 03a9 11       		.byte	17
+ 1237 03aa 55       		.byte	85
+ 1238 03ab 6F       		.byte	111
+ 1239              		.section	.rodata.kern_class_values,"a"
+ 1240              		.align	2
+ 1243              	kern_class_values:
+ 1244 0000 00       		.byte	0
+ 1245 0001 00       		.byte	0
+ 1246 0002 01       		.byte	1
+ 1247 0003 00       		.byte	0
+ 1248 0004 00       		.byte	0
+ 1249 0005 00       		.byte	0
+ 1250 0006 00       		.byte	0
+ 1251 0007 00       		.byte	0
+ 1252 0008 FD       		.byte	-3
+ 1253 0009 00       		.byte	0
+ 1254 000a 00       		.byte	0
+ 1255 000b FF       		.byte	-1
+ 1256 000c 00       		.byte	0
+ 1257 000d 00       		.byte	0
+ 1258 000e 00       		.byte	0
+ 1259 000f 00       		.byte	0
+ 1260 0010 00       		.byte	0
+ 1261 0011 00       		.byte	0
+ 1262 0012 00       		.byte	0
+ 1263 0013 FC       		.byte	-4
+ 1264 0014 FB       		.byte	-5
+ARM GAS  D:\Temp\ccWHss4k.s 			page 23
+
+
+ 1265 0015 FE       		.byte	-2
+ 1266 0016 00       		.byte	0
+ 1267 0017 FE       		.byte	-2
+ 1268 0018 FE       		.byte	-2
+ 1269 0019 00       		.byte	0
+ 1270 001a 00       		.byte	0
+ 1271 001b 00       		.byte	0
+ 1272 001c 02       		.byte	2
+ 1273 001d 00       		.byte	0
+ 1274 001e FE       		.byte	-2
+ 1275 001f FC       		.byte	-4
+ 1276 0020 FE       		.byte	-2
+ 1277 0021 00       		.byte	0
+ 1278 0022 00       		.byte	0
+ 1279 0023 00       		.byte	0
+ 1280 0024 00       		.byte	0
+ 1281 0025 00       		.byte	0
+ 1282 0026 00       		.byte	0
+ 1283 0027 03       		.byte	3
+ 1284 0028 00       		.byte	0
+ 1285 0029 00       		.byte	0
+ 1286 002a 00       		.byte	0
+ 1287 002b 00       		.byte	0
+ 1288 002c FC       		.byte	-4
+ 1289 002d 00       		.byte	0
+ 1290 002e 00       		.byte	0
+ 1291 002f 00       		.byte	0
+ 1292 0030 00       		.byte	0
+ 1293 0031 00       		.byte	0
+ 1294 0032 00       		.byte	0
+ 1295 0033 00       		.byte	0
+ 1296 0034 FD       		.byte	-3
+ 1297 0035 FC       		.byte	-4
+ 1298 0036 FF       		.byte	-1
+ 1299 0037 FD       		.byte	-3
+ 1300 0038 00       		.byte	0
+ 1301 0039 FE       		.byte	-2
+ 1302 003a 14       		.byte	20
+ 1303 003b 0B       		.byte	11
+ 1304 003c 00       		.byte	0
+ 1305 003d 00       		.byte	0
+ 1306 003e 00       		.byte	0
+ 1307 003f 03       		.byte	3
+ 1308 0040 00       		.byte	0
+ 1309 0041 00       		.byte	0
+ 1310 0042 FD       		.byte	-3
+ 1311 0043 00       		.byte	0
+ 1312 0044 FA       		.byte	-6
+ 1313 0045 FE       		.byte	-2
+ 1314 0046 00       		.byte	0
+ 1315 0047 FC       		.byte	-4
+ 1316 0048 00       		.byte	0
+ 1317 0049 FD       		.byte	-3
+ 1318 004a F9       		.byte	-7
+ 1319 004b FB       		.byte	-5
+ 1320 004c FD       		.byte	-3
+ 1321 004d 00       		.byte	0
+ARM GAS  D:\Temp\ccWHss4k.s 			page 24
+
+
+ 1322 004e 00       		.byte	0
+ 1323 004f 00       		.byte	0
+ 1324 0050 00       		.byte	0
+ 1325 0051 0D       		.byte	13
+ 1326 0052 00       		.byte	0
+ 1327 0053 00       		.byte	0
+ 1328 0054 00       		.byte	0
+ 1329 0055 00       		.byte	0
+ 1330 0056 00       		.byte	0
+ 1331 0057 00       		.byte	0
+ 1332 0058 FE       		.byte	-2
+ 1333 0059 FE       		.byte	-2
+ 1334 005a FD       		.byte	-3
+ 1335 005b FE       		.byte	-2
+ 1336 005c 00       		.byte	0
+ 1337 005d FF       		.byte	-1
+ 1338 005e 04       		.byte	4
+ 1339 005f 00       		.byte	0
+ 1340 0060 04       		.byte	4
+ 1341 0061 FE       		.byte	-2
+ 1342 0062 00       		.byte	0
+ 1343 0063 00       		.byte	0
+ 1344 0064 00       		.byte	0
+ 1345 0065 00       		.byte	0
+ 1346 0066 00       		.byte	0
+ 1347 0067 00       		.byte	0
+ 1348 0068 00       		.byte	0
+ 1349 0069 00       		.byte	0
+ 1350 006a 00       		.byte	0
+ 1351 006b FD       		.byte	-3
+ 1352 006c FD       		.byte	-3
+ 1353 006d 00       		.byte	0
+ 1354 006e 00       		.byte	0
+ 1355 006f 00       		.byte	0
+ 1356 0070 FB       		.byte	-5
+ 1357 0071 00       		.byte	0
+ 1358 0072 00       		.byte	0
+ 1359 0073 00       		.byte	0
+ 1360 0074 FD       		.byte	-3
+ 1361 0075 00       		.byte	0
+ 1362 0076 FD       		.byte	-3
+ 1363 0077 00       		.byte	0
+ 1364 0078 00       		.byte	0
+ 1365 0079 FC       		.byte	-4
+ 1366 007a 00       		.byte	0
+ 1367 007b FC       		.byte	-4
+ 1368 007c 00       		.byte	0
+ 1369 007d FC       		.byte	-4
+ 1370 007e FE       		.byte	-2
+ 1371 007f 04       		.byte	4
+ 1372 0080 00       		.byte	0
+ 1373 0081 FE       		.byte	-2
+ 1374 0082 F8       		.byte	-8
+ 1375 0083 FD       		.byte	-3
+ 1376 0084 FD       		.byte	-3
+ 1377 0085 00       		.byte	0
+ 1378 0086 FB       		.byte	-5
+ARM GAS  D:\Temp\ccWHss4k.s 			page 25
+
+
+ 1379 0087 00       		.byte	0
+ 1380 0088 02       		.byte	2
+ 1381 0089 FD       		.byte	-3
+ 1382 008a 00       		.byte	0
+ 1383 008b FD       		.byte	-3
+ 1384 008c F8       		.byte	-8
+ 1385 008d 00       		.byte	0
+ 1386 008e FD       		.byte	-3
+ 1387 008f 00       		.byte	0
+ 1388 0090 00       		.byte	0
+ 1389 0091 FE       		.byte	-2
+ 1390 0092 00       		.byte	0
+ 1391 0093 00       		.byte	0
+ 1392 0094 00       		.byte	0
+ 1393 0095 01       		.byte	1
+ 1394 0096 00       		.byte	0
+ 1395 0097 FD       		.byte	-3
+ 1396 0098 FD       		.byte	-3
+ 1397 0099 00       		.byte	0
+ 1398              		.section	.rodata.kern_classes,"a"
+ 1399              		.align	2
+ 1402              	kern_classes:
+ 1403 0000 00000000 		.word	kern_class_values
+ 1404 0004 00000000 		.word	kern_left_class_mapping
+ 1405 0008 00000000 		.word	kern_right_class_mapping
+ 1406 000c 0E       		.byte	14
+ 1407 000d 0B       		.byte	11
+ 1408 000e 0000     		.space	2
+ 1409              		.section	.rodata.kern_left_class_mapping,"a"
+ 1410              		.align	2
+ 1413              	kern_left_class_mapping:
+ 1414 0000 00       		.byte	0
+ 1415 0001 00       		.byte	0
+ 1416 0002 01       		.byte	1
+ 1417 0003 02       		.byte	2
+ 1418 0004 03       		.byte	3
+ 1419 0005 04       		.byte	4
+ 1420 0006 05       		.byte	5
+ 1421 0007 06       		.byte	6
+ 1422 0008 00       		.byte	0
+ 1423 0009 01       		.byte	1
+ 1424 000a 00       		.byte	0
+ 1425 000b 00       		.byte	0
+ 1426 000c 07       		.byte	7
+ 1427 000d 04       		.byte	4
+ 1428 000e 01       		.byte	1
+ 1429 000f 01       		.byte	1
+ 1430 0010 02       		.byte	2
+ 1431 0011 02       		.byte	2
+ 1432 0012 08       		.byte	8
+ 1433 0013 09       		.byte	9
+ 1434 0014 0A       		.byte	10
+ 1435 0015 0B       		.byte	11
+ 1436 0016 00       		.byte	0
+ 1437 0017 0C       		.byte	12
+ 1438 0018 0C       		.byte	12
+ 1439 0019 0D       		.byte	13
+ARM GAS  D:\Temp\ccWHss4k.s 			page 26
+
+
+ 1440 001a 0C       		.byte	12
+ 1441 001b 0E       		.byte	14
+ 1442              		.section	.rodata.kern_right_class_mapping,"a"
+ 1443              		.align	2
+ 1446              	kern_right_class_mapping:
+ 1447 0000 00       		.byte	0
+ 1448 0001 00       		.byte	0
+ 1449 0002 01       		.byte	1
+ 1450 0003 02       		.byte	2
+ 1451 0004 03       		.byte	3
+ 1452 0005 03       		.byte	3
+ 1453 0006 03       		.byte	3
+ 1454 0007 00       		.byte	0
+ 1455 0008 03       		.byte	3
+ 1456 0009 02       		.byte	2
+ 1457 000a 04       		.byte	4
+ 1458 000b 05       		.byte	5
+ 1459 000c 02       		.byte	2
+ 1460 000d 02       		.byte	2
+ 1461 000e 04       		.byte	4
+ 1462 000f 04       		.byte	4
+ 1463 0010 03       		.byte	3
+ 1464 0011 04       		.byte	4
+ 1465 0012 03       		.byte	3
+ 1466 0013 04       		.byte	4
+ 1467 0014 06       		.byte	6
+ 1468 0015 07       		.byte	7
+ 1469 0016 08       		.byte	8
+ 1470 0017 09       		.byte	9
+ 1471 0018 09       		.byte	9
+ 1472 0019 0A       		.byte	10
+ 1473 001a 09       		.byte	9
+ 1474 001b 0B       		.byte	11
+ 1475              		.text
+ 1476              	.Letext0:
+ 1477              		.file 1 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1478              		.file 2 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1479              		.file 3 "Drivers/CMSIS/Include/core_cm4.h"
+ 1480              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 1481              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 1482              		.file 6 "lvgl/lv_conf.h"
+ 1483              		.file 7 "lv_examples/assets/../../lvgl/src/lv_misc/lv_mem.h"
+ 1484              		.file 8 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1485              		.file 9 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1486              		.file 10 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-non
+ 1487              		.file 11 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1488              		.file 12 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_font\\lv_font.h"
+ 1489              		.file 13 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_anim.h"
+ 1490              		.file 14 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_txt.h"
+ 1491              		.file 15 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_draw\\lv_draw_label.h"
+ 1492              		.file 16 "lv_examples/assets/../../lvgl/src/lv_core/lv_obj.h"
+ 1493              		.file 17 "lv_examples/assets/../../lvgl/src/lv_font/lv_font_fmt_txt.h"
+ 1494              		.file 18 "lv_examples/assets/../../lvgl/src/lv_widgets/lv_cont.h"
+ 1495              		.file 19 "lv_examples/assets/../../lvgl/src/lv_widgets/lv_btn.h"
+ 1496              		.file 20 "lv_examples/assets/../../lvgl/src/lv_widgets/lv_page.h"
+ 1497              		.file 21 "lv_examples/assets/../../lvgl/src/lv_widgets/lv_chart.h"
+ 1498              		.file 22 "lv_examples/assets/../../lvgl/src/lv_widgets/lv_bar.h"
+ARM GAS  D:\Temp\ccWHss4k.s 			page 27
+
+
+ 1499              		.file 23 "lv_examples/assets/../../lvgl/src/lv_widgets/lv_textarea.h"
+ 1500              		.file 24 "lv_examples/assets/../../lvgl/src/lv_widgets/lv_linemeter.h"
+ 1501              		.file 25 "lv_examples/assets/../../lvgl/src/lv_widgets/lv_arc.h"
+ 1502              		.file 26 "lv_examples/assets/lv_font_montserrat_16_compr_az.c"
+ARM GAS  D:\Temp\ccWHss4k.s 			page 28
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_font_montserrat_16_compr_az.c
+  D:\Temp\ccWHss4k.s:36     .data.lv_font_montserrat_16_compr_az:0000000000000000 lv_font_montserrat_16_compr_az
+  D:\Temp\ccWHss4k.s:19     .data.font_dsc:0000000000000000 $d
+  D:\Temp\ccWHss4k.s:22     .data.font_dsc:0000000000000000 font_dsc
+  D:\Temp\ccWHss4k.s:298    .rodata.gylph_bitmap:0000000000000000 gylph_bitmap
+  D:\Temp\ccWHss4k.s:69     .rodata.glyph_dsc:0000000000000000 glyph_dsc
+  D:\Temp\ccWHss4k.s:48     .rodata.cmaps:0000000000000000 cmaps
+  D:\Temp\ccWHss4k.s:1402   .rodata.kern_classes:0000000000000000 kern_classes
+  D:\Temp\ccWHss4k.s:33     .data.lv_font_montserrat_16_compr_az:0000000000000000 $d
+  D:\Temp\ccWHss4k.s:45     .rodata.cmaps:0000000000000000 $d
+  D:\Temp\ccWHss4k.s:66     .rodata.glyph_dsc:0000000000000000 $d
+  D:\Temp\ccWHss4k.s:295    .rodata.gylph_bitmap:0000000000000000 $d
+  D:\Temp\ccWHss4k.s:1240   .rodata.kern_class_values:0000000000000000 $d
+  D:\Temp\ccWHss4k.s:1243   .rodata.kern_class_values:0000000000000000 kern_class_values
+  D:\Temp\ccWHss4k.s:1399   .rodata.kern_classes:0000000000000000 $d
+  D:\Temp\ccWHss4k.s:1413   .rodata.kern_left_class_mapping:0000000000000000 kern_left_class_mapping
+  D:\Temp\ccWHss4k.s:1446   .rodata.kern_right_class_mapping:0000000000000000 kern_right_class_mapping
+  D:\Temp\ccWHss4k.s:1410   .rodata.kern_left_class_mapping:0000000000000000 $d
+  D:\Temp\ccWHss4k.s:1443   .rodata.kern_right_class_mapping:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+lv_font_get_glyph_dsc_fmt_txt
+lv_font_get_bitmap_fmt_txt

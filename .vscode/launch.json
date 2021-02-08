@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Cortex debug",
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "openocd",
+            "cwd": "${workspaceFolder}",
+            "executable": "build/HACK_RF_NEW.elf",
+            "svdFile": ".vscode/STM32F407.svd",
+            "configFiles": [
+                "C:/STM32/GNU MCU Eclipse/OpenOCD/0.10.0-12-20190422-2015/scripts/interface/stlink.cfg",
+                ".vscode/stm32f4x.cfg"
+            ],
+            "preLaunchTask": "Build project"
+        },
+        {
+            "name": "Debug current Python file",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        }
+    ]
+}

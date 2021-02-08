@@ -1,0 +1,42 @@
+ARM GAS  D:\Temp\cctC6MPx.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_gpu_stm32_dma2d.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              	.Letext0:
+  18              		.file 1 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+  19              		.file 2 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+  20              		.file 3 "Drivers/CMSIS/Include/core_cm4.h"
+  21              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+  22              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+  23              		.file 6 "lvgl/lv_conf.h"
+  24              		.file 7 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+  25              		.file 8 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+  26              		.file 9 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-none
+  27              		.file 10 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+  28              		.file 11 "lvgl/src/lv_gpu/../lv_misc/lv_mem.h"
+  29              		.file 12 "lvgl/src/lv_gpu/../lv_core/../lv_font/lv_font.h"
+  30              		.file 13 "lvgl/src/lv_gpu/../lv_core/../lv_misc/lv_anim.h"
+  31              		.file 14 "lvgl/src/lv_gpu/../lv_core/../lv_draw/../lv_misc/lv_txt.h"
+  32              		.file 15 "lvgl/src/lv_gpu/../lv_core/../lv_draw/lv_draw_label.h"
+ARM GAS  D:\Temp\cctC6MPx.s 			page 2
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_gpu_stm32_dma2d.c
+
+NO UNDEFINED SYMBOLS
