@@ -1,0 +1,1998 @@
+ARM GAS  D:\Temp\ccutloVb.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_ll.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.node_set_prev,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	node_set_prev:
+  26              	.LVL0:
+  27              	.LFB145:
+  28              		.file 1 "lvgl/src/lv_misc/lv_ll.c"
+   1:lvgl/src/lv_misc/lv_ll.c **** /**
+   2:lvgl/src/lv_misc/lv_ll.c ****  * @file lv_ll.c
+   3:lvgl/src/lv_misc/lv_ll.c ****  * Handle linked lists.
+   4:lvgl/src/lv_misc/lv_ll.c ****  * The nodes are dynamically allocated by the 'lv_mem' module,
+   5:lvgl/src/lv_misc/lv_ll.c ****  */
+   6:lvgl/src/lv_misc/lv_ll.c **** 
+   7:lvgl/src/lv_misc/lv_ll.c **** /*********************
+   8:lvgl/src/lv_misc/lv_ll.c ****  *      INCLUDES
+   9:lvgl/src/lv_misc/lv_ll.c ****  *********************/
+  10:lvgl/src/lv_misc/lv_ll.c **** #include <stdint.h>
+  11:lvgl/src/lv_misc/lv_ll.c **** #include <string.h>
+  12:lvgl/src/lv_misc/lv_ll.c **** 
+  13:lvgl/src/lv_misc/lv_ll.c **** #include "lv_ll.h"
+  14:lvgl/src/lv_misc/lv_ll.c **** #include "lv_mem.h"
+  15:lvgl/src/lv_misc/lv_ll.c **** 
+  16:lvgl/src/lv_misc/lv_ll.c **** /*********************
+  17:lvgl/src/lv_misc/lv_ll.c ****  *      DEFINES
+  18:lvgl/src/lv_misc/lv_ll.c ****  *********************/
+  19:lvgl/src/lv_misc/lv_ll.c **** #define LL_NODE_META_SIZE (sizeof(lv_ll_node_t *) + sizeof(lv_ll_node_t *))
+  20:lvgl/src/lv_misc/lv_ll.c **** #define LL_PREV_P_OFFSET(ll_p) (ll_p->n_size)
+  21:lvgl/src/lv_misc/lv_ll.c **** #define LL_NEXT_P_OFFSET(ll_p) (ll_p->n_size + sizeof(lv_ll_node_t *))
+  22:lvgl/src/lv_misc/lv_ll.c **** 
+  23:lvgl/src/lv_misc/lv_ll.c **** /**********************
+  24:lvgl/src/lv_misc/lv_ll.c ****  *      TYPEDEFS
+  25:lvgl/src/lv_misc/lv_ll.c ****  **********************/
+  26:lvgl/src/lv_misc/lv_ll.c **** 
+  27:lvgl/src/lv_misc/lv_ll.c **** /**********************
+  28:lvgl/src/lv_misc/lv_ll.c ****  *  STATIC PROTOTYPES
+  29:lvgl/src/lv_misc/lv_ll.c ****  **********************/
+  30:lvgl/src/lv_misc/lv_ll.c **** static void node_set_prev(lv_ll_t * ll_p, lv_ll_node_t * act, lv_ll_node_t * prev);
+ARM GAS  D:\Temp\ccutloVb.s 			page 2
+
+
+  31:lvgl/src/lv_misc/lv_ll.c **** static void node_set_next(lv_ll_t * ll_p, lv_ll_node_t * act, lv_ll_node_t * next);
+  32:lvgl/src/lv_misc/lv_ll.c **** 
+  33:lvgl/src/lv_misc/lv_ll.c **** /**********************
+  34:lvgl/src/lv_misc/lv_ll.c ****  *  STATIC VARIABLES
+  35:lvgl/src/lv_misc/lv_ll.c ****  **********************/
+  36:lvgl/src/lv_misc/lv_ll.c **** 
+  37:lvgl/src/lv_misc/lv_ll.c **** /**********************
+  38:lvgl/src/lv_misc/lv_ll.c ****  *      MACROS
+  39:lvgl/src/lv_misc/lv_ll.c ****  **********************/
+  40:lvgl/src/lv_misc/lv_ll.c **** 
+  41:lvgl/src/lv_misc/lv_ll.c **** /**********************
+  42:lvgl/src/lv_misc/lv_ll.c ****  *   GLOBAL FUNCTIONS
+  43:lvgl/src/lv_misc/lv_ll.c ****  **********************/
+  44:lvgl/src/lv_misc/lv_ll.c **** 
+  45:lvgl/src/lv_misc/lv_ll.c **** /**
+  46:lvgl/src/lv_misc/lv_ll.c ****  * Initialize linked list
+  47:lvgl/src/lv_misc/lv_ll.c ****  * @param ll_dsc pointer to ll_dsc variable
+  48:lvgl/src/lv_misc/lv_ll.c ****  * @param node_size the size of 1 node in bytes
+  49:lvgl/src/lv_misc/lv_ll.c ****  */
+  50:lvgl/src/lv_misc/lv_ll.c **** void _lv_ll_init(lv_ll_t * ll_p, uint32_t node_size)
+  51:lvgl/src/lv_misc/lv_ll.c **** {
+  52:lvgl/src/lv_misc/lv_ll.c ****     ll_p->head = NULL;
+  53:lvgl/src/lv_misc/lv_ll.c ****     ll_p->tail = NULL;
+  54:lvgl/src/lv_misc/lv_ll.c **** #ifdef LV_ARCH_64
+  55:lvgl/src/lv_misc/lv_ll.c ****     /*Round the size up to 8*/
+  56:lvgl/src/lv_misc/lv_ll.c ****     node_size = (node_size + 7) & (~0x7);
+  57:lvgl/src/lv_misc/lv_ll.c **** #else
+  58:lvgl/src/lv_misc/lv_ll.c ****     /*Round the size up to 4*/
+  59:lvgl/src/lv_misc/lv_ll.c ****     node_size = (node_size + 3) & (~0x3);
+  60:lvgl/src/lv_misc/lv_ll.c **** #endif
+  61:lvgl/src/lv_misc/lv_ll.c **** 
+  62:lvgl/src/lv_misc/lv_ll.c ****     ll_p->n_size = node_size;
+  63:lvgl/src/lv_misc/lv_ll.c **** }
+  64:lvgl/src/lv_misc/lv_ll.c **** 
+  65:lvgl/src/lv_misc/lv_ll.c **** /**
+  66:lvgl/src/lv_misc/lv_ll.c ****  * Add a new head to a linked list
+  67:lvgl/src/lv_misc/lv_ll.c ****  * @param ll_p pointer to linked list
+  68:lvgl/src/lv_misc/lv_ll.c ****  * @return pointer to the new head
+  69:lvgl/src/lv_misc/lv_ll.c ****  */
+  70:lvgl/src/lv_misc/lv_ll.c **** void * _lv_ll_ins_head(lv_ll_t * ll_p)
+  71:lvgl/src/lv_misc/lv_ll.c **** {
+  72:lvgl/src/lv_misc/lv_ll.c ****     lv_ll_node_t * n_new;
+  73:lvgl/src/lv_misc/lv_ll.c **** 
+  74:lvgl/src/lv_misc/lv_ll.c ****     n_new = lv_mem_alloc(ll_p->n_size + LL_NODE_META_SIZE);
+  75:lvgl/src/lv_misc/lv_ll.c **** 
+  76:lvgl/src/lv_misc/lv_ll.c ****     if(n_new != NULL) {
+  77:lvgl/src/lv_misc/lv_ll.c ****         node_set_prev(ll_p, n_new, NULL);       /*No prev. before the new head*/
+  78:lvgl/src/lv_misc/lv_ll.c ****         node_set_next(ll_p, n_new, ll_p->head); /*After new comes the old head*/
+  79:lvgl/src/lv_misc/lv_ll.c **** 
+  80:lvgl/src/lv_misc/lv_ll.c ****         if(ll_p->head != NULL) { /*If there is old head then before it goes the new*/
+  81:lvgl/src/lv_misc/lv_ll.c ****             node_set_prev(ll_p, ll_p->head, n_new);
+  82:lvgl/src/lv_misc/lv_ll.c ****         }
+  83:lvgl/src/lv_misc/lv_ll.c **** 
+  84:lvgl/src/lv_misc/lv_ll.c ****         ll_p->head = n_new;      /*Set the new head in the dsc.*/
+  85:lvgl/src/lv_misc/lv_ll.c ****         if(ll_p->tail == NULL) { /*If there is no tail (1. node) set the tail too*/
+  86:lvgl/src/lv_misc/lv_ll.c ****             ll_p->tail = n_new;
+  87:lvgl/src/lv_misc/lv_ll.c ****         }
+ARM GAS  D:\Temp\ccutloVb.s 			page 3
+
+
+  88:lvgl/src/lv_misc/lv_ll.c ****     }
+  89:lvgl/src/lv_misc/lv_ll.c **** 
+  90:lvgl/src/lv_misc/lv_ll.c ****     return n_new;
+  91:lvgl/src/lv_misc/lv_ll.c **** }
+  92:lvgl/src/lv_misc/lv_ll.c **** 
+  93:lvgl/src/lv_misc/lv_ll.c **** /**
+  94:lvgl/src/lv_misc/lv_ll.c ****  * Insert a new node in front of the n_act node
+  95:lvgl/src/lv_misc/lv_ll.c ****  * @param ll_p pointer to linked list
+  96:lvgl/src/lv_misc/lv_ll.c ****  * @param n_act pointer a node
+  97:lvgl/src/lv_misc/lv_ll.c ****  * @return pointer to the new head
+  98:lvgl/src/lv_misc/lv_ll.c ****  */
+  99:lvgl/src/lv_misc/lv_ll.c **** void * _lv_ll_ins_prev(lv_ll_t * ll_p, void * n_act)
+ 100:lvgl/src/lv_misc/lv_ll.c **** {
+ 101:lvgl/src/lv_misc/lv_ll.c ****     lv_ll_node_t * n_new;
+ 102:lvgl/src/lv_misc/lv_ll.c **** 
+ 103:lvgl/src/lv_misc/lv_ll.c ****     if(NULL == ll_p || NULL == n_act) return NULL;
+ 104:lvgl/src/lv_misc/lv_ll.c **** 
+ 105:lvgl/src/lv_misc/lv_ll.c ****     if(_lv_ll_get_head(ll_p) == n_act) {
+ 106:lvgl/src/lv_misc/lv_ll.c ****         n_new = _lv_ll_ins_head(ll_p);
+ 107:lvgl/src/lv_misc/lv_ll.c ****         if(n_new == NULL) return NULL;
+ 108:lvgl/src/lv_misc/lv_ll.c ****     }
+ 109:lvgl/src/lv_misc/lv_ll.c ****     else {
+ 110:lvgl/src/lv_misc/lv_ll.c ****         n_new = lv_mem_alloc(ll_p->n_size + LL_NODE_META_SIZE);
+ 111:lvgl/src/lv_misc/lv_ll.c ****         if(n_new == NULL) return NULL;
+ 112:lvgl/src/lv_misc/lv_ll.c **** 
+ 113:lvgl/src/lv_misc/lv_ll.c ****         lv_ll_node_t * n_prev;
+ 114:lvgl/src/lv_misc/lv_ll.c ****         n_prev = _lv_ll_get_prev(ll_p, n_act);
+ 115:lvgl/src/lv_misc/lv_ll.c ****         node_set_next(ll_p, n_prev, n_new);
+ 116:lvgl/src/lv_misc/lv_ll.c ****         node_set_prev(ll_p, n_new, n_prev);
+ 117:lvgl/src/lv_misc/lv_ll.c ****         node_set_prev(ll_p, n_act, n_new);
+ 118:lvgl/src/lv_misc/lv_ll.c ****         node_set_next(ll_p, n_new, n_act);
+ 119:lvgl/src/lv_misc/lv_ll.c ****     }
+ 120:lvgl/src/lv_misc/lv_ll.c **** 
+ 121:lvgl/src/lv_misc/lv_ll.c ****     return n_new;
+ 122:lvgl/src/lv_misc/lv_ll.c **** }
+ 123:lvgl/src/lv_misc/lv_ll.c **** 
+ 124:lvgl/src/lv_misc/lv_ll.c **** /**
+ 125:lvgl/src/lv_misc/lv_ll.c ****  * Add a new tail to a linked list
+ 126:lvgl/src/lv_misc/lv_ll.c ****  * @param ll_p pointer to linked list
+ 127:lvgl/src/lv_misc/lv_ll.c ****  * @return pointer to the new tail
+ 128:lvgl/src/lv_misc/lv_ll.c ****  */
+ 129:lvgl/src/lv_misc/lv_ll.c **** void * _lv_ll_ins_tail(lv_ll_t * ll_p)
+ 130:lvgl/src/lv_misc/lv_ll.c **** {
+ 131:lvgl/src/lv_misc/lv_ll.c ****     lv_ll_node_t * n_new;
+ 132:lvgl/src/lv_misc/lv_ll.c **** 
+ 133:lvgl/src/lv_misc/lv_ll.c ****     n_new = lv_mem_alloc(ll_p->n_size + LL_NODE_META_SIZE);
+ 134:lvgl/src/lv_misc/lv_ll.c **** 
+ 135:lvgl/src/lv_misc/lv_ll.c ****     if(n_new != NULL) {
+ 136:lvgl/src/lv_misc/lv_ll.c ****         node_set_next(ll_p, n_new, NULL);       /*No next after the new tail*/
+ 137:lvgl/src/lv_misc/lv_ll.c ****         node_set_prev(ll_p, n_new, ll_p->tail); /*The prev. before new is the old tail*/
+ 138:lvgl/src/lv_misc/lv_ll.c ****         if(ll_p->tail != NULL) {                /*If there is old tail then the new comes after it*
+ 139:lvgl/src/lv_misc/lv_ll.c ****             node_set_next(ll_p, ll_p->tail, n_new);
+ 140:lvgl/src/lv_misc/lv_ll.c ****         }
+ 141:lvgl/src/lv_misc/lv_ll.c **** 
+ 142:lvgl/src/lv_misc/lv_ll.c ****         ll_p->tail = n_new;      /*Set the new tail in the dsc.*/
+ 143:lvgl/src/lv_misc/lv_ll.c ****         if(ll_p->head == NULL) { /*If there is no head (1. node) set the head too*/
+ 144:lvgl/src/lv_misc/lv_ll.c ****             ll_p->head = n_new;
+ARM GAS  D:\Temp\ccutloVb.s 			page 4
+
+
+ 145:lvgl/src/lv_misc/lv_ll.c ****         }
+ 146:lvgl/src/lv_misc/lv_ll.c ****     }
+ 147:lvgl/src/lv_misc/lv_ll.c **** 
+ 148:lvgl/src/lv_misc/lv_ll.c ****     return n_new;
+ 149:lvgl/src/lv_misc/lv_ll.c **** }
+ 150:lvgl/src/lv_misc/lv_ll.c **** 
+ 151:lvgl/src/lv_misc/lv_ll.c **** /**
+ 152:lvgl/src/lv_misc/lv_ll.c ****  * Remove the node 'node_p' from 'll_p' linked list.
+ 153:lvgl/src/lv_misc/lv_ll.c ****  * It does not free the memory of node.
+ 154:lvgl/src/lv_misc/lv_ll.c ****  * @param ll_p pointer to the linked list of 'node_p'
+ 155:lvgl/src/lv_misc/lv_ll.c ****  * @param node_p pointer to node in 'll_p' linked list
+ 156:lvgl/src/lv_misc/lv_ll.c ****  */
+ 157:lvgl/src/lv_misc/lv_ll.c **** void _lv_ll_remove(lv_ll_t * ll_p, void * node_p)
+ 158:lvgl/src/lv_misc/lv_ll.c **** {
+ 159:lvgl/src/lv_misc/lv_ll.c ****     if(_lv_ll_get_head(ll_p) == node_p) {
+ 160:lvgl/src/lv_misc/lv_ll.c ****         /*The new head will be the node after 'n_act'*/
+ 161:lvgl/src/lv_misc/lv_ll.c ****         ll_p->head = _lv_ll_get_next(ll_p, node_p);
+ 162:lvgl/src/lv_misc/lv_ll.c ****         if(ll_p->head == NULL) {
+ 163:lvgl/src/lv_misc/lv_ll.c ****             ll_p->tail = NULL;
+ 164:lvgl/src/lv_misc/lv_ll.c ****         }
+ 165:lvgl/src/lv_misc/lv_ll.c ****         else {
+ 166:lvgl/src/lv_misc/lv_ll.c ****             node_set_prev(ll_p, ll_p->head, NULL);
+ 167:lvgl/src/lv_misc/lv_ll.c ****         }
+ 168:lvgl/src/lv_misc/lv_ll.c ****     }
+ 169:lvgl/src/lv_misc/lv_ll.c ****     else if(_lv_ll_get_tail(ll_p) == node_p) {
+ 170:lvgl/src/lv_misc/lv_ll.c ****         /*The new tail will be the node before 'n_act'*/
+ 171:lvgl/src/lv_misc/lv_ll.c ****         ll_p->tail = _lv_ll_get_prev(ll_p, node_p);
+ 172:lvgl/src/lv_misc/lv_ll.c ****         if(ll_p->tail == NULL) {
+ 173:lvgl/src/lv_misc/lv_ll.c ****             ll_p->head = NULL;
+ 174:lvgl/src/lv_misc/lv_ll.c ****         }
+ 175:lvgl/src/lv_misc/lv_ll.c ****         else {
+ 176:lvgl/src/lv_misc/lv_ll.c ****             node_set_next(ll_p, ll_p->tail, NULL);
+ 177:lvgl/src/lv_misc/lv_ll.c ****         }
+ 178:lvgl/src/lv_misc/lv_ll.c ****     }
+ 179:lvgl/src/lv_misc/lv_ll.c ****     else {
+ 180:lvgl/src/lv_misc/lv_ll.c ****         lv_ll_node_t * n_prev = _lv_ll_get_prev(ll_p, node_p);
+ 181:lvgl/src/lv_misc/lv_ll.c ****         lv_ll_node_t * n_next = _lv_ll_get_next(ll_p, node_p);
+ 182:lvgl/src/lv_misc/lv_ll.c **** 
+ 183:lvgl/src/lv_misc/lv_ll.c ****         node_set_next(ll_p, n_prev, n_next);
+ 184:lvgl/src/lv_misc/lv_ll.c ****         node_set_prev(ll_p, n_next, n_prev);
+ 185:lvgl/src/lv_misc/lv_ll.c ****     }
+ 186:lvgl/src/lv_misc/lv_ll.c **** }
+ 187:lvgl/src/lv_misc/lv_ll.c **** 
+ 188:lvgl/src/lv_misc/lv_ll.c **** /**
+ 189:lvgl/src/lv_misc/lv_ll.c ****  * Remove and free all elements from a linked list. The list remain valid but become empty.
+ 190:lvgl/src/lv_misc/lv_ll.c ****  * @param ll_p pointer to linked list
+ 191:lvgl/src/lv_misc/lv_ll.c ****  */
+ 192:lvgl/src/lv_misc/lv_ll.c **** void _lv_ll_clear(lv_ll_t * ll_p)
+ 193:lvgl/src/lv_misc/lv_ll.c **** {
+ 194:lvgl/src/lv_misc/lv_ll.c ****     void * i;
+ 195:lvgl/src/lv_misc/lv_ll.c ****     void * i_next;
+ 196:lvgl/src/lv_misc/lv_ll.c **** 
+ 197:lvgl/src/lv_misc/lv_ll.c ****     i      = _lv_ll_get_head(ll_p);
+ 198:lvgl/src/lv_misc/lv_ll.c ****     i_next = NULL;
+ 199:lvgl/src/lv_misc/lv_ll.c **** 
+ 200:lvgl/src/lv_misc/lv_ll.c ****     while(i != NULL) {
+ 201:lvgl/src/lv_misc/lv_ll.c ****         i_next = _lv_ll_get_next(ll_p, i);
+ARM GAS  D:\Temp\ccutloVb.s 			page 5
+
+
+ 202:lvgl/src/lv_misc/lv_ll.c **** 
+ 203:lvgl/src/lv_misc/lv_ll.c ****         _lv_ll_remove(ll_p, i);
+ 204:lvgl/src/lv_misc/lv_ll.c ****         lv_mem_free(i);
+ 205:lvgl/src/lv_misc/lv_ll.c **** 
+ 206:lvgl/src/lv_misc/lv_ll.c ****         i = i_next;
+ 207:lvgl/src/lv_misc/lv_ll.c ****     }
+ 208:lvgl/src/lv_misc/lv_ll.c **** }
+ 209:lvgl/src/lv_misc/lv_ll.c **** 
+ 210:lvgl/src/lv_misc/lv_ll.c **** /**
+ 211:lvgl/src/lv_misc/lv_ll.c ****  * Move a node to a new linked list
+ 212:lvgl/src/lv_misc/lv_ll.c ****  * @param ll_ori_p pointer to the original (old) linked list
+ 213:lvgl/src/lv_misc/lv_ll.c ****  * @param ll_new_p pointer to the new linked list
+ 214:lvgl/src/lv_misc/lv_ll.c ****  * @param node pointer to a node
+ 215:lvgl/src/lv_misc/lv_ll.c ****  * @param head true: be the head in the new list
+ 216:lvgl/src/lv_misc/lv_ll.c ****  *             false be the head in the new list
+ 217:lvgl/src/lv_misc/lv_ll.c ****  */
+ 218:lvgl/src/lv_misc/lv_ll.c **** void _lv_ll_chg_list(lv_ll_t * ll_ori_p, lv_ll_t * ll_new_p, void * node, bool head)
+ 219:lvgl/src/lv_misc/lv_ll.c **** {
+ 220:lvgl/src/lv_misc/lv_ll.c ****     _lv_ll_remove(ll_ori_p, node);
+ 221:lvgl/src/lv_misc/lv_ll.c **** 
+ 222:lvgl/src/lv_misc/lv_ll.c ****     if(head) {
+ 223:lvgl/src/lv_misc/lv_ll.c ****         /*Set node as head*/
+ 224:lvgl/src/lv_misc/lv_ll.c ****         node_set_prev(ll_new_p, node, NULL);
+ 225:lvgl/src/lv_misc/lv_ll.c ****         node_set_next(ll_new_p, node, ll_new_p->head);
+ 226:lvgl/src/lv_misc/lv_ll.c **** 
+ 227:lvgl/src/lv_misc/lv_ll.c ****         if(ll_new_p->head != NULL) { /*If there is old head then before it goes the new*/
+ 228:lvgl/src/lv_misc/lv_ll.c ****             node_set_prev(ll_new_p, ll_new_p->head, node);
+ 229:lvgl/src/lv_misc/lv_ll.c ****         }
+ 230:lvgl/src/lv_misc/lv_ll.c **** 
+ 231:lvgl/src/lv_misc/lv_ll.c ****         ll_new_p->head = node;       /*Set the new head in the dsc.*/
+ 232:lvgl/src/lv_misc/lv_ll.c ****         if(ll_new_p->tail == NULL) { /*If there is no tail (first node) set the tail too*/
+ 233:lvgl/src/lv_misc/lv_ll.c ****             ll_new_p->tail = node;
+ 234:lvgl/src/lv_misc/lv_ll.c ****         }
+ 235:lvgl/src/lv_misc/lv_ll.c ****     }
+ 236:lvgl/src/lv_misc/lv_ll.c ****     else {
+ 237:lvgl/src/lv_misc/lv_ll.c ****         /*Set node as tail*/
+ 238:lvgl/src/lv_misc/lv_ll.c ****         node_set_prev(ll_new_p, node, ll_new_p->tail);
+ 239:lvgl/src/lv_misc/lv_ll.c ****         node_set_next(ll_new_p, node, NULL);
+ 240:lvgl/src/lv_misc/lv_ll.c **** 
+ 241:lvgl/src/lv_misc/lv_ll.c ****         if(ll_new_p->tail != NULL) { /*If there is old tail then after it goes the new*/
+ 242:lvgl/src/lv_misc/lv_ll.c ****             node_set_next(ll_new_p, ll_new_p->tail, node);
+ 243:lvgl/src/lv_misc/lv_ll.c ****         }
+ 244:lvgl/src/lv_misc/lv_ll.c **** 
+ 245:lvgl/src/lv_misc/lv_ll.c ****         ll_new_p->tail = node;       /*Set the new tail in the dsc.*/
+ 246:lvgl/src/lv_misc/lv_ll.c ****         if(ll_new_p->head == NULL) { /*If there is no head (first node) set the head too*/
+ 247:lvgl/src/lv_misc/lv_ll.c ****             ll_new_p->head = node;
+ 248:lvgl/src/lv_misc/lv_ll.c ****         }
+ 249:lvgl/src/lv_misc/lv_ll.c ****     }
+ 250:lvgl/src/lv_misc/lv_ll.c **** }
+ 251:lvgl/src/lv_misc/lv_ll.c **** 
+ 252:lvgl/src/lv_misc/lv_ll.c **** /**
+ 253:lvgl/src/lv_misc/lv_ll.c ****  * Return with head node of the linked list
+ 254:lvgl/src/lv_misc/lv_ll.c ****  * @param ll_p pointer to linked list
+ 255:lvgl/src/lv_misc/lv_ll.c ****  * @return pointer to the head of 'll_p'
+ 256:lvgl/src/lv_misc/lv_ll.c ****  */
+ 257:lvgl/src/lv_misc/lv_ll.c **** void * _lv_ll_get_head(const lv_ll_t * ll_p)
+ 258:lvgl/src/lv_misc/lv_ll.c **** {
+ARM GAS  D:\Temp\ccutloVb.s 			page 6
+
+
+ 259:lvgl/src/lv_misc/lv_ll.c ****     void * head = NULL;
+ 260:lvgl/src/lv_misc/lv_ll.c **** 
+ 261:lvgl/src/lv_misc/lv_ll.c ****     if(ll_p != NULL) {
+ 262:lvgl/src/lv_misc/lv_ll.c ****         head = ll_p->head;
+ 263:lvgl/src/lv_misc/lv_ll.c ****     }
+ 264:lvgl/src/lv_misc/lv_ll.c **** 
+ 265:lvgl/src/lv_misc/lv_ll.c ****     return head;
+ 266:lvgl/src/lv_misc/lv_ll.c **** }
+ 267:lvgl/src/lv_misc/lv_ll.c **** 
+ 268:lvgl/src/lv_misc/lv_ll.c **** /**
+ 269:lvgl/src/lv_misc/lv_ll.c ****  * Return with tail node of the linked list
+ 270:lvgl/src/lv_misc/lv_ll.c ****  * @param ll_p pointer to linked list
+ 271:lvgl/src/lv_misc/lv_ll.c ****  * @return pointer to the head of 'll_p'
+ 272:lvgl/src/lv_misc/lv_ll.c ****  */
+ 273:lvgl/src/lv_misc/lv_ll.c **** void * _lv_ll_get_tail(const lv_ll_t * ll_p)
+ 274:lvgl/src/lv_misc/lv_ll.c **** {
+ 275:lvgl/src/lv_misc/lv_ll.c ****     void * tail = NULL;
+ 276:lvgl/src/lv_misc/lv_ll.c **** 
+ 277:lvgl/src/lv_misc/lv_ll.c ****     if(ll_p != NULL) {
+ 278:lvgl/src/lv_misc/lv_ll.c ****         tail = ll_p->tail;
+ 279:lvgl/src/lv_misc/lv_ll.c ****     }
+ 280:lvgl/src/lv_misc/lv_ll.c **** 
+ 281:lvgl/src/lv_misc/lv_ll.c ****     return tail;
+ 282:lvgl/src/lv_misc/lv_ll.c **** }
+ 283:lvgl/src/lv_misc/lv_ll.c **** 
+ 284:lvgl/src/lv_misc/lv_ll.c **** /**
+ 285:lvgl/src/lv_misc/lv_ll.c ****  * Return with the pointer of the next node after 'n_act'
+ 286:lvgl/src/lv_misc/lv_ll.c ****  * @param ll_p pointer to linked list
+ 287:lvgl/src/lv_misc/lv_ll.c ****  * @param n_act pointer a node
+ 288:lvgl/src/lv_misc/lv_ll.c ****  * @return pointer to the next node
+ 289:lvgl/src/lv_misc/lv_ll.c ****  */
+ 290:lvgl/src/lv_misc/lv_ll.c **** void * _lv_ll_get_next(const lv_ll_t * ll_p, const void * n_act)
+ 291:lvgl/src/lv_misc/lv_ll.c **** {
+ 292:lvgl/src/lv_misc/lv_ll.c ****     if(ll_p == NULL) return NULL;
+ 293:lvgl/src/lv_misc/lv_ll.c **** 
+ 294:lvgl/src/lv_misc/lv_ll.c ****     /* Pointer to the next node is stored in the end of this node.
+ 295:lvgl/src/lv_misc/lv_ll.c ****      * Go there and return the address found there */
+ 296:lvgl/src/lv_misc/lv_ll.c ****     const lv_ll_node_t * n_act_d = n_act;
+ 297:lvgl/src/lv_misc/lv_ll.c ****     n_act_d += LL_NEXT_P_OFFSET(ll_p);
+ 298:lvgl/src/lv_misc/lv_ll.c ****     return *((lv_ll_node_t **)n_act_d);
+ 299:lvgl/src/lv_misc/lv_ll.c **** }
+ 300:lvgl/src/lv_misc/lv_ll.c **** 
+ 301:lvgl/src/lv_misc/lv_ll.c **** /**
+ 302:lvgl/src/lv_misc/lv_ll.c ****  * Return with the pointer of the previous node after 'n_act'
+ 303:lvgl/src/lv_misc/lv_ll.c ****  * @param ll_p pointer to linked list
+ 304:lvgl/src/lv_misc/lv_ll.c ****  * @param n_act pointer a node
+ 305:lvgl/src/lv_misc/lv_ll.c ****  * @return pointer to the previous node
+ 306:lvgl/src/lv_misc/lv_ll.c ****  */
+ 307:lvgl/src/lv_misc/lv_ll.c **** void * _lv_ll_get_prev(const lv_ll_t * ll_p, const void * n_act)
+ 308:lvgl/src/lv_misc/lv_ll.c **** {
+ 309:lvgl/src/lv_misc/lv_ll.c ****     if(ll_p == NULL) return NULL;
+ 310:lvgl/src/lv_misc/lv_ll.c **** 
+ 311:lvgl/src/lv_misc/lv_ll.c ****     /* Pointer to the prev. node is stored in the end of this node.
+ 312:lvgl/src/lv_misc/lv_ll.c ****      * Go there and return the address found there */
+ 313:lvgl/src/lv_misc/lv_ll.c ****     const lv_ll_node_t * n_act_d = n_act;
+ 314:lvgl/src/lv_misc/lv_ll.c ****     n_act_d += LL_PREV_P_OFFSET(ll_p);
+ 315:lvgl/src/lv_misc/lv_ll.c ****     return *((lv_ll_node_t **)n_act_d);
+ARM GAS  D:\Temp\ccutloVb.s 			page 7
+
+
+ 316:lvgl/src/lv_misc/lv_ll.c **** }
+ 317:lvgl/src/lv_misc/lv_ll.c **** 
+ 318:lvgl/src/lv_misc/lv_ll.c **** /**
+ 319:lvgl/src/lv_misc/lv_ll.c ****  * Return the length of the linked list.
+ 320:lvgl/src/lv_misc/lv_ll.c ****  * @param ll_p pointer to linked list
+ 321:lvgl/src/lv_misc/lv_ll.c ****  * @return length of the linked list
+ 322:lvgl/src/lv_misc/lv_ll.c ****  */
+ 323:lvgl/src/lv_misc/lv_ll.c **** uint32_t _lv_ll_get_len(const lv_ll_t * ll_p)
+ 324:lvgl/src/lv_misc/lv_ll.c **** {
+ 325:lvgl/src/lv_misc/lv_ll.c ****     uint32_t len = 0;
+ 326:lvgl/src/lv_misc/lv_ll.c ****     void * node;
+ 327:lvgl/src/lv_misc/lv_ll.c **** 
+ 328:lvgl/src/lv_misc/lv_ll.c ****     for(node = _lv_ll_get_head(ll_p); node != NULL; node = _lv_ll_get_next(ll_p, node)) {
+ 329:lvgl/src/lv_misc/lv_ll.c ****         len++;
+ 330:lvgl/src/lv_misc/lv_ll.c ****     }
+ 331:lvgl/src/lv_misc/lv_ll.c **** 
+ 332:lvgl/src/lv_misc/lv_ll.c ****     return len;
+ 333:lvgl/src/lv_misc/lv_ll.c **** }
+ 334:lvgl/src/lv_misc/lv_ll.c **** 
+ 335:lvgl/src/lv_misc/lv_ll.c **** /**
+ 336:lvgl/src/lv_misc/lv_ll.c ****  * Move a node before an other node in the same linked list
+ 337:lvgl/src/lv_misc/lv_ll.c ****  * @param ll_p pointer to a linked list
+ 338:lvgl/src/lv_misc/lv_ll.c ****  * @param n_act pointer to node to move
+ 339:lvgl/src/lv_misc/lv_ll.c ****  * @param n_after pointer to a node which should be after `n_act`
+ 340:lvgl/src/lv_misc/lv_ll.c ****  */
+ 341:lvgl/src/lv_misc/lv_ll.c **** void _lv_ll_move_before(lv_ll_t * ll_p, void * n_act, void * n_after)
+ 342:lvgl/src/lv_misc/lv_ll.c **** {
+ 343:lvgl/src/lv_misc/lv_ll.c ****     if(n_act == n_after) return; /*Can't move before itself*/
+ 344:lvgl/src/lv_misc/lv_ll.c **** 
+ 345:lvgl/src/lv_misc/lv_ll.c ****     void * n_before;
+ 346:lvgl/src/lv_misc/lv_ll.c ****     if(n_after != NULL)
+ 347:lvgl/src/lv_misc/lv_ll.c ****         n_before = _lv_ll_get_prev(ll_p, n_after);
+ 348:lvgl/src/lv_misc/lv_ll.c ****     else
+ 349:lvgl/src/lv_misc/lv_ll.c ****         n_before = _lv_ll_get_tail(ll_p); /*if `n_after` is NULL `n_act` should be the new tail*/
+ 350:lvgl/src/lv_misc/lv_ll.c **** 
+ 351:lvgl/src/lv_misc/lv_ll.c ****     if(n_act == n_before) return; /*Already before `n_after`*/
+ 352:lvgl/src/lv_misc/lv_ll.c **** 
+ 353:lvgl/src/lv_misc/lv_ll.c ****     /*It's much easier to remove from the list and add again*/
+ 354:lvgl/src/lv_misc/lv_ll.c ****     _lv_ll_remove(ll_p, n_act);
+ 355:lvgl/src/lv_misc/lv_ll.c **** 
+ 356:lvgl/src/lv_misc/lv_ll.c ****     /*Add again by setting the prev. and next nodes*/
+ 357:lvgl/src/lv_misc/lv_ll.c ****     node_set_next(ll_p, n_before, n_act);
+ 358:lvgl/src/lv_misc/lv_ll.c ****     node_set_prev(ll_p, n_act, n_before);
+ 359:lvgl/src/lv_misc/lv_ll.c ****     node_set_prev(ll_p, n_after, n_act);
+ 360:lvgl/src/lv_misc/lv_ll.c ****     node_set_next(ll_p, n_act, n_after);
+ 361:lvgl/src/lv_misc/lv_ll.c **** 
+ 362:lvgl/src/lv_misc/lv_ll.c ****     /*If `n_act` was moved before NULL then it become the new tail*/
+ 363:lvgl/src/lv_misc/lv_ll.c ****     if(n_after == NULL) ll_p->tail = n_act;
+ 364:lvgl/src/lv_misc/lv_ll.c **** 
+ 365:lvgl/src/lv_misc/lv_ll.c ****     /*If `n_act` was moved before `NULL` then it's the new head*/
+ 366:lvgl/src/lv_misc/lv_ll.c ****     if(n_before == NULL) ll_p->head = n_act;
+ 367:lvgl/src/lv_misc/lv_ll.c **** }
+ 368:lvgl/src/lv_misc/lv_ll.c **** 
+ 369:lvgl/src/lv_misc/lv_ll.c **** /**
+ 370:lvgl/src/lv_misc/lv_ll.c ****  * Check if a linked list is empty
+ 371:lvgl/src/lv_misc/lv_ll.c ****  * @param ll_p pointer to a linked list
+ 372:lvgl/src/lv_misc/lv_ll.c ****  * @return true: the linked list is empty; false: not empty
+ARM GAS  D:\Temp\ccutloVb.s 			page 8
+
+
+ 373:lvgl/src/lv_misc/lv_ll.c ****  */
+ 374:lvgl/src/lv_misc/lv_ll.c **** bool _lv_ll_is_empty(lv_ll_t * ll_p)
+ 375:lvgl/src/lv_misc/lv_ll.c **** {
+ 376:lvgl/src/lv_misc/lv_ll.c ****     if(ll_p == NULL) return true;
+ 377:lvgl/src/lv_misc/lv_ll.c **** 
+ 378:lvgl/src/lv_misc/lv_ll.c ****     if(ll_p->head == NULL && ll_p->tail == NULL) return true;
+ 379:lvgl/src/lv_misc/lv_ll.c **** 
+ 380:lvgl/src/lv_misc/lv_ll.c ****     return false;
+ 381:lvgl/src/lv_misc/lv_ll.c **** }
+ 382:lvgl/src/lv_misc/lv_ll.c **** 
+ 383:lvgl/src/lv_misc/lv_ll.c **** /**********************
+ 384:lvgl/src/lv_misc/lv_ll.c ****  *   STATIC FUNCTIONS
+ 385:lvgl/src/lv_misc/lv_ll.c ****  **********************/
+ 386:lvgl/src/lv_misc/lv_ll.c **** 
+ 387:lvgl/src/lv_misc/lv_ll.c **** /**
+ 388:lvgl/src/lv_misc/lv_ll.c ****  * Set the previous node pointer of a node
+ 389:lvgl/src/lv_misc/lv_ll.c ****  * @param ll_p pointer to linked list
+ 390:lvgl/src/lv_misc/lv_ll.c ****  * @param act pointer to a node which prev. node pointer should be set
+ 391:lvgl/src/lv_misc/lv_ll.c ****  * @param prev pointer to a node which should be the previous node before 'act'
+ 392:lvgl/src/lv_misc/lv_ll.c ****  */
+ 393:lvgl/src/lv_misc/lv_ll.c **** static void node_set_prev(lv_ll_t * ll_p, lv_ll_node_t * act, lv_ll_node_t * prev)
+ 394:lvgl/src/lv_misc/lv_ll.c **** {
+  29              		.loc 1 394 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+ 395:lvgl/src/lv_misc/lv_ll.c ****     if(act == NULL) return; /*Can't set the prev node of `NULL`*/
+  34              		.loc 1 395 5 view .LVU1
+  35              		.loc 1 395 7 is_stmt 0 view .LVU2
+  36 0000 0B46     		mov	r3, r1
+  37 0002 09B1     		cbz	r1, .L1
+ 396:lvgl/src/lv_misc/lv_ll.c **** 
+ 397:lvgl/src/lv_misc/lv_ll.c ****     uint8_t * act8 = (uint8_t *) act;
+  38              		.loc 1 397 5 is_stmt 1 view .LVU3
+  39              	.LVL1:
+ 398:lvgl/src/lv_misc/lv_ll.c **** 
+ 399:lvgl/src/lv_misc/lv_ll.c ****     act8 += LL_PREV_P_OFFSET(ll_p);
+  40              		.loc 1 399 5 view .LVU4
+  41              		.loc 1 399 13 is_stmt 0 view .LVU5
+  42 0004 0168     		ldr	r1, [r0]
+  43              	.LVL2:
+ 400:lvgl/src/lv_misc/lv_ll.c **** 
+ 401:lvgl/src/lv_misc/lv_ll.c ****     lv_ll_node_t ** act_node_p = (lv_ll_node_t **) act8;
+  44              		.loc 1 401 5 is_stmt 1 view .LVU6
+ 402:lvgl/src/lv_misc/lv_ll.c ****     lv_ll_node_t ** prev_node_p = (lv_ll_node_t **) &prev;
+  45              		.loc 1 402 5 view .LVU7
+ 403:lvgl/src/lv_misc/lv_ll.c **** 
+ 404:lvgl/src/lv_misc/lv_ll.c ****     *act_node_p = *prev_node_p;
+  46              		.loc 1 404 5 view .LVU8
+  47              		.loc 1 404 17 is_stmt 0 view .LVU9
+  48 0006 5A50     		str	r2, [r3, r1]
+  49              	.LVL3:
+  50              	.L1:
+ 405:lvgl/src/lv_misc/lv_ll.c **** }
+  51              		.loc 1 405 1 view .LVU10
+  52 0008 7047     		bx	lr
+ARM GAS  D:\Temp\ccutloVb.s 			page 9
+
+
+  53              		.cfi_endproc
+  54              	.LFE145:
+  56              		.section	.text.node_set_next,"ax",%progbits
+  57              		.align	1
+  58              		.syntax unified
+  59              		.thumb
+  60              		.thumb_func
+  61              		.fpu fpv4-sp-d16
+  63              	node_set_next:
+  64              	.LVL4:
+  65              	.LFB146:
+ 406:lvgl/src/lv_misc/lv_ll.c **** 
+ 407:lvgl/src/lv_misc/lv_ll.c **** /**
+ 408:lvgl/src/lv_misc/lv_ll.c ****  * Set the 'next node pointer' of a node
+ 409:lvgl/src/lv_misc/lv_ll.c ****  * @param ll_p pointer to linked list
+ 410:lvgl/src/lv_misc/lv_ll.c ****  * @param act pointer to a node which next node pointer should be set
+ 411:lvgl/src/lv_misc/lv_ll.c ****  * @param next pointer to a node which should be the next node before 'act'
+ 412:lvgl/src/lv_misc/lv_ll.c ****  */
+ 413:lvgl/src/lv_misc/lv_ll.c **** static void node_set_next(lv_ll_t * ll_p, lv_ll_node_t * act, lv_ll_node_t * next)
+ 414:lvgl/src/lv_misc/lv_ll.c **** {
+  66              		.loc 1 414 1 is_stmt 1 view -0
+  67              		.cfi_startproc
+  68              		@ args = 0, pretend = 0, frame = 0
+  69              		@ frame_needed = 0, uses_anonymous_args = 0
+  70              		@ link register save eliminated.
+ 415:lvgl/src/lv_misc/lv_ll.c ****     if(act == NULL) return; /*Can't set the next node of `NULL`*/
+  71              		.loc 1 415 5 view .LVU12
+  72              		.loc 1 415 7 is_stmt 0 view .LVU13
+  73 0000 31B1     		cbz	r1, .L6
+ 414:lvgl/src/lv_misc/lv_ll.c ****     if(act == NULL) return; /*Can't set the next node of `NULL`*/
+  74              		.loc 1 414 1 view .LVU14
+  75 0002 10B4     		push	{r4}
+  76              	.LCFI0:
+  77              		.cfi_def_cfa_offset 4
+  78              		.cfi_offset 4, -4
+ 416:lvgl/src/lv_misc/lv_ll.c ****     uint8_t * act8 = (uint8_t *) act;
+  79              		.loc 1 416 5 is_stmt 1 view .LVU15
+  80              	.LVL5:
+ 417:lvgl/src/lv_misc/lv_ll.c **** 
+ 418:lvgl/src/lv_misc/lv_ll.c ****     act8 += LL_NEXT_P_OFFSET(ll_p);
+  81              		.loc 1 418 5 view .LVU16
+  82              		.loc 1 418 13 is_stmt 0 view .LVU17
+  83 0004 0368     		ldr	r3, [r0]
+  84              		.loc 1 418 10 view .LVU18
+  85 0006 0433     		adds	r3, r3, #4
+  86              	.LVL6:
+ 419:lvgl/src/lv_misc/lv_ll.c ****     lv_ll_node_t ** act_node_p = (lv_ll_node_t **) act8;
+  87              		.loc 1 419 5 is_stmt 1 view .LVU19
+ 420:lvgl/src/lv_misc/lv_ll.c ****     lv_ll_node_t ** next_node_p = (lv_ll_node_t **) &next;
+  88              		.loc 1 420 5 view .LVU20
+ 421:lvgl/src/lv_misc/lv_ll.c **** 
+ 422:lvgl/src/lv_misc/lv_ll.c ****     *act_node_p = *next_node_p;
+  89              		.loc 1 422 5 view .LVU21
+  90              		.loc 1 422 17 is_stmt 0 view .LVU22
+  91 0008 CA50     		str	r2, [r1, r3]
+ 423:lvgl/src/lv_misc/lv_ll.c **** }
+  92              		.loc 1 423 1 view .LVU23
+ARM GAS  D:\Temp\ccutloVb.s 			page 10
+
+
+  93 000a 5DF8044B 		ldr	r4, [sp], #4
+  94              	.LCFI1:
+  95              		.cfi_restore 4
+  96              		.cfi_def_cfa_offset 0
+  97 000e 7047     		bx	lr
+  98              	.LVL7:
+  99              	.L6:
+ 100              		.loc 1 423 1 view .LVU24
+ 101 0010 7047     		bx	lr
+ 102              		.cfi_endproc
+ 103              	.LFE146:
+ 105              		.section	.text._lv_ll_init,"ax",%progbits
+ 106              		.align	1
+ 107              		.global	_lv_ll_init
+ 108              		.syntax unified
+ 109              		.thumb
+ 110              		.thumb_func
+ 111              		.fpu fpv4-sp-d16
+ 113              	_lv_ll_init:
+ 114              	.LVL8:
+ 115              	.LFB131:
+  51:lvgl/src/lv_misc/lv_ll.c ****     ll_p->head = NULL;
+ 116              		.loc 1 51 1 is_stmt 1 view -0
+ 117              		.cfi_startproc
+ 118              		@ args = 0, pretend = 0, frame = 0
+ 119              		@ frame_needed = 0, uses_anonymous_args = 0
+ 120              		@ link register save eliminated.
+  52:lvgl/src/lv_misc/lv_ll.c ****     ll_p->tail = NULL;
+ 121              		.loc 1 52 5 view .LVU26
+  52:lvgl/src/lv_misc/lv_ll.c ****     ll_p->tail = NULL;
+ 122              		.loc 1 52 16 is_stmt 0 view .LVU27
+ 123 0000 0023     		movs	r3, #0
+ 124 0002 4360     		str	r3, [r0, #4]
+  53:lvgl/src/lv_misc/lv_ll.c **** #ifdef LV_ARCH_64
+ 125              		.loc 1 53 5 is_stmt 1 view .LVU28
+  53:lvgl/src/lv_misc/lv_ll.c **** #ifdef LV_ARCH_64
+ 126              		.loc 1 53 16 is_stmt 0 view .LVU29
+ 127 0004 8360     		str	r3, [r0, #8]
+  59:lvgl/src/lv_misc/lv_ll.c **** #endif
+ 128              		.loc 1 59 5 is_stmt 1 view .LVU30
+  59:lvgl/src/lv_misc/lv_ll.c **** #endif
+ 129              		.loc 1 59 28 is_stmt 0 view .LVU31
+ 130 0006 0331     		adds	r1, r1, #3
+ 131              	.LVL9:
+  59:lvgl/src/lv_misc/lv_ll.c **** #endif
+ 132              		.loc 1 59 15 view .LVU32
+ 133 0008 21F00301 		bic	r1, r1, #3
+ 134              	.LVL10:
+  62:lvgl/src/lv_misc/lv_ll.c **** }
+ 135              		.loc 1 62 5 is_stmt 1 view .LVU33
+  62:lvgl/src/lv_misc/lv_ll.c **** }
+ 136              		.loc 1 62 18 is_stmt 0 view .LVU34
+ 137 000c 0160     		str	r1, [r0]
+  63:lvgl/src/lv_misc/lv_ll.c **** 
+ 138              		.loc 1 63 1 view .LVU35
+ 139 000e 7047     		bx	lr
+ 140              		.cfi_endproc
+ARM GAS  D:\Temp\ccutloVb.s 			page 11
+
+
+ 141              	.LFE131:
+ 143              		.section	.text._lv_ll_ins_head,"ax",%progbits
+ 144              		.align	1
+ 145              		.global	_lv_ll_ins_head
+ 146              		.syntax unified
+ 147              		.thumb
+ 148              		.thumb_func
+ 149              		.fpu fpv4-sp-d16
+ 151              	_lv_ll_ins_head:
+ 152              	.LVL11:
+ 153              	.LFB132:
+  71:lvgl/src/lv_misc/lv_ll.c ****     lv_ll_node_t * n_new;
+ 154              		.loc 1 71 1 is_stmt 1 view -0
+ 155              		.cfi_startproc
+ 156              		@ args = 0, pretend = 0, frame = 0
+ 157              		@ frame_needed = 0, uses_anonymous_args = 0
+  71:lvgl/src/lv_misc/lv_ll.c ****     lv_ll_node_t * n_new;
+ 158              		.loc 1 71 1 is_stmt 0 view .LVU37
+ 159 0000 38B5     		push	{r3, r4, r5, lr}
+ 160              	.LCFI2:
+ 161              		.cfi_def_cfa_offset 16
+ 162              		.cfi_offset 3, -16
+ 163              		.cfi_offset 4, -12
+ 164              		.cfi_offset 5, -8
+ 165              		.cfi_offset 14, -4
+ 166 0002 0446     		mov	r4, r0
+  72:lvgl/src/lv_misc/lv_ll.c **** 
+ 167              		.loc 1 72 5 is_stmt 1 view .LVU38
+  74:lvgl/src/lv_misc/lv_ll.c **** 
+ 168              		.loc 1 74 5 view .LVU39
+  74:lvgl/src/lv_misc/lv_ll.c **** 
+ 169              		.loc 1 74 30 is_stmt 0 view .LVU40
+ 170 0004 0068     		ldr	r0, [r0]
+ 171              	.LVL12:
+  74:lvgl/src/lv_misc/lv_ll.c **** 
+ 172              		.loc 1 74 13 view .LVU41
+ 173 0006 0830     		adds	r0, r0, #8
+ 174 0008 FFF7FEFF 		bl	lv_mem_alloc
+ 175              	.LVL13:
+  76:lvgl/src/lv_misc/lv_ll.c ****         node_set_prev(ll_p, n_new, NULL);       /*No prev. before the new head*/
+ 176              		.loc 1 76 5 is_stmt 1 view .LVU42
+  76:lvgl/src/lv_misc/lv_ll.c ****         node_set_prev(ll_p, n_new, NULL);       /*No prev. before the new head*/
+ 177              		.loc 1 76 7 is_stmt 0 view .LVU43
+ 178 000c 0546     		mov	r5, r0
+ 179 000e 90B1     		cbz	r0, .L10
+  77:lvgl/src/lv_misc/lv_ll.c ****         node_set_next(ll_p, n_new, ll_p->head); /*After new comes the old head*/
+ 180              		.loc 1 77 9 is_stmt 1 view .LVU44
+ 181 0010 0022     		movs	r2, #0
+ 182 0012 0146     		mov	r1, r0
+ 183 0014 2046     		mov	r0, r4
+ 184              	.LVL14:
+  77:lvgl/src/lv_misc/lv_ll.c ****         node_set_next(ll_p, n_new, ll_p->head); /*After new comes the old head*/
+ 185              		.loc 1 77 9 is_stmt 0 view .LVU45
+ 186 0016 FFF7FEFF 		bl	node_set_prev
+ 187              	.LVL15:
+  78:lvgl/src/lv_misc/lv_ll.c **** 
+ 188              		.loc 1 78 9 is_stmt 1 view .LVU46
+ARM GAS  D:\Temp\ccutloVb.s 			page 12
+
+
+ 189 001a 6268     		ldr	r2, [r4, #4]
+ 190 001c 2946     		mov	r1, r5
+ 191 001e 2046     		mov	r0, r4
+ 192 0020 FFF7FEFF 		bl	node_set_next
+ 193              	.LVL16:
+  80:lvgl/src/lv_misc/lv_ll.c ****             node_set_prev(ll_p, ll_p->head, n_new);
+ 194              		.loc 1 80 9 view .LVU47
+  80:lvgl/src/lv_misc/lv_ll.c ****             node_set_prev(ll_p, ll_p->head, n_new);
+ 195              		.loc 1 80 16 is_stmt 0 view .LVU48
+ 196 0024 6168     		ldr	r1, [r4, #4]
+  80:lvgl/src/lv_misc/lv_ll.c ****             node_set_prev(ll_p, ll_p->head, n_new);
+ 197              		.loc 1 80 11 view .LVU49
+ 198 0026 19B1     		cbz	r1, .L12
+  81:lvgl/src/lv_misc/lv_ll.c ****         }
+ 199              		.loc 1 81 13 is_stmt 1 view .LVU50
+ 200 0028 2A46     		mov	r2, r5
+ 201 002a 2046     		mov	r0, r4
+ 202 002c FFF7FEFF 		bl	node_set_prev
+ 203              	.LVL17:
+ 204              	.L12:
+  84:lvgl/src/lv_misc/lv_ll.c ****         if(ll_p->tail == NULL) { /*If there is no tail (1. node) set the tail too*/
+ 205              		.loc 1 84 9 view .LVU51
+  84:lvgl/src/lv_misc/lv_ll.c ****         if(ll_p->tail == NULL) { /*If there is no tail (1. node) set the tail too*/
+ 206              		.loc 1 84 20 is_stmt 0 view .LVU52
+ 207 0030 6560     		str	r5, [r4, #4]
+  85:lvgl/src/lv_misc/lv_ll.c ****             ll_p->tail = n_new;
+ 208              		.loc 1 85 9 is_stmt 1 view .LVU53
+  85:lvgl/src/lv_misc/lv_ll.c ****             ll_p->tail = n_new;
+ 209              		.loc 1 85 16 is_stmt 0 view .LVU54
+ 210 0032 A368     		ldr	r3, [r4, #8]
+  85:lvgl/src/lv_misc/lv_ll.c ****             ll_p->tail = n_new;
+ 211              		.loc 1 85 11 view .LVU55
+ 212 0034 0BB1     		cbz	r3, .L14
+ 213              	.L10:
+  91:lvgl/src/lv_misc/lv_ll.c **** 
+ 214              		.loc 1 91 1 view .LVU56
+ 215 0036 2846     		mov	r0, r5
+ 216 0038 38BD     		pop	{r3, r4, r5, pc}
+ 217              	.LVL18:
+ 218              	.L14:
+  86:lvgl/src/lv_misc/lv_ll.c ****         }
+ 219              		.loc 1 86 13 is_stmt 1 view .LVU57
+  86:lvgl/src/lv_misc/lv_ll.c ****         }
+ 220              		.loc 1 86 24 is_stmt 0 view .LVU58
+ 221 003a A560     		str	r5, [r4, #8]
+  90:lvgl/src/lv_misc/lv_ll.c **** }
+ 222              		.loc 1 90 5 is_stmt 1 view .LVU59
+  90:lvgl/src/lv_misc/lv_ll.c **** }
+ 223              		.loc 1 90 12 is_stmt 0 view .LVU60
+ 224 003c FBE7     		b	.L10
+ 225              		.cfi_endproc
+ 226              	.LFE132:
+ 228              		.section	.text._lv_ll_ins_tail,"ax",%progbits
+ 229              		.align	1
+ 230              		.global	_lv_ll_ins_tail
+ 231              		.syntax unified
+ 232              		.thumb
+ARM GAS  D:\Temp\ccutloVb.s 			page 13
+
+
+ 233              		.thumb_func
+ 234              		.fpu fpv4-sp-d16
+ 236              	_lv_ll_ins_tail:
+ 237              	.LVL19:
+ 238              	.LFB134:
+ 130:lvgl/src/lv_misc/lv_ll.c ****     lv_ll_node_t * n_new;
+ 239              		.loc 1 130 1 is_stmt 1 view -0
+ 240              		.cfi_startproc
+ 241              		@ args = 0, pretend = 0, frame = 0
+ 242              		@ frame_needed = 0, uses_anonymous_args = 0
+ 130:lvgl/src/lv_misc/lv_ll.c ****     lv_ll_node_t * n_new;
+ 243              		.loc 1 130 1 is_stmt 0 view .LVU62
+ 244 0000 38B5     		push	{r3, r4, r5, lr}
+ 245              	.LCFI3:
+ 246              		.cfi_def_cfa_offset 16
+ 247              		.cfi_offset 3, -16
+ 248              		.cfi_offset 4, -12
+ 249              		.cfi_offset 5, -8
+ 250              		.cfi_offset 14, -4
+ 251 0002 0446     		mov	r4, r0
+ 131:lvgl/src/lv_misc/lv_ll.c **** 
+ 252              		.loc 1 131 5 is_stmt 1 view .LVU63
+ 133:lvgl/src/lv_misc/lv_ll.c **** 
+ 253              		.loc 1 133 5 view .LVU64
+ 133:lvgl/src/lv_misc/lv_ll.c **** 
+ 254              		.loc 1 133 30 is_stmt 0 view .LVU65
+ 255 0004 0068     		ldr	r0, [r0]
+ 256              	.LVL20:
+ 133:lvgl/src/lv_misc/lv_ll.c **** 
+ 257              		.loc 1 133 13 view .LVU66
+ 258 0006 0830     		adds	r0, r0, #8
+ 259 0008 FFF7FEFF 		bl	lv_mem_alloc
+ 260              	.LVL21:
+ 135:lvgl/src/lv_misc/lv_ll.c ****         node_set_next(ll_p, n_new, NULL);       /*No next after the new tail*/
+ 261              		.loc 1 135 5 is_stmt 1 view .LVU67
+ 135:lvgl/src/lv_misc/lv_ll.c ****         node_set_next(ll_p, n_new, NULL);       /*No next after the new tail*/
+ 262              		.loc 1 135 7 is_stmt 0 view .LVU68
+ 263 000c 0546     		mov	r5, r0
+ 264 000e 90B1     		cbz	r0, .L15
+ 136:lvgl/src/lv_misc/lv_ll.c ****         node_set_prev(ll_p, n_new, ll_p->tail); /*The prev. before new is the old tail*/
+ 265              		.loc 1 136 9 is_stmt 1 view .LVU69
+ 266 0010 0022     		movs	r2, #0
+ 267 0012 0146     		mov	r1, r0
+ 268 0014 2046     		mov	r0, r4
+ 269              	.LVL22:
+ 136:lvgl/src/lv_misc/lv_ll.c ****         node_set_prev(ll_p, n_new, ll_p->tail); /*The prev. before new is the old tail*/
+ 270              		.loc 1 136 9 is_stmt 0 view .LVU70
+ 271 0016 FFF7FEFF 		bl	node_set_next
+ 272              	.LVL23:
+ 137:lvgl/src/lv_misc/lv_ll.c ****         if(ll_p->tail != NULL) {                /*If there is old tail then the new comes after it*
+ 273              		.loc 1 137 9 is_stmt 1 view .LVU71
+ 274 001a A268     		ldr	r2, [r4, #8]
+ 275 001c 2946     		mov	r1, r5
+ 276 001e 2046     		mov	r0, r4
+ 277 0020 FFF7FEFF 		bl	node_set_prev
+ 278              	.LVL24:
+ 138:lvgl/src/lv_misc/lv_ll.c ****             node_set_next(ll_p, ll_p->tail, n_new);
+ARM GAS  D:\Temp\ccutloVb.s 			page 14
+
+
+ 279              		.loc 1 138 9 view .LVU72
+ 138:lvgl/src/lv_misc/lv_ll.c ****             node_set_next(ll_p, ll_p->tail, n_new);
+ 280              		.loc 1 138 16 is_stmt 0 view .LVU73
+ 281 0024 A168     		ldr	r1, [r4, #8]
+ 138:lvgl/src/lv_misc/lv_ll.c ****             node_set_next(ll_p, ll_p->tail, n_new);
+ 282              		.loc 1 138 11 view .LVU74
+ 283 0026 19B1     		cbz	r1, .L17
+ 139:lvgl/src/lv_misc/lv_ll.c ****         }
+ 284              		.loc 1 139 13 is_stmt 1 view .LVU75
+ 285 0028 2A46     		mov	r2, r5
+ 286 002a 2046     		mov	r0, r4
+ 287 002c FFF7FEFF 		bl	node_set_next
+ 288              	.LVL25:
+ 289              	.L17:
+ 142:lvgl/src/lv_misc/lv_ll.c ****         if(ll_p->head == NULL) { /*If there is no head (1. node) set the head too*/
+ 290              		.loc 1 142 9 view .LVU76
+ 142:lvgl/src/lv_misc/lv_ll.c ****         if(ll_p->head == NULL) { /*If there is no head (1. node) set the head too*/
+ 291              		.loc 1 142 20 is_stmt 0 view .LVU77
+ 292 0030 A560     		str	r5, [r4, #8]
+ 143:lvgl/src/lv_misc/lv_ll.c ****             ll_p->head = n_new;
+ 293              		.loc 1 143 9 is_stmt 1 view .LVU78
+ 143:lvgl/src/lv_misc/lv_ll.c ****             ll_p->head = n_new;
+ 294              		.loc 1 143 16 is_stmt 0 view .LVU79
+ 295 0032 6368     		ldr	r3, [r4, #4]
+ 143:lvgl/src/lv_misc/lv_ll.c ****             ll_p->head = n_new;
+ 296              		.loc 1 143 11 view .LVU80
+ 297 0034 0BB1     		cbz	r3, .L19
+ 298              	.L15:
+ 149:lvgl/src/lv_misc/lv_ll.c **** 
+ 299              		.loc 1 149 1 view .LVU81
+ 300 0036 2846     		mov	r0, r5
+ 301 0038 38BD     		pop	{r3, r4, r5, pc}
+ 302              	.LVL26:
+ 303              	.L19:
+ 144:lvgl/src/lv_misc/lv_ll.c ****         }
+ 304              		.loc 1 144 13 is_stmt 1 view .LVU82
+ 144:lvgl/src/lv_misc/lv_ll.c ****         }
+ 305              		.loc 1 144 24 is_stmt 0 view .LVU83
+ 306 003a 6560     		str	r5, [r4, #4]
+ 148:lvgl/src/lv_misc/lv_ll.c **** }
+ 307              		.loc 1 148 5 is_stmt 1 view .LVU84
+ 148:lvgl/src/lv_misc/lv_ll.c **** }
+ 308              		.loc 1 148 12 is_stmt 0 view .LVU85
+ 309 003c FBE7     		b	.L15
+ 310              		.cfi_endproc
+ 311              	.LFE134:
+ 313              		.section	.text._lv_ll_get_head,"ax",%progbits
+ 314              		.align	1
+ 315              		.global	_lv_ll_get_head
+ 316              		.syntax unified
+ 317              		.thumb
+ 318              		.thumb_func
+ 319              		.fpu fpv4-sp-d16
+ 321              	_lv_ll_get_head:
+ 322              	.LVL27:
+ 323              	.LFB138:
+ 258:lvgl/src/lv_misc/lv_ll.c ****     void * head = NULL;
+ARM GAS  D:\Temp\ccutloVb.s 			page 15
+
+
+ 324              		.loc 1 258 1 is_stmt 1 view -0
+ 325              		.cfi_startproc
+ 326              		@ args = 0, pretend = 0, frame = 0
+ 327              		@ frame_needed = 0, uses_anonymous_args = 0
+ 328              		@ link register save eliminated.
+ 259:lvgl/src/lv_misc/lv_ll.c **** 
+ 329              		.loc 1 259 5 view .LVU87
+ 261:lvgl/src/lv_misc/lv_ll.c ****         head = ll_p->head;
+ 330              		.loc 1 261 5 view .LVU88
+ 261:lvgl/src/lv_misc/lv_ll.c ****         head = ll_p->head;
+ 331              		.loc 1 261 7 is_stmt 0 view .LVU89
+ 332 0000 08B1     		cbz	r0, .L22
+ 262:lvgl/src/lv_misc/lv_ll.c ****     }
+ 333              		.loc 1 262 9 is_stmt 1 view .LVU90
+ 262:lvgl/src/lv_misc/lv_ll.c ****     }
+ 334              		.loc 1 262 14 is_stmt 0 view .LVU91
+ 335 0002 4068     		ldr	r0, [r0, #4]
+ 336              	.LVL28:
+ 262:lvgl/src/lv_misc/lv_ll.c ****     }
+ 337              		.loc 1 262 14 view .LVU92
+ 338 0004 7047     		bx	lr
+ 339              	.LVL29:
+ 340              	.L22:
+ 259:lvgl/src/lv_misc/lv_ll.c **** 
+ 341              		.loc 1 259 12 view .LVU93
+ 342 0006 0020     		movs	r0, #0
+ 343              	.LVL30:
+ 265:lvgl/src/lv_misc/lv_ll.c **** }
+ 344              		.loc 1 265 5 is_stmt 1 view .LVU94
+ 266:lvgl/src/lv_misc/lv_ll.c **** 
+ 345              		.loc 1 266 1 is_stmt 0 view .LVU95
+ 346 0008 7047     		bx	lr
+ 347              		.cfi_endproc
+ 348              	.LFE138:
+ 350              		.section	.text._lv_ll_get_tail,"ax",%progbits
+ 351              		.align	1
+ 352              		.global	_lv_ll_get_tail
+ 353              		.syntax unified
+ 354              		.thumb
+ 355              		.thumb_func
+ 356              		.fpu fpv4-sp-d16
+ 358              	_lv_ll_get_tail:
+ 359              	.LVL31:
+ 360              	.LFB139:
+ 274:lvgl/src/lv_misc/lv_ll.c ****     void * tail = NULL;
+ 361              		.loc 1 274 1 is_stmt 1 view -0
+ 362              		.cfi_startproc
+ 363              		@ args = 0, pretend = 0, frame = 0
+ 364              		@ frame_needed = 0, uses_anonymous_args = 0
+ 365              		@ link register save eliminated.
+ 275:lvgl/src/lv_misc/lv_ll.c **** 
+ 366              		.loc 1 275 5 view .LVU97
+ 277:lvgl/src/lv_misc/lv_ll.c ****         tail = ll_p->tail;
+ 367              		.loc 1 277 5 view .LVU98
+ 277:lvgl/src/lv_misc/lv_ll.c ****         tail = ll_p->tail;
+ 368              		.loc 1 277 7 is_stmt 0 view .LVU99
+ 369 0000 08B1     		cbz	r0, .L25
+ARM GAS  D:\Temp\ccutloVb.s 			page 16
+
+
+ 278:lvgl/src/lv_misc/lv_ll.c ****     }
+ 370              		.loc 1 278 9 is_stmt 1 view .LVU100
+ 278:lvgl/src/lv_misc/lv_ll.c ****     }
+ 371              		.loc 1 278 14 is_stmt 0 view .LVU101
+ 372 0002 8068     		ldr	r0, [r0, #8]
+ 373              	.LVL32:
+ 278:lvgl/src/lv_misc/lv_ll.c ****     }
+ 374              		.loc 1 278 14 view .LVU102
+ 375 0004 7047     		bx	lr
+ 376              	.LVL33:
+ 377              	.L25:
+ 275:lvgl/src/lv_misc/lv_ll.c **** 
+ 378              		.loc 1 275 12 view .LVU103
+ 379 0006 0020     		movs	r0, #0
+ 380              	.LVL34:
+ 281:lvgl/src/lv_misc/lv_ll.c **** }
+ 381              		.loc 1 281 5 is_stmt 1 view .LVU104
+ 282:lvgl/src/lv_misc/lv_ll.c **** 
+ 382              		.loc 1 282 1 is_stmt 0 view .LVU105
+ 383 0008 7047     		bx	lr
+ 384              		.cfi_endproc
+ 385              	.LFE139:
+ 387              		.section	.text._lv_ll_get_next,"ax",%progbits
+ 388              		.align	1
+ 389              		.global	_lv_ll_get_next
+ 390              		.syntax unified
+ 391              		.thumb
+ 392              		.thumb_func
+ 393              		.fpu fpv4-sp-d16
+ 395              	_lv_ll_get_next:
+ 396              	.LVL35:
+ 397              	.LFB140:
+ 291:lvgl/src/lv_misc/lv_ll.c ****     if(ll_p == NULL) return NULL;
+ 398              		.loc 1 291 1 is_stmt 1 view -0
+ 399              		.cfi_startproc
+ 400              		@ args = 0, pretend = 0, frame = 0
+ 401              		@ frame_needed = 0, uses_anonymous_args = 0
+ 402              		@ link register save eliminated.
+ 292:lvgl/src/lv_misc/lv_ll.c **** 
+ 403              		.loc 1 292 5 view .LVU107
+ 292:lvgl/src/lv_misc/lv_ll.c **** 
+ 404              		.loc 1 292 7 is_stmt 0 view .LVU108
+ 405 0000 18B1     		cbz	r0, .L28
+ 296:lvgl/src/lv_misc/lv_ll.c ****     n_act_d += LL_NEXT_P_OFFSET(ll_p);
+ 406              		.loc 1 296 5 is_stmt 1 view .LVU109
+ 407              	.LVL36:
+ 297:lvgl/src/lv_misc/lv_ll.c ****     return *((lv_ll_node_t **)n_act_d);
+ 408              		.loc 1 297 5 view .LVU110
+ 297:lvgl/src/lv_misc/lv_ll.c ****     return *((lv_ll_node_t **)n_act_d);
+ 409              		.loc 1 297 16 is_stmt 0 view .LVU111
+ 410 0002 0368     		ldr	r3, [r0]
+ 297:lvgl/src/lv_misc/lv_ll.c ****     return *((lv_ll_node_t **)n_act_d);
+ 411              		.loc 1 297 13 view .LVU112
+ 412 0004 0433     		adds	r3, r3, #4
+ 413              	.LVL37:
+ 298:lvgl/src/lv_misc/lv_ll.c **** }
+ 414              		.loc 1 298 5 is_stmt 1 view .LVU113
+ARM GAS  D:\Temp\ccutloVb.s 			page 17
+
+
+ 298:lvgl/src/lv_misc/lv_ll.c **** }
+ 415              		.loc 1 298 12 is_stmt 0 view .LVU114
+ 416 0006 C858     		ldr	r0, [r1, r3]
+ 417              	.LVL38:
+ 298:lvgl/src/lv_misc/lv_ll.c **** }
+ 418              		.loc 1 298 12 view .LVU115
+ 419 0008 7047     		bx	lr
+ 420              	.LVL39:
+ 421              	.L28:
+ 292:lvgl/src/lv_misc/lv_ll.c **** 
+ 422              		.loc 1 292 29 view .LVU116
+ 423 000a 0020     		movs	r0, #0
+ 424              	.LVL40:
+ 299:lvgl/src/lv_misc/lv_ll.c **** 
+ 425              		.loc 1 299 1 view .LVU117
+ 426 000c 7047     		bx	lr
+ 427              		.cfi_endproc
+ 428              	.LFE140:
+ 430              		.section	.text._lv_ll_get_prev,"ax",%progbits
+ 431              		.align	1
+ 432              		.global	_lv_ll_get_prev
+ 433              		.syntax unified
+ 434              		.thumb
+ 435              		.thumb_func
+ 436              		.fpu fpv4-sp-d16
+ 438              	_lv_ll_get_prev:
+ 439              	.LVL41:
+ 440              	.LFB141:
+ 308:lvgl/src/lv_misc/lv_ll.c ****     if(ll_p == NULL) return NULL;
+ 441              		.loc 1 308 1 is_stmt 1 view -0
+ 442              		.cfi_startproc
+ 443              		@ args = 0, pretend = 0, frame = 0
+ 444              		@ frame_needed = 0, uses_anonymous_args = 0
+ 445              		@ link register save eliminated.
+ 309:lvgl/src/lv_misc/lv_ll.c **** 
+ 446              		.loc 1 309 5 view .LVU119
+ 309:lvgl/src/lv_misc/lv_ll.c **** 
+ 447              		.loc 1 309 7 is_stmt 0 view .LVU120
+ 448 0000 10B1     		cbz	r0, .L31
+ 313:lvgl/src/lv_misc/lv_ll.c ****     n_act_d += LL_PREV_P_OFFSET(ll_p);
+ 449              		.loc 1 313 5 is_stmt 1 view .LVU121
+ 450              	.LVL42:
+ 314:lvgl/src/lv_misc/lv_ll.c ****     return *((lv_ll_node_t **)n_act_d);
+ 451              		.loc 1 314 5 view .LVU122
+ 314:lvgl/src/lv_misc/lv_ll.c ****     return *((lv_ll_node_t **)n_act_d);
+ 452              		.loc 1 314 16 is_stmt 0 view .LVU123
+ 453 0002 0368     		ldr	r3, [r0]
+ 454              	.LVL43:
+ 315:lvgl/src/lv_misc/lv_ll.c **** }
+ 455              		.loc 1 315 5 is_stmt 1 view .LVU124
+ 315:lvgl/src/lv_misc/lv_ll.c **** }
+ 456              		.loc 1 315 12 is_stmt 0 view .LVU125
+ 457 0004 C858     		ldr	r0, [r1, r3]
+ 458              	.LVL44:
+ 315:lvgl/src/lv_misc/lv_ll.c **** }
+ 459              		.loc 1 315 12 view .LVU126
+ 460 0006 7047     		bx	lr
+ARM GAS  D:\Temp\ccutloVb.s 			page 18
+
+
+ 461              	.LVL45:
+ 462              	.L31:
+ 309:lvgl/src/lv_misc/lv_ll.c **** 
+ 463              		.loc 1 309 29 view .LVU127
+ 464 0008 0020     		movs	r0, #0
+ 465              	.LVL46:
+ 316:lvgl/src/lv_misc/lv_ll.c **** 
+ 466              		.loc 1 316 1 view .LVU128
+ 467 000a 7047     		bx	lr
+ 468              		.cfi_endproc
+ 469              	.LFE141:
+ 471              		.section	.text._lv_ll_ins_prev,"ax",%progbits
+ 472              		.align	1
+ 473              		.global	_lv_ll_ins_prev
+ 474              		.syntax unified
+ 475              		.thumb
+ 476              		.thumb_func
+ 477              		.fpu fpv4-sp-d16
+ 479              	_lv_ll_ins_prev:
+ 480              	.LVL47:
+ 481              	.LFB133:
+ 100:lvgl/src/lv_misc/lv_ll.c ****     lv_ll_node_t * n_new;
+ 482              		.loc 1 100 1 is_stmt 1 view -0
+ 483              		.cfi_startproc
+ 484              		@ args = 0, pretend = 0, frame = 0
+ 485              		@ frame_needed = 0, uses_anonymous_args = 0
+ 100:lvgl/src/lv_misc/lv_ll.c ****     lv_ll_node_t * n_new;
+ 486              		.loc 1 100 1 is_stmt 0 view .LVU130
+ 487 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 488              	.LCFI4:
+ 489              		.cfi_def_cfa_offset 24
+ 490              		.cfi_offset 3, -24
+ 491              		.cfi_offset 4, -20
+ 492              		.cfi_offset 5, -16
+ 493              		.cfi_offset 6, -12
+ 494              		.cfi_offset 7, -8
+ 495              		.cfi_offset 14, -4
+ 101:lvgl/src/lv_misc/lv_ll.c **** 
+ 496              		.loc 1 101 5 is_stmt 1 view .LVU131
+ 103:lvgl/src/lv_misc/lv_ll.c **** 
+ 497              		.loc 1 103 5 view .LVU132
+ 103:lvgl/src/lv_misc/lv_ll.c **** 
+ 498              		.loc 1 103 7 is_stmt 0 view .LVU133
+ 499 0002 78B3     		cbz	r0, .L35
+ 500 0004 0446     		mov	r4, r0
+ 103:lvgl/src/lv_misc/lv_ll.c **** 
+ 501              		.loc 1 103 21 discriminator 2 view .LVU134
+ 502 0006 79B3     		cbz	r1, .L36
+ 503 0008 0D46     		mov	r5, r1
+ 105:lvgl/src/lv_misc/lv_ll.c ****         n_new = _lv_ll_ins_head(ll_p);
+ 504              		.loc 1 105 5 is_stmt 1 view .LVU135
+ 105:lvgl/src/lv_misc/lv_ll.c ****         n_new = _lv_ll_ins_head(ll_p);
+ 505              		.loc 1 105 8 is_stmt 0 view .LVU136
+ 506 000a FFF7FEFF 		bl	_lv_ll_get_head
+ 507              	.LVL48:
+ 105:lvgl/src/lv_misc/lv_ll.c ****         n_new = _lv_ll_ins_head(ll_p);
+ 508              		.loc 1 105 7 view .LVU137
+ARM GAS  D:\Temp\ccutloVb.s 			page 19
+
+
+ 509 000e 8542     		cmp	r5, r0
+ 510 0010 20D0     		beq	.L40
+ 511              	.LBB2:
+ 110:lvgl/src/lv_misc/lv_ll.c ****         if(n_new == NULL) return NULL;
+ 512              		.loc 1 110 9 is_stmt 1 view .LVU138
+ 110:lvgl/src/lv_misc/lv_ll.c ****         if(n_new == NULL) return NULL;
+ 513              		.loc 1 110 34 is_stmt 0 view .LVU139
+ 514 0012 2068     		ldr	r0, [r4]
+ 110:lvgl/src/lv_misc/lv_ll.c ****         if(n_new == NULL) return NULL;
+ 515              		.loc 1 110 17 view .LVU140
+ 516 0014 0830     		adds	r0, r0, #8
+ 517 0016 FFF7FEFF 		bl	lv_mem_alloc
+ 518              	.LVL49:
+ 111:lvgl/src/lv_misc/lv_ll.c **** 
+ 519              		.loc 1 111 9 is_stmt 1 view .LVU141
+ 111:lvgl/src/lv_misc/lv_ll.c **** 
+ 520              		.loc 1 111 11 is_stmt 0 view .LVU142
+ 521 001a 0646     		mov	r6, r0
+ 522 001c 30B3     		cbz	r0, .L38
+ 113:lvgl/src/lv_misc/lv_ll.c ****         n_prev = _lv_ll_get_prev(ll_p, n_act);
+ 523              		.loc 1 113 9 is_stmt 1 view .LVU143
+ 114:lvgl/src/lv_misc/lv_ll.c ****         node_set_next(ll_p, n_prev, n_new);
+ 524              		.loc 1 114 9 view .LVU144
+ 114:lvgl/src/lv_misc/lv_ll.c ****         node_set_next(ll_p, n_prev, n_new);
+ 525              		.loc 1 114 18 is_stmt 0 view .LVU145
+ 526 001e 2946     		mov	r1, r5
+ 527 0020 2046     		mov	r0, r4
+ 528              	.LVL50:
+ 114:lvgl/src/lv_misc/lv_ll.c ****         node_set_next(ll_p, n_prev, n_new);
+ 529              		.loc 1 114 18 view .LVU146
+ 530 0022 FFF7FEFF 		bl	_lv_ll_get_prev
+ 531              	.LVL51:
+ 532 0026 0746     		mov	r7, r0
+ 533              	.LVL52:
+ 115:lvgl/src/lv_misc/lv_ll.c ****         node_set_prev(ll_p, n_new, n_prev);
+ 534              		.loc 1 115 9 is_stmt 1 view .LVU147
+ 535 0028 3246     		mov	r2, r6
+ 536 002a 0146     		mov	r1, r0
+ 537 002c 2046     		mov	r0, r4
+ 538              	.LVL53:
+ 115:lvgl/src/lv_misc/lv_ll.c ****         node_set_prev(ll_p, n_new, n_prev);
+ 539              		.loc 1 115 9 is_stmt 0 view .LVU148
+ 540 002e FFF7FEFF 		bl	node_set_next
+ 541              	.LVL54:
+ 116:lvgl/src/lv_misc/lv_ll.c ****         node_set_prev(ll_p, n_act, n_new);
+ 542              		.loc 1 116 9 is_stmt 1 view .LVU149
+ 543 0032 3A46     		mov	r2, r7
+ 544 0034 3146     		mov	r1, r6
+ 545 0036 2046     		mov	r0, r4
+ 546 0038 FFF7FEFF 		bl	node_set_prev
+ 547              	.LVL55:
+ 117:lvgl/src/lv_misc/lv_ll.c ****         node_set_next(ll_p, n_new, n_act);
+ 548              		.loc 1 117 9 view .LVU150
+ 549 003c 3246     		mov	r2, r6
+ 550 003e 2946     		mov	r1, r5
+ 551 0040 2046     		mov	r0, r4
+ 552 0042 FFF7FEFF 		bl	node_set_prev
+ARM GAS  D:\Temp\ccutloVb.s 			page 20
+
+
+ 553              	.LVL56:
+ 118:lvgl/src/lv_misc/lv_ll.c ****     }
+ 554              		.loc 1 118 9 view .LVU151
+ 555 0046 2A46     		mov	r2, r5
+ 556 0048 3146     		mov	r1, r6
+ 557 004a 2046     		mov	r0, r4
+ 558 004c FFF7FEFF 		bl	node_set_next
+ 559              	.LVL57:
+ 560              	.L32:
+ 118:lvgl/src/lv_misc/lv_ll.c ****     }
+ 561              		.loc 1 118 9 is_stmt 0 view .LVU152
+ 562              	.LBE2:
+ 122:lvgl/src/lv_misc/lv_ll.c **** 
+ 563              		.loc 1 122 1 view .LVU153
+ 564 0050 3046     		mov	r0, r6
+ 565 0052 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 566              	.LVL58:
+ 567              	.L40:
+ 106:lvgl/src/lv_misc/lv_ll.c ****         if(n_new == NULL) return NULL;
+ 568              		.loc 1 106 9 is_stmt 1 view .LVU154
+ 106:lvgl/src/lv_misc/lv_ll.c ****         if(n_new == NULL) return NULL;
+ 569              		.loc 1 106 17 is_stmt 0 view .LVU155
+ 570 0054 2046     		mov	r0, r4
+ 571 0056 FFF7FEFF 		bl	_lv_ll_ins_head
+ 572              	.LVL59:
+ 107:lvgl/src/lv_misc/lv_ll.c ****     }
+ 573              		.loc 1 107 9 is_stmt 1 view .LVU156
+ 107:lvgl/src/lv_misc/lv_ll.c ****     }
+ 574              		.loc 1 107 11 is_stmt 0 view .LVU157
+ 575 005a 0646     		mov	r6, r0
+ 576 005c 0028     		cmp	r0, #0
+ 577 005e F7D1     		bne	.L32
+ 107:lvgl/src/lv_misc/lv_ll.c ****     }
+ 578              		.loc 1 107 34 view .LVU158
+ 579 0060 0026     		movs	r6, #0
+ 580 0062 F5E7     		b	.L32
+ 581              	.LVL60:
+ 582              	.L35:
+ 103:lvgl/src/lv_misc/lv_ll.c **** 
+ 583              		.loc 1 103 46 view .LVU159
+ 584 0064 0026     		movs	r6, #0
+ 585 0066 F3E7     		b	.L32
+ 586              	.L36:
+ 103:lvgl/src/lv_misc/lv_ll.c **** 
+ 587              		.loc 1 103 46 view .LVU160
+ 588 0068 0E46     		mov	r6, r1
+ 589 006a F1E7     		b	.L32
+ 590              	.LVL61:
+ 591              	.L38:
+ 592              	.LBB3:
+ 111:lvgl/src/lv_misc/lv_ll.c **** 
+ 593              		.loc 1 111 34 view .LVU161
+ 594 006c 0026     		movs	r6, #0
+ 595 006e EFE7     		b	.L32
+ 596              	.LBE3:
+ 597              		.cfi_endproc
+ 598              	.LFE133:
+ARM GAS  D:\Temp\ccutloVb.s 			page 21
+
+
+ 600              		.section	.text._lv_ll_remove,"ax",%progbits
+ 601              		.align	1
+ 602              		.global	_lv_ll_remove
+ 603              		.syntax unified
+ 604              		.thumb
+ 605              		.thumb_func
+ 606              		.fpu fpv4-sp-d16
+ 608              	_lv_ll_remove:
+ 609              	.LVL62:
+ 610              	.LFB135:
+ 158:lvgl/src/lv_misc/lv_ll.c ****     if(_lv_ll_get_head(ll_p) == node_p) {
+ 611              		.loc 1 158 1 is_stmt 1 view -0
+ 612              		.cfi_startproc
+ 613              		@ args = 0, pretend = 0, frame = 0
+ 614              		@ frame_needed = 0, uses_anonymous_args = 0
+ 158:lvgl/src/lv_misc/lv_ll.c ****     if(_lv_ll_get_head(ll_p) == node_p) {
+ 615              		.loc 1 158 1 is_stmt 0 view .LVU163
+ 616 0000 70B5     		push	{r4, r5, r6, lr}
+ 617              	.LCFI5:
+ 618              		.cfi_def_cfa_offset 16
+ 619              		.cfi_offset 4, -16
+ 620              		.cfi_offset 5, -12
+ 621              		.cfi_offset 6, -8
+ 622              		.cfi_offset 14, -4
+ 623 0002 0446     		mov	r4, r0
+ 624 0004 0D46     		mov	r5, r1
+ 159:lvgl/src/lv_misc/lv_ll.c ****         /*The new head will be the node after 'n_act'*/
+ 625              		.loc 1 159 5 is_stmt 1 view .LVU164
+ 159:lvgl/src/lv_misc/lv_ll.c ****         /*The new head will be the node after 'n_act'*/
+ 626              		.loc 1 159 8 is_stmt 0 view .LVU165
+ 627 0006 FFF7FEFF 		bl	_lv_ll_get_head
+ 628              	.LVL63:
+ 159:lvgl/src/lv_misc/lv_ll.c ****         /*The new head will be the node after 'n_act'*/
+ 629              		.loc 1 159 7 view .LVU166
+ 630 000a 8542     		cmp	r5, r0
+ 631 000c 19D0     		beq	.L48
+ 169:lvgl/src/lv_misc/lv_ll.c ****         /*The new tail will be the node before 'n_act'*/
+ 632              		.loc 1 169 10 is_stmt 1 view .LVU167
+ 169:lvgl/src/lv_misc/lv_ll.c ****         /*The new tail will be the node before 'n_act'*/
+ 633              		.loc 1 169 13 is_stmt 0 view .LVU168
+ 634 000e 2046     		mov	r0, r4
+ 635 0010 FFF7FEFF 		bl	_lv_ll_get_tail
+ 636              	.LVL64:
+ 169:lvgl/src/lv_misc/lv_ll.c ****         /*The new tail will be the node before 'n_act'*/
+ 637              		.loc 1 169 12 view .LVU169
+ 638 0014 8542     		cmp	r5, r0
+ 639 0016 23D0     		beq	.L49
+ 640              	.LBB4:
+ 180:lvgl/src/lv_misc/lv_ll.c ****         lv_ll_node_t * n_next = _lv_ll_get_next(ll_p, node_p);
+ 641              		.loc 1 180 9 is_stmt 1 view .LVU170
+ 180:lvgl/src/lv_misc/lv_ll.c ****         lv_ll_node_t * n_next = _lv_ll_get_next(ll_p, node_p);
+ 642              		.loc 1 180 33 is_stmt 0 view .LVU171
+ 643 0018 2946     		mov	r1, r5
+ 644 001a 2046     		mov	r0, r4
+ 645 001c FFF7FEFF 		bl	_lv_ll_get_prev
+ 646              	.LVL65:
+ 647 0020 0646     		mov	r6, r0
+ARM GAS  D:\Temp\ccutloVb.s 			page 22
+
+
+ 648              	.LVL66:
+ 181:lvgl/src/lv_misc/lv_ll.c **** 
+ 649              		.loc 1 181 9 is_stmt 1 view .LVU172
+ 181:lvgl/src/lv_misc/lv_ll.c **** 
+ 650              		.loc 1 181 33 is_stmt 0 view .LVU173
+ 651 0022 2946     		mov	r1, r5
+ 652 0024 2046     		mov	r0, r4
+ 653              	.LVL67:
+ 181:lvgl/src/lv_misc/lv_ll.c **** 
+ 654              		.loc 1 181 33 view .LVU174
+ 655 0026 FFF7FEFF 		bl	_lv_ll_get_next
+ 656              	.LVL68:
+ 657 002a 0546     		mov	r5, r0
+ 658              	.LVL69:
+ 183:lvgl/src/lv_misc/lv_ll.c ****         node_set_prev(ll_p, n_next, n_prev);
+ 659              		.loc 1 183 9 is_stmt 1 view .LVU175
+ 660 002c 0246     		mov	r2, r0
+ 661 002e 3146     		mov	r1, r6
+ 662 0030 2046     		mov	r0, r4
+ 663              	.LVL70:
+ 183:lvgl/src/lv_misc/lv_ll.c ****         node_set_prev(ll_p, n_next, n_prev);
+ 664              		.loc 1 183 9 is_stmt 0 view .LVU176
+ 665 0032 FFF7FEFF 		bl	node_set_next
+ 666              	.LVL71:
+ 184:lvgl/src/lv_misc/lv_ll.c ****     }
+ 667              		.loc 1 184 9 is_stmt 1 view .LVU177
+ 668 0036 3246     		mov	r2, r6
+ 669 0038 2946     		mov	r1, r5
+ 670 003a 2046     		mov	r0, r4
+ 671 003c FFF7FEFF 		bl	node_set_prev
+ 672              	.LVL72:
+ 673              	.L41:
+ 184:lvgl/src/lv_misc/lv_ll.c ****     }
+ 674              		.loc 1 184 9 is_stmt 0 view .LVU178
+ 675              	.LBE4:
+ 186:lvgl/src/lv_misc/lv_ll.c **** 
+ 676              		.loc 1 186 1 view .LVU179
+ 677 0040 70BD     		pop	{r4, r5, r6, pc}
+ 678              	.LVL73:
+ 679              	.L48:
+ 161:lvgl/src/lv_misc/lv_ll.c ****         if(ll_p->head == NULL) {
+ 680              		.loc 1 161 9 is_stmt 1 view .LVU180
+ 161:lvgl/src/lv_misc/lv_ll.c ****         if(ll_p->head == NULL) {
+ 681              		.loc 1 161 22 is_stmt 0 view .LVU181
+ 682 0042 2946     		mov	r1, r5
+ 683 0044 2046     		mov	r0, r4
+ 684 0046 FFF7FEFF 		bl	_lv_ll_get_next
+ 685              	.LVL74:
+ 161:lvgl/src/lv_misc/lv_ll.c ****         if(ll_p->head == NULL) {
+ 686              		.loc 1 161 20 view .LVU182
+ 687 004a 6060     		str	r0, [r4, #4]
+ 162:lvgl/src/lv_misc/lv_ll.c ****             ll_p->tail = NULL;
+ 688              		.loc 1 162 9 is_stmt 1 view .LVU183
+ 162:lvgl/src/lv_misc/lv_ll.c ****             ll_p->tail = NULL;
+ 689              		.loc 1 162 11 is_stmt 0 view .LVU184
+ 690 004c 28B1     		cbz	r0, .L50
+ 166:lvgl/src/lv_misc/lv_ll.c ****         }
+ARM GAS  D:\Temp\ccutloVb.s 			page 23
+
+
+ 691              		.loc 1 166 13 is_stmt 1 view .LVU185
+ 692 004e 0022     		movs	r2, #0
+ 693 0050 0146     		mov	r1, r0
+ 694 0052 2046     		mov	r0, r4
+ 695 0054 FFF7FEFF 		bl	node_set_prev
+ 696              	.LVL75:
+ 697 0058 F2E7     		b	.L41
+ 698              	.L50:
+ 163:lvgl/src/lv_misc/lv_ll.c ****         }
+ 699              		.loc 1 163 13 view .LVU186
+ 163:lvgl/src/lv_misc/lv_ll.c ****         }
+ 700              		.loc 1 163 24 is_stmt 0 view .LVU187
+ 701 005a 0023     		movs	r3, #0
+ 702 005c A360     		str	r3, [r4, #8]
+ 703 005e EFE7     		b	.L41
+ 704              	.L49:
+ 171:lvgl/src/lv_misc/lv_ll.c ****         if(ll_p->tail == NULL) {
+ 705              		.loc 1 171 9 is_stmt 1 view .LVU188
+ 171:lvgl/src/lv_misc/lv_ll.c ****         if(ll_p->tail == NULL) {
+ 706              		.loc 1 171 22 is_stmt 0 view .LVU189
+ 707 0060 2946     		mov	r1, r5
+ 708 0062 2046     		mov	r0, r4
+ 709 0064 FFF7FEFF 		bl	_lv_ll_get_prev
+ 710              	.LVL76:
+ 171:lvgl/src/lv_misc/lv_ll.c ****         if(ll_p->tail == NULL) {
+ 711              		.loc 1 171 20 view .LVU190
+ 712 0068 A060     		str	r0, [r4, #8]
+ 172:lvgl/src/lv_misc/lv_ll.c ****             ll_p->head = NULL;
+ 713              		.loc 1 172 9 is_stmt 1 view .LVU191
+ 172:lvgl/src/lv_misc/lv_ll.c ****             ll_p->head = NULL;
+ 714              		.loc 1 172 11 is_stmt 0 view .LVU192
+ 715 006a 28B1     		cbz	r0, .L51
+ 176:lvgl/src/lv_misc/lv_ll.c ****         }
+ 716              		.loc 1 176 13 is_stmt 1 view .LVU193
+ 717 006c 0022     		movs	r2, #0
+ 718 006e 0146     		mov	r1, r0
+ 719 0070 2046     		mov	r0, r4
+ 720 0072 FFF7FEFF 		bl	node_set_next
+ 721              	.LVL77:
+ 722 0076 E3E7     		b	.L41
+ 723              	.L51:
+ 173:lvgl/src/lv_misc/lv_ll.c ****         }
+ 724              		.loc 1 173 13 view .LVU194
+ 173:lvgl/src/lv_misc/lv_ll.c ****         }
+ 725              		.loc 1 173 24 is_stmt 0 view .LVU195
+ 726 0078 0023     		movs	r3, #0
+ 727 007a 6360     		str	r3, [r4, #4]
+ 728 007c E0E7     		b	.L41
+ 729              		.cfi_endproc
+ 730              	.LFE135:
+ 732              		.section	.text._lv_ll_clear,"ax",%progbits
+ 733              		.align	1
+ 734              		.global	_lv_ll_clear
+ 735              		.syntax unified
+ 736              		.thumb
+ 737              		.thumb_func
+ 738              		.fpu fpv4-sp-d16
+ARM GAS  D:\Temp\ccutloVb.s 			page 24
+
+
+ 740              	_lv_ll_clear:
+ 741              	.LVL78:
+ 742              	.LFB136:
+ 193:lvgl/src/lv_misc/lv_ll.c ****     void * i;
+ 743              		.loc 1 193 1 is_stmt 1 view -0
+ 744              		.cfi_startproc
+ 745              		@ args = 0, pretend = 0, frame = 0
+ 746              		@ frame_needed = 0, uses_anonymous_args = 0
+ 193:lvgl/src/lv_misc/lv_ll.c ****     void * i;
+ 747              		.loc 1 193 1 is_stmt 0 view .LVU197
+ 748 0000 70B5     		push	{r4, r5, r6, lr}
+ 749              	.LCFI6:
+ 750              		.cfi_def_cfa_offset 16
+ 751              		.cfi_offset 4, -16
+ 752              		.cfi_offset 5, -12
+ 753              		.cfi_offset 6, -8
+ 754              		.cfi_offset 14, -4
+ 755 0002 0546     		mov	r5, r0
+ 194:lvgl/src/lv_misc/lv_ll.c ****     void * i_next;
+ 756              		.loc 1 194 5 is_stmt 1 view .LVU198
+ 195:lvgl/src/lv_misc/lv_ll.c **** 
+ 757              		.loc 1 195 5 view .LVU199
+ 197:lvgl/src/lv_misc/lv_ll.c ****     i_next = NULL;
+ 758              		.loc 1 197 5 view .LVU200
+ 197:lvgl/src/lv_misc/lv_ll.c ****     i_next = NULL;
+ 759              		.loc 1 197 14 is_stmt 0 view .LVU201
+ 760 0004 FFF7FEFF 		bl	_lv_ll_get_head
+ 761              	.LVL79:
+ 197:lvgl/src/lv_misc/lv_ll.c ****     i_next = NULL;
+ 762              		.loc 1 197 14 view .LVU202
+ 763 0008 0446     		mov	r4, r0
+ 764              	.LVL80:
+ 198:lvgl/src/lv_misc/lv_ll.c **** 
+ 765              		.loc 1 198 5 is_stmt 1 view .LVU203
+ 200:lvgl/src/lv_misc/lv_ll.c ****         i_next = _lv_ll_get_next(ll_p, i);
+ 766              		.loc 1 200 5 view .LVU204
+ 767              	.L53:
+ 200:lvgl/src/lv_misc/lv_ll.c ****         i_next = _lv_ll_get_next(ll_p, i);
+ 768              		.loc 1 200 10 is_stmt 0 view .LVU205
+ 769 000a 6CB1     		cbz	r4, .L56
+ 201:lvgl/src/lv_misc/lv_ll.c **** 
+ 770              		.loc 1 201 9 is_stmt 1 view .LVU206
+ 201:lvgl/src/lv_misc/lv_ll.c **** 
+ 771              		.loc 1 201 18 is_stmt 0 view .LVU207
+ 772 000c 2146     		mov	r1, r4
+ 773 000e 2846     		mov	r0, r5
+ 774 0010 FFF7FEFF 		bl	_lv_ll_get_next
+ 775              	.LVL81:
+ 776 0014 0646     		mov	r6, r0
+ 777              	.LVL82:
+ 203:lvgl/src/lv_misc/lv_ll.c ****         lv_mem_free(i);
+ 778              		.loc 1 203 9 is_stmt 1 view .LVU208
+ 779 0016 2146     		mov	r1, r4
+ 780 0018 2846     		mov	r0, r5
+ 781              	.LVL83:
+ 203:lvgl/src/lv_misc/lv_ll.c ****         lv_mem_free(i);
+ 782              		.loc 1 203 9 is_stmt 0 view .LVU209
+ARM GAS  D:\Temp\ccutloVb.s 			page 25
+
+
+ 783 001a FFF7FEFF 		bl	_lv_ll_remove
+ 784              	.LVL84:
+ 204:lvgl/src/lv_misc/lv_ll.c **** 
+ 785              		.loc 1 204 9 is_stmt 1 view .LVU210
+ 786 001e 2046     		mov	r0, r4
+ 787 0020 FFF7FEFF 		bl	lv_mem_free
+ 788              	.LVL85:
+ 206:lvgl/src/lv_misc/lv_ll.c ****     }
+ 789              		.loc 1 206 9 view .LVU211
+ 206:lvgl/src/lv_misc/lv_ll.c ****     }
+ 790              		.loc 1 206 11 is_stmt 0 view .LVU212
+ 791 0024 3446     		mov	r4, r6
+ 792 0026 F0E7     		b	.L53
+ 793              	.LVL86:
+ 794              	.L56:
+ 208:lvgl/src/lv_misc/lv_ll.c **** 
+ 795              		.loc 1 208 1 view .LVU213
+ 796 0028 70BD     		pop	{r4, r5, r6, pc}
+ 208:lvgl/src/lv_misc/lv_ll.c **** 
+ 797              		.loc 1 208 1 view .LVU214
+ 798              		.cfi_endproc
+ 799              	.LFE136:
+ 801              		.section	.text._lv_ll_chg_list,"ax",%progbits
+ 802              		.align	1
+ 803              		.global	_lv_ll_chg_list
+ 804              		.syntax unified
+ 805              		.thumb
+ 806              		.thumb_func
+ 807              		.fpu fpv4-sp-d16
+ 809              	_lv_ll_chg_list:
+ 810              	.LVL87:
+ 811              	.LFB137:
+ 219:lvgl/src/lv_misc/lv_ll.c ****     _lv_ll_remove(ll_ori_p, node);
+ 812              		.loc 1 219 1 is_stmt 1 view -0
+ 813              		.cfi_startproc
+ 814              		@ args = 0, pretend = 0, frame = 0
+ 815              		@ frame_needed = 0, uses_anonymous_args = 0
+ 219:lvgl/src/lv_misc/lv_ll.c ****     _lv_ll_remove(ll_ori_p, node);
+ 816              		.loc 1 219 1 is_stmt 0 view .LVU216
+ 817 0000 70B5     		push	{r4, r5, r6, lr}
+ 818              	.LCFI7:
+ 819              		.cfi_def_cfa_offset 16
+ 820              		.cfi_offset 4, -16
+ 821              		.cfi_offset 5, -12
+ 822              		.cfi_offset 6, -8
+ 823              		.cfi_offset 14, -4
+ 824 0002 0C46     		mov	r4, r1
+ 825 0004 1546     		mov	r5, r2
+ 826 0006 1E46     		mov	r6, r3
+ 220:lvgl/src/lv_misc/lv_ll.c **** 
+ 827              		.loc 1 220 5 is_stmt 1 view .LVU217
+ 828 0008 1146     		mov	r1, r2
+ 829              	.LVL88:
+ 220:lvgl/src/lv_misc/lv_ll.c **** 
+ 830              		.loc 1 220 5 is_stmt 0 view .LVU218
+ 831 000a FFF7FEFF 		bl	_lv_ll_remove
+ 832              	.LVL89:
+ARM GAS  D:\Temp\ccutloVb.s 			page 26
+
+
+ 222:lvgl/src/lv_misc/lv_ll.c ****         /*Set node as head*/
+ 833              		.loc 1 222 5 is_stmt 1 view .LVU219
+ 222:lvgl/src/lv_misc/lv_ll.c ****         /*Set node as head*/
+ 834              		.loc 1 222 7 is_stmt 0 view .LVU220
+ 835 000e AEB1     		cbz	r6, .L58
+ 224:lvgl/src/lv_misc/lv_ll.c ****         node_set_next(ll_new_p, node, ll_new_p->head);
+ 836              		.loc 1 224 9 is_stmt 1 view .LVU221
+ 837 0010 0022     		movs	r2, #0
+ 838 0012 2946     		mov	r1, r5
+ 839 0014 2046     		mov	r0, r4
+ 840 0016 FFF7FEFF 		bl	node_set_prev
+ 841              	.LVL90:
+ 225:lvgl/src/lv_misc/lv_ll.c **** 
+ 842              		.loc 1 225 9 view .LVU222
+ 843 001a 6268     		ldr	r2, [r4, #4]
+ 844 001c 2946     		mov	r1, r5
+ 845 001e 2046     		mov	r0, r4
+ 846 0020 FFF7FEFF 		bl	node_set_next
+ 847              	.LVL91:
+ 227:lvgl/src/lv_misc/lv_ll.c ****             node_set_prev(ll_new_p, ll_new_p->head, node);
+ 848              		.loc 1 227 9 view .LVU223
+ 227:lvgl/src/lv_misc/lv_ll.c ****             node_set_prev(ll_new_p, ll_new_p->head, node);
+ 849              		.loc 1 227 20 is_stmt 0 view .LVU224
+ 850 0024 6168     		ldr	r1, [r4, #4]
+ 227:lvgl/src/lv_misc/lv_ll.c ****             node_set_prev(ll_new_p, ll_new_p->head, node);
+ 851              		.loc 1 227 11 view .LVU225
+ 852 0026 19B1     		cbz	r1, .L59
+ 228:lvgl/src/lv_misc/lv_ll.c ****         }
+ 853              		.loc 1 228 13 is_stmt 1 view .LVU226
+ 854 0028 2A46     		mov	r2, r5
+ 855 002a 2046     		mov	r0, r4
+ 856 002c FFF7FEFF 		bl	node_set_prev
+ 857              	.LVL92:
+ 858              	.L59:
+ 231:lvgl/src/lv_misc/lv_ll.c ****         if(ll_new_p->tail == NULL) { /*If there is no tail (first node) set the tail too*/
+ 859              		.loc 1 231 9 view .LVU227
+ 231:lvgl/src/lv_misc/lv_ll.c ****         if(ll_new_p->tail == NULL) { /*If there is no tail (first node) set the tail too*/
+ 860              		.loc 1 231 24 is_stmt 0 view .LVU228
+ 861 0030 6560     		str	r5, [r4, #4]
+ 232:lvgl/src/lv_misc/lv_ll.c ****             ll_new_p->tail = node;
+ 862              		.loc 1 232 9 is_stmt 1 view .LVU229
+ 232:lvgl/src/lv_misc/lv_ll.c ****             ll_new_p->tail = node;
+ 863              		.loc 1 232 20 is_stmt 0 view .LVU230
+ 864 0032 A368     		ldr	r3, [r4, #8]
+ 232:lvgl/src/lv_misc/lv_ll.c ****             ll_new_p->tail = node;
+ 865              		.loc 1 232 11 view .LVU231
+ 866 0034 03B1     		cbz	r3, .L63
+ 867              	.L57:
+ 250:lvgl/src/lv_misc/lv_ll.c **** 
+ 868              		.loc 1 250 1 view .LVU232
+ 869 0036 70BD     		pop	{r4, r5, r6, pc}
+ 870              	.LVL93:
+ 871              	.L63:
+ 233:lvgl/src/lv_misc/lv_ll.c ****         }
+ 872              		.loc 1 233 13 is_stmt 1 view .LVU233
+ 233:lvgl/src/lv_misc/lv_ll.c ****         }
+ 873              		.loc 1 233 28 is_stmt 0 view .LVU234
+ARM GAS  D:\Temp\ccutloVb.s 			page 27
+
+
+ 874 0038 A560     		str	r5, [r4, #8]
+ 875 003a FCE7     		b	.L57
+ 876              	.L58:
+ 238:lvgl/src/lv_misc/lv_ll.c ****         node_set_next(ll_new_p, node, NULL);
+ 877              		.loc 1 238 9 is_stmt 1 view .LVU235
+ 878 003c A268     		ldr	r2, [r4, #8]
+ 879 003e 2946     		mov	r1, r5
+ 880 0040 2046     		mov	r0, r4
+ 881 0042 FFF7FEFF 		bl	node_set_prev
+ 882              	.LVL94:
+ 239:lvgl/src/lv_misc/lv_ll.c **** 
+ 883              		.loc 1 239 9 view .LVU236
+ 884 0046 0022     		movs	r2, #0
+ 885 0048 2946     		mov	r1, r5
+ 886 004a 2046     		mov	r0, r4
+ 887 004c FFF7FEFF 		bl	node_set_next
+ 888              	.LVL95:
+ 241:lvgl/src/lv_misc/lv_ll.c ****             node_set_next(ll_new_p, ll_new_p->tail, node);
+ 889              		.loc 1 241 9 view .LVU237
+ 241:lvgl/src/lv_misc/lv_ll.c ****             node_set_next(ll_new_p, ll_new_p->tail, node);
+ 890              		.loc 1 241 20 is_stmt 0 view .LVU238
+ 891 0050 A168     		ldr	r1, [r4, #8]
+ 241:lvgl/src/lv_misc/lv_ll.c ****             node_set_next(ll_new_p, ll_new_p->tail, node);
+ 892              		.loc 1 241 11 view .LVU239
+ 893 0052 19B1     		cbz	r1, .L61
+ 242:lvgl/src/lv_misc/lv_ll.c ****         }
+ 894              		.loc 1 242 13 is_stmt 1 view .LVU240
+ 895 0054 2A46     		mov	r2, r5
+ 896 0056 2046     		mov	r0, r4
+ 897 0058 FFF7FEFF 		bl	node_set_next
+ 898              	.LVL96:
+ 899              	.L61:
+ 245:lvgl/src/lv_misc/lv_ll.c ****         if(ll_new_p->head == NULL) { /*If there is no head (first node) set the head too*/
+ 900              		.loc 1 245 9 view .LVU241
+ 245:lvgl/src/lv_misc/lv_ll.c ****         if(ll_new_p->head == NULL) { /*If there is no head (first node) set the head too*/
+ 901              		.loc 1 245 24 is_stmt 0 view .LVU242
+ 902 005c A560     		str	r5, [r4, #8]
+ 246:lvgl/src/lv_misc/lv_ll.c ****             ll_new_p->head = node;
+ 903              		.loc 1 246 9 is_stmt 1 view .LVU243
+ 246:lvgl/src/lv_misc/lv_ll.c ****             ll_new_p->head = node;
+ 904              		.loc 1 246 20 is_stmt 0 view .LVU244
+ 905 005e 6368     		ldr	r3, [r4, #4]
+ 246:lvgl/src/lv_misc/lv_ll.c ****             ll_new_p->head = node;
+ 906              		.loc 1 246 11 view .LVU245
+ 907 0060 002B     		cmp	r3, #0
+ 908 0062 E8D1     		bne	.L57
+ 247:lvgl/src/lv_misc/lv_ll.c ****         }
+ 909              		.loc 1 247 13 is_stmt 1 view .LVU246
+ 247:lvgl/src/lv_misc/lv_ll.c ****         }
+ 910              		.loc 1 247 28 is_stmt 0 view .LVU247
+ 911 0064 6560     		str	r5, [r4, #4]
+ 250:lvgl/src/lv_misc/lv_ll.c **** 
+ 912              		.loc 1 250 1 view .LVU248
+ 913 0066 E6E7     		b	.L57
+ 914              		.cfi_endproc
+ 915              	.LFE137:
+ 917              		.section	.text._lv_ll_get_len,"ax",%progbits
+ARM GAS  D:\Temp\ccutloVb.s 			page 28
+
+
+ 918              		.align	1
+ 919              		.global	_lv_ll_get_len
+ 920              		.syntax unified
+ 921              		.thumb
+ 922              		.thumb_func
+ 923              		.fpu fpv4-sp-d16
+ 925              	_lv_ll_get_len:
+ 926              	.LVL97:
+ 927              	.LFB142:
+ 324:lvgl/src/lv_misc/lv_ll.c ****     uint32_t len = 0;
+ 928              		.loc 1 324 1 is_stmt 1 view -0
+ 929              		.cfi_startproc
+ 930              		@ args = 0, pretend = 0, frame = 0
+ 931              		@ frame_needed = 0, uses_anonymous_args = 0
+ 324:lvgl/src/lv_misc/lv_ll.c ****     uint32_t len = 0;
+ 932              		.loc 1 324 1 is_stmt 0 view .LVU250
+ 933 0000 38B5     		push	{r3, r4, r5, lr}
+ 934              	.LCFI8:
+ 935              		.cfi_def_cfa_offset 16
+ 936              		.cfi_offset 3, -16
+ 937              		.cfi_offset 4, -12
+ 938              		.cfi_offset 5, -8
+ 939              		.cfi_offset 14, -4
+ 940 0002 0546     		mov	r5, r0
+ 325:lvgl/src/lv_misc/lv_ll.c ****     void * node;
+ 941              		.loc 1 325 5 is_stmt 1 view .LVU251
+ 942              	.LVL98:
+ 326:lvgl/src/lv_misc/lv_ll.c **** 
+ 943              		.loc 1 326 5 view .LVU252
+ 328:lvgl/src/lv_misc/lv_ll.c ****         len++;
+ 944              		.loc 1 328 5 view .LVU253
+ 328:lvgl/src/lv_misc/lv_ll.c ****         len++;
+ 945              		.loc 1 328 16 is_stmt 0 view .LVU254
+ 946 0004 FFF7FEFF 		bl	_lv_ll_get_head
+ 947              	.LVL99:
+ 325:lvgl/src/lv_misc/lv_ll.c ****     void * node;
+ 948              		.loc 1 325 14 view .LVU255
+ 949 0008 0024     		movs	r4, #0
+ 950              	.LVL100:
+ 951              	.L65:
+ 328:lvgl/src/lv_misc/lv_ll.c ****         len++;
+ 952              		.loc 1 328 5 discriminator 1 view .LVU256
+ 953 000a 28B1     		cbz	r0, .L68
+ 329:lvgl/src/lv_misc/lv_ll.c ****     }
+ 954              		.loc 1 329 9 is_stmt 1 discriminator 3 view .LVU257
+ 329:lvgl/src/lv_misc/lv_ll.c ****     }
+ 955              		.loc 1 329 12 is_stmt 0 discriminator 3 view .LVU258
+ 956 000c 0134     		adds	r4, r4, #1
+ 957              	.LVL101:
+ 328:lvgl/src/lv_misc/lv_ll.c ****         len++;
+ 958              		.loc 1 328 60 discriminator 3 view .LVU259
+ 959 000e 0146     		mov	r1, r0
+ 960 0010 2846     		mov	r0, r5
+ 961              	.LVL102:
+ 328:lvgl/src/lv_misc/lv_ll.c ****         len++;
+ 962              		.loc 1 328 60 discriminator 3 view .LVU260
+ 963 0012 FFF7FEFF 		bl	_lv_ll_get_next
+ARM GAS  D:\Temp\ccutloVb.s 			page 29
+
+
+ 964              	.LVL103:
+ 328:lvgl/src/lv_misc/lv_ll.c ****         len++;
+ 965              		.loc 1 328 60 discriminator 3 view .LVU261
+ 966 0016 F8E7     		b	.L65
+ 967              	.L68:
+ 332:lvgl/src/lv_misc/lv_ll.c **** }
+ 968              		.loc 1 332 5 is_stmt 1 view .LVU262
+ 333:lvgl/src/lv_misc/lv_ll.c **** 
+ 969              		.loc 1 333 1 is_stmt 0 view .LVU263
+ 970 0018 2046     		mov	r0, r4
+ 971              	.LVL104:
+ 333:lvgl/src/lv_misc/lv_ll.c **** 
+ 972              		.loc 1 333 1 view .LVU264
+ 973 001a 38BD     		pop	{r3, r4, r5, pc}
+ 333:lvgl/src/lv_misc/lv_ll.c **** 
+ 974              		.loc 1 333 1 view .LVU265
+ 975              		.cfi_endproc
+ 976              	.LFE142:
+ 978              		.section	.text._lv_ll_move_before,"ax",%progbits
+ 979              		.align	1
+ 980              		.global	_lv_ll_move_before
+ 981              		.syntax unified
+ 982              		.thumb
+ 983              		.thumb_func
+ 984              		.fpu fpv4-sp-d16
+ 986              	_lv_ll_move_before:
+ 987              	.LVL105:
+ 988              	.LFB143:
+ 342:lvgl/src/lv_misc/lv_ll.c ****     if(n_act == n_after) return; /*Can't move before itself*/
+ 989              		.loc 1 342 1 is_stmt 1 view -0
+ 990              		.cfi_startproc
+ 991              		@ args = 0, pretend = 0, frame = 0
+ 992              		@ frame_needed = 0, uses_anonymous_args = 0
+ 343:lvgl/src/lv_misc/lv_ll.c **** 
+ 993              		.loc 1 343 5 view .LVU267
+ 343:lvgl/src/lv_misc/lv_ll.c **** 
+ 994              		.loc 1 343 7 is_stmt 0 view .LVU268
+ 995 0000 9142     		cmp	r1, r2
+ 996 0002 2DD0     		beq	.L75
+ 342:lvgl/src/lv_misc/lv_ll.c ****     if(n_act == n_after) return; /*Can't move before itself*/
+ 997              		.loc 1 342 1 view .LVU269
+ 998 0004 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 999              	.LCFI9:
+ 1000              		.cfi_def_cfa_offset 24
+ 1001              		.cfi_offset 3, -24
+ 1002              		.cfi_offset 4, -20
+ 1003              		.cfi_offset 5, -16
+ 1004              		.cfi_offset 6, -12
+ 1005              		.cfi_offset 7, -8
+ 1006              		.cfi_offset 14, -4
+ 1007 0006 1546     		mov	r5, r2
+ 1008 0008 0C46     		mov	r4, r1
+ 1009 000a 0646     		mov	r6, r0
+ 345:lvgl/src/lv_misc/lv_ll.c ****     if(n_after != NULL)
+ 1010              		.loc 1 345 5 is_stmt 1 view .LVU270
+ 346:lvgl/src/lv_misc/lv_ll.c ****         n_before = _lv_ll_get_prev(ll_p, n_after);
+ 1011              		.loc 1 346 5 view .LVU271
+ARM GAS  D:\Temp\ccutloVb.s 			page 30
+
+
+ 346:lvgl/src/lv_misc/lv_ll.c ****         n_before = _lv_ll_get_prev(ll_p, n_after);
+ 1012              		.loc 1 346 7 is_stmt 0 view .LVU272
+ 1013 000c 02B3     		cbz	r2, .L71
+ 347:lvgl/src/lv_misc/lv_ll.c ****     else
+ 1014              		.loc 1 347 9 is_stmt 1 view .LVU273
+ 347:lvgl/src/lv_misc/lv_ll.c ****     else
+ 1015              		.loc 1 347 20 is_stmt 0 view .LVU274
+ 1016 000e 1146     		mov	r1, r2
+ 1017              	.LVL106:
+ 347:lvgl/src/lv_misc/lv_ll.c ****     else
+ 1018              		.loc 1 347 20 view .LVU275
+ 1019 0010 FFF7FEFF 		bl	_lv_ll_get_prev
+ 1020              	.LVL107:
+ 347:lvgl/src/lv_misc/lv_ll.c ****     else
+ 1021              		.loc 1 347 20 view .LVU276
+ 1022 0014 0746     		mov	r7, r0
+ 1023              	.LVL108:
+ 1024              	.L72:
+ 351:lvgl/src/lv_misc/lv_ll.c **** 
+ 1025              		.loc 1 351 5 is_stmt 1 view .LVU277
+ 351:lvgl/src/lv_misc/lv_ll.c **** 
+ 1026              		.loc 1 351 7 is_stmt 0 view .LVU278
+ 1027 0016 A742     		cmp	r7, r4
+ 1028 0018 19D0     		beq	.L69
+ 354:lvgl/src/lv_misc/lv_ll.c **** 
+ 1029              		.loc 1 354 5 is_stmt 1 view .LVU279
+ 1030 001a 2146     		mov	r1, r4
+ 1031 001c 3046     		mov	r0, r6
+ 1032              	.LVL109:
+ 354:lvgl/src/lv_misc/lv_ll.c **** 
+ 1033              		.loc 1 354 5 is_stmt 0 view .LVU280
+ 1034 001e FFF7FEFF 		bl	_lv_ll_remove
+ 1035              	.LVL110:
+ 357:lvgl/src/lv_misc/lv_ll.c ****     node_set_prev(ll_p, n_act, n_before);
+ 1036              		.loc 1 357 5 is_stmt 1 view .LVU281
+ 1037 0022 2246     		mov	r2, r4
+ 1038 0024 3946     		mov	r1, r7
+ 1039 0026 3046     		mov	r0, r6
+ 1040 0028 FFF7FEFF 		bl	node_set_next
+ 1041              	.LVL111:
+ 358:lvgl/src/lv_misc/lv_ll.c ****     node_set_prev(ll_p, n_after, n_act);
+ 1042              		.loc 1 358 5 view .LVU282
+ 1043 002c 3A46     		mov	r2, r7
+ 1044 002e 2146     		mov	r1, r4
+ 1045 0030 3046     		mov	r0, r6
+ 1046 0032 FFF7FEFF 		bl	node_set_prev
+ 1047              	.LVL112:
+ 359:lvgl/src/lv_misc/lv_ll.c ****     node_set_next(ll_p, n_act, n_after);
+ 1048              		.loc 1 359 5 view .LVU283
+ 1049 0036 2246     		mov	r2, r4
+ 1050 0038 2946     		mov	r1, r5
+ 1051 003a 3046     		mov	r0, r6
+ 1052 003c FFF7FEFF 		bl	node_set_prev
+ 1053              	.LVL113:
+ 360:lvgl/src/lv_misc/lv_ll.c **** 
+ 1054              		.loc 1 360 5 view .LVU284
+ 1055 0040 2A46     		mov	r2, r5
+ARM GAS  D:\Temp\ccutloVb.s 			page 31
+
+
+ 1056 0042 2146     		mov	r1, r4
+ 1057 0044 3046     		mov	r0, r6
+ 1058 0046 FFF7FEFF 		bl	node_set_next
+ 1059              	.LVL114:
+ 363:lvgl/src/lv_misc/lv_ll.c **** 
+ 1060              		.loc 1 363 5 view .LVU285
+ 363:lvgl/src/lv_misc/lv_ll.c **** 
+ 1061              		.loc 1 363 7 is_stmt 0 view .LVU286
+ 1062 004a 2DB1     		cbz	r5, .L78
+ 1063              	.L73:
+ 366:lvgl/src/lv_misc/lv_ll.c **** }
+ 1064              		.loc 1 366 5 is_stmt 1 view .LVU287
+ 366:lvgl/src/lv_misc/lv_ll.c **** }
+ 1065              		.loc 1 366 7 is_stmt 0 view .LVU288
+ 1066 004c 37B1     		cbz	r7, .L79
+ 1067              	.L69:
+ 367:lvgl/src/lv_misc/lv_ll.c **** 
+ 1068              		.loc 1 367 1 view .LVU289
+ 1069 004e F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 1070              	.LVL115:
+ 1071              	.L71:
+ 349:lvgl/src/lv_misc/lv_ll.c **** 
+ 1072              		.loc 1 349 9 is_stmt 1 view .LVU290
+ 349:lvgl/src/lv_misc/lv_ll.c **** 
+ 1073              		.loc 1 349 20 is_stmt 0 view .LVU291
+ 1074 0050 FFF7FEFF 		bl	_lv_ll_get_tail
+ 1075              	.LVL116:
+ 349:lvgl/src/lv_misc/lv_ll.c **** 
+ 1076              		.loc 1 349 20 view .LVU292
+ 1077 0054 0746     		mov	r7, r0
+ 1078              	.LVL117:
+ 349:lvgl/src/lv_misc/lv_ll.c **** 
+ 1079              		.loc 1 349 20 view .LVU293
+ 1080 0056 DEE7     		b	.L72
+ 1081              	.LVL118:
+ 1082              	.L78:
+ 363:lvgl/src/lv_misc/lv_ll.c **** 
+ 1083              		.loc 1 363 25 is_stmt 1 discriminator 1 view .LVU294
+ 363:lvgl/src/lv_misc/lv_ll.c **** 
+ 1084              		.loc 1 363 36 is_stmt 0 discriminator 1 view .LVU295
+ 1085 0058 B460     		str	r4, [r6, #8]
+ 1086 005a F7E7     		b	.L73
+ 1087              	.L79:
+ 366:lvgl/src/lv_misc/lv_ll.c **** }
+ 1088              		.loc 1 366 26 is_stmt 1 discriminator 1 view .LVU296
+ 366:lvgl/src/lv_misc/lv_ll.c **** }
+ 1089              		.loc 1 366 37 is_stmt 0 discriminator 1 view .LVU297
+ 1090 005c 7460     		str	r4, [r6, #4]
+ 1091 005e F6E7     		b	.L69
+ 1092              	.LVL119:
+ 1093              	.L75:
+ 1094              	.LCFI10:
+ 1095              		.cfi_def_cfa_offset 0
+ 1096              		.cfi_restore 3
+ 1097              		.cfi_restore 4
+ 1098              		.cfi_restore 5
+ 1099              		.cfi_restore 6
+ARM GAS  D:\Temp\ccutloVb.s 			page 32
+
+
+ 1100              		.cfi_restore 7
+ 1101              		.cfi_restore 14
+ 366:lvgl/src/lv_misc/lv_ll.c **** }
+ 1102              		.loc 1 366 37 discriminator 1 view .LVU298
+ 1103 0060 7047     		bx	lr
+ 1104              		.cfi_endproc
+ 1105              	.LFE143:
+ 1107              		.section	.text._lv_ll_is_empty,"ax",%progbits
+ 1108              		.align	1
+ 1109              		.global	_lv_ll_is_empty
+ 1110              		.syntax unified
+ 1111              		.thumb
+ 1112              		.thumb_func
+ 1113              		.fpu fpv4-sp-d16
+ 1115              	_lv_ll_is_empty:
+ 1116              	.LVL120:
+ 1117              	.LFB144:
+ 375:lvgl/src/lv_misc/lv_ll.c ****     if(ll_p == NULL) return true;
+ 1118              		.loc 1 375 1 is_stmt 1 view -0
+ 1119              		.cfi_startproc
+ 1120              		@ args = 0, pretend = 0, frame = 0
+ 1121              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1122              		@ link register save eliminated.
+ 376:lvgl/src/lv_misc/lv_ll.c **** 
+ 1123              		.loc 1 376 5 view .LVU300
+ 376:lvgl/src/lv_misc/lv_ll.c **** 
+ 1124              		.loc 1 376 7 is_stmt 0 view .LVU301
+ 1125 0000 38B1     		cbz	r0, .L82
+ 378:lvgl/src/lv_misc/lv_ll.c **** 
+ 1126              		.loc 1 378 5 is_stmt 1 view .LVU302
+ 378:lvgl/src/lv_misc/lv_ll.c **** 
+ 1127              		.loc 1 378 12 is_stmt 0 view .LVU303
+ 1128 0002 4268     		ldr	r2, [r0, #4]
+ 378:lvgl/src/lv_misc/lv_ll.c **** 
+ 1129              		.loc 1 378 7 view .LVU304
+ 1130 0004 0AB1     		cbz	r2, .L85
+ 380:lvgl/src/lv_misc/lv_ll.c **** }
+ 1131              		.loc 1 380 12 view .LVU305
+ 1132 0006 0020     		movs	r0, #0
+ 1133              	.LVL121:
+ 380:lvgl/src/lv_misc/lv_ll.c **** }
+ 1134              		.loc 1 380 12 view .LVU306
+ 1135 0008 7047     		bx	lr
+ 1136              	.LVL122:
+ 1137              	.L85:
+ 378:lvgl/src/lv_misc/lv_ll.c **** 
+ 1138              		.loc 1 378 34 discriminator 1 view .LVU307
+ 1139 000a 8368     		ldr	r3, [r0, #8]
+ 378:lvgl/src/lv_misc/lv_ll.c **** 
+ 1140              		.loc 1 378 27 discriminator 1 view .LVU308
+ 1141 000c 1BB1     		cbz	r3, .L84
+ 380:lvgl/src/lv_misc/lv_ll.c **** }
+ 1142              		.loc 1 380 12 view .LVU309
+ 1143 000e 0020     		movs	r0, #0
+ 1144              	.LVL123:
+ 380:lvgl/src/lv_misc/lv_ll.c **** }
+ 1145              		.loc 1 380 12 view .LVU310
+ARM GAS  D:\Temp\ccutloVb.s 			page 33
+
+
+ 1146 0010 7047     		bx	lr
+ 1147              	.LVL124:
+ 1148              	.L82:
+ 376:lvgl/src/lv_misc/lv_ll.c **** 
+ 1149              		.loc 1 376 29 view .LVU311
+ 1150 0012 0120     		movs	r0, #1
+ 1151              	.LVL125:
+ 376:lvgl/src/lv_misc/lv_ll.c **** 
+ 1152              		.loc 1 376 29 view .LVU312
+ 1153 0014 7047     		bx	lr
+ 1154              	.LVL126:
+ 1155              	.L84:
+ 378:lvgl/src/lv_misc/lv_ll.c **** 
+ 1156              		.loc 1 378 57 view .LVU313
+ 1157 0016 0120     		movs	r0, #1
+ 1158              	.LVL127:
+ 381:lvgl/src/lv_misc/lv_ll.c **** 
+ 1159              		.loc 1 381 1 view .LVU314
+ 1160 0018 7047     		bx	lr
+ 1161              		.cfi_endproc
+ 1162              	.LFE144:
+ 1164              		.text
+ 1165              	.Letext0:
+ 1166              		.file 2 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1167              		.file 3 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1168              		.file 4 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1169              		.file 5 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1170              		.file 6 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-none
+ 1171              		.file 7 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1172              		.file 8 "Drivers/CMSIS/Include/core_cm4.h"
+ 1173              		.file 9 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 1174              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 1175              		.file 11 "lvgl/src/lv_misc/lv_mem.h"
+ 1176              		.file 12 "lvgl/src/lv_misc/lv_ll.h"
+ARM GAS  D:\Temp\ccutloVb.s 			page 34
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_ll.c
+  D:\Temp\ccutloVb.s:18     .text.node_set_prev:0000000000000000 $t
+  D:\Temp\ccutloVb.s:25     .text.node_set_prev:0000000000000000 node_set_prev
+  D:\Temp\ccutloVb.s:57     .text.node_set_next:0000000000000000 $t
+  D:\Temp\ccutloVb.s:63     .text.node_set_next:0000000000000000 node_set_next
+  D:\Temp\ccutloVb.s:106    .text._lv_ll_init:0000000000000000 $t
+  D:\Temp\ccutloVb.s:113    .text._lv_ll_init:0000000000000000 _lv_ll_init
+  D:\Temp\ccutloVb.s:144    .text._lv_ll_ins_head:0000000000000000 $t
+  D:\Temp\ccutloVb.s:151    .text._lv_ll_ins_head:0000000000000000 _lv_ll_ins_head
+  D:\Temp\ccutloVb.s:229    .text._lv_ll_ins_tail:0000000000000000 $t
+  D:\Temp\ccutloVb.s:236    .text._lv_ll_ins_tail:0000000000000000 _lv_ll_ins_tail
+  D:\Temp\ccutloVb.s:314    .text._lv_ll_get_head:0000000000000000 $t
+  D:\Temp\ccutloVb.s:321    .text._lv_ll_get_head:0000000000000000 _lv_ll_get_head
+  D:\Temp\ccutloVb.s:351    .text._lv_ll_get_tail:0000000000000000 $t
+  D:\Temp\ccutloVb.s:358    .text._lv_ll_get_tail:0000000000000000 _lv_ll_get_tail
+  D:\Temp\ccutloVb.s:388    .text._lv_ll_get_next:0000000000000000 $t
+  D:\Temp\ccutloVb.s:395    .text._lv_ll_get_next:0000000000000000 _lv_ll_get_next
+  D:\Temp\ccutloVb.s:431    .text._lv_ll_get_prev:0000000000000000 $t
+  D:\Temp\ccutloVb.s:438    .text._lv_ll_get_prev:0000000000000000 _lv_ll_get_prev
+  D:\Temp\ccutloVb.s:472    .text._lv_ll_ins_prev:0000000000000000 $t
+  D:\Temp\ccutloVb.s:479    .text._lv_ll_ins_prev:0000000000000000 _lv_ll_ins_prev
+  D:\Temp\ccutloVb.s:601    .text._lv_ll_remove:0000000000000000 $t
+  D:\Temp\ccutloVb.s:608    .text._lv_ll_remove:0000000000000000 _lv_ll_remove
+  D:\Temp\ccutloVb.s:733    .text._lv_ll_clear:0000000000000000 $t
+  D:\Temp\ccutloVb.s:740    .text._lv_ll_clear:0000000000000000 _lv_ll_clear
+  D:\Temp\ccutloVb.s:802    .text._lv_ll_chg_list:0000000000000000 $t
+  D:\Temp\ccutloVb.s:809    .text._lv_ll_chg_list:0000000000000000 _lv_ll_chg_list
+  D:\Temp\ccutloVb.s:918    .text._lv_ll_get_len:0000000000000000 $t
+  D:\Temp\ccutloVb.s:925    .text._lv_ll_get_len:0000000000000000 _lv_ll_get_len
+  D:\Temp\ccutloVb.s:979    .text._lv_ll_move_before:0000000000000000 $t
+  D:\Temp\ccutloVb.s:986    .text._lv_ll_move_before:0000000000000000 _lv_ll_move_before
+  D:\Temp\ccutloVb.s:1108   .text._lv_ll_is_empty:0000000000000000 $t
+  D:\Temp\ccutloVb.s:1115   .text._lv_ll_is_empty:0000000000000000 _lv_ll_is_empty
+
+UNDEFINED SYMBOLS
+lv_mem_alloc
+lv_mem_free

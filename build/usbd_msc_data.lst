@@ -1,0 +1,131 @@
+ARM GAS  D:\Temp\ccPhJfCp.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"usbd_msc_data.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.global	MSC_Mode_Sense10_data
+  18              		.global	MSC_Mode_Sense6_data
+  19              		.global	MSC_Page80_Inquiry_Data
+  20              		.global	MSC_Page00_Inquiry_Data
+  21              		.section	.data.MSC_Mode_Sense10_data,"aw"
+  22              		.align	2
+  25              	MSC_Mode_Sense10_data:
+  26 0000 00       		.byte	0
+  27 0001 26       		.byte	38
+  28 0002 00       		.byte	0
+  29 0003 00       		.byte	0
+  30 0004 00       		.byte	0
+  31 0005 00       		.byte	0
+  32 0006 00       		.byte	0
+  33 0007 00       		.byte	0
+  34 0008 08       		.byte	8
+  35 0009 12       		.byte	18
+  36 000a 00       		.byte	0
+  37 000b 00       		.byte	0
+  38 000c 00       		.byte	0
+  39 000d 00       		.byte	0
+  40 000e 00       		.byte	0
+  41 000f 00       		.byte	0
+  42 0010 00       		.byte	0
+  43 0011 00       		.byte	0
+  44 0012 00       		.byte	0
+  45 0013 00       		.byte	0
+  46 0014 00       		.byte	0
+  47 0015 00       		.byte	0
+  48 0016 00       		.byte	0
+  49 0017 00       		.byte	0
+  50 0018 00       		.byte	0
+  51 0019 00       		.byte	0
+  52 001a 00       		.byte	0
+  53              		.section	.data.MSC_Mode_Sense6_data,"aw"
+  54              		.align	2
+  57              	MSC_Mode_Sense6_data:
+  58 0000 22       		.byte	34
+  59 0001 00       		.byte	0
+  60 0002 00       		.byte	0
+  61 0003 00       		.byte	0
+ARM GAS  D:\Temp\ccPhJfCp.s 			page 2
+
+
+  62 0004 08       		.byte	8
+  63 0005 12       		.byte	18
+  64 0006 00       		.byte	0
+  65 0007 00       		.byte	0
+  66 0008 00       		.byte	0
+  67 0009 00       		.byte	0
+  68 000a 00       		.byte	0
+  69 000b 00       		.byte	0
+  70 000c 00       		.byte	0
+  71 000d 00       		.byte	0
+  72 000e 00       		.byte	0
+  73 000f 00       		.byte	0
+  74 0010 00       		.byte	0
+  75 0011 00       		.byte	0
+  76 0012 00       		.byte	0
+  77 0013 00       		.byte	0
+  78 0014 00       		.byte	0
+  79 0015 00       		.byte	0
+  80 0016 00       		.byte	0
+  81              		.section	.data.MSC_Page00_Inquiry_Data,"aw"
+  82              		.align	2
+  85              	MSC_Page00_Inquiry_Data:
+  86 0000 00       		.byte	0
+  87 0001 00       		.byte	0
+  88 0002 00       		.byte	0
+  89 0003 02       		.byte	2
+  90 0004 00       		.byte	0
+  91 0005 80       		.byte	-128
+  92              		.section	.data.MSC_Page80_Inquiry_Data,"aw"
+  93              		.align	2
+  96              	MSC_Page80_Inquiry_Data:
+  97 0000 00       		.byte	0
+  98 0001 80       		.byte	-128
+  99 0002 00       		.byte	0
+ 100 0003 08       		.byte	8
+ 101 0004 20       		.byte	32
+ 102 0005 20       		.byte	32
+ 103 0006 20       		.byte	32
+ 104 0007 20       		.byte	32
+ 105              		.text
+ 106              	.Letext0:
+ 107              		.file 1 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 108              		.file 2 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 109              		.file 3 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 110              		.file 4 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-none
+ 111              		.file 5 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 112              		.file 6 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 113              		.file 7 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 114              		.file 8 "Drivers/CMSIS/Include/core_cm4.h"
+ 115              		.file 9 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 116              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 117              		.file 11 "Middlewares/ST/STM32_USB_Device_Library/Class/MSC/Inc/usbd_msc_data.h"
+ 118              		.file 12 "Middlewares/ST/STM32_USB_Device_Library/Class/MSC/Src/usbd_msc_data.c"
+ARM GAS  D:\Temp\ccPhJfCp.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 usbd_msc_data.c
+  D:\Temp\ccPhJfCp.s:25     .data.MSC_Mode_Sense10_data:0000000000000000 MSC_Mode_Sense10_data
+  D:\Temp\ccPhJfCp.s:57     .data.MSC_Mode_Sense6_data:0000000000000000 MSC_Mode_Sense6_data
+  D:\Temp\ccPhJfCp.s:96     .data.MSC_Page80_Inquiry_Data:0000000000000000 MSC_Page80_Inquiry_Data
+  D:\Temp\ccPhJfCp.s:85     .data.MSC_Page00_Inquiry_Data:0000000000000000 MSC_Page00_Inquiry_Data
+  D:\Temp\ccPhJfCp.s:22     .data.MSC_Mode_Sense10_data:0000000000000000 $d
+  D:\Temp\ccPhJfCp.s:54     .data.MSC_Mode_Sense6_data:0000000000000000 $d
+  D:\Temp\ccPhJfCp.s:82     .data.MSC_Page00_Inquiry_Data:0000000000000000 $d
+  D:\Temp\ccPhJfCp.s:93     .data.MSC_Page80_Inquiry_Data:0000000000000000 $d
+
+NO UNDEFINED SYMBOLS

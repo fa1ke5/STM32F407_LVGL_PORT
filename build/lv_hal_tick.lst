@@ -1,0 +1,293 @@
+ARM GAS  D:\Temp\ccVp63JX.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_hal_tick.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.lv_tick_inc,"ax",%progbits
+  18              		.align	1
+  19              		.global	lv_tick_inc
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	lv_tick_inc:
+  27              	.LVL0:
+  28              	.LFB130:
+  29              		.file 1 "lvgl/src/lv_hal/lv_hal_tick.c"
+   1:lvgl/src/lv_hal/lv_hal_tick.c **** /**
+   2:lvgl/src/lv_hal/lv_hal_tick.c ****  * @file lv_hal_tick.c
+   3:lvgl/src/lv_hal/lv_hal_tick.c ****  * Provide access to the system tick with 1 millisecond resolution
+   4:lvgl/src/lv_hal/lv_hal_tick.c ****  */
+   5:lvgl/src/lv_hal/lv_hal_tick.c **** 
+   6:lvgl/src/lv_hal/lv_hal_tick.c **** /*********************
+   7:lvgl/src/lv_hal/lv_hal_tick.c ****  *      INCLUDES
+   8:lvgl/src/lv_hal/lv_hal_tick.c ****  *********************/
+   9:lvgl/src/lv_hal/lv_hal_tick.c **** #include "lv_hal_tick.h"
+  10:lvgl/src/lv_hal/lv_hal_tick.c **** #include <stddef.h>
+  11:lvgl/src/lv_hal/lv_hal_tick.c **** 
+  12:lvgl/src/lv_hal/lv_hal_tick.c **** #if LV_TICK_CUSTOM == 1
+  13:lvgl/src/lv_hal/lv_hal_tick.c ****     #include LV_TICK_CUSTOM_INCLUDE
+  14:lvgl/src/lv_hal/lv_hal_tick.c **** #endif
+  15:lvgl/src/lv_hal/lv_hal_tick.c **** 
+  16:lvgl/src/lv_hal/lv_hal_tick.c **** /*********************
+  17:lvgl/src/lv_hal/lv_hal_tick.c ****  *      DEFINES
+  18:lvgl/src/lv_hal/lv_hal_tick.c ****  *********************/
+  19:lvgl/src/lv_hal/lv_hal_tick.c **** 
+  20:lvgl/src/lv_hal/lv_hal_tick.c **** /**********************
+  21:lvgl/src/lv_hal/lv_hal_tick.c ****  *      TYPEDEFS
+  22:lvgl/src/lv_hal/lv_hal_tick.c ****  **********************/
+  23:lvgl/src/lv_hal/lv_hal_tick.c **** 
+  24:lvgl/src/lv_hal/lv_hal_tick.c **** /**********************
+  25:lvgl/src/lv_hal/lv_hal_tick.c ****  *  STATIC PROTOTYPES
+  26:lvgl/src/lv_hal/lv_hal_tick.c ****  **********************/
+  27:lvgl/src/lv_hal/lv_hal_tick.c **** 
+  28:lvgl/src/lv_hal/lv_hal_tick.c **** /**********************
+  29:lvgl/src/lv_hal/lv_hal_tick.c ****  *  STATIC VARIABLES
+ARM GAS  D:\Temp\ccVp63JX.s 			page 2
+
+
+  30:lvgl/src/lv_hal/lv_hal_tick.c ****  **********************/
+  31:lvgl/src/lv_hal/lv_hal_tick.c **** static uint32_t sys_time = 0;
+  32:lvgl/src/lv_hal/lv_hal_tick.c **** static volatile uint8_t tick_irq_flag;
+  33:lvgl/src/lv_hal/lv_hal_tick.c **** 
+  34:lvgl/src/lv_hal/lv_hal_tick.c **** /**********************
+  35:lvgl/src/lv_hal/lv_hal_tick.c ****  *      MACROS
+  36:lvgl/src/lv_hal/lv_hal_tick.c ****  **********************/
+  37:lvgl/src/lv_hal/lv_hal_tick.c **** 
+  38:lvgl/src/lv_hal/lv_hal_tick.c **** /**********************
+  39:lvgl/src/lv_hal/lv_hal_tick.c ****  *   GLOBAL FUNCTIONS
+  40:lvgl/src/lv_hal/lv_hal_tick.c ****  **********************/
+  41:lvgl/src/lv_hal/lv_hal_tick.c **** 
+  42:lvgl/src/lv_hal/lv_hal_tick.c **** /**
+  43:lvgl/src/lv_hal/lv_hal_tick.c ****  * You have to call this function periodically
+  44:lvgl/src/lv_hal/lv_hal_tick.c ****  * @param tick_period the call period of this function in milliseconds
+  45:lvgl/src/lv_hal/lv_hal_tick.c ****  */
+  46:lvgl/src/lv_hal/lv_hal_tick.c **** LV_ATTRIBUTE_TICK_INC void lv_tick_inc(uint32_t tick_period)
+  47:lvgl/src/lv_hal/lv_hal_tick.c **** {
+  30              		.loc 1 47 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  48:lvgl/src/lv_hal/lv_hal_tick.c ****     tick_irq_flag = 0;
+  35              		.loc 1 48 5 view .LVU1
+  36              		.loc 1 48 19 is_stmt 0 view .LVU2
+  37 0000 034B     		ldr	r3, .L2
+  38 0002 0022     		movs	r2, #0
+  39 0004 1A70     		strb	r2, [r3]
+  49:lvgl/src/lv_hal/lv_hal_tick.c ****     sys_time += tick_period;
+  40              		.loc 1 49 5 is_stmt 1 view .LVU3
+  41              		.loc 1 49 14 is_stmt 0 view .LVU4
+  42 0006 034A     		ldr	r2, .L2+4
+  43 0008 1368     		ldr	r3, [r2]
+  44 000a 1844     		add	r0, r0, r3
+  45              	.LVL1:
+  46              		.loc 1 49 14 view .LVU5
+  47 000c 1060     		str	r0, [r2]
+  50:lvgl/src/lv_hal/lv_hal_tick.c **** }
+  48              		.loc 1 50 1 view .LVU6
+  49 000e 7047     		bx	lr
+  50              	.L3:
+  51              		.align	2
+  52              	.L2:
+  53 0010 00000000 		.word	.LANCHOR0
+  54 0014 00000000 		.word	.LANCHOR1
+  55              		.cfi_endproc
+  56              	.LFE130:
+  58              		.section	.text.lv_tick_get,"ax",%progbits
+  59              		.align	1
+  60              		.global	lv_tick_get
+  61              		.syntax unified
+  62              		.thumb
+  63              		.thumb_func
+  64              		.fpu fpv4-sp-d16
+  66              	lv_tick_get:
+  67              	.LFB131:
+ARM GAS  D:\Temp\ccVp63JX.s 			page 3
+
+
+  51:lvgl/src/lv_hal/lv_hal_tick.c **** 
+  52:lvgl/src/lv_hal/lv_hal_tick.c **** /**
+  53:lvgl/src/lv_hal/lv_hal_tick.c ****  * Get the elapsed milliseconds since start up
+  54:lvgl/src/lv_hal/lv_hal_tick.c ****  * @return the elapsed milliseconds
+  55:lvgl/src/lv_hal/lv_hal_tick.c ****  */
+  56:lvgl/src/lv_hal/lv_hal_tick.c **** uint32_t lv_tick_get(void)
+  57:lvgl/src/lv_hal/lv_hal_tick.c **** {
+  68              		.loc 1 57 1 is_stmt 1 view -0
+  69              		.cfi_startproc
+  70              		@ args = 0, pretend = 0, frame = 0
+  71              		@ frame_needed = 0, uses_anonymous_args = 0
+  72              		@ link register save eliminated.
+  73              	.L5:
+  58:lvgl/src/lv_hal/lv_hal_tick.c **** #if LV_TICK_CUSTOM == 0
+  59:lvgl/src/lv_hal/lv_hal_tick.c **** 
+  60:lvgl/src/lv_hal/lv_hal_tick.c ****     /* If `lv_tick_inc` is called from an interrupt while `sys_time` is read
+  61:lvgl/src/lv_hal/lv_hal_tick.c ****      * the result might be corrupted.
+  62:lvgl/src/lv_hal/lv_hal_tick.c ****      * This loop detects if `lv_tick_inc` was called while reading `sys_time`.
+  63:lvgl/src/lv_hal/lv_hal_tick.c ****      * If `tick_irq_flag` was cleared in `lv_tick_inc` try to read again
+  64:lvgl/src/lv_hal/lv_hal_tick.c ****      * until `tick_irq_flag` remains `1`. */
+  65:lvgl/src/lv_hal/lv_hal_tick.c ****     uint32_t result;
+  74              		.loc 1 65 5 discriminator 1 view .LVU8
+  66:lvgl/src/lv_hal/lv_hal_tick.c ****     do {
+  75              		.loc 1 66 5 discriminator 1 view .LVU9
+  67:lvgl/src/lv_hal/lv_hal_tick.c ****         tick_irq_flag = 1;
+  76              		.loc 1 67 9 discriminator 1 view .LVU10
+  77              		.loc 1 67 23 is_stmt 0 discriminator 1 view .LVU11
+  78 0000 044B     		ldr	r3, .L6
+  79 0002 0122     		movs	r2, #1
+  80 0004 1A70     		strb	r2, [r3]
+  68:lvgl/src/lv_hal/lv_hal_tick.c ****         result        = sys_time;
+  81              		.loc 1 68 9 is_stmt 1 discriminator 1 view .LVU12
+  82              		.loc 1 68 23 is_stmt 0 discriminator 1 view .LVU13
+  83 0006 044A     		ldr	r2, .L6+4
+  84 0008 1068     		ldr	r0, [r2]
+  85              	.LVL2:
+  69:lvgl/src/lv_hal/lv_hal_tick.c ****     } while(!tick_irq_flag); /*Continue until see a non interrupted cycle */
+  86              		.loc 1 69 13 discriminator 1 view .LVU14
+  87 000a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  88              		.loc 1 69 5 discriminator 1 view .LVU15
+  89 000c 002B     		cmp	r3, #0
+  90 000e F7D0     		beq	.L5
+  70:lvgl/src/lv_hal/lv_hal_tick.c **** 
+  71:lvgl/src/lv_hal/lv_hal_tick.c ****     return result;
+  72:lvgl/src/lv_hal/lv_hal_tick.c **** #else
+  73:lvgl/src/lv_hal/lv_hal_tick.c ****     return LV_TICK_CUSTOM_SYS_TIME_EXPR;
+  74:lvgl/src/lv_hal/lv_hal_tick.c **** #endif
+  75:lvgl/src/lv_hal/lv_hal_tick.c **** }
+  91              		.loc 1 75 1 view .LVU16
+  92 0010 7047     		bx	lr
+  93              	.L7:
+  94 0012 00BF     		.align	2
+  95              	.L6:
+  96 0014 00000000 		.word	.LANCHOR0
+  97 0018 00000000 		.word	.LANCHOR1
+  98              		.cfi_endproc
+  99              	.LFE131:
+ARM GAS  D:\Temp\ccVp63JX.s 			page 4
+
+
+ 101              		.section	.text.lv_tick_elaps,"ax",%progbits
+ 102              		.align	1
+ 103              		.global	lv_tick_elaps
+ 104              		.syntax unified
+ 105              		.thumb
+ 106              		.thumb_func
+ 107              		.fpu fpv4-sp-d16
+ 109              	lv_tick_elaps:
+ 110              	.LVL3:
+ 111              	.LFB132:
+  76:lvgl/src/lv_hal/lv_hal_tick.c **** 
+  77:lvgl/src/lv_hal/lv_hal_tick.c **** /**
+  78:lvgl/src/lv_hal/lv_hal_tick.c ****  * Get the elapsed milliseconds since a previous time stamp
+  79:lvgl/src/lv_hal/lv_hal_tick.c ****  * @param prev_tick a previous time stamp (return value of lv_tick_get() )
+  80:lvgl/src/lv_hal/lv_hal_tick.c ****  * @return the elapsed milliseconds since 'prev_tick'
+  81:lvgl/src/lv_hal/lv_hal_tick.c ****  */
+  82:lvgl/src/lv_hal/lv_hal_tick.c **** uint32_t lv_tick_elaps(uint32_t prev_tick)
+  83:lvgl/src/lv_hal/lv_hal_tick.c **** {
+ 112              		.loc 1 83 1 is_stmt 1 view -0
+ 113              		.cfi_startproc
+ 114              		@ args = 0, pretend = 0, frame = 0
+ 115              		@ frame_needed = 0, uses_anonymous_args = 0
+ 116              		.loc 1 83 1 is_stmt 0 view .LVU18
+ 117 0000 10B5     		push	{r4, lr}
+ 118              	.LCFI0:
+ 119              		.cfi_def_cfa_offset 8
+ 120              		.cfi_offset 4, -8
+ 121              		.cfi_offset 14, -4
+ 122 0002 0446     		mov	r4, r0
+  84:lvgl/src/lv_hal/lv_hal_tick.c ****     uint32_t act_time = lv_tick_get();
+ 123              		.loc 1 84 5 is_stmt 1 view .LVU19
+ 124              		.loc 1 84 25 is_stmt 0 view .LVU20
+ 125 0004 FFF7FEFF 		bl	lv_tick_get
+ 126              	.LVL4:
+  85:lvgl/src/lv_hal/lv_hal_tick.c **** 
+  86:lvgl/src/lv_hal/lv_hal_tick.c ****     /*If there is no overflow in sys_time simple subtract*/
+  87:lvgl/src/lv_hal/lv_hal_tick.c ****     if(act_time >= prev_tick) {
+ 127              		.loc 1 87 5 is_stmt 1 view .LVU21
+ 128              		.loc 1 87 7 is_stmt 0 view .LVU22
+ 129 0008 A042     		cmp	r0, r4
+ 130 000a 01D3     		bcc	.L9
+  88:lvgl/src/lv_hal/lv_hal_tick.c ****         prev_tick = act_time - prev_tick;
+ 131              		.loc 1 88 9 is_stmt 1 view .LVU23
+ 132              		.loc 1 88 19 is_stmt 0 view .LVU24
+ 133 000c 001B     		subs	r0, r0, r4
+ 134              	.LVL5:
+ 135              	.L8:
+  89:lvgl/src/lv_hal/lv_hal_tick.c ****     }
+  90:lvgl/src/lv_hal/lv_hal_tick.c ****     else {
+  91:lvgl/src/lv_hal/lv_hal_tick.c ****         prev_tick = UINT32_MAX - prev_tick + 1;
+  92:lvgl/src/lv_hal/lv_hal_tick.c ****         prev_tick += act_time;
+  93:lvgl/src/lv_hal/lv_hal_tick.c ****     }
+  94:lvgl/src/lv_hal/lv_hal_tick.c **** 
+  95:lvgl/src/lv_hal/lv_hal_tick.c ****     return prev_tick;
+  96:lvgl/src/lv_hal/lv_hal_tick.c **** }
+ 136              		.loc 1 96 1 view .LVU25
+ 137 000e 10BD     		pop	{r4, pc}
+ARM GAS  D:\Temp\ccVp63JX.s 			page 5
+
+
+ 138              	.LVL6:
+ 139              	.L9:
+  91:lvgl/src/lv_hal/lv_hal_tick.c ****         prev_tick += act_time;
+ 140              		.loc 1 91 9 is_stmt 1 view .LVU26
+  92:lvgl/src/lv_hal/lv_hal_tick.c ****     }
+ 141              		.loc 1 92 9 view .LVU27
+ 142 0010 001B     		subs	r0, r0, r4
+ 143              	.LVL7:
+  95:lvgl/src/lv_hal/lv_hal_tick.c **** }
+ 144              		.loc 1 95 5 view .LVU28
+  95:lvgl/src/lv_hal/lv_hal_tick.c **** }
+ 145              		.loc 1 95 12 is_stmt 0 view .LVU29
+ 146 0012 FCE7     		b	.L8
+ 147              		.cfi_endproc
+ 148              	.LFE132:
+ 150              		.section	.bss.sys_time,"aw",%nobits
+ 151              		.align	2
+ 152              		.set	.LANCHOR1,. + 0
+ 155              	sys_time:
+ 156 0000 00000000 		.space	4
+ 157              		.section	.bss.tick_irq_flag,"aw",%nobits
+ 158              		.set	.LANCHOR0,. + 0
+ 161              	tick_irq_flag:
+ 162 0000 00       		.space	1
+ 163              		.text
+ 164              	.Letext0:
+ 165              		.file 2 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 166              		.file 3 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 167              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 168              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 169              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ARM GAS  D:\Temp\ccVp63JX.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_hal_tick.c
+  D:\Temp\ccVp63JX.s:18     .text.lv_tick_inc:0000000000000000 $t
+  D:\Temp\ccVp63JX.s:26     .text.lv_tick_inc:0000000000000000 lv_tick_inc
+  D:\Temp\ccVp63JX.s:53     .text.lv_tick_inc:0000000000000010 $d
+  D:\Temp\ccVp63JX.s:59     .text.lv_tick_get:0000000000000000 $t
+  D:\Temp\ccVp63JX.s:66     .text.lv_tick_get:0000000000000000 lv_tick_get
+  D:\Temp\ccVp63JX.s:96     .text.lv_tick_get:0000000000000014 $d
+  D:\Temp\ccVp63JX.s:102    .text.lv_tick_elaps:0000000000000000 $t
+  D:\Temp\ccVp63JX.s:109    .text.lv_tick_elaps:0000000000000000 lv_tick_elaps
+  D:\Temp\ccVp63JX.s:151    .bss.sys_time:0000000000000000 $d
+  D:\Temp\ccVp63JX.s:155    .bss.sys_time:0000000000000000 sys_time
+  D:\Temp\ccVp63JX.s:161    .bss.tick_irq_flag:0000000000000000 tick_irq_flag
+  D:\Temp\ccVp63JX.s:162    .bss.tick_irq_flag:0000000000000000 $d
+
+NO UNDEFINED SYMBOLS

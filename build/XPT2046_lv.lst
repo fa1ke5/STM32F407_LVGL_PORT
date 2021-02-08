@@ -1,0 +1,1269 @@
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"XPT2046_lv.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._spi_init,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	_spi_init:
+  26              	.LFB567:
+  27              		.file 1 "Drivers/TS/Src/XPT2046_lv.c"
+   1:Drivers/TS/Src/XPT2046_lv.c **** /**
+   2:Drivers/TS/Src/XPT2046_lv.c ****  * @file XPT2046.c
+   3:Drivers/TS/Src/XPT2046_lv.c ****  *
+   4:Drivers/TS/Src/XPT2046_lv.c ****  */
+   5:Drivers/TS/Src/XPT2046_lv.c **** 
+   6:Drivers/TS/Src/XPT2046_lv.c **** /*********************
+   7:Drivers/TS/Src/XPT2046_lv.c ****  *      INCLUDES
+   8:Drivers/TS/Src/XPT2046_lv.c ****  *********************/
+   9:Drivers/TS/Src/XPT2046_lv.c **** #include "XPT2046_lv.h"
+  10:Drivers/TS/Src/XPT2046_lv.c **** #include "config.h"
+  11:Drivers/TS/Src/XPT2046_lv.c **** #include "main.h"
+  12:Drivers/TS/Src/XPT2046_lv.c **** #include "ILI9341_GFX.h"
+  13:Drivers/TS/Src/XPT2046_lv.c **** #include "ILI9341_STM32_Driver.h"
+  14:Drivers/TS/Src/XPT2046_lv.c **** #if USE_XPT2046
+  15:Drivers/TS/Src/XPT2046_lv.c **** 
+  16:Drivers/TS/Src/XPT2046_lv.c **** #include <stddef.h>
+  17:Drivers/TS/Src/XPT2046_lv.c **** //#include LV_DRV_INDEV_INCLUDE
+  18:Drivers/TS/Src/XPT2046_lv.c **** //#include LV_DRV_DELAY_INCLUDE
+  19:Drivers/TS/Src/XPT2046_lv.c **** 
+  20:Drivers/TS/Src/XPT2046_lv.c **** /*********************
+  21:Drivers/TS/Src/XPT2046_lv.c ****  *      DEFINES
+  22:Drivers/TS/Src/XPT2046_lv.c ****  *********************/
+  23:Drivers/TS/Src/XPT2046_lv.c **** #define CMD_X_READ  0b10010000
+  24:Drivers/TS/Src/XPT2046_lv.c **** #define CMD_Y_READ  0b11010000
+  25:Drivers/TS/Src/XPT2046_lv.c **** 
+  26:Drivers/TS/Src/XPT2046_lv.c **** /**********************
+  27:Drivers/TS/Src/XPT2046_lv.c ****  *      TYPEDEFS
+  28:Drivers/TS/Src/XPT2046_lv.c ****  **********************/
+  29:Drivers/TS/Src/XPT2046_lv.c **** 
+  30:Drivers/TS/Src/XPT2046_lv.c **** /**********************
+  31:Drivers/TS/Src/XPT2046_lv.c ****  *  STATIC PROTOTYPES
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 2
+
+
+  32:Drivers/TS/Src/XPT2046_lv.c ****  **********************/
+  33:Drivers/TS/Src/XPT2046_lv.c **** 
+  34:Drivers/TS/Src/XPT2046_lv.c **** 
+  35:Drivers/TS/Src/XPT2046_lv.c **** /**********************
+  36:Drivers/TS/Src/XPT2046_lv.c ****  *  STATIC VARIABLES
+  37:Drivers/TS/Src/XPT2046_lv.c ****  **********************/
+  38:Drivers/TS/Src/XPT2046_lv.c **** int16_t avg_buf_x[XPT2046_AVG];
+  39:Drivers/TS/Src/XPT2046_lv.c **** int16_t avg_buf_y[XPT2046_AVG];
+  40:Drivers/TS/Src/XPT2046_lv.c **** uint8_t avg_last;
+  41:Drivers/TS/Src/XPT2046_lv.c **** 
+  42:Drivers/TS/Src/XPT2046_lv.c ****      uint16_t last_x = 0;
+  43:Drivers/TS/Src/XPT2046_lv.c ****      uint16_t last_y = 0;
+  44:Drivers/TS/Src/XPT2046_lv.c ****      uint8_t last_state = 0;
+  45:Drivers/TS/Src/XPT2046_lv.c **** static SPI_HandleTypeDef *_spi;
+  46:Drivers/TS/Src/XPT2046_lv.c **** static SPI_HandleTypeDef hspi2;
+  47:Drivers/TS/Src/XPT2046_lv.c **** uint8_t isTouched = 0;
+  48:Drivers/TS/Src/XPT2046_lv.c **** 
+  49:Drivers/TS/Src/XPT2046_lv.c **** //extern SPI_HandleTypeDef hspi2;
+  50:Drivers/TS/Src/XPT2046_lv.c **** 
+  51:Drivers/TS/Src/XPT2046_lv.c **** /* Параметры ориентации */
+  52:Drivers/TS/Src/XPT2046_lv.c **** static touchOrienation _orient;
+  53:Drivers/TS/Src/XPT2046_lv.c **** static uint16_t _width, _height;
+  54:Drivers/TS/Src/XPT2046_lv.c **** 
+  55:Drivers/TS/Src/XPT2046_lv.c **** static void _spi_init(void);
+  56:Drivers/TS/Src/XPT2046_lv.c **** static void _XPT2046_TouchSelect(void);
+  57:Drivers/TS/Src/XPT2046_lv.c **** static void _XPT2046_TouchUnselect(void);
+  58:Drivers/TS/Src/XPT2046_lv.c **** /**********************
+  59:Drivers/TS/Src/XPT2046_lv.c ****  *      MACROS
+  60:Drivers/TS/Src/XPT2046_lv.c ****  **********************/
+  61:Drivers/TS/Src/XPT2046_lv.c **** 
+  62:Drivers/TS/Src/XPT2046_lv.c **** /**********************
+  63:Drivers/TS/Src/XPT2046_lv.c ****  *   GLOBAL FUNCTIONS
+  64:Drivers/TS/Src/XPT2046_lv.c ****  **********************/
+  65:Drivers/TS/Src/XPT2046_lv.c **** 
+  66:Drivers/TS/Src/XPT2046_lv.c **** /**
+  67:Drivers/TS/Src/XPT2046_lv.c ****  * Initialize the XPT2046
+  68:Drivers/TS/Src/XPT2046_lv.c ****  */
+  69:Drivers/TS/Src/XPT2046_lv.c **** void xpt2046_lv_init(void)
+  70:Drivers/TS/Src/XPT2046_lv.c **** {
+  71:Drivers/TS/Src/XPT2046_lv.c ****     //XPT2046_init(_spi, XPT2046_LANDSCAPE, XPT2046_HOR_RES, XPT2046_VER_RES);
+  72:Drivers/TS/Src/XPT2046_lv.c ****     XPT2046_init(&hspi2, XPT2046_LANDSCAPE, XPT2046_HOR_RES, XPT2046_VER_RES);
+  73:Drivers/TS/Src/XPT2046_lv.c **** }
+  74:Drivers/TS/Src/XPT2046_lv.c **** 
+  75:Drivers/TS/Src/XPT2046_lv.c **** /**
+  76:Drivers/TS/Src/XPT2046_lv.c ****  * Get the current position and state of the touchpad
+  77:Drivers/TS/Src/XPT2046_lv.c ****  * @param data store the read data here
+  78:Drivers/TS/Src/XPT2046_lv.c ****  * @return false: because no ore data to be read
+  79:Drivers/TS/Src/XPT2046_lv.c ****  */
+  80:Drivers/TS/Src/XPT2046_lv.c **** #define READ_X 0x90
+  81:Drivers/TS/Src/XPT2046_lv.c **** #define READ_Y 0xD0
+  82:Drivers/TS/Src/XPT2046_lv.c **** 	static const uint8_t _cmd_read_x[] = {READ_X};
+  83:Drivers/TS/Src/XPT2046_lv.c **** 	static const uint8_t _cmd_read_y[] = {READ_Y};
+  84:Drivers/TS/Src/XPT2046_lv.c **** 	static const uint8_t _zeroes_tx[] = {0x00, 0x00};
+  85:Drivers/TS/Src/XPT2046_lv.c **** 
+  86:Drivers/TS/Src/XPT2046_lv.c ****     static void _XPT2046_TouchSelect(void)
+  87:Drivers/TS/Src/XPT2046_lv.c **** {
+  88:Drivers/TS/Src/XPT2046_lv.c ****     HAL_GPIO_WritePin(XPT2046_CS_GPIO_Port, XPT2046_CS_Pin, GPIO_PIN_RESET);
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 3
+
+
+  89:Drivers/TS/Src/XPT2046_lv.c **** }
+  90:Drivers/TS/Src/XPT2046_lv.c **** 
+  91:Drivers/TS/Src/XPT2046_lv.c **** static void _XPT2046_TouchUnselect(void)
+  92:Drivers/TS/Src/XPT2046_lv.c **** {
+  93:Drivers/TS/Src/XPT2046_lv.c ****     HAL_GPIO_WritePin(XPT2046_CS_GPIO_Port, XPT2046_CS_Pin, GPIO_PIN_SET);
+  94:Drivers/TS/Src/XPT2046_lv.c **** }
+  95:Drivers/TS/Src/XPT2046_lv.c **** void XPT2046_init(SPI_HandleTypeDef *spi, touchOrienation orientation, const uint16_t width, const 
+  96:Drivers/TS/Src/XPT2046_lv.c **** 	_spi = spi;
+  97:Drivers/TS/Src/XPT2046_lv.c **** 	_orient = orientation;
+  98:Drivers/TS/Src/XPT2046_lv.c **** 	_width = width;
+  99:Drivers/TS/Src/XPT2046_lv.c **** 	_height = height;
+ 100:Drivers/TS/Src/XPT2046_lv.c **** }
+ 101:Drivers/TS/Src/XPT2046_lv.c **** 
+ 102:Drivers/TS/Src/XPT2046_lv.c **** bool XPT2046_TouchPressed(void)
+ 103:Drivers/TS/Src/XPT2046_lv.c **** {
+ 104:Drivers/TS/Src/XPT2046_lv.c ****     return HAL_GPIO_ReadPin(TS_IRQ_GPIO_Port, TS_IRQ_Pin) == GPIO_PIN_RESET;
+ 105:Drivers/TS/Src/XPT2046_lv.c **** }
+ 106:Drivers/TS/Src/XPT2046_lv.c **** //XPT2046_AVG
+ 107:Drivers/TS/Src/XPT2046_lv.c **** bool xpt2046_getXY(uint16_t* x, uint16_t* y)
+ 108:Drivers/TS/Src/XPT2046_lv.c **** {
+ 109:Drivers/TS/Src/XPT2046_lv.c ****     last_state = LV_INDEV_STATE_PR;
+ 110:Drivers/TS/Src/XPT2046_lv.c ****             	//Если включен контроль скорости SPI, то сохранен
+ 111:Drivers/TS/Src/XPT2046_lv.c **** 	#ifdef XPT2046_SPI_PARAM_CONTROL
+ 112:Drivers/TS/Src/XPT2046_lv.c **** 	SPI_HandleTypeDef old_spi =  *_spi;//Сохранение старых параметров SPI
+ 113:Drivers/TS/Src/XPT2046_lv.c **** 	_spi_init(); //Инициализация с правильными параметрами
+ 114:Drivers/TS/Src/XPT2046_lv.c **** 	#endif
+ 115:Drivers/TS/Src/XPT2046_lv.c ****         _XPT2046_TouchSelect();
+ 116:Drivers/TS/Src/XPT2046_lv.c **** 
+ 117:Drivers/TS/Src/XPT2046_lv.c ****             HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);    
+ 118:Drivers/TS/Src/XPT2046_lv.c ****    
+ 119:Drivers/TS/Src/XPT2046_lv.c ****     uint32_t avg_x = 0;
+ 120:Drivers/TS/Src/XPT2046_lv.c ****     uint32_t avg_y = 0;
+ 121:Drivers/TS/Src/XPT2046_lv.c ****     uint8_t nsamples = 0;
+ 122:Drivers/TS/Src/XPT2046_lv.c **** 
+ 123:Drivers/TS/Src/XPT2046_lv.c ****     for(uint8_t i = 0; i < XPT2046_AVG; i++)
+ 124:Drivers/TS/Src/XPT2046_lv.c ****     {
+ 125:Drivers/TS/Src/XPT2046_lv.c ****         if(!XPT2046_TouchPressed())
+ 126:Drivers/TS/Src/XPT2046_lv.c ****         {
+ 127:Drivers/TS/Src/XPT2046_lv.c ****             last_state = LV_INDEV_STATE_REL;
+ 128:Drivers/TS/Src/XPT2046_lv.c ****             break;
+ 129:Drivers/TS/Src/XPT2046_lv.c ****         }
+ 130:Drivers/TS/Src/XPT2046_lv.c ****             
+ 131:Drivers/TS/Src/XPT2046_lv.c **** 
+ 132:Drivers/TS/Src/XPT2046_lv.c ****         nsamples++;
+ 133:Drivers/TS/Src/XPT2046_lv.c **** 
+ 134:Drivers/TS/Src/XPT2046_lv.c ****         HAL_SPI_Transmit(_spi, (uint8_t*)_cmd_read_y, sizeof(_cmd_read_y), HAL_MAX_DELAY);
+ 135:Drivers/TS/Src/XPT2046_lv.c ****         uint8_t y_raw[2];
+ 136:Drivers/TS/Src/XPT2046_lv.c ****         HAL_SPI_TransmitReceive(_spi, (uint8_t*)_zeroes_tx, y_raw, sizeof(y_raw), HAL_MAX_DELAY);
+ 137:Drivers/TS/Src/XPT2046_lv.c **** 
+ 138:Drivers/TS/Src/XPT2046_lv.c ****         HAL_SPI_Transmit(_spi, (uint8_t*)_cmd_read_x, sizeof(_cmd_read_x), HAL_MAX_DELAY);
+ 139:Drivers/TS/Src/XPT2046_lv.c ****         uint8_t x_raw[2];
+ 140:Drivers/TS/Src/XPT2046_lv.c ****         HAL_SPI_TransmitReceive(_spi, (uint8_t*)_zeroes_tx, x_raw, sizeof(x_raw), HAL_MAX_DELAY);
+ 141:Drivers/TS/Src/XPT2046_lv.c **** 
+ 142:Drivers/TS/Src/XPT2046_lv.c ****         avg_x += (((uint16_t)x_raw[0]) << 8) | ((uint16_t)x_raw[1]);
+ 143:Drivers/TS/Src/XPT2046_lv.c ****         avg_y += (((uint16_t)y_raw[0]) << 8) | ((uint16_t)y_raw[1]);
+ 144:Drivers/TS/Src/XPT2046_lv.c ****     }
+ 145:Drivers/TS/Src/XPT2046_lv.c **** 
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 4
+
+
+ 146:Drivers/TS/Src/XPT2046_lv.c ****     _XPT2046_TouchUnselect();
+ 147:Drivers/TS/Src/XPT2046_lv.c **** 
+ 148:Drivers/TS/Src/XPT2046_lv.c ****         	//Восстановление старых параметров
+ 149:Drivers/TS/Src/XPT2046_lv.c ****             
+ 150:Drivers/TS/Src/XPT2046_lv.c **** 	#ifdef XPT2046_SPI_PARAM_CONTROL
+ 151:Drivers/TS/Src/XPT2046_lv.c **** 	*_spi = old_spi; 
+ 152:Drivers/TS/Src/XPT2046_lv.c **** 	//Инициализация с старыми параметрами
+ 153:Drivers/TS/Src/XPT2046_lv.c ****   if (HAL_SPI_Init(_spi) != HAL_OK) Error_Handler();
+ 154:Drivers/TS/Src/XPT2046_lv.c **** 	#endif  
+ 155:Drivers/TS/Src/XPT2046_lv.c **** 
+ 156:Drivers/TS/Src/XPT2046_lv.c ****     if(nsamples < XPT2046_AVG)
+ 157:Drivers/TS/Src/XPT2046_lv.c ****     {
+ 158:Drivers/TS/Src/XPT2046_lv.c ****         return false;
+ 159:Drivers/TS/Src/XPT2046_lv.c ****     }
+ 160:Drivers/TS/Src/XPT2046_lv.c **** 
+ 161:Drivers/TS/Src/XPT2046_lv.c ****     uint32_t raw_x = (avg_x / XPT2046_AVG);
+ 162:Drivers/TS/Src/XPT2046_lv.c ****     if(raw_x <  XPT2046_X_MIN) raw_x = XPT2046_X_MIN;
+ 163:Drivers/TS/Src/XPT2046_lv.c ****     if(raw_x >  XPT2046_X_MAX) raw_x = XPT2046_X_MAX;
+ 164:Drivers/TS/Src/XPT2046_lv.c **** 
+ 165:Drivers/TS/Src/XPT2046_lv.c ****     uint32_t raw_y = (avg_y / XPT2046_AVG);
+ 166:Drivers/TS/Src/XPT2046_lv.c ****     if(raw_y < XPT2046_Y_MIN) raw_y = XPT2046_Y_MIN;
+ 167:Drivers/TS/Src/XPT2046_lv.c ****     if(raw_y > XPT2046_Y_MAX) raw_y = XPT2046_Y_MAX;
+ 168:Drivers/TS/Src/XPT2046_lv.c **** 
+ 169:Drivers/TS/Src/XPT2046_lv.c ****     #if XPT2046_XY_SWAP != 0
+ 170:Drivers/TS/Src/XPT2046_lv.c ****     int16_t swap_tmp;
+ 171:Drivers/TS/Src/XPT2046_lv.c ****     swap_tmp = *x;
+ 172:Drivers/TS/Src/XPT2046_lv.c ****     *x = *y;
+ 173:Drivers/TS/Src/XPT2046_lv.c ****     *y = swap_tmp;
+ 174:Drivers/TS/Src/XPT2046_lv.c ****     #endif
+ 175:Drivers/TS/Src/XPT2046_lv.c **** 
+ 176:Drivers/TS/Src/XPT2046_lv.c ****     *x = (raw_x - XPT2046_X_MIN) * XPT2046_HOR_RES / (XPT2046_X_MAX - XPT2046_X_MIN);
+ 177:Drivers/TS/Src/XPT2046_lv.c ****     *y = (raw_y - XPT2046_Y_MIN) * XPT2046_VER_RES / (XPT2046_Y_MAX - XPT2046_Y_MIN);
+ 178:Drivers/TS/Src/XPT2046_lv.c ****     #if XPT2046_X_INV != 0
+ 179:Drivers/TS/Src/XPT2046_lv.c ****          (*x) =  XPT2046_HOR_RES - (*x);
+ 180:Drivers/TS/Src/XPT2046_lv.c ****     #endif
+ 181:Drivers/TS/Src/XPT2046_lv.c ****     #if XPT2046_Y_INV != 0
+ 182:Drivers/TS/Src/XPT2046_lv.c ****         (*y) =  XPT2046_VER_RES - (*y);
+ 183:Drivers/TS/Src/XPT2046_lv.c ****     #endif
+ 184:Drivers/TS/Src/XPT2046_lv.c ****  //   HAL_NVIC_DisableIRQ(CTP_INT_IRQn);
+ 185:Drivers/TS/Src/XPT2046_lv.c ****    last_x = (*x);
+ 186:Drivers/TS/Src/XPT2046_lv.c ****     last_y = (*y);
+ 187:Drivers/TS/Src/XPT2046_lv.c ****    //  ILI9341_Draw_Filled_Circle(last_x - 1, last_y - 1, 2, RED);
+ 188:Drivers/TS/Src/XPT2046_lv.c ****     
+ 189:Drivers/TS/Src/XPT2046_lv.c ****   //  HAL_NVIC_EnableIRQ(CTP_INT_IRQn);
+ 190:Drivers/TS/Src/XPT2046_lv.c ****     
+ 191:Drivers/TS/Src/XPT2046_lv.c **** 
+ 192:Drivers/TS/Src/XPT2046_lv.c **** 
+ 193:Drivers/TS/Src/XPT2046_lv.c ****    // last_state = LV_INDEV_STATE_PR;
+ 194:Drivers/TS/Src/XPT2046_lv.c ****     return true;
+ 195:Drivers/TS/Src/XPT2046_lv.c **** 
+ 196:Drivers/TS/Src/XPT2046_lv.c **** }
+ 197:Drivers/TS/Src/XPT2046_lv.c **** 
+ 198:Drivers/TS/Src/XPT2046_lv.c **** 
+ 199:Drivers/TS/Src/XPT2046_lv.c **** bool xpt2046_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
+ 200:Drivers/TS/Src/XPT2046_lv.c **** {
+ 201:Drivers/TS/Src/XPT2046_lv.c ****          if(!XPT2046_TouchPressed() )
+ 202:Drivers/TS/Src/XPT2046_lv.c ****          {
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 5
+
+
+ 203:Drivers/TS/Src/XPT2046_lv.c ****            last_state = LV_INDEV_STATE_REL;
+ 204:Drivers/TS/Src/XPT2046_lv.c ****          }  
+ 205:Drivers/TS/Src/XPT2046_lv.c ****     int16_t x = 0;
+ 206:Drivers/TS/Src/XPT2046_lv.c ****     int16_t y = 0;
+ 207:Drivers/TS/Src/XPT2046_lv.c **** 
+ 208:Drivers/TS/Src/XPT2046_lv.c ****         x = last_x;
+ 209:Drivers/TS/Src/XPT2046_lv.c ****         y = last_y;
+ 210:Drivers/TS/Src/XPT2046_lv.c **** 
+ 211:Drivers/TS/Src/XPT2046_lv.c ****     data->point.x = (lv_coord_t)x;
+ 212:Drivers/TS/Src/XPT2046_lv.c ****     data->point.y = (lv_coord_t)y;
+ 213:Drivers/TS/Src/XPT2046_lv.c ****     data->state = last_state;// ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;
+ 214:Drivers/TS/Src/XPT2046_lv.c **** 
+ 215:Drivers/TS/Src/XPT2046_lv.c ****     return false;
+ 216:Drivers/TS/Src/XPT2046_lv.c **** }
+ 217:Drivers/TS/Src/XPT2046_lv.c **** 
+ 218:Drivers/TS/Src/XPT2046_lv.c **** #ifdef XPT2046_SPI_PARAM_CONTROL
+ 219:Drivers/TS/Src/XPT2046_lv.c **** static void _spi_init(void) {
+  28              		.loc 1 219 29 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 3, -8
+  36              		.cfi_offset 14, -4
+ 220:Drivers/TS/Src/XPT2046_lv.c ****   _spi->Instance = SPI2;
+  37              		.loc 1 220 3 view .LVU1
+  38              		.loc 1 220 7 is_stmt 0 view .LVU2
+  39 0002 0E4B     		ldr	r3, .L5
+  40 0004 1868     		ldr	r0, [r3]
+  41              		.loc 1 220 18 view .LVU3
+  42 0006 0E4B     		ldr	r3, .L5+4
+  43 0008 0360     		str	r3, [r0]
+ 221:Drivers/TS/Src/XPT2046_lv.c ****   _spi->Init.Mode = SPI_MODE_MASTER;
+  44              		.loc 1 221 3 is_stmt 1 view .LVU4
+  45              		.loc 1 221 19 is_stmt 0 view .LVU5
+  46 000a 4FF48273 		mov	r3, #260
+  47 000e 4360     		str	r3, [r0, #4]
+ 222:Drivers/TS/Src/XPT2046_lv.c ****   _spi->Init.Direction = SPI_DIRECTION_2LINES;
+  48              		.loc 1 222 3 is_stmt 1 view .LVU6
+  49              		.loc 1 222 24 is_stmt 0 view .LVU7
+  50 0010 0023     		movs	r3, #0
+  51 0012 8360     		str	r3, [r0, #8]
+ 223:Drivers/TS/Src/XPT2046_lv.c ****   _spi->Init.DataSize = SPI_DATASIZE_8BIT;
+  52              		.loc 1 223 3 is_stmt 1 view .LVU8
+  53              		.loc 1 223 23 is_stmt 0 view .LVU9
+  54 0014 C360     		str	r3, [r0, #12]
+ 224:Drivers/TS/Src/XPT2046_lv.c ****   _spi->Init.CLKPolarity = SPI_POLARITY_LOW;
+  55              		.loc 1 224 3 is_stmt 1 view .LVU10
+  56              		.loc 1 224 26 is_stmt 0 view .LVU11
+  57 0016 0361     		str	r3, [r0, #16]
+ 225:Drivers/TS/Src/XPT2046_lv.c ****   _spi->Init.CLKPhase = SPI_PHASE_1EDGE;
+  58              		.loc 1 225 3 is_stmt 1 view .LVU12
+  59              		.loc 1 225 23 is_stmt 0 view .LVU13
+  60 0018 4361     		str	r3, [r0, #20]
+ 226:Drivers/TS/Src/XPT2046_lv.c ****   _spi->Init.NSS = SPI_NSS_SOFT;
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 6
+
+
+  61              		.loc 1 226 3 is_stmt 1 view .LVU14
+  62              		.loc 1 226 18 is_stmt 0 view .LVU15
+  63 001a 4FF40072 		mov	r2, #512
+  64 001e 8261     		str	r2, [r0, #24]
+ 227:Drivers/TS/Src/XPT2046_lv.c **** 	//Делитель частоты SPI. Установите безопасное значение 
+ 228:Drivers/TS/Src/XPT2046_lv.c ****   _spi->Init.BaudRatePrescaler = XPT2046_SPI_PRESCALER;
+  65              		.loc 1 228 3 is_stmt 1 view .LVU16
+  66              		.loc 1 228 32 is_stmt 0 view .LVU17
+  67 0020 2822     		movs	r2, #40
+  68 0022 C261     		str	r2, [r0, #28]
+ 229:Drivers/TS/Src/XPT2046_lv.c ****   _spi->Init.FirstBit = SPI_FIRSTBIT_MSB;
+  69              		.loc 1 229 3 is_stmt 1 view .LVU18
+  70              		.loc 1 229 23 is_stmt 0 view .LVU19
+  71 0024 0362     		str	r3, [r0, #32]
+ 230:Drivers/TS/Src/XPT2046_lv.c ****   _spi->Init.TIMode = SPI_TIMODE_DISABLE;
+  72              		.loc 1 230 3 is_stmt 1 view .LVU20
+  73              		.loc 1 230 21 is_stmt 0 view .LVU21
+  74 0026 4362     		str	r3, [r0, #36]
+ 231:Drivers/TS/Src/XPT2046_lv.c ****   _spi->Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  75              		.loc 1 231 3 is_stmt 1 view .LVU22
+  76              		.loc 1 231 29 is_stmt 0 view .LVU23
+  77 0028 8362     		str	r3, [r0, #40]
+ 232:Drivers/TS/Src/XPT2046_lv.c ****   _spi->Init.CRCPolynomial = 10;
+  78              		.loc 1 232 3 is_stmt 1 view .LVU24
+  79              		.loc 1 232 28 is_stmt 0 view .LVU25
+  80 002a 0A23     		movs	r3, #10
+  81 002c C362     		str	r3, [r0, #44]
+ 233:Drivers/TS/Src/XPT2046_lv.c ****   if (HAL_SPI_Init(_spi) != HAL_OK) Error_Handler();
+  82              		.loc 1 233 3 is_stmt 1 view .LVU26
+  83              		.loc 1 233 7 is_stmt 0 view .LVU27
+  84 002e FFF7FEFF 		bl	HAL_SPI_Init
+  85              	.LVL0:
+  86              		.loc 1 233 6 view .LVU28
+  87 0032 00B9     		cbnz	r0, .L4
+  88              	.L1:
+ 234:Drivers/TS/Src/XPT2046_lv.c **** }
+  89              		.loc 1 234 1 view .LVU29
+  90 0034 08BD     		pop	{r3, pc}
+  91              	.L4:
+ 233:Drivers/TS/Src/XPT2046_lv.c ****   if (HAL_SPI_Init(_spi) != HAL_OK) Error_Handler();
+  92              		.loc 1 233 37 is_stmt 1 discriminator 1 view .LVU30
+  93 0036 FFF7FEFF 		bl	Error_Handler
+  94              	.LVL1:
+  95              		.loc 1 234 1 is_stmt 0 discriminator 1 view .LVU31
+  96 003a FBE7     		b	.L1
+  97              	.L6:
+  98              		.align	2
+  99              	.L5:
+ 100 003c 00000000 		.word	.LANCHOR0
+ 101 0040 00380040 		.word	1073756160
+ 102              		.cfi_endproc
+ 103              	.LFE567:
+ 105              		.section	.text._XPT2046_TouchSelect,"ax",%progbits
+ 106              		.align	1
+ 107              		.syntax unified
+ 108              		.thumb
+ 109              		.thumb_func
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 7
+
+
+ 110              		.fpu fpv4-sp-d16
+ 112              	_XPT2046_TouchSelect:
+ 113              	.LFB561:
+  87:Drivers/TS/Src/XPT2046_lv.c ****     HAL_GPIO_WritePin(XPT2046_CS_GPIO_Port, XPT2046_CS_Pin, GPIO_PIN_RESET);
+ 114              		.loc 1 87 1 is_stmt 1 view -0
+ 115              		.cfi_startproc
+ 116              		@ args = 0, pretend = 0, frame = 0
+ 117              		@ frame_needed = 0, uses_anonymous_args = 0
+ 118 0000 08B5     		push	{r3, lr}
+ 119              	.LCFI1:
+ 120              		.cfi_def_cfa_offset 8
+ 121              		.cfi_offset 3, -8
+ 122              		.cfi_offset 14, -4
+  88:Drivers/TS/Src/XPT2046_lv.c **** }
+ 123              		.loc 1 88 5 view .LVU33
+ 124 0002 0022     		movs	r2, #0
+ 125 0004 4FF48051 		mov	r1, #4096
+ 126 0008 0148     		ldr	r0, .L9
+ 127 000a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 128              	.LVL2:
+  89:Drivers/TS/Src/XPT2046_lv.c **** 
+ 129              		.loc 1 89 1 is_stmt 0 view .LVU34
+ 130 000e 08BD     		pop	{r3, pc}
+ 131              	.L10:
+ 132              		.align	2
+ 133              	.L9:
+ 134 0010 00040240 		.word	1073873920
+ 135              		.cfi_endproc
+ 136              	.LFE561:
+ 138              		.section	.text._XPT2046_TouchUnselect,"ax",%progbits
+ 139              		.align	1
+ 140              		.syntax unified
+ 141              		.thumb
+ 142              		.thumb_func
+ 143              		.fpu fpv4-sp-d16
+ 145              	_XPT2046_TouchUnselect:
+ 146              	.LFB562:
+  92:Drivers/TS/Src/XPT2046_lv.c ****     HAL_GPIO_WritePin(XPT2046_CS_GPIO_Port, XPT2046_CS_Pin, GPIO_PIN_SET);
+ 147              		.loc 1 92 1 is_stmt 1 view -0
+ 148              		.cfi_startproc
+ 149              		@ args = 0, pretend = 0, frame = 0
+ 150              		@ frame_needed = 0, uses_anonymous_args = 0
+ 151 0000 08B5     		push	{r3, lr}
+ 152              	.LCFI2:
+ 153              		.cfi_def_cfa_offset 8
+ 154              		.cfi_offset 3, -8
+ 155              		.cfi_offset 14, -4
+  93:Drivers/TS/Src/XPT2046_lv.c **** }
+ 156              		.loc 1 93 5 view .LVU36
+ 157 0002 0122     		movs	r2, #1
+ 158 0004 4FF48051 		mov	r1, #4096
+ 159 0008 0148     		ldr	r0, .L13
+ 160 000a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 161              	.LVL3:
+  94:Drivers/TS/Src/XPT2046_lv.c **** void XPT2046_init(SPI_HandleTypeDef *spi, touchOrienation orientation, const uint16_t width, const 
+ 162              		.loc 1 94 1 is_stmt 0 view .LVU37
+ 163 000e 08BD     		pop	{r3, pc}
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 8
+
+
+ 164              	.L14:
+ 165              		.align	2
+ 166              	.L13:
+ 167 0010 00040240 		.word	1073873920
+ 168              		.cfi_endproc
+ 169              	.LFE562:
+ 171              		.section	.text.XPT2046_init,"ax",%progbits
+ 172              		.align	1
+ 173              		.global	XPT2046_init
+ 174              		.syntax unified
+ 175              		.thumb
+ 176              		.thumb_func
+ 177              		.fpu fpv4-sp-d16
+ 179              	XPT2046_init:
+ 180              	.LVL4:
+ 181              	.LFB563:
+  95:Drivers/TS/Src/XPT2046_lv.c **** 	_spi = spi;
+ 182              		.loc 1 95 117 is_stmt 1 view -0
+ 183              		.cfi_startproc
+ 184              		@ args = 0, pretend = 0, frame = 0
+ 185              		@ frame_needed = 0, uses_anonymous_args = 0
+ 186              		@ link register save eliminated.
+  96:Drivers/TS/Src/XPT2046_lv.c **** 	_orient = orientation;
+ 187              		.loc 1 96 2 view .LVU39
+  96:Drivers/TS/Src/XPT2046_lv.c **** 	_orient = orientation;
+ 188              		.loc 1 96 7 is_stmt 0 view .LVU40
+ 189 0000 014B     		ldr	r3, .L16
+ 190              	.LVL5:
+  96:Drivers/TS/Src/XPT2046_lv.c **** 	_orient = orientation;
+ 191              		.loc 1 96 7 view .LVU41
+ 192 0002 1860     		str	r0, [r3]
+  97:Drivers/TS/Src/XPT2046_lv.c **** 	_width = width;
+ 193              		.loc 1 97 2 is_stmt 1 view .LVU42
+  98:Drivers/TS/Src/XPT2046_lv.c **** 	_height = height;
+ 194              		.loc 1 98 2 view .LVU43
+  99:Drivers/TS/Src/XPT2046_lv.c **** }
+ 195              		.loc 1 99 2 view .LVU44
+ 100:Drivers/TS/Src/XPT2046_lv.c **** 
+ 196              		.loc 1 100 1 is_stmt 0 view .LVU45
+ 197 0004 7047     		bx	lr
+ 198              	.L17:
+ 199 0006 00BF     		.align	2
+ 200              	.L16:
+ 201 0008 00000000 		.word	.LANCHOR0
+ 202              		.cfi_endproc
+ 203              	.LFE563:
+ 205              		.section	.text.xpt2046_lv_init,"ax",%progbits
+ 206              		.align	1
+ 207              		.global	xpt2046_lv_init
+ 208              		.syntax unified
+ 209              		.thumb
+ 210              		.thumb_func
+ 211              		.fpu fpv4-sp-d16
+ 213              	xpt2046_lv_init:
+ 214              	.LFB560:
+  70:Drivers/TS/Src/XPT2046_lv.c ****     //XPT2046_init(_spi, XPT2046_LANDSCAPE, XPT2046_HOR_RES, XPT2046_VER_RES);
+ 215              		.loc 1 70 1 is_stmt 1 view -0
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 9
+
+
+ 216              		.cfi_startproc
+ 217              		@ args = 0, pretend = 0, frame = 0
+ 218              		@ frame_needed = 0, uses_anonymous_args = 0
+ 219 0000 08B5     		push	{r3, lr}
+ 220              	.LCFI3:
+ 221              		.cfi_def_cfa_offset 8
+ 222              		.cfi_offset 3, -8
+ 223              		.cfi_offset 14, -4
+  72:Drivers/TS/Src/XPT2046_lv.c **** }
+ 224              		.loc 1 72 5 view .LVU47
+ 225 0002 F023     		movs	r3, #240
+ 226 0004 4FF4A072 		mov	r2, #320
+ 227 0008 0021     		movs	r1, #0
+ 228 000a 0248     		ldr	r0, .L20
+ 229 000c FFF7FEFF 		bl	XPT2046_init
+ 230              	.LVL6:
+  73:Drivers/TS/Src/XPT2046_lv.c **** 
+ 231              		.loc 1 73 1 is_stmt 0 view .LVU48
+ 232 0010 08BD     		pop	{r3, pc}
+ 233              	.L21:
+ 234 0012 00BF     		.align	2
+ 235              	.L20:
+ 236 0014 00000000 		.word	.LANCHOR1
+ 237              		.cfi_endproc
+ 238              	.LFE560:
+ 240              		.section	.text.XPT2046_TouchPressed,"ax",%progbits
+ 241              		.align	1
+ 242              		.global	XPT2046_TouchPressed
+ 243              		.syntax unified
+ 244              		.thumb
+ 245              		.thumb_func
+ 246              		.fpu fpv4-sp-d16
+ 248              	XPT2046_TouchPressed:
+ 249              	.LFB564:
+ 103:Drivers/TS/Src/XPT2046_lv.c ****     return HAL_GPIO_ReadPin(TS_IRQ_GPIO_Port, TS_IRQ_Pin) == GPIO_PIN_RESET;
+ 250              		.loc 1 103 1 is_stmt 1 view -0
+ 251              		.cfi_startproc
+ 252              		@ args = 0, pretend = 0, frame = 0
+ 253              		@ frame_needed = 0, uses_anonymous_args = 0
+ 254 0000 08B5     		push	{r3, lr}
+ 255              	.LCFI4:
+ 256              		.cfi_def_cfa_offset 8
+ 257              		.cfi_offset 3, -8
+ 258              		.cfi_offset 14, -4
+ 104:Drivers/TS/Src/XPT2046_lv.c **** }
+ 259              		.loc 1 104 5 view .LVU50
+ 104:Drivers/TS/Src/XPT2046_lv.c **** }
+ 260              		.loc 1 104 12 is_stmt 0 view .LVU51
+ 261 0002 2021     		movs	r1, #32
+ 262 0004 0348     		ldr	r0, .L24
+ 263 0006 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 264              	.LVL7:
+ 105:Drivers/TS/Src/XPT2046_lv.c **** //XPT2046_AVG
+ 265              		.loc 1 105 1 view .LVU52
+ 266 000a B0FA80F0 		clz	r0, r0
+ 267 000e 4009     		lsrs	r0, r0, #5
+ 268 0010 08BD     		pop	{r3, pc}
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 10
+
+
+ 269              	.L25:
+ 270 0012 00BF     		.align	2
+ 271              	.L24:
+ 272 0014 00080240 		.word	1073874944
+ 273              		.cfi_endproc
+ 274              	.LFE564:
+ 276              		.section	.text.xpt2046_getXY,"ax",%progbits
+ 277              		.align	1
+ 278              		.global	xpt2046_getXY
+ 279              		.syntax unified
+ 280              		.thumb
+ 281              		.thumb_func
+ 282              		.fpu fpv4-sp-d16
+ 284              	xpt2046_getXY:
+ 285              	.LVL8:
+ 286              	.LFB565:
+ 108:Drivers/TS/Src/XPT2046_lv.c ****     last_state = LV_INDEV_STATE_PR;
+ 287              		.loc 1 108 1 is_stmt 1 view -0
+ 288              		.cfi_startproc
+ 289              		@ args = 0, pretend = 0, frame = 96
+ 290              		@ frame_needed = 0, uses_anonymous_args = 0
+ 108:Drivers/TS/Src/XPT2046_lv.c ****     last_state = LV_INDEV_STATE_PR;
+ 291              		.loc 1 108 1 is_stmt 0 view .LVU54
+ 292 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 293              	.LCFI5:
+ 294              		.cfi_def_cfa_offset 36
+ 295              		.cfi_offset 4, -36
+ 296              		.cfi_offset 5, -32
+ 297              		.cfi_offset 6, -28
+ 298              		.cfi_offset 7, -24
+ 299              		.cfi_offset 8, -20
+ 300              		.cfi_offset 9, -16
+ 301              		.cfi_offset 10, -12
+ 302              		.cfi_offset 11, -8
+ 303              		.cfi_offset 14, -4
+ 304 0004 9BB0     		sub	sp, sp, #108
+ 305              	.LCFI6:
+ 306              		.cfi_def_cfa_offset 144
+ 307 0006 8146     		mov	r9, r0
+ 308 0008 8846     		mov	r8, r1
+ 109:Drivers/TS/Src/XPT2046_lv.c ****             	//Если включен контроль скорости SPI, то сохранен
+ 309              		.loc 1 109 5 is_stmt 1 view .LVU55
+ 109:Drivers/TS/Src/XPT2046_lv.c ****             	//Если включен контроль скорости SPI, то сохранен
+ 310              		.loc 1 109 16 is_stmt 0 view .LVU56
+ 311 000a 594B     		ldr	r3, .L43
+ 312 000c 0122     		movs	r2, #1
+ 313 000e 1A70     		strb	r2, [r3]
+ 112:Drivers/TS/Src/XPT2046_lv.c **** 	_spi_init(); //Инициализация с правильными параметрами
+ 314              		.loc 1 112 2 is_stmt 1 view .LVU57
+ 112:Drivers/TS/Src/XPT2046_lv.c **** 	_spi_init(); //Инициализация с правильными параметрами
+ 315              		.loc 1 112 20 is_stmt 0 view .LVU58
+ 316 0010 5822     		movs	r2, #88
+ 317 0012 584B     		ldr	r3, .L43+4
+ 318 0014 1968     		ldr	r1, [r3]
+ 319              	.LVL9:
+ 112:Drivers/TS/Src/XPT2046_lv.c **** 	_spi_init(); //Инициализация с правильными параметрами
+ 320              		.loc 1 112 20 view .LVU59
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 11
+
+
+ 321 0016 04A8     		add	r0, sp, #16
+ 322              	.LVL10:
+ 112:Drivers/TS/Src/XPT2046_lv.c **** 	_spi_init(); //Инициализация с правильными параметрами
+ 323              		.loc 1 112 20 view .LVU60
+ 324 0018 FFF7FEFF 		bl	memcpy
+ 325              	.LVL11:
+ 113:Drivers/TS/Src/XPT2046_lv.c **** 	#endif
+ 326              		.loc 1 113 2 is_stmt 1 view .LVU61
+ 327 001c FFF7FEFF 		bl	_spi_init
+ 328              	.LVL12:
+ 115:Drivers/TS/Src/XPT2046_lv.c **** 
+ 329              		.loc 1 115 9 view .LVU62
+ 330 0020 FFF7FEFF 		bl	_XPT2046_TouchSelect
+ 331              	.LVL13:
+ 117:Drivers/TS/Src/XPT2046_lv.c ****    
+ 332              		.loc 1 117 13 view .LVU63
+ 333 0024 8021     		movs	r1, #128
+ 334 0026 5448     		ldr	r0, .L43+8
+ 335 0028 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 336              	.LVL14:
+ 119:Drivers/TS/Src/XPT2046_lv.c ****     uint32_t avg_y = 0;
+ 337              		.loc 1 119 5 view .LVU64
+ 120:Drivers/TS/Src/XPT2046_lv.c ****     uint8_t nsamples = 0;
+ 338              		.loc 1 120 5 view .LVU65
+ 121:Drivers/TS/Src/XPT2046_lv.c **** 
+ 339              		.loc 1 121 5 view .LVU66
+ 123:Drivers/TS/Src/XPT2046_lv.c ****     {
+ 340              		.loc 1 123 5 view .LVU67
+ 341              	.LBB2:
+ 123:Drivers/TS/Src/XPT2046_lv.c ****     {
+ 342              		.loc 1 123 9 view .LVU68
+ 123:Drivers/TS/Src/XPT2046_lv.c ****     {
+ 343              		.loc 1 123 9 is_stmt 0 view .LVU69
+ 344              	.LBE2:
+ 121:Drivers/TS/Src/XPT2046_lv.c **** 
+ 345              		.loc 1 121 13 view .LVU70
+ 346 002c 0024     		movs	r4, #0
+ 120:Drivers/TS/Src/XPT2046_lv.c ****     uint8_t nsamples = 0;
+ 347              		.loc 1 120 14 view .LVU71
+ 348 002e 2646     		mov	r6, r4
+ 119:Drivers/TS/Src/XPT2046_lv.c ****     uint32_t avg_y = 0;
+ 349              		.loc 1 119 14 view .LVU72
+ 350 0030 2746     		mov	r7, r4
+ 351              	.LVL15:
+ 352              	.L27:
+ 353              	.LBB4:
+ 123:Drivers/TS/Src/XPT2046_lv.c ****     {
+ 354              		.loc 1 123 5 discriminator 1 view .LVU73
+ 355 0032 0F2C     		cmp	r4, #15
+ 356 0034 38D8     		bhi	.L29
+ 357              	.LBB3:
+ 125:Drivers/TS/Src/XPT2046_lv.c ****         {
+ 358              		.loc 1 125 9 is_stmt 1 view .LVU74
+ 125:Drivers/TS/Src/XPT2046_lv.c ****         {
+ 359              		.loc 1 125 13 is_stmt 0 view .LVU75
+ 360 0036 FFF7FEFF 		bl	XPT2046_TouchPressed
+ 361              	.LVL16:
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 12
+
+
+ 125:Drivers/TS/Src/XPT2046_lv.c ****         {
+ 362              		.loc 1 125 11 view .LVU76
+ 363 003a 90B3     		cbz	r0, .L41
+ 132:Drivers/TS/Src/XPT2046_lv.c **** 
+ 364              		.loc 1 132 9 is_stmt 1 view .LVU77
+ 132:Drivers/TS/Src/XPT2046_lv.c **** 
+ 365              		.loc 1 132 17 is_stmt 0 view .LVU78
+ 366 003c 0134     		adds	r4, r4, #1
+ 367              	.LVL17:
+ 132:Drivers/TS/Src/XPT2046_lv.c **** 
+ 368              		.loc 1 132 17 view .LVU79
+ 369 003e E4B2     		uxtb	r4, r4
+ 370              	.LVL18:
+ 134:Drivers/TS/Src/XPT2046_lv.c ****         uint8_t y_raw[2];
+ 371              		.loc 1 134 9 is_stmt 1 view .LVU80
+ 372 0040 4C4D     		ldr	r5, .L43+4
+ 373 0042 4FF0FF33 		mov	r3, #-1
+ 374 0046 0122     		movs	r2, #1
+ 375 0048 4C49     		ldr	r1, .L43+12
+ 376 004a 2868     		ldr	r0, [r5]
+ 377 004c FFF7FEFF 		bl	HAL_SPI_Transmit
+ 378              	.LVL19:
+ 135:Drivers/TS/Src/XPT2046_lv.c ****         HAL_SPI_TransmitReceive(_spi, (uint8_t*)_zeroes_tx, y_raw, sizeof(y_raw), HAL_MAX_DELAY);
+ 379              		.loc 1 135 9 view .LVU81
+ 136:Drivers/TS/Src/XPT2046_lv.c **** 
+ 380              		.loc 1 136 9 view .LVU82
+ 381 0050 DFF840B1 		ldr	fp, .L43+36
+ 382 0054 4FF0FF3A 		mov	r10, #-1
+ 383 0058 CDF800A0 		str	r10, [sp]
+ 384 005c 0223     		movs	r3, #2
+ 385 005e 02AA     		add	r2, sp, #8
+ 386 0060 5946     		mov	r1, fp
+ 387 0062 2868     		ldr	r0, [r5]
+ 388 0064 FFF7FEFF 		bl	HAL_SPI_TransmitReceive
+ 389              	.LVL20:
+ 138:Drivers/TS/Src/XPT2046_lv.c ****         uint8_t x_raw[2];
+ 390              		.loc 1 138 9 view .LVU83
+ 391 0068 5346     		mov	r3, r10
+ 392 006a 0122     		movs	r2, #1
+ 393 006c 4449     		ldr	r1, .L43+16
+ 394 006e 2868     		ldr	r0, [r5]
+ 395 0070 FFF7FEFF 		bl	HAL_SPI_Transmit
+ 396              	.LVL21:
+ 139:Drivers/TS/Src/XPT2046_lv.c ****         HAL_SPI_TransmitReceive(_spi, (uint8_t*)_zeroes_tx, x_raw, sizeof(x_raw), HAL_MAX_DELAY);
+ 397              		.loc 1 139 9 view .LVU84
+ 140:Drivers/TS/Src/XPT2046_lv.c **** 
+ 398              		.loc 1 140 9 view .LVU85
+ 399 0074 CDF800A0 		str	r10, [sp]
+ 400 0078 0223     		movs	r3, #2
+ 401 007a 03AA     		add	r2, sp, #12
+ 402 007c 5946     		mov	r1, fp
+ 403 007e 2868     		ldr	r0, [r5]
+ 404 0080 FFF7FEFF 		bl	HAL_SPI_TransmitReceive
+ 405              	.LVL22:
+ 142:Drivers/TS/Src/XPT2046_lv.c ****         avg_y += (((uint16_t)y_raw[0]) << 8) | ((uint16_t)y_raw[1]);
+ 406              		.loc 1 142 9 view .LVU86
+ 142:Drivers/TS/Src/XPT2046_lv.c ****         avg_y += (((uint16_t)y_raw[0]) << 8) | ((uint16_t)y_raw[1]);
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 13
+
+
+ 407              		.loc 1 142 35 is_stmt 0 view .LVU87
+ 408 0084 9DF80C20 		ldrb	r2, [sp, #12]	@ zero_extendqisi2
+ 142:Drivers/TS/Src/XPT2046_lv.c ****         avg_y += (((uint16_t)y_raw[0]) << 8) | ((uint16_t)y_raw[1]);
+ 409              		.loc 1 142 64 view .LVU88
+ 410 0088 9DF80D30 		ldrb	r3, [sp, #13]	@ zero_extendqisi2
+ 142:Drivers/TS/Src/XPT2046_lv.c ****         avg_y += (((uint16_t)y_raw[0]) << 8) | ((uint16_t)y_raw[1]);
+ 411              		.loc 1 142 46 view .LVU89
+ 412 008c 43EA0223 		orr	r3, r3, r2, lsl #8
+ 142:Drivers/TS/Src/XPT2046_lv.c ****         avg_y += (((uint16_t)y_raw[0]) << 8) | ((uint16_t)y_raw[1]);
+ 413              		.loc 1 142 15 view .LVU90
+ 414 0090 1F44     		add	r7, r7, r3
+ 415              	.LVL23:
+ 143:Drivers/TS/Src/XPT2046_lv.c ****     }
+ 416              		.loc 1 143 9 is_stmt 1 view .LVU91
+ 143:Drivers/TS/Src/XPT2046_lv.c ****     }
+ 417              		.loc 1 143 35 is_stmt 0 view .LVU92
+ 418 0092 9DF80820 		ldrb	r2, [sp, #8]	@ zero_extendqisi2
+ 143:Drivers/TS/Src/XPT2046_lv.c ****     }
+ 419              		.loc 1 143 64 view .LVU93
+ 420 0096 9DF80930 		ldrb	r3, [sp, #9]	@ zero_extendqisi2
+ 143:Drivers/TS/Src/XPT2046_lv.c ****     }
+ 421              		.loc 1 143 46 view .LVU94
+ 422 009a 43EA0223 		orr	r3, r3, r2, lsl #8
+ 143:Drivers/TS/Src/XPT2046_lv.c ****     }
+ 423              		.loc 1 143 15 view .LVU95
+ 424 009e 1E44     		add	r6, r6, r3
+ 425              	.LVL24:
+ 143:Drivers/TS/Src/XPT2046_lv.c ****     }
+ 426              		.loc 1 143 15 view .LVU96
+ 427 00a0 C7E7     		b	.L27
+ 428              	.L41:
+ 127:Drivers/TS/Src/XPT2046_lv.c ****             break;
+ 429              		.loc 1 127 13 is_stmt 1 view .LVU97
+ 127:Drivers/TS/Src/XPT2046_lv.c ****             break;
+ 430              		.loc 1 127 24 is_stmt 0 view .LVU98
+ 431 00a2 334B     		ldr	r3, .L43
+ 432 00a4 0022     		movs	r2, #0
+ 433 00a6 1A70     		strb	r2, [r3]
+ 128:Drivers/TS/Src/XPT2046_lv.c ****         }
+ 434              		.loc 1 128 13 is_stmt 1 view .LVU99
+ 435              	.L29:
+ 436              	.LBE3:
+ 437              	.LBE4:
+ 146:Drivers/TS/Src/XPT2046_lv.c **** 
+ 438              		.loc 1 146 5 view .LVU100
+ 439 00a8 FFF7FEFF 		bl	_XPT2046_TouchUnselect
+ 440              	.LVL25:
+ 151:Drivers/TS/Src/XPT2046_lv.c **** 	//Инициализация с старыми параметрами
+ 441              		.loc 1 151 2 view .LVU101
+ 442 00ac 314B     		ldr	r3, .L43+4
+ 443 00ae 1D68     		ldr	r5, [r3]
+ 151:Drivers/TS/Src/XPT2046_lv.c **** 	//Инициализация с старыми параметрами
+ 444              		.loc 1 151 8 is_stmt 0 view .LVU102
+ 445 00b0 5822     		movs	r2, #88
+ 446 00b2 04A9     		add	r1, sp, #16
+ 447 00b4 2846     		mov	r0, r5
+ 448 00b6 FFF7FEFF 		bl	memcpy
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 14
+
+
+ 449              	.LVL26:
+ 153:Drivers/TS/Src/XPT2046_lv.c **** 	#endif  
+ 450              		.loc 1 153 3 is_stmt 1 view .LVU103
+ 153:Drivers/TS/Src/XPT2046_lv.c **** 	#endif  
+ 451              		.loc 1 153 7 is_stmt 0 view .LVU104
+ 452 00ba 2846     		mov	r0, r5
+ 453 00bc FFF7FEFF 		bl	HAL_SPI_Init
+ 454              	.LVL27:
+ 153:Drivers/TS/Src/XPT2046_lv.c **** 	#endif  
+ 455              		.loc 1 153 6 view .LVU105
+ 456 00c0 68B9     		cbnz	r0, .L42
+ 457              	.L31:
+ 156:Drivers/TS/Src/XPT2046_lv.c ****     {
+ 458              		.loc 1 156 5 is_stmt 1 view .LVU106
+ 156:Drivers/TS/Src/XPT2046_lv.c ****     {
+ 459              		.loc 1 156 7 is_stmt 0 view .LVU107
+ 460 00c2 0F2C     		cmp	r4, #15
+ 461 00c4 51D9     		bls	.L35
+ 161:Drivers/TS/Src/XPT2046_lv.c ****     if(raw_x <  XPT2046_X_MIN) raw_x = XPT2046_X_MIN;
+ 462              		.loc 1 161 5 is_stmt 1 view .LVU108
+ 161:Drivers/TS/Src/XPT2046_lv.c ****     if(raw_x <  XPT2046_X_MIN) raw_x = XPT2046_X_MIN;
+ 463              		.loc 1 161 14 is_stmt 0 view .LVU109
+ 464 00c6 3B09     		lsrs	r3, r7, #4
+ 465              	.LVL28:
+ 162:Drivers/TS/Src/XPT2046_lv.c ****     if(raw_x >  XPT2046_X_MAX) raw_x = XPT2046_X_MAX;
+ 466              		.loc 1 162 5 is_stmt 1 view .LVU110
+ 162:Drivers/TS/Src/XPT2046_lv.c ****     if(raw_x >  XPT2046_X_MAX) raw_x = XPT2046_X_MAX;
+ 467              		.loc 1 162 7 is_stmt 0 view .LVU111
+ 468 00c8 46F63F22 		movw	r2, #27199
+ 469 00cc 9742     		cmp	r7, r2
+ 470 00ce 09D9     		bls	.L36
+ 163:Drivers/TS/Src/XPT2046_lv.c **** 
+ 471              		.loc 1 163 5 is_stmt 1 view .LVU112
+ 163:Drivers/TS/Src/XPT2046_lv.c **** 
+ 472              		.loc 1 163 7 is_stmt 0 view .LVU113
+ 473 00d0 47F2F852 		movw	r2, #30200
+ 474 00d4 9342     		cmp	r3, r2
+ 475 00d6 07D9     		bls	.L33
+ 163:Drivers/TS/Src/XPT2046_lv.c **** 
+ 476              		.loc 1 163 38 view .LVU114
+ 477 00d8 47F2F853 		movw	r3, #30200
+ 478              	.LVL29:
+ 163:Drivers/TS/Src/XPT2046_lv.c **** 
+ 479              		.loc 1 163 38 view .LVU115
+ 480 00dc 04E0     		b	.L33
+ 481              	.LVL30:
+ 482              	.L42:
+ 153:Drivers/TS/Src/XPT2046_lv.c **** 	#endif  
+ 483              		.loc 1 153 37 is_stmt 1 discriminator 1 view .LVU116
+ 484 00de FFF7FEFF 		bl	Error_Handler
+ 485              	.LVL31:
+ 486 00e2 EEE7     		b	.L31
+ 487              	.LVL32:
+ 488              	.L36:
+ 162:Drivers/TS/Src/XPT2046_lv.c ****     if(raw_x >  XPT2046_X_MAX) raw_x = XPT2046_X_MAX;
+ 489              		.loc 1 162 38 is_stmt 0 view .LVU117
+ 490 00e4 40F2A463 		movw	r3, #1700
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 15
+
+
+ 491              	.LVL33:
+ 492              	.L33:
+ 165:Drivers/TS/Src/XPT2046_lv.c ****     if(raw_y < XPT2046_Y_MIN) raw_y = XPT2046_Y_MIN;
+ 493              		.loc 1 165 5 is_stmt 1 view .LVU118
+ 165:Drivers/TS/Src/XPT2046_lv.c ****     if(raw_y < XPT2046_Y_MIN) raw_y = XPT2046_Y_MIN;
+ 494              		.loc 1 165 14 is_stmt 0 view .LVU119
+ 495 00e8 3209     		lsrs	r2, r6, #4
+ 496              	.LVL34:
+ 166:Drivers/TS/Src/XPT2046_lv.c ****     if(raw_y > XPT2046_Y_MAX) raw_y = XPT2046_Y_MAX;
+ 497              		.loc 1 166 5 is_stmt 1 view .LVU120
+ 166:Drivers/TS/Src/XPT2046_lv.c ****     if(raw_y > XPT2046_Y_MAX) raw_y = XPT2046_Y_MAX;
+ 498              		.loc 1 166 7 is_stmt 0 view .LVU121
+ 499 00ea 46F63F21 		movw	r1, #27199
+ 500 00ee 8E42     		cmp	r6, r1
+ 501 00f0 06D9     		bls	.L38
+ 167:Drivers/TS/Src/XPT2046_lv.c **** 
+ 502              		.loc 1 167 5 is_stmt 1 view .LVU122
+ 167:Drivers/TS/Src/XPT2046_lv.c **** 
+ 503              		.loc 1 167 7 is_stmt 0 view .LVU123
+ 504 00f2 47F2C061 		movw	r1, #30400
+ 505 00f6 8A42     		cmp	r2, r1
+ 506 00f8 04D9     		bls	.L34
+ 167:Drivers/TS/Src/XPT2046_lv.c **** 
+ 507              		.loc 1 167 37 view .LVU124
+ 508 00fa 47F2C062 		movw	r2, #30400
+ 509              	.LVL35:
+ 167:Drivers/TS/Src/XPT2046_lv.c **** 
+ 510              		.loc 1 167 37 view .LVU125
+ 511 00fe 01E0     		b	.L34
+ 512              	.LVL36:
+ 513              	.L38:
+ 166:Drivers/TS/Src/XPT2046_lv.c ****     if(raw_y > XPT2046_Y_MAX) raw_y = XPT2046_Y_MAX;
+ 514              		.loc 1 166 37 view .LVU126
+ 515 0100 40F2A462 		movw	r2, #1700
+ 516              	.LVL37:
+ 517              	.L34:
+ 176:Drivers/TS/Src/XPT2046_lv.c ****     *y = (raw_y - XPT2046_Y_MIN) * XPT2046_VER_RES / (XPT2046_Y_MAX - XPT2046_Y_MIN);
+ 518              		.loc 1 176 5 is_stmt 1 view .LVU127
+ 176:Drivers/TS/Src/XPT2046_lv.c ****     *y = (raw_y - XPT2046_Y_MIN) * XPT2046_VER_RES / (XPT2046_Y_MAX - XPT2046_Y_MIN);
+ 519              		.loc 1 176 34 is_stmt 0 view .LVU128
+ 520 0104 03EB8301 		add	r1, r3, r3, lsl #2
+ 521 0108 8B01     		lsls	r3, r1, #6
+ 522              	.LVL38:
+ 176:Drivers/TS/Src/XPT2046_lv.c ****     *y = (raw_y - XPT2046_Y_MIN) * XPT2046_VER_RES / (XPT2046_Y_MAX - XPT2046_Y_MIN);
+ 523              		.loc 1 176 34 view .LVU129
+ 524 010a A3F50423 		sub	r3, r3, #540672
+ 525 010e A3F55063 		sub	r3, r3, #3328
+ 176:Drivers/TS/Src/XPT2046_lv.c ****     *y = (raw_y - XPT2046_Y_MIN) * XPT2046_VER_RES / (XPT2046_Y_MAX - XPT2046_Y_MIN);
+ 526              		.loc 1 176 52 view .LVU130
+ 527 0112 9B08     		lsrs	r3, r3, #2
+ 528 0114 1B49     		ldr	r1, .L43+20
+ 529 0116 A1FB0313 		umull	r1, r3, r1, r3
+ 530 011a 5B0A     		lsrs	r3, r3, #9
+ 176:Drivers/TS/Src/XPT2046_lv.c ****     *y = (raw_y - XPT2046_Y_MIN) * XPT2046_VER_RES / (XPT2046_Y_MAX - XPT2046_Y_MIN);
+ 531              		.loc 1 176 8 view .LVU131
+ 532 011c A9F80030 		strh	r3, [r9]	@ movhi
+ 177:Drivers/TS/Src/XPT2046_lv.c ****     #if XPT2046_X_INV != 0
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 16
+
+
+ 533              		.loc 1 177 5 is_stmt 1 view .LVU132
+ 177:Drivers/TS/Src/XPT2046_lv.c ****     #if XPT2046_X_INV != 0
+ 534              		.loc 1 177 34 is_stmt 0 view .LVU133
+ 535 0120 C2EB0212 		rsb	r2, r2, r2, lsl #4
+ 536              	.LVL39:
+ 177:Drivers/TS/Src/XPT2046_lv.c ****     #if XPT2046_X_INV != 0
+ 537              		.loc 1 177 34 view .LVU134
+ 538 0124 1301     		lsls	r3, r2, #4
+ 539 0126 A3F5C723 		sub	r3, r3, #407552
+ 540 012a A3F5E073 		sub	r3, r3, #448
+ 177:Drivers/TS/Src/XPT2046_lv.c ****     #if XPT2046_X_INV != 0
+ 541              		.loc 1 177 52 view .LVU135
+ 542 012e 164A     		ldr	r2, .L43+24
+ 543 0130 A2FB0323 		umull	r2, r3, r2, r3
+ 544 0134 1B0B     		lsrs	r3, r3, #12
+ 177:Drivers/TS/Src/XPT2046_lv.c ****     #if XPT2046_X_INV != 0
+ 545              		.loc 1 177 8 view .LVU136
+ 546 0136 A8F80030 		strh	r3, [r8]	@ movhi
+ 179:Drivers/TS/Src/XPT2046_lv.c ****     #endif
+ 547              		.loc 1 179 10 is_stmt 1 view .LVU137
+ 179:Drivers/TS/Src/XPT2046_lv.c ****     #endif
+ 548              		.loc 1 179 37 is_stmt 0 view .LVU138
+ 549 013a B9F80030 		ldrh	r3, [r9]
+ 179:Drivers/TS/Src/XPT2046_lv.c ****     #endif
+ 550              		.loc 1 179 34 view .LVU139
+ 551 013e C3F5A073 		rsb	r3, r3, #320
+ 179:Drivers/TS/Src/XPT2046_lv.c ****     #endif
+ 552              		.loc 1 179 15 view .LVU140
+ 553 0142 A9F80030 		strh	r3, [r9]	@ movhi
+ 182:Drivers/TS/Src/XPT2046_lv.c ****     #endif
+ 554              		.loc 1 182 9 is_stmt 1 view .LVU141
+ 182:Drivers/TS/Src/XPT2046_lv.c ****     #endif
+ 555              		.loc 1 182 36 is_stmt 0 view .LVU142
+ 556 0146 B8F80030 		ldrh	r3, [r8]
+ 182:Drivers/TS/Src/XPT2046_lv.c ****     #endif
+ 557              		.loc 1 182 33 view .LVU143
+ 558 014a C3F1F003 		rsb	r3, r3, #240
+ 182:Drivers/TS/Src/XPT2046_lv.c ****     #endif
+ 559              		.loc 1 182 14 view .LVU144
+ 560 014e A8F80030 		strh	r3, [r8]	@ movhi
+ 185:Drivers/TS/Src/XPT2046_lv.c ****     last_y = (*y);
+ 561              		.loc 1 185 4 is_stmt 1 view .LVU145
+ 185:Drivers/TS/Src/XPT2046_lv.c ****     last_y = (*y);
+ 562              		.loc 1 185 14 is_stmt 0 view .LVU146
+ 563 0152 B9F80020 		ldrh	r2, [r9]
+ 185:Drivers/TS/Src/XPT2046_lv.c ****     last_y = (*y);
+ 564              		.loc 1 185 11 view .LVU147
+ 565 0156 0D4B     		ldr	r3, .L43+28
+ 566 0158 1A80     		strh	r2, [r3]	@ movhi
+ 186:Drivers/TS/Src/XPT2046_lv.c ****    //  ILI9341_Draw_Filled_Circle(last_x - 1, last_y - 1, 2, RED);
+ 567              		.loc 1 186 5 is_stmt 1 view .LVU148
+ 186:Drivers/TS/Src/XPT2046_lv.c ****    //  ILI9341_Draw_Filled_Circle(last_x - 1, last_y - 1, 2, RED);
+ 568              		.loc 1 186 15 is_stmt 0 view .LVU149
+ 569 015a B8F80020 		ldrh	r2, [r8]
+ 186:Drivers/TS/Src/XPT2046_lv.c ****    //  ILI9341_Draw_Filled_Circle(last_x - 1, last_y - 1, 2, RED);
+ 570              		.loc 1 186 12 view .LVU150
+ 571 015e 0C4B     		ldr	r3, .L43+32
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 17
+
+
+ 572 0160 1A80     		strh	r2, [r3]	@ movhi
+ 194:Drivers/TS/Src/XPT2046_lv.c **** 
+ 573              		.loc 1 194 5 is_stmt 1 view .LVU151
+ 194:Drivers/TS/Src/XPT2046_lv.c **** 
+ 574              		.loc 1 194 12 is_stmt 0 view .LVU152
+ 575 0162 0120     		movs	r0, #1
+ 576              	.L32:
+ 196:Drivers/TS/Src/XPT2046_lv.c **** 
+ 577              		.loc 1 196 1 view .LVU153
+ 578 0164 1BB0     		add	sp, sp, #108
+ 579              	.LCFI7:
+ 580              		.cfi_remember_state
+ 581              		.cfi_def_cfa_offset 36
+ 582              		@ sp needed
+ 583 0166 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 584              	.LVL40:
+ 585              	.L35:
+ 586              	.LCFI8:
+ 587              		.cfi_restore_state
+ 158:Drivers/TS/Src/XPT2046_lv.c ****     }
+ 588              		.loc 1 158 16 view .LVU154
+ 589 016a 0020     		movs	r0, #0
+ 590 016c FAE7     		b	.L32
+ 591              	.L44:
+ 592 016e 00BF     		.align	2
+ 593              	.L43:
+ 594 0170 00000000 		.word	.LANCHOR2
+ 595 0174 00000000 		.word	.LANCHOR0
+ 596 0178 00000240 		.word	1073872896
+ 597 017c 00000000 		.word	.LANCHOR3
+ 598 0180 00000000 		.word	.LANCHOR5
+ 599 0184 DB646512 		.word	308634843
+ 600 0188 DB268924 		.word	612968155
+ 601 018c 00000000 		.word	.LANCHOR6
+ 602 0190 00000000 		.word	.LANCHOR7
+ 603 0194 00000000 		.word	.LANCHOR4
+ 604              		.cfi_endproc
+ 605              	.LFE565:
+ 607              		.section	.text.xpt2046_read,"ax",%progbits
+ 608              		.align	1
+ 609              		.global	xpt2046_read
+ 610              		.syntax unified
+ 611              		.thumb
+ 612              		.thumb_func
+ 613              		.fpu fpv4-sp-d16
+ 615              	xpt2046_read:
+ 616              	.LVL41:
+ 617              	.LFB566:
+ 200:Drivers/TS/Src/XPT2046_lv.c ****          if(!XPT2046_TouchPressed() )
+ 618              		.loc 1 200 1 is_stmt 1 view -0
+ 619              		.cfi_startproc
+ 620              		@ args = 0, pretend = 0, frame = 0
+ 621              		@ frame_needed = 0, uses_anonymous_args = 0
+ 200:Drivers/TS/Src/XPT2046_lv.c ****          if(!XPT2046_TouchPressed() )
+ 622              		.loc 1 200 1 is_stmt 0 view .LVU156
+ 623 0000 10B5     		push	{r4, lr}
+ 624              	.LCFI9:
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 18
+
+
+ 625              		.cfi_def_cfa_offset 8
+ 626              		.cfi_offset 4, -8
+ 627              		.cfi_offset 14, -4
+ 628 0002 0C46     		mov	r4, r1
+ 201:Drivers/TS/Src/XPT2046_lv.c ****          {
+ 629              		.loc 1 201 10 is_stmt 1 view .LVU157
+ 201:Drivers/TS/Src/XPT2046_lv.c ****          {
+ 630              		.loc 1 201 14 is_stmt 0 view .LVU158
+ 631 0004 FFF7FEFF 		bl	XPT2046_TouchPressed
+ 632              	.LVL42:
+ 201:Drivers/TS/Src/XPT2046_lv.c ****          {
+ 633              		.loc 1 201 12 view .LVU159
+ 634 0008 10B9     		cbnz	r0, .L46
+ 203:Drivers/TS/Src/XPT2046_lv.c ****          }  
+ 635              		.loc 1 203 12 is_stmt 1 view .LVU160
+ 203:Drivers/TS/Src/XPT2046_lv.c ****          }  
+ 636              		.loc 1 203 23 is_stmt 0 view .LVU161
+ 637 000a 084B     		ldr	r3, .L48
+ 638 000c 0022     		movs	r2, #0
+ 639 000e 1A70     		strb	r2, [r3]
+ 640              	.L46:
+ 205:Drivers/TS/Src/XPT2046_lv.c ****     int16_t y = 0;
+ 641              		.loc 1 205 5 is_stmt 1 view .LVU162
+ 642              	.LVL43:
+ 206:Drivers/TS/Src/XPT2046_lv.c **** 
+ 643              		.loc 1 206 5 view .LVU163
+ 208:Drivers/TS/Src/XPT2046_lv.c ****         y = last_y;
+ 644              		.loc 1 208 9 view .LVU164
+ 208:Drivers/TS/Src/XPT2046_lv.c ****         y = last_y;
+ 645              		.loc 1 208 11 is_stmt 0 view .LVU165
+ 646 0010 074B     		ldr	r3, .L48+4
+ 647 0012 B3F90020 		ldrsh	r2, [r3]
+ 648              	.LVL44:
+ 209:Drivers/TS/Src/XPT2046_lv.c **** 
+ 649              		.loc 1 209 9 is_stmt 1 view .LVU166
+ 209:Drivers/TS/Src/XPT2046_lv.c **** 
+ 650              		.loc 1 209 11 is_stmt 0 view .LVU167
+ 651 0016 074B     		ldr	r3, .L48+8
+ 652 0018 B3F90030 		ldrsh	r3, [r3]
+ 653              	.LVL45:
+ 211:Drivers/TS/Src/XPT2046_lv.c ****     data->point.y = (lv_coord_t)y;
+ 654              		.loc 1 211 5 is_stmt 1 view .LVU168
+ 211:Drivers/TS/Src/XPT2046_lv.c ****     data->point.y = (lv_coord_t)y;
+ 655              		.loc 1 211 19 is_stmt 0 view .LVU169
+ 656 001c 2280     		strh	r2, [r4]	@ movhi
+ 212:Drivers/TS/Src/XPT2046_lv.c ****     data->state = last_state;// ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;
+ 657              		.loc 1 212 5 is_stmt 1 view .LVU170
+ 212:Drivers/TS/Src/XPT2046_lv.c ****     data->state = last_state;// ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;
+ 658              		.loc 1 212 19 is_stmt 0 view .LVU171
+ 659 001e 6380     		strh	r3, [r4, #2]	@ movhi
+ 213:Drivers/TS/Src/XPT2046_lv.c **** 
+ 660              		.loc 1 213 5 is_stmt 1 view .LVU172
+ 213:Drivers/TS/Src/XPT2046_lv.c **** 
+ 661              		.loc 1 213 17 is_stmt 0 view .LVU173
+ 662 0020 024B     		ldr	r3, .L48
+ 663              	.LVL46:
+ 213:Drivers/TS/Src/XPT2046_lv.c **** 
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 19
+
+
+ 664              		.loc 1 213 17 view .LVU174
+ 665 0022 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 666 0024 A373     		strb	r3, [r4, #14]
+ 215:Drivers/TS/Src/XPT2046_lv.c **** }
+ 667              		.loc 1 215 5 is_stmt 1 view .LVU175
+ 216:Drivers/TS/Src/XPT2046_lv.c **** 
+ 668              		.loc 1 216 1 is_stmt 0 view .LVU176
+ 669 0026 0020     		movs	r0, #0
+ 670 0028 10BD     		pop	{r4, pc}
+ 671              	.LVL47:
+ 672              	.L49:
+ 216:Drivers/TS/Src/XPT2046_lv.c **** 
+ 673              		.loc 1 216 1 view .LVU177
+ 674 002a 00BF     		.align	2
+ 675              	.L48:
+ 676 002c 00000000 		.word	.LANCHOR2
+ 677 0030 00000000 		.word	.LANCHOR6
+ 678 0034 00000000 		.word	.LANCHOR7
+ 679              		.cfi_endproc
+ 680              	.LFE566:
+ 682              		.global	isTouched
+ 683              		.global	last_state
+ 684              		.global	last_y
+ 685              		.global	last_x
+ 686              		.comm	avg_last,1,1
+ 687              		.comm	avg_buf_y,32,4
+ 688              		.comm	avg_buf_x,32,4
+ 689              		.section	.bss._spi,"aw",%nobits
+ 690              		.align	2
+ 691              		.set	.LANCHOR0,. + 0
+ 694              	_spi:
+ 695 0000 00000000 		.space	4
+ 696              		.section	.bss.hspi2,"aw",%nobits
+ 697              		.align	2
+ 698              		.set	.LANCHOR1,. + 0
+ 701              	hspi2:
+ 702 0000 00000000 		.space	88
+ 702      00000000 
+ 702      00000000 
+ 702      00000000 
+ 702      00000000 
+ 703              		.section	.bss.isTouched,"aw",%nobits
+ 706              	isTouched:
+ 707 0000 00       		.space	1
+ 708              		.section	.bss.last_state,"aw",%nobits
+ 709              		.set	.LANCHOR2,. + 0
+ 712              	last_state:
+ 713 0000 00       		.space	1
+ 714              		.section	.bss.last_x,"aw",%nobits
+ 715              		.align	1
+ 716              		.set	.LANCHOR6,. + 0
+ 719              	last_x:
+ 720 0000 0000     		.space	2
+ 721              		.section	.bss.last_y,"aw",%nobits
+ 722              		.align	1
+ 723              		.set	.LANCHOR7,. + 0
+ 726              	last_y:
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 20
+
+
+ 727 0000 0000     		.space	2
+ 728              		.section	.rodata._cmd_read_x,"a"
+ 729              		.align	2
+ 730              		.set	.LANCHOR5,. + 0
+ 733              	_cmd_read_x:
+ 734 0000 90       		.byte	-112
+ 735              		.section	.rodata._cmd_read_y,"a"
+ 736              		.align	2
+ 737              		.set	.LANCHOR3,. + 0
+ 740              	_cmd_read_y:
+ 741 0000 D0       		.byte	-48
+ 742              		.section	.rodata._zeroes_tx,"a"
+ 743              		.align	2
+ 744              		.set	.LANCHOR4,. + 0
+ 747              	_zeroes_tx:
+ 748 0000 0000     		.space	2
+ 749              		.text
+ 750              	.Letext0:
+ 751              		.file 2 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 752              		.file 3 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 753              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 754              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 755              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 756              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 757              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 758              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 759              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h"
+ 760              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 761              		.file 12 "lvgl/lv_conf.h"
+ 762              		.file 13 "Inc/../lvgl/src/lv_misc/lv_types.h"
+ 763              		.file 14 "Inc/../lvgl/src/lv_misc/lv_mem.h"
+ 764              		.file 15 "Inc/../lvgl/src/lv_misc/lv_ll.h"
+ 765              		.file 16 "Inc/../lvgl/src/lv_misc/lv_task.h"
+ 766              		.file 17 "Inc/../lvgl/src/lv_hal/../lv_misc/lv_color.h"
+ 767              		.file 18 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 768              		.file 19 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 769              		.file 20 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-non
+ 770              		.file 21 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 771              		.file 22 "Inc/../lvgl/src/lv_hal/../lv_misc/lv_area.h"
+ 772              		.file 23 "Inc/../lvgl/src/lv_hal/lv_hal_disp.h"
+ 773              		.file 24 "Inc/../lvgl/src/lv_core/lv_obj.h"
+ 774              		.file 25 "Inc/../lvgl/src/lv_hal/lv_hal_indev.h"
+ 775              		.file 26 "Inc/../lvgl/src/lv_core/../lv_font/lv_font.h"
+ 776              		.file 27 "Inc/../lvgl/src/lv_core/../lv_misc/lv_anim.h"
+ 777              		.file 28 "Inc/../lvgl/src/lv_core/lv_style.h"
+ 778              		.file 29 "Inc/../lvgl/src/lv_core/../lv_draw/../lv_misc/lv_bidi.h"
+ 779              		.file 30 "Inc/../lvgl/src/lv_core/../lv_draw/../lv_misc/lv_txt.h"
+ 780              		.file 31 "Inc/../lvgl/src/lv_core/../lv_draw/lv_draw_label.h"
+ 781              		.file 32 "Inc/../lvgl/src/lv_widgets/lv_cont.h"
+ 782              		.file 33 "Inc/../lvgl/src/lv_widgets/lv_btn.h"
+ 783              		.file 34 "Inc/../lvgl/src/lv_widgets/lv_page.h"
+ 784              		.file 35 "Inc/../lvgl/src/lv_widgets/lv_chart.h"
+ 785              		.file 36 "Inc/../lvgl/src/lv_widgets/lv_bar.h"
+ 786              		.file 37 "Inc/../lvgl/src/lv_widgets/lv_textarea.h"
+ 787              		.file 38 "Inc/../lvgl/src/lv_widgets/lv_linemeter.h"
+ 788              		.file 39 "Inc/../lvgl/src/lv_widgets/lv_arc.h"
+ 789              		.file 40 "Drivers/TS/Inc/XPT2046_lv.h"
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 21
+
+
+ 790              		.file 41 "Drivers/LCD/ILI9341/ILI9341_GFX.h"
+ 791              		.file 42 "Inc/main.h"
+ 792              		.file 43 "<built-in>"
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 22
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 XPT2046_lv.c
+  D:\Temp\ccFdJH8g.s:18     .text._spi_init:0000000000000000 $t
+  D:\Temp\ccFdJH8g.s:25     .text._spi_init:0000000000000000 _spi_init
+  D:\Temp\ccFdJH8g.s:100    .text._spi_init:000000000000003c $d
+  D:\Temp\ccFdJH8g.s:106    .text._XPT2046_TouchSelect:0000000000000000 $t
+  D:\Temp\ccFdJH8g.s:112    .text._XPT2046_TouchSelect:0000000000000000 _XPT2046_TouchSelect
+  D:\Temp\ccFdJH8g.s:134    .text._XPT2046_TouchSelect:0000000000000010 $d
+  D:\Temp\ccFdJH8g.s:139    .text._XPT2046_TouchUnselect:0000000000000000 $t
+  D:\Temp\ccFdJH8g.s:145    .text._XPT2046_TouchUnselect:0000000000000000 _XPT2046_TouchUnselect
+  D:\Temp\ccFdJH8g.s:167    .text._XPT2046_TouchUnselect:0000000000000010 $d
+  D:\Temp\ccFdJH8g.s:172    .text.XPT2046_init:0000000000000000 $t
+  D:\Temp\ccFdJH8g.s:179    .text.XPT2046_init:0000000000000000 XPT2046_init
+  D:\Temp\ccFdJH8g.s:201    .text.XPT2046_init:0000000000000008 $d
+  D:\Temp\ccFdJH8g.s:206    .text.xpt2046_lv_init:0000000000000000 $t
+  D:\Temp\ccFdJH8g.s:213    .text.xpt2046_lv_init:0000000000000000 xpt2046_lv_init
+  D:\Temp\ccFdJH8g.s:236    .text.xpt2046_lv_init:0000000000000014 $d
+  D:\Temp\ccFdJH8g.s:241    .text.XPT2046_TouchPressed:0000000000000000 $t
+  D:\Temp\ccFdJH8g.s:248    .text.XPT2046_TouchPressed:0000000000000000 XPT2046_TouchPressed
+  D:\Temp\ccFdJH8g.s:272    .text.XPT2046_TouchPressed:0000000000000014 $d
+  D:\Temp\ccFdJH8g.s:277    .text.xpt2046_getXY:0000000000000000 $t
+  D:\Temp\ccFdJH8g.s:284    .text.xpt2046_getXY:0000000000000000 xpt2046_getXY
+  D:\Temp\ccFdJH8g.s:594    .text.xpt2046_getXY:0000000000000170 $d
+  D:\Temp\ccFdJH8g.s:608    .text.xpt2046_read:0000000000000000 $t
+  D:\Temp\ccFdJH8g.s:615    .text.xpt2046_read:0000000000000000 xpt2046_read
+  D:\Temp\ccFdJH8g.s:676    .text.xpt2046_read:000000000000002c $d
+  D:\Temp\ccFdJH8g.s:706    .bss.isTouched:0000000000000000 isTouched
+  D:\Temp\ccFdJH8g.s:712    .bss.last_state:0000000000000000 last_state
+  D:\Temp\ccFdJH8g.s:726    .bss.last_y:0000000000000000 last_y
+  D:\Temp\ccFdJH8g.s:719    .bss.last_x:0000000000000000 last_x
+                            *COM*:0000000000000001 avg_last
+                            *COM*:0000000000000020 avg_buf_y
+                            *COM*:0000000000000020 avg_buf_x
+  D:\Temp\ccFdJH8g.s:690    .bss._spi:0000000000000000 $d
+  D:\Temp\ccFdJH8g.s:694    .bss._spi:0000000000000000 _spi
+  D:\Temp\ccFdJH8g.s:697    .bss.hspi2:0000000000000000 $d
+  D:\Temp\ccFdJH8g.s:701    .bss.hspi2:0000000000000000 hspi2
+  D:\Temp\ccFdJH8g.s:707    .bss.isTouched:0000000000000000 $d
+  D:\Temp\ccFdJH8g.s:713    .bss.last_state:0000000000000000 $d
+  D:\Temp\ccFdJH8g.s:715    .bss.last_x:0000000000000000 $d
+  D:\Temp\ccFdJH8g.s:722    .bss.last_y:0000000000000000 $d
+  D:\Temp\ccFdJH8g.s:729    .rodata._cmd_read_x:0000000000000000 $d
+  D:\Temp\ccFdJH8g.s:733    .rodata._cmd_read_x:0000000000000000 _cmd_read_x
+  D:\Temp\ccFdJH8g.s:736    .rodata._cmd_read_y:0000000000000000 $d
+  D:\Temp\ccFdJH8g.s:740    .rodata._cmd_read_y:0000000000000000 _cmd_read_y
+  D:\Temp\ccFdJH8g.s:743    .rodata._zeroes_tx:0000000000000000 $d
+  D:\Temp\ccFdJH8g.s:747    .rodata._zeroes_tx:0000000000000000 _zeroes_tx
+
+UNDEFINED SYMBOLS
+HAL_SPI_Init
+Error_Handler
+HAL_GPIO_WritePin
+HAL_GPIO_ReadPin
+memcpy
+HAL_GPIO_TogglePin
+HAL_SPI_Transmit
+HAL_SPI_TransmitReceive
+ARM GAS  D:\Temp\ccFdJH8g.s 			page 23
+
+

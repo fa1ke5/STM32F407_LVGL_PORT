@@ -1,0 +1,3806 @@
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_area.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.lv_point_within_circle,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	lv_point_within_circle:
+  26              	.LVL0:
+  27              	.LFB145:
+  28              		.file 1 "lvgl/src/lv_misc/lv_area.c"
+   1:lvgl/src/lv_misc/lv_area.c **** /**
+   2:lvgl/src/lv_misc/lv_area.c ****  * @file lv_area.c
+   3:lvgl/src/lv_misc/lv_area.c ****  *
+   4:lvgl/src/lv_misc/lv_area.c ****  */
+   5:lvgl/src/lv_misc/lv_area.c **** 
+   6:lvgl/src/lv_misc/lv_area.c **** /*********************
+   7:lvgl/src/lv_misc/lv_area.c ****  *      INCLUDES
+   8:lvgl/src/lv_misc/lv_area.c ****  *********************/
+   9:lvgl/src/lv_misc/lv_area.c **** #include "../lv_conf_internal.h"
+  10:lvgl/src/lv_misc/lv_area.c **** 
+  11:lvgl/src/lv_misc/lv_area.c **** #include "lv_area.h"
+  12:lvgl/src/lv_misc/lv_area.c **** #include "lv_math.h"
+  13:lvgl/src/lv_misc/lv_area.c **** 
+  14:lvgl/src/lv_misc/lv_area.c **** /*********************
+  15:lvgl/src/lv_misc/lv_area.c ****  *      DEFINES
+  16:lvgl/src/lv_misc/lv_area.c ****  *********************/
+  17:lvgl/src/lv_misc/lv_area.c **** 
+  18:lvgl/src/lv_misc/lv_area.c **** /**********************
+  19:lvgl/src/lv_misc/lv_area.c ****  *      TYPEDEFS
+  20:lvgl/src/lv_misc/lv_area.c ****  **********************/
+  21:lvgl/src/lv_misc/lv_area.c **** 
+  22:lvgl/src/lv_misc/lv_area.c **** /**********************
+  23:lvgl/src/lv_misc/lv_area.c ****  *  STATIC PROTOTYPES
+  24:lvgl/src/lv_misc/lv_area.c ****  **********************/
+  25:lvgl/src/lv_misc/lv_area.c **** 
+  26:lvgl/src/lv_misc/lv_area.c **** static bool lv_point_within_circle(const lv_area_t * area, const lv_point_t * p);
+  27:lvgl/src/lv_misc/lv_area.c **** 
+  28:lvgl/src/lv_misc/lv_area.c **** /**********************
+  29:lvgl/src/lv_misc/lv_area.c ****  *  STATIC VARIABLES
+  30:lvgl/src/lv_misc/lv_area.c ****  **********************/
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 2
+
+
+  31:lvgl/src/lv_misc/lv_area.c **** 
+  32:lvgl/src/lv_misc/lv_area.c **** /**********************
+  33:lvgl/src/lv_misc/lv_area.c ****  *      MACROS
+  34:lvgl/src/lv_misc/lv_area.c ****  **********************/
+  35:lvgl/src/lv_misc/lv_area.c **** 
+  36:lvgl/src/lv_misc/lv_area.c **** /**********************
+  37:lvgl/src/lv_misc/lv_area.c ****  *   GLOBAL FUNCTIONS
+  38:lvgl/src/lv_misc/lv_area.c ****  **********************/
+  39:lvgl/src/lv_misc/lv_area.c **** 
+  40:lvgl/src/lv_misc/lv_area.c **** /**
+  41:lvgl/src/lv_misc/lv_area.c ****  * Initialize an area
+  42:lvgl/src/lv_misc/lv_area.c ****  * @param area_p pointer to an area
+  43:lvgl/src/lv_misc/lv_area.c ****  * @param x1 left coordinate of the area
+  44:lvgl/src/lv_misc/lv_area.c ****  * @param y1 top coordinate of the area
+  45:lvgl/src/lv_misc/lv_area.c ****  * @param x2 right coordinate of the area
+  46:lvgl/src/lv_misc/lv_area.c ****  * @param y2 bottom coordinate of the area
+  47:lvgl/src/lv_misc/lv_area.c ****  */
+  48:lvgl/src/lv_misc/lv_area.c **** void lv_area_set(lv_area_t * area_p, lv_coord_t x1, lv_coord_t y1, lv_coord_t x2, lv_coord_t y2)
+  49:lvgl/src/lv_misc/lv_area.c **** {
+  50:lvgl/src/lv_misc/lv_area.c ****     area_p->x1 = x1;
+  51:lvgl/src/lv_misc/lv_area.c ****     area_p->y1 = y1;
+  52:lvgl/src/lv_misc/lv_area.c ****     area_p->x2 = x2;
+  53:lvgl/src/lv_misc/lv_area.c ****     area_p->y2 = y2;
+  54:lvgl/src/lv_misc/lv_area.c **** }
+  55:lvgl/src/lv_misc/lv_area.c **** 
+  56:lvgl/src/lv_misc/lv_area.c **** /**
+  57:lvgl/src/lv_misc/lv_area.c ****  * Set the width of an area
+  58:lvgl/src/lv_misc/lv_area.c ****  * @param area_p pointer to an area
+  59:lvgl/src/lv_misc/lv_area.c ****  * @param w the new width of the area (w == 1 makes x1 == x2)
+  60:lvgl/src/lv_misc/lv_area.c ****  */
+  61:lvgl/src/lv_misc/lv_area.c **** void lv_area_set_width(lv_area_t * area_p, lv_coord_t w)
+  62:lvgl/src/lv_misc/lv_area.c **** {
+  63:lvgl/src/lv_misc/lv_area.c ****     area_p->x2 = area_p->x1 + w - 1;
+  64:lvgl/src/lv_misc/lv_area.c **** }
+  65:lvgl/src/lv_misc/lv_area.c **** 
+  66:lvgl/src/lv_misc/lv_area.c **** /**
+  67:lvgl/src/lv_misc/lv_area.c ****  * Set the height of an area
+  68:lvgl/src/lv_misc/lv_area.c ****  * @param area_p pointer to an area
+  69:lvgl/src/lv_misc/lv_area.c ****  * @param h the new height of the area (h == 1 makes y1 == y2)
+  70:lvgl/src/lv_misc/lv_area.c ****  */
+  71:lvgl/src/lv_misc/lv_area.c **** void lv_area_set_height(lv_area_t * area_p, lv_coord_t h)
+  72:lvgl/src/lv_misc/lv_area.c **** {
+  73:lvgl/src/lv_misc/lv_area.c ****     area_p->y2 = area_p->y1 + h - 1;
+  74:lvgl/src/lv_misc/lv_area.c **** }
+  75:lvgl/src/lv_misc/lv_area.c **** 
+  76:lvgl/src/lv_misc/lv_area.c **** /**
+  77:lvgl/src/lv_misc/lv_area.c ****  * Set the position of an area (width and height will be kept)
+  78:lvgl/src/lv_misc/lv_area.c ****  * @param area_p pointer to an area
+  79:lvgl/src/lv_misc/lv_area.c ****  * @param x the new x coordinate of the area
+  80:lvgl/src/lv_misc/lv_area.c ****  * @param y the new y coordinate of the area
+  81:lvgl/src/lv_misc/lv_area.c ****  */
+  82:lvgl/src/lv_misc/lv_area.c **** void _lv_area_set_pos(lv_area_t * area_p, lv_coord_t x, lv_coord_t y)
+  83:lvgl/src/lv_misc/lv_area.c **** {
+  84:lvgl/src/lv_misc/lv_area.c ****     lv_coord_t w = lv_area_get_width(area_p);
+  85:lvgl/src/lv_misc/lv_area.c ****     lv_coord_t h = lv_area_get_height(area_p);
+  86:lvgl/src/lv_misc/lv_area.c ****     area_p->x1   = x;
+  87:lvgl/src/lv_misc/lv_area.c ****     area_p->y1   = y;
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 3
+
+
+  88:lvgl/src/lv_misc/lv_area.c ****     lv_area_set_width(area_p, w);
+  89:lvgl/src/lv_misc/lv_area.c ****     lv_area_set_height(area_p, h);
+  90:lvgl/src/lv_misc/lv_area.c **** }
+  91:lvgl/src/lv_misc/lv_area.c **** 
+  92:lvgl/src/lv_misc/lv_area.c **** /**
+  93:lvgl/src/lv_misc/lv_area.c ****  * Return with area of an area (x * y)
+  94:lvgl/src/lv_misc/lv_area.c ****  * @param area_p pointer to an area
+  95:lvgl/src/lv_misc/lv_area.c ****  * @return size of area
+  96:lvgl/src/lv_misc/lv_area.c ****  */
+  97:lvgl/src/lv_misc/lv_area.c **** uint32_t lv_area_get_size(const lv_area_t * area_p)
+  98:lvgl/src/lv_misc/lv_area.c **** {
+  99:lvgl/src/lv_misc/lv_area.c ****     uint32_t size;
+ 100:lvgl/src/lv_misc/lv_area.c **** 
+ 101:lvgl/src/lv_misc/lv_area.c ****     size = (uint32_t)(area_p->x2 - area_p->x1 + 1) * (area_p->y2 - area_p->y1 + 1);
+ 102:lvgl/src/lv_misc/lv_area.c **** 
+ 103:lvgl/src/lv_misc/lv_area.c ****     return size;
+ 104:lvgl/src/lv_misc/lv_area.c **** }
+ 105:lvgl/src/lv_misc/lv_area.c **** 
+ 106:lvgl/src/lv_misc/lv_area.c **** /**
+ 107:lvgl/src/lv_misc/lv_area.c ****  * Get the common parts of two areas
+ 108:lvgl/src/lv_misc/lv_area.c ****  * @param res_p pointer to an area, the result will be stored here
+ 109:lvgl/src/lv_misc/lv_area.c ****  * @param a1_p pointer to the first area
+ 110:lvgl/src/lv_misc/lv_area.c ****  * @param a2_p pointer to the second area
+ 111:lvgl/src/lv_misc/lv_area.c ****  * @return false: the two area has NO common parts, res_p is invalid
+ 112:lvgl/src/lv_misc/lv_area.c ****  */
+ 113:lvgl/src/lv_misc/lv_area.c **** bool _lv_area_intersect(lv_area_t * res_p, const lv_area_t * a1_p, const lv_area_t * a2_p)
+ 114:lvgl/src/lv_misc/lv_area.c **** {
+ 115:lvgl/src/lv_misc/lv_area.c ****     /* Get the smaller area from 'a1_p' and 'a2_p' */
+ 116:lvgl/src/lv_misc/lv_area.c ****     res_p->x1 = LV_MATH_MAX(a1_p->x1, a2_p->x1);
+ 117:lvgl/src/lv_misc/lv_area.c ****     res_p->y1 = LV_MATH_MAX(a1_p->y1, a2_p->y1);
+ 118:lvgl/src/lv_misc/lv_area.c ****     res_p->x2 = LV_MATH_MIN(a1_p->x2, a2_p->x2);
+ 119:lvgl/src/lv_misc/lv_area.c ****     res_p->y2 = LV_MATH_MIN(a1_p->y2, a2_p->y2);
+ 120:lvgl/src/lv_misc/lv_area.c **** 
+ 121:lvgl/src/lv_misc/lv_area.c ****     /*If x1 or y1 greater then x2 or y2 then the areas union is empty*/
+ 122:lvgl/src/lv_misc/lv_area.c ****     bool union_ok = true;
+ 123:lvgl/src/lv_misc/lv_area.c ****     if((res_p->x1 > res_p->x2) || (res_p->y1 > res_p->y2)) {
+ 124:lvgl/src/lv_misc/lv_area.c ****         union_ok = false;
+ 125:lvgl/src/lv_misc/lv_area.c ****     }
+ 126:lvgl/src/lv_misc/lv_area.c **** 
+ 127:lvgl/src/lv_misc/lv_area.c ****     return union_ok;
+ 128:lvgl/src/lv_misc/lv_area.c **** }
+ 129:lvgl/src/lv_misc/lv_area.c **** /**
+ 130:lvgl/src/lv_misc/lv_area.c ****  * Join two areas into a third which involves the other two
+ 131:lvgl/src/lv_misc/lv_area.c ****  * @param res_p pointer to an area, the result will be stored here
+ 132:lvgl/src/lv_misc/lv_area.c ****  * @param a1_p pointer to the first area
+ 133:lvgl/src/lv_misc/lv_area.c ****  * @param a2_p pointer to the second area
+ 134:lvgl/src/lv_misc/lv_area.c ****  */
+ 135:lvgl/src/lv_misc/lv_area.c **** void _lv_area_join(lv_area_t * a_res_p, const lv_area_t * a1_p, const lv_area_t * a2_p)
+ 136:lvgl/src/lv_misc/lv_area.c **** {
+ 137:lvgl/src/lv_misc/lv_area.c ****     a_res_p->x1 = LV_MATH_MIN(a1_p->x1, a2_p->x1);
+ 138:lvgl/src/lv_misc/lv_area.c ****     a_res_p->y1 = LV_MATH_MIN(a1_p->y1, a2_p->y1);
+ 139:lvgl/src/lv_misc/lv_area.c ****     a_res_p->x2 = LV_MATH_MAX(a1_p->x2, a2_p->x2);
+ 140:lvgl/src/lv_misc/lv_area.c ****     a_res_p->y2 = LV_MATH_MAX(a1_p->y2, a2_p->y2);
+ 141:lvgl/src/lv_misc/lv_area.c **** }
+ 142:lvgl/src/lv_misc/lv_area.c **** 
+ 143:lvgl/src/lv_misc/lv_area.c **** /**
+ 144:lvgl/src/lv_misc/lv_area.c ****  * Check if a point is on an area
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 4
+
+
+ 145:lvgl/src/lv_misc/lv_area.c ****  * @param a_p pointer to an area
+ 146:lvgl/src/lv_misc/lv_area.c ****  * @param p_p pointer to a point
+ 147:lvgl/src/lv_misc/lv_area.c ****  * @param radius radius of area (e.g. for rounded rectangle)
+ 148:lvgl/src/lv_misc/lv_area.c ****  * @return false:the point is out of the area
+ 149:lvgl/src/lv_misc/lv_area.c ****  */
+ 150:lvgl/src/lv_misc/lv_area.c **** bool _lv_area_is_point_on(const lv_area_t * a_p, const lv_point_t * p_p, lv_coord_t radius)
+ 151:lvgl/src/lv_misc/lv_area.c **** {
+ 152:lvgl/src/lv_misc/lv_area.c ****     /*First check the basic area*/
+ 153:lvgl/src/lv_misc/lv_area.c ****     bool is_on_rect = false;
+ 154:lvgl/src/lv_misc/lv_area.c ****     if((p_p->x >= a_p->x1 && p_p->x <= a_p->x2) && ((p_p->y >= a_p->y1 && p_p->y <= a_p->y2))) {
+ 155:lvgl/src/lv_misc/lv_area.c ****         is_on_rect = true;
+ 156:lvgl/src/lv_misc/lv_area.c ****     }
+ 157:lvgl/src/lv_misc/lv_area.c ****     if(!is_on_rect)
+ 158:lvgl/src/lv_misc/lv_area.c ****         return false;
+ 159:lvgl/src/lv_misc/lv_area.c ****     /*Now handle potential rounded rectangles*/
+ 160:lvgl/src/lv_misc/lv_area.c ****     if(radius <= 0) {
+ 161:lvgl/src/lv_misc/lv_area.c ****         /*No radius, it is within the rectangle*/
+ 162:lvgl/src/lv_misc/lv_area.c ****         return true;
+ 163:lvgl/src/lv_misc/lv_area.c ****     }
+ 164:lvgl/src/lv_misc/lv_area.c ****     lv_coord_t w = lv_area_get_width(a_p) / 2;
+ 165:lvgl/src/lv_misc/lv_area.c ****     lv_coord_t h = lv_area_get_height(a_p) / 2;
+ 166:lvgl/src/lv_misc/lv_area.c ****     lv_coord_t max_radius = LV_MATH_MIN(w, h);
+ 167:lvgl/src/lv_misc/lv_area.c ****     if(radius > max_radius)
+ 168:lvgl/src/lv_misc/lv_area.c ****         radius = max_radius;
+ 169:lvgl/src/lv_misc/lv_area.c **** 
+ 170:lvgl/src/lv_misc/lv_area.c ****     /*Check if it's in one of the corners*/
+ 171:lvgl/src/lv_misc/lv_area.c ****     lv_area_t corner_area;
+ 172:lvgl/src/lv_misc/lv_area.c ****     /*Top left*/
+ 173:lvgl/src/lv_misc/lv_area.c ****     corner_area.x1 = a_p->x1;
+ 174:lvgl/src/lv_misc/lv_area.c ****     corner_area.x2 = a_p->x1 + radius;
+ 175:lvgl/src/lv_misc/lv_area.c ****     corner_area.y1 = a_p->y1;
+ 176:lvgl/src/lv_misc/lv_area.c ****     corner_area.y2 = a_p->y1 + radius;
+ 177:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(&corner_area, p_p, 0)) {
+ 178:lvgl/src/lv_misc/lv_area.c ****         corner_area.x2 += radius;
+ 179:lvgl/src/lv_misc/lv_area.c ****         corner_area.y2 += radius;
+ 180:lvgl/src/lv_misc/lv_area.c ****         return lv_point_within_circle(&corner_area, p_p);
+ 181:lvgl/src/lv_misc/lv_area.c ****     }
+ 182:lvgl/src/lv_misc/lv_area.c ****     /*Bottom left*/
+ 183:lvgl/src/lv_misc/lv_area.c ****     corner_area.y1 = a_p->y2 - radius;
+ 184:lvgl/src/lv_misc/lv_area.c ****     corner_area.y2 = a_p->y2;
+ 185:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(&corner_area, p_p, 0)) {
+ 186:lvgl/src/lv_misc/lv_area.c ****         corner_area.x2 += radius;
+ 187:lvgl/src/lv_misc/lv_area.c ****         corner_area.y1 -= radius;
+ 188:lvgl/src/lv_misc/lv_area.c ****         return lv_point_within_circle(&corner_area, p_p);
+ 189:lvgl/src/lv_misc/lv_area.c ****     }
+ 190:lvgl/src/lv_misc/lv_area.c ****     /*Bottom right*/
+ 191:lvgl/src/lv_misc/lv_area.c ****     corner_area.x1 = a_p->x2 - radius;
+ 192:lvgl/src/lv_misc/lv_area.c ****     corner_area.x2 = a_p->x2;
+ 193:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(&corner_area, p_p, 0)) {
+ 194:lvgl/src/lv_misc/lv_area.c ****         corner_area.x1 -= radius;
+ 195:lvgl/src/lv_misc/lv_area.c ****         corner_area.y1 -= radius;
+ 196:lvgl/src/lv_misc/lv_area.c ****         return lv_point_within_circle(&corner_area, p_p);
+ 197:lvgl/src/lv_misc/lv_area.c ****     }
+ 198:lvgl/src/lv_misc/lv_area.c ****     /*Top right*/
+ 199:lvgl/src/lv_misc/lv_area.c ****     corner_area.y1 = a_p->y1;
+ 200:lvgl/src/lv_misc/lv_area.c ****     corner_area.y2 = a_p->y1 + radius;
+ 201:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(&corner_area, p_p, 0)) {
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 5
+
+
+ 202:lvgl/src/lv_misc/lv_area.c ****         corner_area.x1 -= radius;
+ 203:lvgl/src/lv_misc/lv_area.c ****         corner_area.y2 += radius;
+ 204:lvgl/src/lv_misc/lv_area.c ****         return lv_point_within_circle(&corner_area, p_p);
+ 205:lvgl/src/lv_misc/lv_area.c ****     }
+ 206:lvgl/src/lv_misc/lv_area.c ****     /*Not within corners*/
+ 207:lvgl/src/lv_misc/lv_area.c ****     return true;
+ 208:lvgl/src/lv_misc/lv_area.c **** }
+ 209:lvgl/src/lv_misc/lv_area.c **** 
+ 210:lvgl/src/lv_misc/lv_area.c **** /**
+ 211:lvgl/src/lv_misc/lv_area.c ****  * Check if two area has common parts
+ 212:lvgl/src/lv_misc/lv_area.c ****  * @param a1_p pointer to an area.
+ 213:lvgl/src/lv_misc/lv_area.c ****  * @param a2_p pointer to an other area
+ 214:lvgl/src/lv_misc/lv_area.c ****  * @return false: a1_p and a2_p has no common parts
+ 215:lvgl/src/lv_misc/lv_area.c ****  */
+ 216:lvgl/src/lv_misc/lv_area.c **** bool _lv_area_is_on(const lv_area_t * a1_p, const lv_area_t * a2_p)
+ 217:lvgl/src/lv_misc/lv_area.c **** {
+ 218:lvgl/src/lv_misc/lv_area.c ****     if((a1_p->x1 <= a2_p->x2) && (a1_p->x2 >= a2_p->x1) && (a1_p->y1 <= a2_p->y2) && (a1_p->y2 >= a
+ 219:lvgl/src/lv_misc/lv_area.c ****         return true;
+ 220:lvgl/src/lv_misc/lv_area.c ****     }
+ 221:lvgl/src/lv_misc/lv_area.c ****     else {
+ 222:lvgl/src/lv_misc/lv_area.c ****         return false;
+ 223:lvgl/src/lv_misc/lv_area.c ****     }
+ 224:lvgl/src/lv_misc/lv_area.c **** }
+ 225:lvgl/src/lv_misc/lv_area.c **** 
+ 226:lvgl/src/lv_misc/lv_area.c **** /**
+ 227:lvgl/src/lv_misc/lv_area.c ****  * Check if an area is fully on an other
+ 228:lvgl/src/lv_misc/lv_area.c ****  * @param ain_p pointer to an area which could be in 'aholder_p'
+ 229:lvgl/src/lv_misc/lv_area.c ****  * @param aholder_p pointer to an area which could involve 'ain_p'
+ 230:lvgl/src/lv_misc/lv_area.c ****  * @param radius radius of `aholder_p` (e.g. for rounded rectangle)
+ 231:lvgl/src/lv_misc/lv_area.c ****  * @return true: `ain_p` is fully inside `aholder_p`
+ 232:lvgl/src/lv_misc/lv_area.c ****  */
+ 233:lvgl/src/lv_misc/lv_area.c **** bool _lv_area_is_in(const lv_area_t * ain_p, const lv_area_t * aholder_p, lv_coord_t radius)
+ 234:lvgl/src/lv_misc/lv_area.c **** {
+ 235:lvgl/src/lv_misc/lv_area.c ****     bool is_in = false;
+ 236:lvgl/src/lv_misc/lv_area.c **** 
+ 237:lvgl/src/lv_misc/lv_area.c ****     if(ain_p->x1 >= aholder_p->x1 && ain_p->y1 >= aholder_p->y1 && ain_p->x2 <= aholder_p->x2 &&
+ 238:lvgl/src/lv_misc/lv_area.c ****        ain_p->y2 <= aholder_p->y2) {
+ 239:lvgl/src/lv_misc/lv_area.c ****         is_in = true;
+ 240:lvgl/src/lv_misc/lv_area.c ****     }
+ 241:lvgl/src/lv_misc/lv_area.c **** 
+ 242:lvgl/src/lv_misc/lv_area.c ****     if(!is_in) return false;
+ 243:lvgl/src/lv_misc/lv_area.c ****     if(radius == 0) return true;
+ 244:lvgl/src/lv_misc/lv_area.c **** 
+ 245:lvgl/src/lv_misc/lv_area.c ****     /*Check if the corner points are inside the radius or not*/
+ 246:lvgl/src/lv_misc/lv_area.c ****     lv_point_t p;
+ 247:lvgl/src/lv_misc/lv_area.c **** 
+ 248:lvgl/src/lv_misc/lv_area.c ****     p.x = ain_p->x1;
+ 249:lvgl/src/lv_misc/lv_area.c ****     p.y = ain_p->y1;
+ 250:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(aholder_p, &p, radius) == false) return false;
+ 251:lvgl/src/lv_misc/lv_area.c **** 
+ 252:lvgl/src/lv_misc/lv_area.c ****     p.x = ain_p->x2;
+ 253:lvgl/src/lv_misc/lv_area.c ****     p.y = ain_p->y1;
+ 254:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(aholder_p, &p, radius) == false) return false;
+ 255:lvgl/src/lv_misc/lv_area.c **** 
+ 256:lvgl/src/lv_misc/lv_area.c ****     p.x = ain_p->x1;
+ 257:lvgl/src/lv_misc/lv_area.c ****     p.y = ain_p->y2;
+ 258:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(aholder_p, &p, radius) == false) return false;
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 6
+
+
+ 259:lvgl/src/lv_misc/lv_area.c **** 
+ 260:lvgl/src/lv_misc/lv_area.c ****     p.x = ain_p->x2;
+ 261:lvgl/src/lv_misc/lv_area.c ****     p.y = ain_p->y2;
+ 262:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(aholder_p, &p, radius) == false) return false;
+ 263:lvgl/src/lv_misc/lv_area.c **** 
+ 264:lvgl/src/lv_misc/lv_area.c ****     return true;
+ 265:lvgl/src/lv_misc/lv_area.c **** }
+ 266:lvgl/src/lv_misc/lv_area.c **** 
+ 267:lvgl/src/lv_misc/lv_area.c **** /**
+ 268:lvgl/src/lv_misc/lv_area.c ****  * Align an area to an other
+ 269:lvgl/src/lv_misc/lv_area.c ****  * @param base an are where the other will be aligned
+ 270:lvgl/src/lv_misc/lv_area.c ****  * @param to_align the area to align
+ 271:lvgl/src/lv_misc/lv_area.c ****  * @param align `LV_ALIGN_...`
+ 272:lvgl/src/lv_misc/lv_area.c ****  * @param res x/y coordinates where `to_align` align area should be placed
+ 273:lvgl/src/lv_misc/lv_area.c ****  */
+ 274:lvgl/src/lv_misc/lv_area.c **** void _lv_area_align(const lv_area_t * base, const lv_area_t * to_align, lv_align_t align, lv_point_
+ 275:lvgl/src/lv_misc/lv_area.c **** {
+ 276:lvgl/src/lv_misc/lv_area.c **** 
+ 277:lvgl/src/lv_misc/lv_area.c ****     switch(align) {
+ 278:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_CENTER:
+ 279:lvgl/src/lv_misc/lv_area.c ****             res->x = lv_area_get_width(base) / 2 - lv_area_get_width(to_align) / 2;
+ 280:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ 281:lvgl/src/lv_misc/lv_area.c ****             break;
+ 282:lvgl/src/lv_misc/lv_area.c **** 
+ 283:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_IN_TOP_LEFT:
+ 284:lvgl/src/lv_misc/lv_area.c ****             res->x = 0;
+ 285:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 286:lvgl/src/lv_misc/lv_area.c ****             break;
+ 287:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_IN_TOP_MID:
+ 288:lvgl/src/lv_misc/lv_area.c ****             res->x = lv_area_get_width(base) / 2 - lv_area_get_width(to_align) / 2;
+ 289:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 290:lvgl/src/lv_misc/lv_area.c ****             break;
+ 291:lvgl/src/lv_misc/lv_area.c **** 
+ 292:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_IN_TOP_RIGHT:
+ 293:lvgl/src/lv_misc/lv_area.c ****             res->x = lv_area_get_width(base) - lv_area_get_width(to_align);
+ 294:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 295:lvgl/src/lv_misc/lv_area.c ****             break;
+ 296:lvgl/src/lv_misc/lv_area.c **** 
+ 297:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_IN_BOTTOM_LEFT:
+ 298:lvgl/src/lv_misc/lv_area.c ****             res->x = 0;
+ 299:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 300:lvgl/src/lv_misc/lv_area.c ****             break;
+ 301:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_IN_BOTTOM_MID:
+ 302:lvgl/src/lv_misc/lv_area.c ****             res->x = lv_area_get_width(base) / 2 - lv_area_get_width(to_align) / 2;
+ 303:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 304:lvgl/src/lv_misc/lv_area.c ****             break;
+ 305:lvgl/src/lv_misc/lv_area.c **** 
+ 306:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_IN_BOTTOM_RIGHT:
+ 307:lvgl/src/lv_misc/lv_area.c ****             res->x = lv_area_get_width(base) - lv_area_get_width(to_align);
+ 308:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 309:lvgl/src/lv_misc/lv_area.c ****             break;
+ 310:lvgl/src/lv_misc/lv_area.c **** 
+ 311:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_IN_LEFT_MID:
+ 312:lvgl/src/lv_misc/lv_area.c ****             res->x = 0;
+ 313:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ 314:lvgl/src/lv_misc/lv_area.c ****             break;
+ 315:lvgl/src/lv_misc/lv_area.c **** 
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 7
+
+
+ 316:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_IN_RIGHT_MID:
+ 317:lvgl/src/lv_misc/lv_area.c ****             res->x = lv_area_get_width(base) - lv_area_get_width(to_align);
+ 318:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ 319:lvgl/src/lv_misc/lv_area.c ****             break;
+ 320:lvgl/src/lv_misc/lv_area.c **** 
+ 321:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_OUT_TOP_LEFT:
+ 322:lvgl/src/lv_misc/lv_area.c ****             res->x = 0;
+ 323:lvgl/src/lv_misc/lv_area.c ****             res->y = -lv_area_get_height(to_align);
+ 324:lvgl/src/lv_misc/lv_area.c ****             break;
+ 325:lvgl/src/lv_misc/lv_area.c **** 
+ 326:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_OUT_TOP_MID:
+ 327:lvgl/src/lv_misc/lv_area.c ****             res->x = lv_area_get_width(base) / 2 - lv_area_get_width(to_align) / 2;
+ 328:lvgl/src/lv_misc/lv_area.c ****             res->y = -lv_area_get_height(to_align);
+ 329:lvgl/src/lv_misc/lv_area.c ****             break;
+ 330:lvgl/src/lv_misc/lv_area.c **** 
+ 331:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_OUT_TOP_RIGHT:
+ 332:lvgl/src/lv_misc/lv_area.c ****             res->x = lv_area_get_width(base) - lv_area_get_width(to_align);
+ 333:lvgl/src/lv_misc/lv_area.c ****             res->y = -lv_area_get_height(to_align);
+ 334:lvgl/src/lv_misc/lv_area.c ****             break;
+ 335:lvgl/src/lv_misc/lv_area.c **** 
+ 336:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_OUT_BOTTOM_LEFT:
+ 337:lvgl/src/lv_misc/lv_area.c ****             res->x = 0;
+ 338:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base);
+ 339:lvgl/src/lv_misc/lv_area.c ****             break;
+ 340:lvgl/src/lv_misc/lv_area.c **** 
+ 341:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_OUT_BOTTOM_MID:
+ 342:lvgl/src/lv_misc/lv_area.c ****             res->x = lv_area_get_width(base) / 2 - lv_area_get_width(to_align) / 2;
+ 343:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base);
+ 344:lvgl/src/lv_misc/lv_area.c ****             break;
+ 345:lvgl/src/lv_misc/lv_area.c **** 
+ 346:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_OUT_BOTTOM_RIGHT:
+ 347:lvgl/src/lv_misc/lv_area.c ****             res->x = lv_area_get_width(base) - lv_area_get_width(to_align);
+ 348:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base);
+ 349:lvgl/src/lv_misc/lv_area.c ****             break;
+ 350:lvgl/src/lv_misc/lv_area.c **** 
+ 351:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_OUT_LEFT_TOP:
+ 352:lvgl/src/lv_misc/lv_area.c ****             res->x = -lv_area_get_width(to_align);
+ 353:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 354:lvgl/src/lv_misc/lv_area.c ****             break;
+ 355:lvgl/src/lv_misc/lv_area.c **** 
+ 356:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_OUT_LEFT_MID:
+ 357:lvgl/src/lv_misc/lv_area.c ****             res->x = -lv_area_get_width(to_align);
+ 358:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ 359:lvgl/src/lv_misc/lv_area.c ****             break;
+ 360:lvgl/src/lv_misc/lv_area.c **** 
+ 361:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_OUT_LEFT_BOTTOM:
+ 362:lvgl/src/lv_misc/lv_area.c ****             res->x = -lv_area_get_width(to_align);
+ 363:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 364:lvgl/src/lv_misc/lv_area.c ****             break;
+ 365:lvgl/src/lv_misc/lv_area.c **** 
+ 366:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_OUT_RIGHT_TOP:
+ 367:lvgl/src/lv_misc/lv_area.c ****             res->x = lv_area_get_width(base);
+ 368:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 369:lvgl/src/lv_misc/lv_area.c ****             break;
+ 370:lvgl/src/lv_misc/lv_area.c **** 
+ 371:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_OUT_RIGHT_MID:
+ 372:lvgl/src/lv_misc/lv_area.c ****             res->x = lv_area_get_width(base);
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 8
+
+
+ 373:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ 374:lvgl/src/lv_misc/lv_area.c ****             break;
+ 375:lvgl/src/lv_misc/lv_area.c **** 
+ 376:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_OUT_RIGHT_BOTTOM:
+ 377:lvgl/src/lv_misc/lv_area.c ****             res->x = lv_area_get_width(base);
+ 378:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 379:lvgl/src/lv_misc/lv_area.c ****             break;
+ 380:lvgl/src/lv_misc/lv_area.c ****     }
+ 381:lvgl/src/lv_misc/lv_area.c **** 
+ 382:lvgl/src/lv_misc/lv_area.c ****     res->x += base->x1;
+ 383:lvgl/src/lv_misc/lv_area.c ****     res->y += base->y1;
+ 384:lvgl/src/lv_misc/lv_area.c **** }
+ 385:lvgl/src/lv_misc/lv_area.c **** 
+ 386:lvgl/src/lv_misc/lv_area.c **** /**********************
+ 387:lvgl/src/lv_misc/lv_area.c ****  *   STATIC FUNCTIONS
+ 388:lvgl/src/lv_misc/lv_area.c ****  **********************/
+ 389:lvgl/src/lv_misc/lv_area.c **** 
+ 390:lvgl/src/lv_misc/lv_area.c **** static bool lv_point_within_circle(const lv_area_t * area, const lv_point_t * p)
+ 391:lvgl/src/lv_misc/lv_area.c **** {
+  29              		.loc 1 391 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+  34              		.loc 1 391 1 is_stmt 0 view .LVU1
+  35 0000 30B4     		push	{r4, r5}
+  36              	.LCFI0:
+  37              		.cfi_def_cfa_offset 8
+  38              		.cfi_offset 4, -8
+  39              		.cfi_offset 5, -4
+ 392:lvgl/src/lv_misc/lv_area.c ****     lv_coord_t r = (area->x2 - area->x1) / 2;
+  40              		.loc 1 392 5 is_stmt 1 view .LVU2
+  41              		.loc 1 392 25 is_stmt 0 view .LVU3
+  42 0002 B0F90430 		ldrsh	r3, [r0, #4]
+  43              		.loc 1 392 36 view .LVU4
+  44 0006 B0F90020 		ldrsh	r2, [r0]
+  45              		.loc 1 392 30 view .LVU5
+  46 000a 9B1A     		subs	r3, r3, r2
+  47              		.loc 1 392 42 view .LVU6
+  48 000c 03EBD373 		add	r3, r3, r3, lsr #31
+  49 0010 5B10     		asrs	r3, r3, #1
+  50              	.LVL1:
+ 393:lvgl/src/lv_misc/lv_area.c **** 
+ 394:lvgl/src/lv_misc/lv_area.c ****     /* Circle center */
+ 395:lvgl/src/lv_misc/lv_area.c ****     lv_coord_t cx = area->x1 + r;
+  51              		.loc 1 395 5 is_stmt 1 view .LVU7
+  52              		.loc 1 395 30 is_stmt 0 view .LVU8
+  53 0012 9CB2     		uxth	r4, r3
+  54 0014 14FA82F2 		uxtah	r2, r4, r2
+  55 0018 95B2     		uxth	r5, r2
+  56              	.LVL2:
+ 396:lvgl/src/lv_misc/lv_area.c ****     lv_coord_t cy = area->y1 + r;
+  57              		.loc 1 396 5 is_stmt 1 view .LVU9
+  58              		.loc 1 396 25 is_stmt 0 view .LVU10
+  59 001a 4288     		ldrh	r2, [r0, #2]
+  60              		.loc 1 396 30 view .LVU11
+  61 001c 1444     		add	r4, r4, r2
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 9
+
+
+  62 001e A4B2     		uxth	r4, r4
+  63              	.LVL3:
+ 397:lvgl/src/lv_misc/lv_area.c **** 
+ 398:lvgl/src/lv_misc/lv_area.c ****     /*Simplify the code by moving everything to (0, 0) */
+ 399:lvgl/src/lv_misc/lv_area.c ****     lv_coord_t px = p->x - cx;
+  64              		.loc 1 399 5 is_stmt 1 view .LVU12
+  65              		.loc 1 399 22 is_stmt 0 view .LVU13
+  66 0020 0A88     		ldrh	r2, [r1]
+  67              		.loc 1 399 26 view .LVU14
+  68 0022 521B     		subs	r2, r2, r5
+  69              	.LVL4:
+ 400:lvgl/src/lv_misc/lv_area.c ****     lv_coord_t py = p->y - cy;
+  70              		.loc 1 400 5 is_stmt 1 view .LVU15
+  71              		.loc 1 400 22 is_stmt 0 view .LVU16
+  72 0024 4988     		ldrh	r1, [r1, #2]
+  73              	.LVL5:
+  74              		.loc 1 400 26 view .LVU17
+  75 0026 091B     		subs	r1, r1, r4
+  76              	.LVL6:
+ 401:lvgl/src/lv_misc/lv_area.c **** 
+ 402:lvgl/src/lv_misc/lv_area.c ****     uint32_t r_sqrd = r * r;
+  77              		.loc 1 402 5 is_stmt 1 view .LVU18
+  78              		.loc 1 402 25 is_stmt 0 view .LVU19
+  79 0028 13FB03F3 		smulbb	r3, r3, r3
+  80              	.LVL7:
+ 403:lvgl/src/lv_misc/lv_area.c ****     uint32_t dist = (px * px) + (py * py);
+  81              		.loc 1 403 5 is_stmt 1 view .LVU20
+  82              		.loc 1 403 37 is_stmt 0 view .LVU21
+  83 002c 11FB01F1 		smulbb	r1, r1, r1
+  84              	.LVL8:
+  85              		.loc 1 403 31 view .LVU22
+  86 0030 12FB0212 		smlabb	r2, r2, r2, r1
+  87              	.LVL9:
+ 404:lvgl/src/lv_misc/lv_area.c **** 
+ 405:lvgl/src/lv_misc/lv_area.c ****     if(dist <= r_sqrd)
+  88              		.loc 1 405 5 is_stmt 1 view .LVU23
+  89              		.loc 1 405 7 is_stmt 0 view .LVU24
+  90 0034 9342     		cmp	r3, r2
+  91 0036 02D3     		bcc	.L3
+ 406:lvgl/src/lv_misc/lv_area.c ****         return true;
+  92              		.loc 1 406 16 view .LVU25
+  93 0038 0120     		movs	r0, #1
+  94              	.LVL10:
+  95              	.L2:
+ 407:lvgl/src/lv_misc/lv_area.c ****     else
+ 408:lvgl/src/lv_misc/lv_area.c ****         return false;
+ 409:lvgl/src/lv_misc/lv_area.c **** }
+  96              		.loc 1 409 1 view .LVU26
+  97 003a 30BC     		pop	{r4, r5}
+  98              	.LCFI1:
+  99              		.cfi_remember_state
+ 100              		.cfi_restore 5
+ 101              		.cfi_restore 4
+ 102              		.cfi_def_cfa_offset 0
+ 103              	.LVL11:
+ 104              		.loc 1 409 1 view .LVU27
+ 105 003c 7047     		bx	lr
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 10
+
+
+ 106              	.LVL12:
+ 107              	.L3:
+ 108              	.LCFI2:
+ 109              		.cfi_restore_state
+ 408:lvgl/src/lv_misc/lv_area.c **** }
+ 110              		.loc 1 408 16 view .LVU28
+ 111 003e 0020     		movs	r0, #0
+ 112              	.LVL13:
+ 408:lvgl/src/lv_misc/lv_area.c **** }
+ 113              		.loc 1 408 16 view .LVU29
+ 114 0040 FBE7     		b	.L2
+ 115              		.cfi_endproc
+ 116              	.LFE145:
+ 118              		.section	.text.lv_area_set,"ax",%progbits
+ 119              		.align	1
+ 120              		.global	lv_area_set
+ 121              		.syntax unified
+ 122              		.thumb
+ 123              		.thumb_func
+ 124              		.fpu fpv4-sp-d16
+ 126              	lv_area_set:
+ 127              	.LVL14:
+ 128              	.LFB134:
+  49:lvgl/src/lv_misc/lv_area.c ****     area_p->x1 = x1;
+ 129              		.loc 1 49 1 is_stmt 1 view -0
+ 130              		.cfi_startproc
+ 131              		@ args = 4, pretend = 0, frame = 0
+ 132              		@ frame_needed = 0, uses_anonymous_args = 0
+ 133              		@ link register save eliminated.
+  50:lvgl/src/lv_misc/lv_area.c ****     area_p->y1 = y1;
+ 134              		.loc 1 50 5 view .LVU31
+  50:lvgl/src/lv_misc/lv_area.c ****     area_p->y1 = y1;
+ 135              		.loc 1 50 16 is_stmt 0 view .LVU32
+ 136 0000 0180     		strh	r1, [r0]	@ movhi
+  51:lvgl/src/lv_misc/lv_area.c ****     area_p->x2 = x2;
+ 137              		.loc 1 51 5 is_stmt 1 view .LVU33
+  51:lvgl/src/lv_misc/lv_area.c ****     area_p->x2 = x2;
+ 138              		.loc 1 51 16 is_stmt 0 view .LVU34
+ 139 0002 4280     		strh	r2, [r0, #2]	@ movhi
+  52:lvgl/src/lv_misc/lv_area.c ****     area_p->y2 = y2;
+ 140              		.loc 1 52 5 is_stmt 1 view .LVU35
+  52:lvgl/src/lv_misc/lv_area.c ****     area_p->y2 = y2;
+ 141              		.loc 1 52 16 is_stmt 0 view .LVU36
+ 142 0004 8380     		strh	r3, [r0, #4]	@ movhi
+  53:lvgl/src/lv_misc/lv_area.c **** }
+ 143              		.loc 1 53 5 is_stmt 1 view .LVU37
+  53:lvgl/src/lv_misc/lv_area.c **** }
+ 144              		.loc 1 53 16 is_stmt 0 view .LVU38
+ 145 0006 BDF90030 		ldrsh	r3, [sp]
+ 146              	.LVL15:
+  53:lvgl/src/lv_misc/lv_area.c **** }
+ 147              		.loc 1 53 16 view .LVU39
+ 148 000a C380     		strh	r3, [r0, #6]	@ movhi
+  54:lvgl/src/lv_misc/lv_area.c **** 
+ 149              		.loc 1 54 1 view .LVU40
+ 150 000c 7047     		bx	lr
+ 151              		.cfi_endproc
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 11
+
+
+ 152              	.LFE134:
+ 154              		.section	.text.lv_area_set_width,"ax",%progbits
+ 155              		.align	1
+ 156              		.global	lv_area_set_width
+ 157              		.syntax unified
+ 158              		.thumb
+ 159              		.thumb_func
+ 160              		.fpu fpv4-sp-d16
+ 162              	lv_area_set_width:
+ 163              	.LVL16:
+ 164              	.LFB135:
+  62:lvgl/src/lv_misc/lv_area.c ****     area_p->x2 = area_p->x1 + w - 1;
+ 165              		.loc 1 62 1 is_stmt 1 view -0
+ 166              		.cfi_startproc
+ 167              		@ args = 0, pretend = 0, frame = 0
+ 168              		@ frame_needed = 0, uses_anonymous_args = 0
+ 169              		@ link register save eliminated.
+  63:lvgl/src/lv_misc/lv_area.c **** }
+ 170              		.loc 1 63 5 view .LVU42
+  63:lvgl/src/lv_misc/lv_area.c **** }
+ 171              		.loc 1 63 24 is_stmt 0 view .LVU43
+ 172 0000 0388     		ldrh	r3, [r0]
+  63:lvgl/src/lv_misc/lv_area.c **** }
+ 173              		.loc 1 63 29 view .LVU44
+ 174 0002 1944     		add	r1, r1, r3
+ 175              	.LVL17:
+  63:lvgl/src/lv_misc/lv_area.c **** }
+ 176              		.loc 1 63 29 view .LVU45
+ 177 0004 89B2     		uxth	r1, r1
+  63:lvgl/src/lv_misc/lv_area.c **** }
+ 178              		.loc 1 63 33 view .LVU46
+ 179 0006 0139     		subs	r1, r1, #1
+  63:lvgl/src/lv_misc/lv_area.c **** }
+ 180              		.loc 1 63 16 view .LVU47
+ 181 0008 8180     		strh	r1, [r0, #4]	@ movhi
+  64:lvgl/src/lv_misc/lv_area.c **** 
+ 182              		.loc 1 64 1 view .LVU48
+ 183 000a 7047     		bx	lr
+ 184              		.cfi_endproc
+ 185              	.LFE135:
+ 187              		.section	.text.lv_area_set_height,"ax",%progbits
+ 188              		.align	1
+ 189              		.global	lv_area_set_height
+ 190              		.syntax unified
+ 191              		.thumb
+ 192              		.thumb_func
+ 193              		.fpu fpv4-sp-d16
+ 195              	lv_area_set_height:
+ 196              	.LVL18:
+ 197              	.LFB136:
+  72:lvgl/src/lv_misc/lv_area.c ****     area_p->y2 = area_p->y1 + h - 1;
+ 198              		.loc 1 72 1 is_stmt 1 view -0
+ 199              		.cfi_startproc
+ 200              		@ args = 0, pretend = 0, frame = 0
+ 201              		@ frame_needed = 0, uses_anonymous_args = 0
+ 202              		@ link register save eliminated.
+  73:lvgl/src/lv_misc/lv_area.c **** }
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 12
+
+
+ 203              		.loc 1 73 5 view .LVU50
+  73:lvgl/src/lv_misc/lv_area.c **** }
+ 204              		.loc 1 73 24 is_stmt 0 view .LVU51
+ 205 0000 4388     		ldrh	r3, [r0, #2]
+  73:lvgl/src/lv_misc/lv_area.c **** }
+ 206              		.loc 1 73 29 view .LVU52
+ 207 0002 1944     		add	r1, r1, r3
+ 208              	.LVL19:
+  73:lvgl/src/lv_misc/lv_area.c **** }
+ 209              		.loc 1 73 29 view .LVU53
+ 210 0004 89B2     		uxth	r1, r1
+  73:lvgl/src/lv_misc/lv_area.c **** }
+ 211              		.loc 1 73 33 view .LVU54
+ 212 0006 0139     		subs	r1, r1, #1
+  73:lvgl/src/lv_misc/lv_area.c **** }
+ 213              		.loc 1 73 16 view .LVU55
+ 214 0008 C180     		strh	r1, [r0, #6]	@ movhi
+  74:lvgl/src/lv_misc/lv_area.c **** 
+ 215              		.loc 1 74 1 view .LVU56
+ 216 000a 7047     		bx	lr
+ 217              		.cfi_endproc
+ 218              	.LFE136:
+ 220              		.section	.text._lv_area_set_pos,"ax",%progbits
+ 221              		.align	1
+ 222              		.global	_lv_area_set_pos
+ 223              		.syntax unified
+ 224              		.thumb
+ 225              		.thumb_func
+ 226              		.fpu fpv4-sp-d16
+ 228              	_lv_area_set_pos:
+ 229              	.LVL20:
+ 230              	.LFB137:
+  83:lvgl/src/lv_misc/lv_area.c ****     lv_coord_t w = lv_area_get_width(area_p);
+ 231              		.loc 1 83 1 is_stmt 1 view -0
+ 232              		.cfi_startproc
+ 233              		@ args = 0, pretend = 0, frame = 0
+ 234              		@ frame_needed = 0, uses_anonymous_args = 0
+  83:lvgl/src/lv_misc/lv_area.c ****     lv_coord_t w = lv_area_get_width(area_p);
+ 235              		.loc 1 83 1 is_stmt 0 view .LVU58
+ 236 0000 70B5     		push	{r4, r5, r6, lr}
+ 237              	.LCFI3:
+ 238              		.cfi_def_cfa_offset 16
+ 239              		.cfi_offset 4, -16
+ 240              		.cfi_offset 5, -12
+ 241              		.cfi_offset 6, -8
+ 242              		.cfi_offset 14, -4
+ 243 0002 0546     		mov	r5, r0
+  84:lvgl/src/lv_misc/lv_area.c ****     lv_coord_t h = lv_area_get_height(area_p);
+ 244              		.loc 1 84 5 is_stmt 1 view .LVU59
+ 245              	.LVL21:
+ 246              	.LBB114:
+ 247              	.LBI114:
+ 248              		.file 2 "lvgl/src/lv_misc/lv_area.h"
+   1:lvgl/src/lv_misc/lv_area.h **** /**
+   2:lvgl/src/lv_misc/lv_area.h ****  * @file lv_area.h
+   3:lvgl/src/lv_misc/lv_area.h ****  *
+   4:lvgl/src/lv_misc/lv_area.h ****  */
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 13
+
+
+   5:lvgl/src/lv_misc/lv_area.h **** 
+   6:lvgl/src/lv_misc/lv_area.h **** #ifndef LV_AREA_H
+   7:lvgl/src/lv_misc/lv_area.h **** #define LV_AREA_H
+   8:lvgl/src/lv_misc/lv_area.h **** 
+   9:lvgl/src/lv_misc/lv_area.h **** #ifdef __cplusplus
+  10:lvgl/src/lv_misc/lv_area.h **** extern "C" {
+  11:lvgl/src/lv_misc/lv_area.h **** #endif
+  12:lvgl/src/lv_misc/lv_area.h **** 
+  13:lvgl/src/lv_misc/lv_area.h **** /*********************
+  14:lvgl/src/lv_misc/lv_area.h ****  *      INCLUDES
+  15:lvgl/src/lv_misc/lv_area.h ****  *********************/
+  16:lvgl/src/lv_misc/lv_area.h **** #include "../lv_conf_internal.h"
+  17:lvgl/src/lv_misc/lv_area.h **** #include <string.h>
+  18:lvgl/src/lv_misc/lv_area.h **** #include <stdbool.h>
+  19:lvgl/src/lv_misc/lv_area.h **** #include <stdint.h>
+  20:lvgl/src/lv_misc/lv_area.h **** #include "lv_mem.h"
+  21:lvgl/src/lv_misc/lv_area.h **** 
+  22:lvgl/src/lv_misc/lv_area.h **** /*********************
+  23:lvgl/src/lv_misc/lv_area.h ****  *      DEFINES
+  24:lvgl/src/lv_misc/lv_area.h ****  *********************/
+  25:lvgl/src/lv_misc/lv_area.h **** /*To avoid overflow don't let the max ranges (reduce with 1000) */
+  26:lvgl/src/lv_misc/lv_area.h **** #define LV_COORD_MAX ((lv_coord_t)((uint32_t)((uint32_t)1 << (8 * sizeof(lv_coord_t) - 1)) - 1000))
+  27:lvgl/src/lv_misc/lv_area.h **** #define LV_COORD_MIN (-LV_COORD_MAX)
+  28:lvgl/src/lv_misc/lv_area.h **** 
+  29:lvgl/src/lv_misc/lv_area.h **** LV_EXPORT_CONST_INT(LV_COORD_MAX);
+  30:lvgl/src/lv_misc/lv_area.h **** LV_EXPORT_CONST_INT(LV_COORD_MIN);
+  31:lvgl/src/lv_misc/lv_area.h **** 
+  32:lvgl/src/lv_misc/lv_area.h **** /**********************
+  33:lvgl/src/lv_misc/lv_area.h ****  *      TYPEDEFS
+  34:lvgl/src/lv_misc/lv_area.h ****  **********************/
+  35:lvgl/src/lv_misc/lv_area.h **** 
+  36:lvgl/src/lv_misc/lv_area.h **** /**
+  37:lvgl/src/lv_misc/lv_area.h ****  * Represents a point on the screen.
+  38:lvgl/src/lv_misc/lv_area.h ****  */
+  39:lvgl/src/lv_misc/lv_area.h **** typedef struct {
+  40:lvgl/src/lv_misc/lv_area.h ****     lv_coord_t x;
+  41:lvgl/src/lv_misc/lv_area.h ****     lv_coord_t y;
+  42:lvgl/src/lv_misc/lv_area.h **** } lv_point_t;
+  43:lvgl/src/lv_misc/lv_area.h **** 
+  44:lvgl/src/lv_misc/lv_area.h **** /** Represents an area of the screen. */
+  45:lvgl/src/lv_misc/lv_area.h **** typedef struct {
+  46:lvgl/src/lv_misc/lv_area.h ****     lv_coord_t x1;
+  47:lvgl/src/lv_misc/lv_area.h ****     lv_coord_t y1;
+  48:lvgl/src/lv_misc/lv_area.h ****     lv_coord_t x2;
+  49:lvgl/src/lv_misc/lv_area.h ****     lv_coord_t y2;
+  50:lvgl/src/lv_misc/lv_area.h **** } lv_area_t;
+  51:lvgl/src/lv_misc/lv_area.h **** 
+  52:lvgl/src/lv_misc/lv_area.h **** /** Alignments */
+  53:lvgl/src/lv_misc/lv_area.h **** enum {
+  54:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_CENTER = 0,
+  55:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_IN_TOP_LEFT,
+  56:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_IN_TOP_MID,
+  57:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_IN_TOP_RIGHT,
+  58:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_IN_BOTTOM_LEFT,
+  59:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_IN_BOTTOM_MID,
+  60:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_IN_BOTTOM_RIGHT,
+  61:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_IN_LEFT_MID,
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 14
+
+
+  62:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_IN_RIGHT_MID,
+  63:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_OUT_TOP_LEFT,
+  64:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_OUT_TOP_MID,
+  65:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_OUT_TOP_RIGHT,
+  66:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_OUT_BOTTOM_LEFT,
+  67:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_OUT_BOTTOM_MID,
+  68:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_OUT_BOTTOM_RIGHT,
+  69:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_OUT_LEFT_TOP,
+  70:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_OUT_LEFT_MID,
+  71:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_OUT_LEFT_BOTTOM,
+  72:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_OUT_RIGHT_TOP,
+  73:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_OUT_RIGHT_MID,
+  74:lvgl/src/lv_misc/lv_area.h ****     LV_ALIGN_OUT_RIGHT_BOTTOM,
+  75:lvgl/src/lv_misc/lv_area.h **** };
+  76:lvgl/src/lv_misc/lv_area.h **** typedef uint8_t lv_align_t;
+  77:lvgl/src/lv_misc/lv_area.h **** 
+  78:lvgl/src/lv_misc/lv_area.h **** /**********************
+  79:lvgl/src/lv_misc/lv_area.h ****  * GLOBAL PROTOTYPES
+  80:lvgl/src/lv_misc/lv_area.h ****  **********************/
+  81:lvgl/src/lv_misc/lv_area.h **** 
+  82:lvgl/src/lv_misc/lv_area.h **** /**
+  83:lvgl/src/lv_misc/lv_area.h ****  * Initialize an area
+  84:lvgl/src/lv_misc/lv_area.h ****  * @param area_p pointer to an area
+  85:lvgl/src/lv_misc/lv_area.h ****  * @param x1 left coordinate of the area
+  86:lvgl/src/lv_misc/lv_area.h ****  * @param y1 top coordinate of the area
+  87:lvgl/src/lv_misc/lv_area.h ****  * @param x2 right coordinate of the area
+  88:lvgl/src/lv_misc/lv_area.h ****  * @param y2 bottom coordinate of the area
+  89:lvgl/src/lv_misc/lv_area.h ****  */
+  90:lvgl/src/lv_misc/lv_area.h **** void lv_area_set(lv_area_t * area_p, lv_coord_t x1, lv_coord_t y1, lv_coord_t x2, lv_coord_t y2);
+  91:lvgl/src/lv_misc/lv_area.h **** 
+  92:lvgl/src/lv_misc/lv_area.h **** /**
+  93:lvgl/src/lv_misc/lv_area.h ****  * Copy an area
+  94:lvgl/src/lv_misc/lv_area.h ****  * @param dest pointer to the destination area
+  95:lvgl/src/lv_misc/lv_area.h ****  * @param src pointer to the source area
+  96:lvgl/src/lv_misc/lv_area.h ****  */
+  97:lvgl/src/lv_misc/lv_area.h **** inline static void lv_area_copy(lv_area_t * dest, const lv_area_t * src)
+  98:lvgl/src/lv_misc/lv_area.h **** {
+  99:lvgl/src/lv_misc/lv_area.h ****     _lv_memcpy_small(dest, src, sizeof(lv_area_t));
+ 100:lvgl/src/lv_misc/lv_area.h **** }
+ 101:lvgl/src/lv_misc/lv_area.h **** 
+ 102:lvgl/src/lv_misc/lv_area.h **** /**
+ 103:lvgl/src/lv_misc/lv_area.h ****  * Get the width of an area
+ 104:lvgl/src/lv_misc/lv_area.h ****  * @param area_p pointer to an area
+ 105:lvgl/src/lv_misc/lv_area.h ****  * @return the width of the area (if x1 == x2 -> width = 1)
+ 106:lvgl/src/lv_misc/lv_area.h ****  */
+ 107:lvgl/src/lv_misc/lv_area.h **** static inline lv_coord_t lv_area_get_width(const lv_area_t * area_p)
+ 249              		.loc 2 107 26 view .LVU60
+ 250              	.LBB115:
+ 108:lvgl/src/lv_misc/lv_area.h **** {
+ 109:lvgl/src/lv_misc/lv_area.h ****     return (lv_coord_t)(area_p->x2 - area_p->x1 + 1);
+ 251              		.loc 2 109 5 view .LVU61
+ 252              		.loc 2 109 31 is_stmt 0 view .LVU62
+ 253 0004 8388     		ldrh	r3, [r0, #4]
+ 254              		.loc 2 109 44 view .LVU63
+ 255 0006 0488     		ldrh	r4, [r0]
+ 256              		.loc 2 109 36 view .LVU64
+ 257 0008 1B1B     		subs	r3, r3, r4
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 15
+
+
+ 258 000a 9BB2     		uxth	r3, r3
+ 259              		.loc 2 109 49 view .LVU65
+ 260 000c 0133     		adds	r3, r3, #1
+ 261              	.LVL22:
+ 262              		.loc 2 109 49 view .LVU66
+ 263              	.LBE115:
+ 264              	.LBE114:
+  85:lvgl/src/lv_misc/lv_area.c ****     area_p->x1   = x;
+ 265              		.loc 1 85 5 is_stmt 1 view .LVU67
+ 266              	.LBB116:
+ 267              	.LBI116:
+ 110:lvgl/src/lv_misc/lv_area.h **** }
+ 111:lvgl/src/lv_misc/lv_area.h **** 
+ 112:lvgl/src/lv_misc/lv_area.h **** /**
+ 113:lvgl/src/lv_misc/lv_area.h ****  * Get the height of an area
+ 114:lvgl/src/lv_misc/lv_area.h ****  * @param area_p pointer to an area
+ 115:lvgl/src/lv_misc/lv_area.h ****  * @return the height of the area (if y1 == y2 -> height = 1)
+ 116:lvgl/src/lv_misc/lv_area.h ****  */
+ 117:lvgl/src/lv_misc/lv_area.h **** static inline lv_coord_t lv_area_get_height(const lv_area_t * area_p)
+ 268              		.loc 2 117 26 view .LVU68
+ 269              	.LBB117:
+ 118:lvgl/src/lv_misc/lv_area.h **** {
+ 119:lvgl/src/lv_misc/lv_area.h ****     return (lv_coord_t)(area_p->y2 - area_p->y1 + 1);
+ 270              		.loc 2 119 5 view .LVU69
+ 271              		.loc 2 119 31 is_stmt 0 view .LVU70
+ 272 000e C488     		ldrh	r4, [r0, #6]
+ 273              		.loc 2 119 44 view .LVU71
+ 274 0010 4688     		ldrh	r6, [r0, #2]
+ 275              		.loc 2 119 36 view .LVU72
+ 276 0012 A41B     		subs	r4, r4, r6
+ 277 0014 A4B2     		uxth	r4, r4
+ 278              		.loc 2 119 49 view .LVU73
+ 279 0016 0134     		adds	r4, r4, #1
+ 280              		.loc 2 119 12 view .LVU74
+ 281 0018 24B2     		sxth	r4, r4
+ 282              	.LVL23:
+ 283              		.loc 2 119 12 view .LVU75
+ 284              	.LBE117:
+ 285              	.LBE116:
+  86:lvgl/src/lv_misc/lv_area.c ****     area_p->y1   = y;
+ 286              		.loc 1 86 5 is_stmt 1 view .LVU76
+  86:lvgl/src/lv_misc/lv_area.c ****     area_p->y1   = y;
+ 287              		.loc 1 86 18 is_stmt 0 view .LVU77
+ 288 001a 0180     		strh	r1, [r0]	@ movhi
+  87:lvgl/src/lv_misc/lv_area.c ****     lv_area_set_width(area_p, w);
+ 289              		.loc 1 87 5 is_stmt 1 view .LVU78
+  87:lvgl/src/lv_misc/lv_area.c ****     lv_area_set_width(area_p, w);
+ 290              		.loc 1 87 18 is_stmt 0 view .LVU79
+ 291 001c 4280     		strh	r2, [r0, #2]	@ movhi
+  88:lvgl/src/lv_misc/lv_area.c ****     lv_area_set_height(area_p, h);
+ 292              		.loc 1 88 5 is_stmt 1 view .LVU80
+ 293 001e 19B2     		sxth	r1, r3
+ 294              	.LVL24:
+  88:lvgl/src/lv_misc/lv_area.c ****     lv_area_set_height(area_p, h);
+ 295              		.loc 1 88 5 is_stmt 0 view .LVU81
+ 296 0020 FFF7FEFF 		bl	lv_area_set_width
+ 297              	.LVL25:
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 16
+
+
+  89:lvgl/src/lv_misc/lv_area.c **** }
+ 298              		.loc 1 89 5 is_stmt 1 view .LVU82
+ 299 0024 2146     		mov	r1, r4
+ 300 0026 2846     		mov	r0, r5
+ 301 0028 FFF7FEFF 		bl	lv_area_set_height
+ 302              	.LVL26:
+  90:lvgl/src/lv_misc/lv_area.c **** 
+ 303              		.loc 1 90 1 is_stmt 0 view .LVU83
+ 304 002c 70BD     		pop	{r4, r5, r6, pc}
+  90:lvgl/src/lv_misc/lv_area.c **** 
+ 305              		.loc 1 90 1 view .LVU84
+ 306              		.cfi_endproc
+ 307              	.LFE137:
+ 309              		.section	.text.lv_area_get_size,"ax",%progbits
+ 310              		.align	1
+ 311              		.global	lv_area_get_size
+ 312              		.syntax unified
+ 313              		.thumb
+ 314              		.thumb_func
+ 315              		.fpu fpv4-sp-d16
+ 317              	lv_area_get_size:
+ 318              	.LVL27:
+ 319              	.LFB138:
+  98:lvgl/src/lv_misc/lv_area.c ****     uint32_t size;
+ 320              		.loc 1 98 1 is_stmt 1 view -0
+ 321              		.cfi_startproc
+ 322              		@ args = 0, pretend = 0, frame = 0
+ 323              		@ frame_needed = 0, uses_anonymous_args = 0
+ 324              		@ link register save eliminated.
+  99:lvgl/src/lv_misc/lv_area.c **** 
+ 325              		.loc 1 99 5 view .LVU86
+ 101:lvgl/src/lv_misc/lv_area.c **** 
+ 326              		.loc 1 101 5 view .LVU87
+ 101:lvgl/src/lv_misc/lv_area.c **** 
+ 327              		.loc 1 101 29 is_stmt 0 view .LVU88
+ 328 0000 B0F90420 		ldrsh	r2, [r0, #4]
+ 101:lvgl/src/lv_misc/lv_area.c **** 
+ 329              		.loc 1 101 42 view .LVU89
+ 330 0004 B0F90030 		ldrsh	r3, [r0]
+ 101:lvgl/src/lv_misc/lv_area.c **** 
+ 331              		.loc 1 101 34 view .LVU90
+ 332 0008 D21A     		subs	r2, r2, r3
+ 101:lvgl/src/lv_misc/lv_area.c **** 
+ 333              		.loc 1 101 61 view .LVU91
+ 334 000a B0F90630 		ldrsh	r3, [r0, #6]
+ 101:lvgl/src/lv_misc/lv_area.c **** 
+ 335              		.loc 1 101 74 view .LVU92
+ 336 000e B0F90200 		ldrsh	r0, [r0, #2]
+ 337              	.LVL28:
+ 101:lvgl/src/lv_misc/lv_area.c **** 
+ 338              		.loc 1 101 66 view .LVU93
+ 339 0012 1B1A     		subs	r3, r3, r0
+ 101:lvgl/src/lv_misc/lv_area.c **** 
+ 340              		.loc 1 101 79 view .LVU94
+ 341 0014 581C     		adds	r0, r3, #1
+ 342              	.LVL29:
+ 103:lvgl/src/lv_misc/lv_area.c **** }
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 17
+
+
+ 343              		.loc 1 103 5 is_stmt 1 view .LVU95
+ 104:lvgl/src/lv_misc/lv_area.c **** 
+ 344              		.loc 1 104 1 is_stmt 0 view .LVU96
+ 345 0016 02FB0000 		mla	r0, r2, r0, r0
+ 346              	.LVL30:
+ 104:lvgl/src/lv_misc/lv_area.c **** 
+ 347              		.loc 1 104 1 view .LVU97
+ 348 001a 7047     		bx	lr
+ 349              		.cfi_endproc
+ 350              	.LFE138:
+ 352              		.section	.text._lv_area_intersect,"ax",%progbits
+ 353              		.align	1
+ 354              		.global	_lv_area_intersect
+ 355              		.syntax unified
+ 356              		.thumb
+ 357              		.thumb_func
+ 358              		.fpu fpv4-sp-d16
+ 360              	_lv_area_intersect:
+ 361              	.LVL31:
+ 362              	.LFB139:
+ 114:lvgl/src/lv_misc/lv_area.c ****     /* Get the smaller area from 'a1_p' and 'a2_p' */
+ 363              		.loc 1 114 1 is_stmt 1 view -0
+ 364              		.cfi_startproc
+ 365              		@ args = 0, pretend = 0, frame = 0
+ 366              		@ frame_needed = 0, uses_anonymous_args = 0
+ 367              		@ link register save eliminated.
+ 114:lvgl/src/lv_misc/lv_area.c ****     /* Get the smaller area from 'a1_p' and 'a2_p' */
+ 368              		.loc 1 114 1 is_stmt 0 view .LVU99
+ 369 0000 70B4     		push	{r4, r5, r6}
+ 370              	.LCFI4:
+ 371              		.cfi_def_cfa_offset 12
+ 372              		.cfi_offset 4, -12
+ 373              		.cfi_offset 5, -8
+ 374              		.cfi_offset 6, -4
+ 116:lvgl/src/lv_misc/lv_area.c ****     res_p->y1 = LV_MATH_MAX(a1_p->y1, a2_p->y1);
+ 375              		.loc 1 116 5 is_stmt 1 view .LVU100
+ 116:lvgl/src/lv_misc/lv_area.c ****     res_p->y1 = LV_MATH_MAX(a1_p->y1, a2_p->y1);
+ 376              		.loc 1 116 17 is_stmt 0 view .LVU101
+ 377 0002 B2F90040 		ldrsh	r4, [r2]
+ 378 0006 B1F90030 		ldrsh	r3, [r1]
+ 379 000a 9C42     		cmp	r4, r3
+ 380 000c B8BF     		it	lt
+ 381 000e 1C46     		movlt	r4, r3
+ 116:lvgl/src/lv_misc/lv_area.c ****     res_p->y1 = LV_MATH_MAX(a1_p->y1, a2_p->y1);
+ 382              		.loc 1 116 15 view .LVU102
+ 383 0010 0480     		strh	r4, [r0]	@ movhi
+ 117:lvgl/src/lv_misc/lv_area.c ****     res_p->x2 = LV_MATH_MIN(a1_p->x2, a2_p->x2);
+ 384              		.loc 1 117 5 is_stmt 1 view .LVU103
+ 117:lvgl/src/lv_misc/lv_area.c ****     res_p->x2 = LV_MATH_MIN(a1_p->x2, a2_p->x2);
+ 385              		.loc 1 117 17 is_stmt 0 view .LVU104
+ 386 0012 B2F90250 		ldrsh	r5, [r2, #2]
+ 387 0016 B1F90230 		ldrsh	r3, [r1, #2]
+ 388 001a 9D42     		cmp	r5, r3
+ 389 001c B8BF     		it	lt
+ 390 001e 1D46     		movlt	r5, r3
+ 117:lvgl/src/lv_misc/lv_area.c ****     res_p->x2 = LV_MATH_MIN(a1_p->x2, a2_p->x2);
+ 391              		.loc 1 117 15 view .LVU105
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 18
+
+
+ 392 0020 4580     		strh	r5, [r0, #2]	@ movhi
+ 118:lvgl/src/lv_misc/lv_area.c ****     res_p->y2 = LV_MATH_MIN(a1_p->y2, a2_p->y2);
+ 393              		.loc 1 118 5 is_stmt 1 view .LVU106
+ 118:lvgl/src/lv_misc/lv_area.c ****     res_p->y2 = LV_MATH_MIN(a1_p->y2, a2_p->y2);
+ 394              		.loc 1 118 17 is_stmt 0 view .LVU107
+ 395 0022 B2F90430 		ldrsh	r3, [r2, #4]
+ 396 0026 B1F90460 		ldrsh	r6, [r1, #4]
+ 397 002a B342     		cmp	r3, r6
+ 398 002c A8BF     		it	ge
+ 399 002e 3346     		movge	r3, r6
+ 118:lvgl/src/lv_misc/lv_area.c ****     res_p->y2 = LV_MATH_MIN(a1_p->y2, a2_p->y2);
+ 400              		.loc 1 118 15 view .LVU108
+ 401 0030 8380     		strh	r3, [r0, #4]	@ movhi
+ 119:lvgl/src/lv_misc/lv_area.c **** 
+ 402              		.loc 1 119 5 is_stmt 1 view .LVU109
+ 119:lvgl/src/lv_misc/lv_area.c **** 
+ 403              		.loc 1 119 17 is_stmt 0 view .LVU110
+ 404 0032 B2F90620 		ldrsh	r2, [r2, #6]
+ 405              	.LVL32:
+ 119:lvgl/src/lv_misc/lv_area.c **** 
+ 406              		.loc 1 119 17 view .LVU111
+ 407 0036 B1F90610 		ldrsh	r1, [r1, #6]
+ 408              	.LVL33:
+ 119:lvgl/src/lv_misc/lv_area.c **** 
+ 409              		.loc 1 119 17 view .LVU112
+ 410 003a 8A42     		cmp	r2, r1
+ 411 003c A8BF     		it	ge
+ 412 003e 0A46     		movge	r2, r1
+ 119:lvgl/src/lv_misc/lv_area.c **** 
+ 413              		.loc 1 119 15 view .LVU113
+ 414 0040 C280     		strh	r2, [r0, #6]	@ movhi
+ 122:lvgl/src/lv_misc/lv_area.c ****     if((res_p->x1 > res_p->x2) || (res_p->y1 > res_p->y2)) {
+ 415              		.loc 1 122 5 is_stmt 1 view .LVU114
+ 416              	.LVL34:
+ 123:lvgl/src/lv_misc/lv_area.c ****         union_ok = false;
+ 417              		.loc 1 123 5 view .LVU115
+ 123:lvgl/src/lv_misc/lv_area.c ****         union_ok = false;
+ 418              		.loc 1 123 7 is_stmt 0 view .LVU116
+ 419 0042 9C42     		cmp	r4, r3
+ 420 0044 03DC     		bgt	.L13
+ 123:lvgl/src/lv_misc/lv_area.c ****         union_ok = false;
+ 421              		.loc 1 123 32 discriminator 1 view .LVU117
+ 422 0046 9542     		cmp	r5, r2
+ 423 0048 04DC     		bgt	.L14
+ 122:lvgl/src/lv_misc/lv_area.c ****     if((res_p->x1 > res_p->x2) || (res_p->y1 > res_p->y2)) {
+ 424              		.loc 1 122 10 view .LVU118
+ 425 004a 0120     		movs	r0, #1
+ 426              	.LVL35:
+ 122:lvgl/src/lv_misc/lv_area.c ****     if((res_p->x1 > res_p->x2) || (res_p->y1 > res_p->y2)) {
+ 427              		.loc 1 122 10 view .LVU119
+ 428 004c 00E0     		b	.L12
+ 429              	.LVL36:
+ 430              	.L13:
+ 124:lvgl/src/lv_misc/lv_area.c ****     }
+ 431              		.loc 1 124 18 view .LVU120
+ 432 004e 0020     		movs	r0, #0
+ 433              	.LVL37:
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 19
+
+
+ 434              	.L12:
+ 127:lvgl/src/lv_misc/lv_area.c **** }
+ 435              		.loc 1 127 5 is_stmt 1 view .LVU121
+ 128:lvgl/src/lv_misc/lv_area.c **** /**
+ 436              		.loc 1 128 1 is_stmt 0 view .LVU122
+ 437 0050 70BC     		pop	{r4, r5, r6}
+ 438              	.LCFI5:
+ 439              		.cfi_remember_state
+ 440              		.cfi_restore 6
+ 441              		.cfi_restore 5
+ 442              		.cfi_restore 4
+ 443              		.cfi_def_cfa_offset 0
+ 444 0052 7047     		bx	lr
+ 445              	.LVL38:
+ 446              	.L14:
+ 447              	.LCFI6:
+ 448              		.cfi_restore_state
+ 124:lvgl/src/lv_misc/lv_area.c ****     }
+ 449              		.loc 1 124 18 view .LVU123
+ 450 0054 0020     		movs	r0, #0
+ 451              	.LVL39:
+ 124:lvgl/src/lv_misc/lv_area.c ****     }
+ 452              		.loc 1 124 18 view .LVU124
+ 453 0056 FBE7     		b	.L12
+ 454              		.cfi_endproc
+ 455              	.LFE139:
+ 457              		.section	.text._lv_area_join,"ax",%progbits
+ 458              		.align	1
+ 459              		.global	_lv_area_join
+ 460              		.syntax unified
+ 461              		.thumb
+ 462              		.thumb_func
+ 463              		.fpu fpv4-sp-d16
+ 465              	_lv_area_join:
+ 466              	.LVL40:
+ 467              	.LFB140:
+ 136:lvgl/src/lv_misc/lv_area.c ****     a_res_p->x1 = LV_MATH_MIN(a1_p->x1, a2_p->x1);
+ 468              		.loc 1 136 1 is_stmt 1 view -0
+ 469              		.cfi_startproc
+ 470              		@ args = 0, pretend = 0, frame = 0
+ 471              		@ frame_needed = 0, uses_anonymous_args = 0
+ 472              		@ link register save eliminated.
+ 136:lvgl/src/lv_misc/lv_area.c ****     a_res_p->x1 = LV_MATH_MIN(a1_p->x1, a2_p->x1);
+ 473              		.loc 1 136 1 is_stmt 0 view .LVU126
+ 474 0000 10B4     		push	{r4}
+ 475              	.LCFI7:
+ 476              		.cfi_def_cfa_offset 4
+ 477              		.cfi_offset 4, -4
+ 137:lvgl/src/lv_misc/lv_area.c ****     a_res_p->y1 = LV_MATH_MIN(a1_p->y1, a2_p->y1);
+ 478              		.loc 1 137 5 is_stmt 1 view .LVU127
+ 137:lvgl/src/lv_misc/lv_area.c ****     a_res_p->y1 = LV_MATH_MIN(a1_p->y1, a2_p->y1);
+ 479              		.loc 1 137 19 is_stmt 0 view .LVU128
+ 480 0002 B2F90030 		ldrsh	r3, [r2]
+ 481 0006 B1F90040 		ldrsh	r4, [r1]
+ 482 000a A342     		cmp	r3, r4
+ 483 000c A8BF     		it	ge
+ 484 000e 2346     		movge	r3, r4
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 20
+
+
+ 137:lvgl/src/lv_misc/lv_area.c ****     a_res_p->y1 = LV_MATH_MIN(a1_p->y1, a2_p->y1);
+ 485              		.loc 1 137 17 view .LVU129
+ 486 0010 0380     		strh	r3, [r0]	@ movhi
+ 138:lvgl/src/lv_misc/lv_area.c ****     a_res_p->x2 = LV_MATH_MAX(a1_p->x2, a2_p->x2);
+ 487              		.loc 1 138 5 is_stmt 1 view .LVU130
+ 138:lvgl/src/lv_misc/lv_area.c ****     a_res_p->x2 = LV_MATH_MAX(a1_p->x2, a2_p->x2);
+ 488              		.loc 1 138 19 is_stmt 0 view .LVU131
+ 489 0012 B2F90230 		ldrsh	r3, [r2, #2]
+ 490 0016 B1F90240 		ldrsh	r4, [r1, #2]
+ 491 001a A342     		cmp	r3, r4
+ 492 001c A8BF     		it	ge
+ 493 001e 2346     		movge	r3, r4
+ 138:lvgl/src/lv_misc/lv_area.c ****     a_res_p->x2 = LV_MATH_MAX(a1_p->x2, a2_p->x2);
+ 494              		.loc 1 138 17 view .LVU132
+ 495 0020 4380     		strh	r3, [r0, #2]	@ movhi
+ 139:lvgl/src/lv_misc/lv_area.c ****     a_res_p->y2 = LV_MATH_MAX(a1_p->y2, a2_p->y2);
+ 496              		.loc 1 139 5 is_stmt 1 view .LVU133
+ 139:lvgl/src/lv_misc/lv_area.c ****     a_res_p->y2 = LV_MATH_MAX(a1_p->y2, a2_p->y2);
+ 497              		.loc 1 139 19 is_stmt 0 view .LVU134
+ 498 0022 B2F90430 		ldrsh	r3, [r2, #4]
+ 499 0026 B1F90440 		ldrsh	r4, [r1, #4]
+ 500 002a A342     		cmp	r3, r4
+ 501 002c B8BF     		it	lt
+ 502 002e 2346     		movlt	r3, r4
+ 139:lvgl/src/lv_misc/lv_area.c ****     a_res_p->y2 = LV_MATH_MAX(a1_p->y2, a2_p->y2);
+ 503              		.loc 1 139 17 view .LVU135
+ 504 0030 8380     		strh	r3, [r0, #4]	@ movhi
+ 140:lvgl/src/lv_misc/lv_area.c **** }
+ 505              		.loc 1 140 5 is_stmt 1 view .LVU136
+ 140:lvgl/src/lv_misc/lv_area.c **** }
+ 506              		.loc 1 140 19 is_stmt 0 view .LVU137
+ 507 0032 B2F90630 		ldrsh	r3, [r2, #6]
+ 508 0036 B1F90620 		ldrsh	r2, [r1, #6]
+ 509              	.LVL41:
+ 140:lvgl/src/lv_misc/lv_area.c **** }
+ 510              		.loc 1 140 19 view .LVU138
+ 511 003a 9342     		cmp	r3, r2
+ 512 003c B8BF     		it	lt
+ 513 003e 1346     		movlt	r3, r2
+ 140:lvgl/src/lv_misc/lv_area.c **** }
+ 514              		.loc 1 140 17 view .LVU139
+ 515 0040 C380     		strh	r3, [r0, #6]	@ movhi
+ 141:lvgl/src/lv_misc/lv_area.c **** 
+ 516              		.loc 1 141 1 view .LVU140
+ 517 0042 5DF8044B 		ldr	r4, [sp], #4
+ 518              	.LCFI8:
+ 519              		.cfi_restore 4
+ 520              		.cfi_def_cfa_offset 0
+ 521 0046 7047     		bx	lr
+ 522              		.cfi_endproc
+ 523              	.LFE140:
+ 525              		.section	.text._lv_area_is_point_on,"ax",%progbits
+ 526              		.align	1
+ 527              		.global	_lv_area_is_point_on
+ 528              		.syntax unified
+ 529              		.thumb
+ 530              		.thumb_func
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 21
+
+
+ 531              		.fpu fpv4-sp-d16
+ 533              	_lv_area_is_point_on:
+ 534              	.LVL42:
+ 535              	.LFB141:
+ 151:lvgl/src/lv_misc/lv_area.c ****     /*First check the basic area*/
+ 536              		.loc 1 151 1 is_stmt 1 view -0
+ 537              		.cfi_startproc
+ 538              		@ args = 0, pretend = 0, frame = 8
+ 539              		@ frame_needed = 0, uses_anonymous_args = 0
+ 151:lvgl/src/lv_misc/lv_area.c ****     /*First check the basic area*/
+ 540              		.loc 1 151 1 is_stmt 0 view .LVU142
+ 541 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 542              	.LCFI9:
+ 543              		.cfi_def_cfa_offset 20
+ 544              		.cfi_offset 4, -20
+ 545              		.cfi_offset 5, -16
+ 546              		.cfi_offset 6, -12
+ 547              		.cfi_offset 7, -8
+ 548              		.cfi_offset 14, -4
+ 549 0002 83B0     		sub	sp, sp, #12
+ 550              	.LCFI10:
+ 551              		.cfi_def_cfa_offset 32
+ 153:lvgl/src/lv_misc/lv_area.c ****     if((p_p->x >= a_p->x1 && p_p->x <= a_p->x2) && ((p_p->y >= a_p->y1 && p_p->y <= a_p->y2))) {
+ 552              		.loc 1 153 5 is_stmt 1 view .LVU143
+ 553              	.LVL43:
+ 154:lvgl/src/lv_misc/lv_area.c ****         is_on_rect = true;
+ 554              		.loc 1 154 5 view .LVU144
+ 154:lvgl/src/lv_misc/lv_area.c ****         is_on_rect = true;
+ 555              		.loc 1 154 12 is_stmt 0 view .LVU145
+ 556 0004 B1F90040 		ldrsh	r4, [r1]
+ 154:lvgl/src/lv_misc/lv_area.c ****         is_on_rect = true;
+ 557              		.loc 1 154 22 view .LVU146
+ 558 0008 B0F90050 		ldrsh	r5, [r0]
+ 154:lvgl/src/lv_misc/lv_area.c ****         is_on_rect = true;
+ 559              		.loc 1 154 7 view .LVU147
+ 560 000c AC42     		cmp	r4, r5
+ 561 000e C0F2AA80 		blt	.L24
+ 154:lvgl/src/lv_misc/lv_area.c ****         is_on_rect = true;
+ 562              		.loc 1 154 43 discriminator 1 view .LVU148
+ 563 0012 B0F90430 		ldrsh	r3, [r0, #4]
+ 154:lvgl/src/lv_misc/lv_area.c ****         is_on_rect = true;
+ 564              		.loc 1 154 27 discriminator 1 view .LVU149
+ 565 0016 9C42     		cmp	r4, r3
+ 566 0018 00F3A880 		bgt	.L25
+ 154:lvgl/src/lv_misc/lv_area.c ****         is_on_rect = true;
+ 567              		.loc 1 154 57 discriminator 2 view .LVU150
+ 568 001c B1F90260 		ldrsh	r6, [r1, #2]
+ 154:lvgl/src/lv_misc/lv_area.c ****         is_on_rect = true;
+ 569              		.loc 1 154 67 discriminator 2 view .LVU151
+ 570 0020 B0F90270 		ldrsh	r7, [r0, #2]
+ 154:lvgl/src/lv_misc/lv_area.c ****         is_on_rect = true;
+ 571              		.loc 1 154 49 discriminator 2 view .LVU152
+ 572 0024 BE42     		cmp	r6, r7
+ 573 0026 C0F2A380 		blt	.L26
+ 154:lvgl/src/lv_misc/lv_area.c ****         is_on_rect = true;
+ 574              		.loc 1 154 88 discriminator 3 view .LVU153
+ 575 002a B0F90640 		ldrsh	r4, [r0, #6]
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 22
+
+
+ 154:lvgl/src/lv_misc/lv_area.c ****         is_on_rect = true;
+ 576              		.loc 1 154 72 discriminator 3 view .LVU154
+ 577 002e A642     		cmp	r6, r4
+ 578 0030 00F3A080 		bgt	.L27
+ 155:lvgl/src/lv_misc/lv_area.c ****     }
+ 579              		.loc 1 155 9 is_stmt 1 view .LVU155
+ 580              	.LVL44:
+ 157:lvgl/src/lv_misc/lv_area.c ****         return false;
+ 581              		.loc 1 157 5 view .LVU156
+ 160:lvgl/src/lv_misc/lv_area.c ****         /*No radius, it is within the rectangle*/
+ 582              		.loc 1 160 5 view .LVU157
+ 160:lvgl/src/lv_misc/lv_area.c ****         /*No radius, it is within the rectangle*/
+ 583              		.loc 1 160 7 is_stmt 0 view .LVU158
+ 584 0034 002A     		cmp	r2, #0
+ 585 0036 40F39F80 		ble	.L28
+ 164:lvgl/src/lv_misc/lv_area.c ****     lv_coord_t h = lv_area_get_height(a_p) / 2;
+ 586              		.loc 1 164 5 is_stmt 1 view .LVU159
+ 587              	.LVL45:
+ 588              	.LBB118:
+ 589              	.LBI118:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 590              		.loc 2 107 26 view .LVU160
+ 591              	.LBB119:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 592              		.loc 2 109 5 view .LVU161
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 593              		.loc 2 109 31 is_stmt 0 view .LVU162
+ 594 003a 9BB2     		uxth	r3, r3
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 595              		.loc 2 109 44 view .LVU163
+ 596 003c AEB2     		uxth	r6, r5
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 597              		.loc 2 109 36 view .LVU164
+ 598 003e 9B1B     		subs	r3, r3, r6
+ 599 0040 9BB2     		uxth	r3, r3
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 600              		.loc 2 109 49 view .LVU165
+ 601 0042 0133     		adds	r3, r3, #1
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 602              		.loc 2 109 12 view .LVU166
+ 603 0044 1BB2     		sxth	r3, r3
+ 604              	.LVL46:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 605              		.loc 2 109 12 view .LVU167
+ 606              	.LBE119:
+ 607              	.LBE118:
+ 164:lvgl/src/lv_misc/lv_area.c ****     lv_coord_t h = lv_area_get_height(a_p) / 2;
+ 608              		.loc 1 164 16 view .LVU168
+ 609 0046 03EBD373 		add	r3, r3, r3, lsr #31
+ 610 004a 5B10     		asrs	r3, r3, #1
+ 611              	.LVL47:
+ 165:lvgl/src/lv_misc/lv_area.c ****     lv_coord_t max_radius = LV_MATH_MIN(w, h);
+ 612              		.loc 1 165 5 is_stmt 1 view .LVU169
+ 613              	.LBB120:
+ 614              	.LBI120:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 615              		.loc 2 117 26 view .LVU170
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 23
+
+
+ 616              	.LBB121:
+ 617              		.loc 2 119 5 view .LVU171
+ 618              		.loc 2 119 31 is_stmt 0 view .LVU172
+ 619 004c A6B2     		uxth	r6, r4
+ 620              		.loc 2 119 44 view .LVU173
+ 621 004e BFB2     		uxth	r7, r7
+ 622              		.loc 2 119 36 view .LVU174
+ 623 0050 F61B     		subs	r6, r6, r7
+ 624 0052 B6B2     		uxth	r6, r6
+ 625              		.loc 2 119 49 view .LVU175
+ 626 0054 0136     		adds	r6, r6, #1
+ 627              		.loc 2 119 12 view .LVU176
+ 628 0056 34B2     		sxth	r4, r6
+ 629              	.LVL48:
+ 630              		.loc 2 119 12 view .LVU177
+ 631              	.LBE121:
+ 632              	.LBE120:
+ 165:lvgl/src/lv_misc/lv_area.c ****     lv_coord_t max_radius = LV_MATH_MIN(w, h);
+ 633              		.loc 1 165 16 view .LVU178
+ 634 0058 04EBD474 		add	r4, r4, r4, lsr #31
+ 635 005c 6410     		asrs	r4, r4, #1
+ 636              	.LVL49:
+ 166:lvgl/src/lv_misc/lv_area.c ****     if(radius > max_radius)
+ 637              		.loc 1 166 5 is_stmt 1 view .LVU179
+ 166:lvgl/src/lv_misc/lv_area.c ****     if(radius > max_radius)
+ 638              		.loc 1 166 16 is_stmt 0 view .LVU180
+ 639 005e A342     		cmp	r3, r4
+ 640 0060 A8BF     		it	ge
+ 641 0062 2346     		movge	r3, r4
+ 642              	.LVL50:
+ 167:lvgl/src/lv_misc/lv_area.c ****         radius = max_radius;
+ 643              		.loc 1 167 5 is_stmt 1 view .LVU181
+ 167:lvgl/src/lv_misc/lv_area.c ****         radius = max_radius;
+ 644              		.loc 1 167 7 is_stmt 0 view .LVU182
+ 645 0064 9A42     		cmp	r2, r3
+ 646 0066 00DC     		bgt	.L20
+ 647 0068 1346     		mov	r3, r2
+ 648              	.LVL51:
+ 649              	.L20:
+ 167:lvgl/src/lv_misc/lv_area.c ****         radius = max_radius;
+ 650              		.loc 1 167 7 view .LVU183
+ 651 006a 0E46     		mov	r6, r1
+ 652 006c 0746     		mov	r7, r0
+ 653              	.LVL52:
+ 171:lvgl/src/lv_misc/lv_area.c ****     /*Top left*/
+ 654              		.loc 1 171 5 is_stmt 1 view .LVU184
+ 173:lvgl/src/lv_misc/lv_area.c ****     corner_area.x2 = a_p->x1 + radius;
+ 655              		.loc 1 173 5 view .LVU185
+ 173:lvgl/src/lv_misc/lv_area.c ****     corner_area.x2 = a_p->x1 + radius;
+ 656              		.loc 1 173 20 is_stmt 0 view .LVU186
+ 657 006e ADF80050 		strh	r5, [sp]	@ movhi
+ 174:lvgl/src/lv_misc/lv_area.c ****     corner_area.y1 = a_p->y1;
+ 658              		.loc 1 174 5 is_stmt 1 view .LVU187
+ 174:lvgl/src/lv_misc/lv_area.c ****     corner_area.y1 = a_p->y1;
+ 659              		.loc 1 174 25 is_stmt 0 view .LVU188
+ 660 0072 0288     		ldrh	r2, [r0]
+ 174:lvgl/src/lv_misc/lv_area.c ****     corner_area.y1 = a_p->y1;
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 24
+
+
+ 661              		.loc 1 174 30 view .LVU189
+ 662 0074 9CB2     		uxth	r4, r3
+ 663              	.LVL53:
+ 174:lvgl/src/lv_misc/lv_area.c ****     corner_area.y1 = a_p->y1;
+ 664              		.loc 1 174 30 view .LVU190
+ 665 0076 1319     		adds	r3, r2, r4
+ 666              	.LVL54:
+ 174:lvgl/src/lv_misc/lv_area.c ****     corner_area.y1 = a_p->y1;
+ 667              		.loc 1 174 20 view .LVU191
+ 668 0078 ADF80430 		strh	r3, [sp, #4]	@ movhi
+ 669              	.LVL55:
+ 175:lvgl/src/lv_misc/lv_area.c ****     corner_area.y2 = a_p->y1 + radius;
+ 670              		.loc 1 175 5 is_stmt 1 view .LVU192
+ 175:lvgl/src/lv_misc/lv_area.c ****     corner_area.y2 = a_p->y1 + radius;
+ 671              		.loc 1 175 25 is_stmt 0 view .LVU193
+ 672 007c B0F90230 		ldrsh	r3, [r0, #2]
+ 175:lvgl/src/lv_misc/lv_area.c ****     corner_area.y2 = a_p->y1 + radius;
+ 673              		.loc 1 175 20 view .LVU194
+ 674 0080 ADF80230 		strh	r3, [sp, #2]	@ movhi
+ 176:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(&corner_area, p_p, 0)) {
+ 675              		.loc 1 176 5 is_stmt 1 view .LVU195
+ 176:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(&corner_area, p_p, 0)) {
+ 676              		.loc 1 176 30 is_stmt 0 view .LVU196
+ 677 0084 14FA83F3 		uxtah	r3, r4, r3
+ 176:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(&corner_area, p_p, 0)) {
+ 678              		.loc 1 176 20 view .LVU197
+ 679 0088 ADF80630 		strh	r3, [sp, #6]	@ movhi
+ 177:lvgl/src/lv_misc/lv_area.c ****         corner_area.x2 += radius;
+ 680              		.loc 1 177 5 is_stmt 1 view .LVU198
+ 177:lvgl/src/lv_misc/lv_area.c ****         corner_area.x2 += radius;
+ 681              		.loc 1 177 8 is_stmt 0 view .LVU199
+ 682 008c 0022     		movs	r2, #0
+ 683 008e 6846     		mov	r0, sp
+ 684              	.LVL56:
+ 177:lvgl/src/lv_misc/lv_area.c ****         corner_area.x2 += radius;
+ 685              		.loc 1 177 8 view .LVU200
+ 686 0090 FFF7FEFF 		bl	_lv_area_is_point_on
+ 687              	.LVL57:
+ 177:lvgl/src/lv_misc/lv_area.c ****         corner_area.x2 += radius;
+ 688              		.loc 1 177 7 view .LVU201
+ 689 0094 70B1     		cbz	r0, .L21
+ 178:lvgl/src/lv_misc/lv_area.c ****         corner_area.y2 += radius;
+ 690              		.loc 1 178 9 is_stmt 1 view .LVU202
+ 178:lvgl/src/lv_misc/lv_area.c ****         corner_area.y2 += radius;
+ 691              		.loc 1 178 24 is_stmt 0 view .LVU203
+ 692 0096 BDF80430 		ldrh	r3, [sp, #4]
+ 693 009a 2344     		add	r3, r3, r4
+ 694 009c ADF80430 		strh	r3, [sp, #4]	@ movhi
+ 179:lvgl/src/lv_misc/lv_area.c ****         return lv_point_within_circle(&corner_area, p_p);
+ 695              		.loc 1 179 9 is_stmt 1 view .LVU204
+ 179:lvgl/src/lv_misc/lv_area.c ****         return lv_point_within_circle(&corner_area, p_p);
+ 696              		.loc 1 179 24 is_stmt 0 view .LVU205
+ 697 00a0 BDF80630 		ldrh	r3, [sp, #6]
+ 698 00a4 1C44     		add	r4, r4, r3
+ 699              	.LVL58:
+ 179:lvgl/src/lv_misc/lv_area.c ****         return lv_point_within_circle(&corner_area, p_p);
+ 700              		.loc 1 179 24 view .LVU206
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 25
+
+
+ 701 00a6 ADF80640 		strh	r4, [sp, #6]	@ movhi
+ 180:lvgl/src/lv_misc/lv_area.c ****     }
+ 702              		.loc 1 180 9 is_stmt 1 view .LVU207
+ 180:lvgl/src/lv_misc/lv_area.c ****     }
+ 703              		.loc 1 180 16 is_stmt 0 view .LVU208
+ 704 00aa 3146     		mov	r1, r6
+ 705 00ac 6846     		mov	r0, sp
+ 706 00ae FFF7FEFF 		bl	lv_point_within_circle
+ 707              	.LVL59:
+ 708 00b2 59E0     		b	.L19
+ 709              	.LVL60:
+ 710              	.L21:
+ 183:lvgl/src/lv_misc/lv_area.c ****     corner_area.y2 = a_p->y2;
+ 711              		.loc 1 183 5 is_stmt 1 view .LVU209
+ 183:lvgl/src/lv_misc/lv_area.c ****     corner_area.y2 = a_p->y2;
+ 712              		.loc 1 183 25 is_stmt 0 view .LVU210
+ 713 00b4 B7F90620 		ldrsh	r2, [r7, #6]
+ 714 00b8 93B2     		uxth	r3, r2
+ 183:lvgl/src/lv_misc/lv_area.c ****     corner_area.y2 = a_p->y2;
+ 715              		.loc 1 183 30 view .LVU211
+ 716 00ba 1B1B     		subs	r3, r3, r4
+ 183:lvgl/src/lv_misc/lv_area.c ****     corner_area.y2 = a_p->y2;
+ 717              		.loc 1 183 20 view .LVU212
+ 718 00bc ADF80230 		strh	r3, [sp, #2]	@ movhi
+ 184:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(&corner_area, p_p, 0)) {
+ 719              		.loc 1 184 5 is_stmt 1 view .LVU213
+ 184:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(&corner_area, p_p, 0)) {
+ 720              		.loc 1 184 20 is_stmt 0 view .LVU214
+ 721 00c0 ADF80620 		strh	r2, [sp, #6]	@ movhi
+ 185:lvgl/src/lv_misc/lv_area.c ****         corner_area.x2 += radius;
+ 722              		.loc 1 185 5 is_stmt 1 view .LVU215
+ 185:lvgl/src/lv_misc/lv_area.c ****         corner_area.x2 += radius;
+ 723              		.loc 1 185 8 is_stmt 0 view .LVU216
+ 724 00c4 0022     		movs	r2, #0
+ 725 00c6 3146     		mov	r1, r6
+ 726 00c8 6846     		mov	r0, sp
+ 727 00ca FFF7FEFF 		bl	_lv_area_is_point_on
+ 728              	.LVL61:
+ 185:lvgl/src/lv_misc/lv_area.c ****         corner_area.x2 += radius;
+ 729              		.loc 1 185 7 view .LVU217
+ 730 00ce 70B1     		cbz	r0, .L22
+ 186:lvgl/src/lv_misc/lv_area.c ****         corner_area.y1 -= radius;
+ 731              		.loc 1 186 9 is_stmt 1 view .LVU218
+ 186:lvgl/src/lv_misc/lv_area.c ****         corner_area.y1 -= radius;
+ 732              		.loc 1 186 24 is_stmt 0 view .LVU219
+ 733 00d0 BDF80430 		ldrh	r3, [sp, #4]
+ 734 00d4 2344     		add	r3, r3, r4
+ 735 00d6 ADF80430 		strh	r3, [sp, #4]	@ movhi
+ 187:lvgl/src/lv_misc/lv_area.c ****         return lv_point_within_circle(&corner_area, p_p);
+ 736              		.loc 1 187 9 is_stmt 1 view .LVU220
+ 187:lvgl/src/lv_misc/lv_area.c ****         return lv_point_within_circle(&corner_area, p_p);
+ 737              		.loc 1 187 24 is_stmt 0 view .LVU221
+ 738 00da BDF80230 		ldrh	r3, [sp, #2]
+ 739 00de 1C1B     		subs	r4, r3, r4
+ 740              	.LVL62:
+ 187:lvgl/src/lv_misc/lv_area.c ****         return lv_point_within_circle(&corner_area, p_p);
+ 741              		.loc 1 187 24 view .LVU222
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 26
+
+
+ 742 00e0 ADF80240 		strh	r4, [sp, #2]	@ movhi
+ 188:lvgl/src/lv_misc/lv_area.c ****     }
+ 743              		.loc 1 188 9 is_stmt 1 view .LVU223
+ 188:lvgl/src/lv_misc/lv_area.c ****     }
+ 744              		.loc 1 188 16 is_stmt 0 view .LVU224
+ 745 00e4 3146     		mov	r1, r6
+ 746 00e6 6846     		mov	r0, sp
+ 747 00e8 FFF7FEFF 		bl	lv_point_within_circle
+ 748              	.LVL63:
+ 749 00ec 3CE0     		b	.L19
+ 750              	.LVL64:
+ 751              	.L22:
+ 191:lvgl/src/lv_misc/lv_area.c ****     corner_area.x2 = a_p->x2;
+ 752              		.loc 1 191 5 is_stmt 1 view .LVU225
+ 191:lvgl/src/lv_misc/lv_area.c ****     corner_area.x2 = a_p->x2;
+ 753              		.loc 1 191 25 is_stmt 0 view .LVU226
+ 754 00ee B7F90420 		ldrsh	r2, [r7, #4]
+ 755 00f2 93B2     		uxth	r3, r2
+ 191:lvgl/src/lv_misc/lv_area.c ****     corner_area.x2 = a_p->x2;
+ 756              		.loc 1 191 30 view .LVU227
+ 757 00f4 1B1B     		subs	r3, r3, r4
+ 191:lvgl/src/lv_misc/lv_area.c ****     corner_area.x2 = a_p->x2;
+ 758              		.loc 1 191 20 view .LVU228
+ 759 00f6 ADF80030 		strh	r3, [sp]	@ movhi
+ 192:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(&corner_area, p_p, 0)) {
+ 760              		.loc 1 192 5 is_stmt 1 view .LVU229
+ 192:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(&corner_area, p_p, 0)) {
+ 761              		.loc 1 192 20 is_stmt 0 view .LVU230
+ 762 00fa ADF80420 		strh	r2, [sp, #4]	@ movhi
+ 193:lvgl/src/lv_misc/lv_area.c ****         corner_area.x1 -= radius;
+ 763              		.loc 1 193 5 is_stmt 1 view .LVU231
+ 193:lvgl/src/lv_misc/lv_area.c ****         corner_area.x1 -= radius;
+ 764              		.loc 1 193 8 is_stmt 0 view .LVU232
+ 765 00fe 0022     		movs	r2, #0
+ 766 0100 3146     		mov	r1, r6
+ 767 0102 6846     		mov	r0, sp
+ 768 0104 FFF7FEFF 		bl	_lv_area_is_point_on
+ 769              	.LVL65:
+ 193:lvgl/src/lv_misc/lv_area.c ****         corner_area.x1 -= radius;
+ 770              		.loc 1 193 7 view .LVU233
+ 771 0108 70B1     		cbz	r0, .L23
+ 194:lvgl/src/lv_misc/lv_area.c ****         corner_area.y1 -= radius;
+ 772              		.loc 1 194 9 is_stmt 1 view .LVU234
+ 194:lvgl/src/lv_misc/lv_area.c ****         corner_area.y1 -= radius;
+ 773              		.loc 1 194 24 is_stmt 0 view .LVU235
+ 774 010a BDF80030 		ldrh	r3, [sp]
+ 775 010e 1B1B     		subs	r3, r3, r4
+ 776 0110 ADF80030 		strh	r3, [sp]	@ movhi
+ 195:lvgl/src/lv_misc/lv_area.c ****         return lv_point_within_circle(&corner_area, p_p);
+ 777              		.loc 1 195 9 is_stmt 1 view .LVU236
+ 195:lvgl/src/lv_misc/lv_area.c ****         return lv_point_within_circle(&corner_area, p_p);
+ 778              		.loc 1 195 24 is_stmt 0 view .LVU237
+ 779 0114 BDF80230 		ldrh	r3, [sp, #2]
+ 780 0118 1C1B     		subs	r4, r3, r4
+ 781              	.LVL66:
+ 195:lvgl/src/lv_misc/lv_area.c ****         return lv_point_within_circle(&corner_area, p_p);
+ 782              		.loc 1 195 24 view .LVU238
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 27
+
+
+ 783 011a ADF80240 		strh	r4, [sp, #2]	@ movhi
+ 196:lvgl/src/lv_misc/lv_area.c ****     }
+ 784              		.loc 1 196 9 is_stmt 1 view .LVU239
+ 196:lvgl/src/lv_misc/lv_area.c ****     }
+ 785              		.loc 1 196 16 is_stmt 0 view .LVU240
+ 786 011e 3146     		mov	r1, r6
+ 787 0120 6846     		mov	r0, sp
+ 788 0122 FFF7FEFF 		bl	lv_point_within_circle
+ 789              	.LVL67:
+ 790 0126 1FE0     		b	.L19
+ 791              	.LVL68:
+ 792              	.L23:
+ 199:lvgl/src/lv_misc/lv_area.c ****     corner_area.y2 = a_p->y1 + radius;
+ 793              		.loc 1 199 5 is_stmt 1 view .LVU241
+ 199:lvgl/src/lv_misc/lv_area.c ****     corner_area.y2 = a_p->y1 + radius;
+ 794              		.loc 1 199 25 is_stmt 0 view .LVU242
+ 795 0128 B7F90230 		ldrsh	r3, [r7, #2]
+ 199:lvgl/src/lv_misc/lv_area.c ****     corner_area.y2 = a_p->y1 + radius;
+ 796              		.loc 1 199 20 view .LVU243
+ 797 012c ADF80230 		strh	r3, [sp, #2]	@ movhi
+ 200:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(&corner_area, p_p, 0)) {
+ 798              		.loc 1 200 5 is_stmt 1 view .LVU244
+ 200:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(&corner_area, p_p, 0)) {
+ 799              		.loc 1 200 30 is_stmt 0 view .LVU245
+ 800 0130 14FA83F3 		uxtah	r3, r4, r3
+ 200:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(&corner_area, p_p, 0)) {
+ 801              		.loc 1 200 20 view .LVU246
+ 802 0134 ADF80630 		strh	r3, [sp, #6]	@ movhi
+ 201:lvgl/src/lv_misc/lv_area.c ****         corner_area.x1 -= radius;
+ 803              		.loc 1 201 5 is_stmt 1 view .LVU247
+ 201:lvgl/src/lv_misc/lv_area.c ****         corner_area.x1 -= radius;
+ 804              		.loc 1 201 8 is_stmt 0 view .LVU248
+ 805 0138 0022     		movs	r2, #0
+ 806 013a 3146     		mov	r1, r6
+ 807 013c 6846     		mov	r0, sp
+ 808 013e FFF7FEFF 		bl	_lv_area_is_point_on
+ 809              	.LVL69:
+ 201:lvgl/src/lv_misc/lv_area.c ****         corner_area.x1 -= radius;
+ 810              		.loc 1 201 7 view .LVU249
+ 811 0142 08B9     		cbnz	r0, .L31
+ 207:lvgl/src/lv_misc/lv_area.c **** }
+ 812              		.loc 1 207 12 view .LVU250
+ 813 0144 0120     		movs	r0, #1
+ 814 0146 0FE0     		b	.L19
+ 815              	.L31:
+ 202:lvgl/src/lv_misc/lv_area.c ****         corner_area.y2 += radius;
+ 816              		.loc 1 202 9 is_stmt 1 view .LVU251
+ 202:lvgl/src/lv_misc/lv_area.c ****         corner_area.y2 += radius;
+ 817              		.loc 1 202 24 is_stmt 0 view .LVU252
+ 818 0148 BDF80030 		ldrh	r3, [sp]
+ 819 014c 1B1B     		subs	r3, r3, r4
+ 820 014e ADF80030 		strh	r3, [sp]	@ movhi
+ 203:lvgl/src/lv_misc/lv_area.c ****         return lv_point_within_circle(&corner_area, p_p);
+ 821              		.loc 1 203 9 is_stmt 1 view .LVU253
+ 203:lvgl/src/lv_misc/lv_area.c ****         return lv_point_within_circle(&corner_area, p_p);
+ 822              		.loc 1 203 24 is_stmt 0 view .LVU254
+ 823 0152 BDF80630 		ldrh	r3, [sp, #6]
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 28
+
+
+ 824 0156 1C44     		add	r4, r4, r3
+ 825              	.LVL70:
+ 203:lvgl/src/lv_misc/lv_area.c ****         return lv_point_within_circle(&corner_area, p_p);
+ 826              		.loc 1 203 24 view .LVU255
+ 827 0158 ADF80640 		strh	r4, [sp, #6]	@ movhi
+ 204:lvgl/src/lv_misc/lv_area.c ****     }
+ 828              		.loc 1 204 9 is_stmt 1 view .LVU256
+ 204:lvgl/src/lv_misc/lv_area.c ****     }
+ 829              		.loc 1 204 16 is_stmt 0 view .LVU257
+ 830 015c 3146     		mov	r1, r6
+ 831 015e 6846     		mov	r0, sp
+ 832 0160 FFF7FEFF 		bl	lv_point_within_circle
+ 833              	.LVL71:
+ 834 0164 00E0     		b	.L19
+ 835              	.LVL72:
+ 836              	.L24:
+ 158:lvgl/src/lv_misc/lv_area.c ****     /*Now handle potential rounded rectangles*/
+ 837              		.loc 1 158 16 view .LVU258
+ 838 0166 0020     		movs	r0, #0
+ 839              	.LVL73:
+ 840              	.L19:
+ 208:lvgl/src/lv_misc/lv_area.c **** 
+ 841              		.loc 1 208 1 view .LVU259
+ 842 0168 03B0     		add	sp, sp, #12
+ 843              	.LCFI11:
+ 844              		.cfi_remember_state
+ 845              		.cfi_def_cfa_offset 20
+ 846              		@ sp needed
+ 847 016a F0BD     		pop	{r4, r5, r6, r7, pc}
+ 848              	.LVL74:
+ 849              	.L25:
+ 850              	.LCFI12:
+ 851              		.cfi_restore_state
+ 158:lvgl/src/lv_misc/lv_area.c ****     /*Now handle potential rounded rectangles*/
+ 852              		.loc 1 158 16 view .LVU260
+ 853 016c 0020     		movs	r0, #0
+ 854              	.LVL75:
+ 158:lvgl/src/lv_misc/lv_area.c ****     /*Now handle potential rounded rectangles*/
+ 855              		.loc 1 158 16 view .LVU261
+ 856 016e FBE7     		b	.L19
+ 857              	.LVL76:
+ 858              	.L26:
+ 158:lvgl/src/lv_misc/lv_area.c ****     /*Now handle potential rounded rectangles*/
+ 859              		.loc 1 158 16 view .LVU262
+ 860 0170 0020     		movs	r0, #0
+ 861              	.LVL77:
+ 158:lvgl/src/lv_misc/lv_area.c ****     /*Now handle potential rounded rectangles*/
+ 862              		.loc 1 158 16 view .LVU263
+ 863 0172 F9E7     		b	.L19
+ 864              	.LVL78:
+ 865              	.L27:
+ 158:lvgl/src/lv_misc/lv_area.c ****     /*Now handle potential rounded rectangles*/
+ 866              		.loc 1 158 16 view .LVU264
+ 867 0174 0020     		movs	r0, #0
+ 868              	.LVL79:
+ 158:lvgl/src/lv_misc/lv_area.c ****     /*Now handle potential rounded rectangles*/
+ 869              		.loc 1 158 16 view .LVU265
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 29
+
+
+ 870 0176 F7E7     		b	.L19
+ 871              	.LVL80:
+ 872              	.L28:
+ 162:lvgl/src/lv_misc/lv_area.c ****     }
+ 873              		.loc 1 162 16 view .LVU266
+ 874 0178 0120     		movs	r0, #1
+ 875              	.LVL81:
+ 162:lvgl/src/lv_misc/lv_area.c ****     }
+ 876              		.loc 1 162 16 view .LVU267
+ 877 017a F5E7     		b	.L19
+ 878              		.cfi_endproc
+ 879              	.LFE141:
+ 881              		.section	.text._lv_area_is_on,"ax",%progbits
+ 882              		.align	1
+ 883              		.global	_lv_area_is_on
+ 884              		.syntax unified
+ 885              		.thumb
+ 886              		.thumb_func
+ 887              		.fpu fpv4-sp-d16
+ 889              	_lv_area_is_on:
+ 890              	.LVL82:
+ 891              	.LFB142:
+ 217:lvgl/src/lv_misc/lv_area.c ****     if((a1_p->x1 <= a2_p->x2) && (a1_p->x2 >= a2_p->x1) && (a1_p->y1 <= a2_p->y2) && (a1_p->y2 >= a
+ 892              		.loc 1 217 1 is_stmt 1 view -0
+ 893              		.cfi_startproc
+ 894              		@ args = 0, pretend = 0, frame = 0
+ 895              		@ frame_needed = 0, uses_anonymous_args = 0
+ 896              		@ link register save eliminated.
+ 218:lvgl/src/lv_misc/lv_area.c ****         return true;
+ 897              		.loc 1 218 5 view .LVU269
+ 218:lvgl/src/lv_misc/lv_area.c ****         return true;
+ 898              		.loc 1 218 13 is_stmt 0 view .LVU270
+ 899 0000 B0F90020 		ldrsh	r2, [r0]
+ 218:lvgl/src/lv_misc/lv_area.c ****         return true;
+ 900              		.loc 1 218 25 view .LVU271
+ 901 0004 B1F90430 		ldrsh	r3, [r1, #4]
+ 218:lvgl/src/lv_misc/lv_area.c ****         return true;
+ 902              		.loc 1 218 7 view .LVU272
+ 903 0008 9A42     		cmp	r2, r3
+ 904 000a 13DC     		bgt	.L34
+ 218:lvgl/src/lv_misc/lv_area.c ****         return true;
+ 905              		.loc 1 218 39 discriminator 1 view .LVU273
+ 906 000c B0F90420 		ldrsh	r2, [r0, #4]
+ 218:lvgl/src/lv_misc/lv_area.c ****         return true;
+ 907              		.loc 1 218 51 discriminator 1 view .LVU274
+ 908 0010 B1F90030 		ldrsh	r3, [r1]
+ 218:lvgl/src/lv_misc/lv_area.c ****         return true;
+ 909              		.loc 1 218 31 discriminator 1 view .LVU275
+ 910 0014 9A42     		cmp	r2, r3
+ 911 0016 0FDB     		blt	.L35
+ 218:lvgl/src/lv_misc/lv_area.c ****         return true;
+ 912              		.loc 1 218 65 discriminator 2 view .LVU276
+ 913 0018 B0F90220 		ldrsh	r2, [r0, #2]
+ 218:lvgl/src/lv_misc/lv_area.c ****         return true;
+ 914              		.loc 1 218 77 discriminator 2 view .LVU277
+ 915 001c B1F90630 		ldrsh	r3, [r1, #6]
+ 218:lvgl/src/lv_misc/lv_area.c ****         return true;
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 30
+
+
+ 916              		.loc 1 218 57 discriminator 2 view .LVU278
+ 917 0020 9A42     		cmp	r2, r3
+ 918 0022 0BDC     		bgt	.L36
+ 218:lvgl/src/lv_misc/lv_area.c ****         return true;
+ 919              		.loc 1 218 91 discriminator 3 view .LVU279
+ 920 0024 B0F90620 		ldrsh	r2, [r0, #6]
+ 218:lvgl/src/lv_misc/lv_area.c ****         return true;
+ 921              		.loc 1 218 103 discriminator 3 view .LVU280
+ 922 0028 B1F90230 		ldrsh	r3, [r1, #2]
+ 218:lvgl/src/lv_misc/lv_area.c ****         return true;
+ 923              		.loc 1 218 83 discriminator 3 view .LVU281
+ 924 002c 9A42     		cmp	r2, r3
+ 925 002e 07DA     		bge	.L37
+ 222:lvgl/src/lv_misc/lv_area.c ****     }
+ 926              		.loc 1 222 16 view .LVU282
+ 927 0030 0020     		movs	r0, #0
+ 928              	.LVL83:
+ 222:lvgl/src/lv_misc/lv_area.c ****     }
+ 929              		.loc 1 222 16 view .LVU283
+ 930 0032 7047     		bx	lr
+ 931              	.LVL84:
+ 932              	.L34:
+ 222:lvgl/src/lv_misc/lv_area.c ****     }
+ 933              		.loc 1 222 16 view .LVU284
+ 934 0034 0020     		movs	r0, #0
+ 935              	.LVL85:
+ 222:lvgl/src/lv_misc/lv_area.c ****     }
+ 936              		.loc 1 222 16 view .LVU285
+ 937 0036 7047     		bx	lr
+ 938              	.LVL86:
+ 939              	.L35:
+ 222:lvgl/src/lv_misc/lv_area.c ****     }
+ 940              		.loc 1 222 16 view .LVU286
+ 941 0038 0020     		movs	r0, #0
+ 942              	.LVL87:
+ 222:lvgl/src/lv_misc/lv_area.c ****     }
+ 943              		.loc 1 222 16 view .LVU287
+ 944 003a 7047     		bx	lr
+ 945              	.LVL88:
+ 946              	.L36:
+ 222:lvgl/src/lv_misc/lv_area.c ****     }
+ 947              		.loc 1 222 16 view .LVU288
+ 948 003c 0020     		movs	r0, #0
+ 949              	.LVL89:
+ 222:lvgl/src/lv_misc/lv_area.c ****     }
+ 950              		.loc 1 222 16 view .LVU289
+ 951 003e 7047     		bx	lr
+ 952              	.LVL90:
+ 953              	.L37:
+ 219:lvgl/src/lv_misc/lv_area.c ****     }
+ 954              		.loc 1 219 16 view .LVU290
+ 955 0040 0120     		movs	r0, #1
+ 956              	.LVL91:
+ 224:lvgl/src/lv_misc/lv_area.c **** 
+ 957              		.loc 1 224 1 view .LVU291
+ 958 0042 7047     		bx	lr
+ 959              		.cfi_endproc
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 31
+
+
+ 960              	.LFE142:
+ 962              		.section	.text._lv_area_is_in,"ax",%progbits
+ 963              		.align	1
+ 964              		.global	_lv_area_is_in
+ 965              		.syntax unified
+ 966              		.thumb
+ 967              		.thumb_func
+ 968              		.fpu fpv4-sp-d16
+ 970              	_lv_area_is_in:
+ 971              	.LVL92:
+ 972              	.LFB143:
+ 234:lvgl/src/lv_misc/lv_area.c ****     bool is_in = false;
+ 973              		.loc 1 234 1 is_stmt 1 view -0
+ 974              		.cfi_startproc
+ 975              		@ args = 0, pretend = 0, frame = 8
+ 976              		@ frame_needed = 0, uses_anonymous_args = 0
+ 234:lvgl/src/lv_misc/lv_area.c ****     bool is_in = false;
+ 977              		.loc 1 234 1 is_stmt 0 view .LVU293
+ 978 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 979              	.LCFI13:
+ 980              		.cfi_def_cfa_offset 24
+ 981              		.cfi_offset 4, -24
+ 982              		.cfi_offset 5, -20
+ 983              		.cfi_offset 6, -16
+ 984              		.cfi_offset 7, -12
+ 985              		.cfi_offset 8, -8
+ 986              		.cfi_offset 14, -4
+ 987 0004 82B0     		sub	sp, sp, #8
+ 988              	.LCFI14:
+ 989              		.cfi_def_cfa_offset 32
+ 235:lvgl/src/lv_misc/lv_area.c **** 
+ 990              		.loc 1 235 5 is_stmt 1 view .LVU294
+ 991              	.LVL93:
+ 237:lvgl/src/lv_misc/lv_area.c ****        ain_p->y2 <= aholder_p->y2) {
+ 992              		.loc 1 237 5 view .LVU295
+ 237:lvgl/src/lv_misc/lv_area.c ****        ain_p->y2 <= aholder_p->y2) {
+ 993              		.loc 1 237 13 is_stmt 0 view .LVU296
+ 994 0006 B0F90030 		ldrsh	r3, [r0]
+ 237:lvgl/src/lv_misc/lv_area.c ****        ain_p->y2 <= aholder_p->y2) {
+ 995              		.loc 1 237 30 view .LVU297
+ 996 000a B1F90040 		ldrsh	r4, [r1]
+ 237:lvgl/src/lv_misc/lv_area.c ****        ain_p->y2 <= aholder_p->y2) {
+ 997              		.loc 1 237 7 view .LVU298
+ 998 000e A342     		cmp	r3, r4
+ 999 0010 44DB     		blt	.L40
+ 237:lvgl/src/lv_misc/lv_area.c ****        ain_p->y2 <= aholder_p->y2) {
+ 1000              		.loc 1 237 43 discriminator 1 view .LVU299
+ 1001 0012 B0F902C0 		ldrsh	ip, [r0, #2]
+ 237:lvgl/src/lv_misc/lv_area.c ****        ain_p->y2 <= aholder_p->y2) {
+ 1002              		.loc 1 237 60 discriminator 1 view .LVU300
+ 1003 0016 B1F90240 		ldrsh	r4, [r1, #2]
+ 237:lvgl/src/lv_misc/lv_area.c ****        ain_p->y2 <= aholder_p->y2) {
+ 1004              		.loc 1 237 35 discriminator 1 view .LVU301
+ 1005 001a A445     		cmp	ip, r4
+ 1006 001c 43DB     		blt	.L41
+ 237:lvgl/src/lv_misc/lv_area.c ****        ain_p->y2 <= aholder_p->y2) {
+ 1007              		.loc 1 237 73 discriminator 2 view .LVU302
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 32
+
+
+ 1008 001e B0F90460 		ldrsh	r6, [r0, #4]
+ 237:lvgl/src/lv_misc/lv_area.c ****        ain_p->y2 <= aholder_p->y2) {
+ 1009              		.loc 1 237 90 discriminator 2 view .LVU303
+ 1010 0022 B1F90440 		ldrsh	r4, [r1, #4]
+ 237:lvgl/src/lv_misc/lv_area.c ****        ain_p->y2 <= aholder_p->y2) {
+ 1011              		.loc 1 237 65 discriminator 2 view .LVU304
+ 1012 0026 A642     		cmp	r6, r4
+ 1013 0028 3FDC     		bgt	.L42
+ 238:lvgl/src/lv_misc/lv_area.c ****         is_in = true;
+ 1014              		.loc 1 238 13 discriminator 3 view .LVU305
+ 1015 002a B0F90670 		ldrsh	r7, [r0, #6]
+ 238:lvgl/src/lv_misc/lv_area.c ****         is_in = true;
+ 1016              		.loc 1 238 30 discriminator 3 view .LVU306
+ 1017 002e B1F90640 		ldrsh	r4, [r1, #6]
+ 237:lvgl/src/lv_misc/lv_area.c ****        ain_p->y2 <= aholder_p->y2) {
+ 1018              		.loc 1 237 95 discriminator 3 view .LVU307
+ 1019 0032 A742     		cmp	r7, r4
+ 1020 0034 3BDC     		bgt	.L43
+ 239:lvgl/src/lv_misc/lv_area.c ****     }
+ 1021              		.loc 1 239 9 is_stmt 1 view .LVU308
+ 1022              	.LVL94:
+ 242:lvgl/src/lv_misc/lv_area.c ****     if(radius == 0) return true;
+ 1023              		.loc 1 242 5 view .LVU309
+ 243:lvgl/src/lv_misc/lv_area.c **** 
+ 1024              		.loc 1 243 5 view .LVU310
+ 243:lvgl/src/lv_misc/lv_area.c **** 
+ 1025              		.loc 1 243 7 is_stmt 0 view .LVU311
+ 1026 0036 0AB9     		cbnz	r2, .L46
+ 243:lvgl/src/lv_misc/lv_area.c **** 
+ 1027              		.loc 1 243 28 view .LVU312
+ 1028 0038 0123     		movs	r3, #1
+ 1029 003a 30E0     		b	.L39
+ 1030              	.L46:
+ 1031 003c 1546     		mov	r5, r2
+ 1032 003e 0C46     		mov	r4, r1
+ 1033 0040 8046     		mov	r8, r0
+ 246:lvgl/src/lv_misc/lv_area.c **** 
+ 1034              		.loc 1 246 5 is_stmt 1 view .LVU313
+ 248:lvgl/src/lv_misc/lv_area.c ****     p.y = ain_p->y1;
+ 1035              		.loc 1 248 5 view .LVU314
+ 248:lvgl/src/lv_misc/lv_area.c ****     p.y = ain_p->y1;
+ 1036              		.loc 1 248 9 is_stmt 0 view .LVU315
+ 1037 0042 ADF80430 		strh	r3, [sp, #4]	@ movhi
+ 249:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(aholder_p, &p, radius) == false) return false;
+ 1038              		.loc 1 249 5 is_stmt 1 view .LVU316
+ 249:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(aholder_p, &p, radius) == false) return false;
+ 1039              		.loc 1 249 9 is_stmt 0 view .LVU317
+ 1040 0046 ADF806C0 		strh	ip, [sp, #6]	@ movhi
+ 250:lvgl/src/lv_misc/lv_area.c **** 
+ 1041              		.loc 1 250 5 is_stmt 1 view .LVU318
+ 250:lvgl/src/lv_misc/lv_area.c **** 
+ 1042              		.loc 1 250 8 is_stmt 0 view .LVU319
+ 1043 004a 01A9     		add	r1, sp, #4
+ 1044              	.LVL95:
+ 250:lvgl/src/lv_misc/lv_area.c **** 
+ 1045              		.loc 1 250 8 view .LVU320
+ 1046 004c 2046     		mov	r0, r4
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 33
+
+
+ 1047              	.LVL96:
+ 250:lvgl/src/lv_misc/lv_area.c **** 
+ 1048              		.loc 1 250 8 view .LVU321
+ 1049 004e FFF7FEFF 		bl	_lv_area_is_point_on
+ 1050              	.LVL97:
+ 250:lvgl/src/lv_misc/lv_area.c **** 
+ 1051              		.loc 1 250 7 view .LVU322
+ 1052 0052 0346     		mov	r3, r0
+ 1053 0054 18B3     		cbz	r0, .L39
+ 252:lvgl/src/lv_misc/lv_area.c ****     p.y = ain_p->y1;
+ 1054              		.loc 1 252 5 is_stmt 1 view .LVU323
+ 252:lvgl/src/lv_misc/lv_area.c ****     p.y = ain_p->y1;
+ 1055              		.loc 1 252 9 is_stmt 0 view .LVU324
+ 1056 0056 ADF80460 		strh	r6, [sp, #4]	@ movhi
+ 253:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(aholder_p, &p, radius) == false) return false;
+ 1057              		.loc 1 253 5 is_stmt 1 view .LVU325
+ 253:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(aholder_p, &p, radius) == false) return false;
+ 1058              		.loc 1 253 16 is_stmt 0 view .LVU326
+ 1059 005a B8F90230 		ldrsh	r3, [r8, #2]
+ 253:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(aholder_p, &p, radius) == false) return false;
+ 1060              		.loc 1 253 9 view .LVU327
+ 1061 005e ADF80630 		strh	r3, [sp, #6]	@ movhi
+ 254:lvgl/src/lv_misc/lv_area.c **** 
+ 1062              		.loc 1 254 5 is_stmt 1 view .LVU328
+ 254:lvgl/src/lv_misc/lv_area.c **** 
+ 1063              		.loc 1 254 8 is_stmt 0 view .LVU329
+ 1064 0062 2A46     		mov	r2, r5
+ 1065 0064 01A9     		add	r1, sp, #4
+ 1066 0066 2046     		mov	r0, r4
+ 1067 0068 FFF7FEFF 		bl	_lv_area_is_point_on
+ 1068              	.LVL98:
+ 254:lvgl/src/lv_misc/lv_area.c **** 
+ 1069              		.loc 1 254 7 view .LVU330
+ 1070 006c 0346     		mov	r3, r0
+ 1071 006e B0B1     		cbz	r0, .L39
+ 256:lvgl/src/lv_misc/lv_area.c ****     p.y = ain_p->y2;
+ 1072              		.loc 1 256 5 is_stmt 1 view .LVU331
+ 256:lvgl/src/lv_misc/lv_area.c ****     p.y = ain_p->y2;
+ 1073              		.loc 1 256 16 is_stmt 0 view .LVU332
+ 1074 0070 B8F90030 		ldrsh	r3, [r8]
+ 256:lvgl/src/lv_misc/lv_area.c ****     p.y = ain_p->y2;
+ 1075              		.loc 1 256 9 view .LVU333
+ 1076 0074 ADF80430 		strh	r3, [sp, #4]	@ movhi
+ 257:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(aholder_p, &p, radius) == false) return false;
+ 1077              		.loc 1 257 5 is_stmt 1 view .LVU334
+ 257:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(aholder_p, &p, radius) == false) return false;
+ 1078              		.loc 1 257 9 is_stmt 0 view .LVU335
+ 1079 0078 ADF80670 		strh	r7, [sp, #6]	@ movhi
+ 258:lvgl/src/lv_misc/lv_area.c **** 
+ 1080              		.loc 1 258 5 is_stmt 1 view .LVU336
+ 258:lvgl/src/lv_misc/lv_area.c **** 
+ 1081              		.loc 1 258 8 is_stmt 0 view .LVU337
+ 1082 007c 2A46     		mov	r2, r5
+ 1083 007e 01A9     		add	r1, sp, #4
+ 1084 0080 2046     		mov	r0, r4
+ 1085 0082 FFF7FEFF 		bl	_lv_area_is_point_on
+ 1086              	.LVL99:
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 34
+
+
+ 258:lvgl/src/lv_misc/lv_area.c **** 
+ 1087              		.loc 1 258 7 view .LVU338
+ 1088 0086 0346     		mov	r3, r0
+ 1089 0088 48B1     		cbz	r0, .L39
+ 260:lvgl/src/lv_misc/lv_area.c ****     p.y = ain_p->y2;
+ 1090              		.loc 1 260 5 is_stmt 1 view .LVU339
+ 260:lvgl/src/lv_misc/lv_area.c ****     p.y = ain_p->y2;
+ 1091              		.loc 1 260 9 is_stmt 0 view .LVU340
+ 1092 008a ADF80460 		strh	r6, [sp, #4]	@ movhi
+ 261:lvgl/src/lv_misc/lv_area.c ****     if(_lv_area_is_point_on(aholder_p, &p, radius) == false) return false;
+ 1093              		.loc 1 261 5 is_stmt 1 view .LVU341
+ 262:lvgl/src/lv_misc/lv_area.c **** 
+ 1094              		.loc 1 262 5 view .LVU342
+ 262:lvgl/src/lv_misc/lv_area.c **** 
+ 1095              		.loc 1 262 8 is_stmt 0 view .LVU343
+ 1096 008e 2A46     		mov	r2, r5
+ 1097 0090 01A9     		add	r1, sp, #4
+ 1098 0092 2046     		mov	r0, r4
+ 1099 0094 FFF7FEFF 		bl	_lv_area_is_point_on
+ 1100              	.LVL100:
+ 1101 0098 0346     		mov	r3, r0
+ 1102 009a 00E0     		b	.L39
+ 1103              	.LVL101:
+ 1104              	.L40:
+ 242:lvgl/src/lv_misc/lv_area.c ****     if(radius == 0) return true;
+ 1105              		.loc 1 242 23 view .LVU344
+ 1106 009c 0023     		movs	r3, #0
+ 1107              	.LVL102:
+ 1108              	.L39:
+ 265:lvgl/src/lv_misc/lv_area.c **** 
+ 1109              		.loc 1 265 1 view .LVU345
+ 1110 009e 1846     		mov	r0, r3
+ 1111 00a0 02B0     		add	sp, sp, #8
+ 1112              	.LCFI15:
+ 1113              		.cfi_remember_state
+ 1114              		.cfi_def_cfa_offset 24
+ 1115              		@ sp needed
+ 1116 00a2 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 1117              	.LVL103:
+ 1118              	.L41:
+ 1119              	.LCFI16:
+ 1120              		.cfi_restore_state
+ 242:lvgl/src/lv_misc/lv_area.c ****     if(radius == 0) return true;
+ 1121              		.loc 1 242 23 view .LVU346
+ 1122 00a6 0023     		movs	r3, #0
+ 1123 00a8 F9E7     		b	.L39
+ 1124              	.L42:
+ 1125 00aa 0023     		movs	r3, #0
+ 1126 00ac F7E7     		b	.L39
+ 1127              	.L43:
+ 1128 00ae 0023     		movs	r3, #0
+ 1129 00b0 F5E7     		b	.L39
+ 1130              		.cfi_endproc
+ 1131              	.LFE143:
+ 1133              		.section	.text._lv_area_align,"ax",%progbits
+ 1134              		.align	1
+ 1135              		.global	_lv_area_align
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 35
+
+
+ 1136              		.syntax unified
+ 1137              		.thumb
+ 1138              		.thumb_func
+ 1139              		.fpu fpv4-sp-d16
+ 1141              	_lv_area_align:
+ 1142              	.LVL104:
+ 1143              	.LFB144:
+ 275:lvgl/src/lv_misc/lv_area.c **** 
+ 1144              		.loc 1 275 1 is_stmt 1 view -0
+ 1145              		.cfi_startproc
+ 1146              		@ args = 0, pretend = 0, frame = 0
+ 1147              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1148              		@ link register save eliminated.
+ 275:lvgl/src/lv_misc/lv_area.c **** 
+ 1149              		.loc 1 275 1 is_stmt 0 view .LVU348
+ 1150 0000 30B4     		push	{r4, r5}
+ 1151              	.LCFI17:
+ 1152              		.cfi_def_cfa_offset 8
+ 1153              		.cfi_offset 4, -8
+ 1154              		.cfi_offset 5, -4
+ 277:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_CENTER:
+ 1155              		.loc 1 277 5 is_stmt 1 view .LVU349
+ 1156 0002 142A     		cmp	r2, #20
+ 1157 0004 3ED8     		bhi	.L48
+ 1158 0006 DFE812F0 		tbh	[pc, r2, lsl #1]
+ 1159              	.L50:
+ 1160 000a 1500     		.2byte	(.L70-.L50)/2
+ 1161 000c 4700     		.2byte	(.L69-.L50)/2
+ 1162 000e 4B00     		.2byte	(.L68-.L50)/2
+ 1163 0010 6200     		.2byte	(.L67-.L50)/2
+ 1164 0012 6E00     		.2byte	(.L66-.L50)/2
+ 1165 0014 7A00     		.2byte	(.L65-.L50)/2
+ 1166 0016 9800     		.2byte	(.L64-.L50)/2
+ 1167 0018 AB00     		.2byte	(.L63-.L50)/2
+ 1168 001a C200     		.2byte	(.L62-.L50)/2
+ 1169 001c E000     		.2byte	(.L61-.L50)/2
+ 1170 001e E800     		.2byte	(.L60-.L50)/2
+ 1171 0020 0201     		.2byte	(.L59-.L50)/2
+ 1172 0022 1101     		.2byte	(.L58-.L50)/2
+ 1173 0024 1A01     		.2byte	(.L57-.L50)/2
+ 1174 0026 3501     		.2byte	(.L56-.L50)/2
+ 1175 0028 4501     		.2byte	(.L55-.L50)/2
+ 1176 002a 4D01     		.2byte	(.L54-.L50)/2
+ 1177 002c 6701     		.2byte	(.L53-.L50)/2
+ 1178 002e 7601     		.2byte	(.L52-.L50)/2
+ 1179 0030 7F01     		.2byte	(.L51-.L50)/2
+ 1180 0032 9A01     		.2byte	(.L49-.L50)/2
+ 1181              		.p2align 1
+ 1182              	.L70:
+ 279:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ 1183              		.loc 1 279 13 view .LVU350
+ 1184              	.LVL105:
+ 1185              	.LBB122:
+ 1186              	.LBI122:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 1187              		.loc 2 107 26 view .LVU351
+ 1188              	.LBB123:
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 36
+
+
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1189              		.loc 2 109 5 view .LVU352
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1190              		.loc 2 109 31 is_stmt 0 view .LVU353
+ 1191 0034 8488     		ldrh	r4, [r0, #4]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1192              		.loc 2 109 44 view .LVU354
+ 1193 0036 0288     		ldrh	r2, [r0]
+ 1194              	.LVL106:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1195              		.loc 2 109 36 view .LVU355
+ 1196 0038 A41A     		subs	r4, r4, r2
+ 1197 003a A4B2     		uxth	r4, r4
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1198              		.loc 2 109 49 view .LVU356
+ 1199 003c 0134     		adds	r4, r4, #1
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1200              		.loc 2 109 12 view .LVU357
+ 1201 003e 24B2     		sxth	r4, r4
+ 1202              	.LVL107:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1203              		.loc 2 109 12 view .LVU358
+ 1204              	.LBE123:
+ 1205              	.LBE122:
+ 1206              	.LBB124:
+ 1207              	.LBI124:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 1208              		.loc 2 107 26 is_stmt 1 view .LVU359
+ 1209              	.LBB125:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1210              		.loc 2 109 5 view .LVU360
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1211              		.loc 2 109 31 is_stmt 0 view .LVU361
+ 1212 0040 8A88     		ldrh	r2, [r1, #4]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1213              		.loc 2 109 44 view .LVU362
+ 1214 0042 0D88     		ldrh	r5, [r1]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1215              		.loc 2 109 36 view .LVU363
+ 1216 0044 521B     		subs	r2, r2, r5
+ 1217 0046 92B2     		uxth	r2, r2
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1218              		.loc 2 109 49 view .LVU364
+ 1219 0048 0132     		adds	r2, r2, #1
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1220              		.loc 2 109 12 view .LVU365
+ 1221 004a 12B2     		sxth	r2, r2
+ 1222              	.LVL108:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1223              		.loc 2 109 12 view .LVU366
+ 1224              	.LBE125:
+ 1225              	.LBE124:
+ 279:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ 1226              		.loc 1 279 50 view .LVU367
+ 1227 004c 04EBD474 		add	r4, r4, r4, lsr #31
+ 1228 0050 02EBD272 		add	r2, r2, r2, lsr #31
+ 1229 0054 5210     		asrs	r2, r2, #1
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 37
+
+
+ 1230 0056 C2EB6402 		rsb	r2, r2, r4, asr #1
+ 279:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ 1231              		.loc 1 279 20 view .LVU368
+ 1232 005a 1A80     		strh	r2, [r3]	@ movhi
+ 280:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1233              		.loc 1 280 13 is_stmt 1 view .LVU369
+ 1234              	.LVL109:
+ 1235              	.LBB126:
+ 1236              	.LBI126:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 1237              		.loc 2 117 26 view .LVU370
+ 1238              	.LBB127:
+ 1239              		.loc 2 119 5 view .LVU371
+ 1240              		.loc 2 119 31 is_stmt 0 view .LVU372
+ 1241 005c C488     		ldrh	r4, [r0, #6]
+ 1242              		.loc 2 119 44 view .LVU373
+ 1243 005e 4288     		ldrh	r2, [r0, #2]
+ 1244              		.loc 2 119 36 view .LVU374
+ 1245 0060 A41A     		subs	r4, r4, r2
+ 1246 0062 A4B2     		uxth	r4, r4
+ 1247              		.loc 2 119 49 view .LVU375
+ 1248 0064 0134     		adds	r4, r4, #1
+ 1249              		.loc 2 119 12 view .LVU376
+ 1250 0066 24B2     		sxth	r4, r4
+ 1251              	.LVL110:
+ 1252              		.loc 2 119 12 view .LVU377
+ 1253              	.LBE127:
+ 1254              	.LBE126:
+ 1255              	.LBB128:
+ 1256              	.LBI128:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 1257              		.loc 2 117 26 is_stmt 1 view .LVU378
+ 1258              	.LBB129:
+ 1259              		.loc 2 119 5 view .LVU379
+ 1260              		.loc 2 119 31 is_stmt 0 view .LVU380
+ 1261 0068 CA88     		ldrh	r2, [r1, #6]
+ 1262              		.loc 2 119 44 view .LVU381
+ 1263 006a 4988     		ldrh	r1, [r1, #2]
+ 1264              	.LVL111:
+ 1265              		.loc 2 119 36 view .LVU382
+ 1266 006c 521A     		subs	r2, r2, r1
+ 1267 006e 92B2     		uxth	r2, r2
+ 1268              		.loc 2 119 49 view .LVU383
+ 1269 0070 0132     		adds	r2, r2, #1
+ 1270              		.loc 2 119 12 view .LVU384
+ 1271 0072 12B2     		sxth	r2, r2
+ 1272              	.LVL112:
+ 1273              		.loc 2 119 12 view .LVU385
+ 1274              	.LBE129:
+ 1275              	.LBE128:
+ 280:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1276              		.loc 1 280 51 view .LVU386
+ 1277 0074 04EBD474 		add	r4, r4, r4, lsr #31
+ 1278 0078 02EBD272 		add	r2, r2, r2, lsr #31
+ 1279 007c 5210     		asrs	r2, r2, #1
+ 1280 007e C2EB6402 		rsb	r2, r2, r4, asr #1
+ 280:lvgl/src/lv_misc/lv_area.c ****             break;
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 38
+
+
+ 1281              		.loc 1 280 20 view .LVU387
+ 1282 0082 5A80     		strh	r2, [r3, #2]	@ movhi
+ 281:lvgl/src/lv_misc/lv_area.c **** 
+ 1283              		.loc 1 281 13 is_stmt 1 view .LVU388
+ 1284              	.L48:
+ 382:lvgl/src/lv_misc/lv_area.c ****     res->y += base->y1;
+ 1285              		.loc 1 382 5 view .LVU389
+ 382:lvgl/src/lv_misc/lv_area.c ****     res->y += base->y1;
+ 1286              		.loc 1 382 19 is_stmt 0 view .LVU390
+ 1287 0084 0288     		ldrh	r2, [r0]
+ 382:lvgl/src/lv_misc/lv_area.c ****     res->y += base->y1;
+ 1288              		.loc 1 382 12 view .LVU391
+ 1289 0086 1988     		ldrh	r1, [r3]
+ 1290 0088 0A44     		add	r2, r2, r1
+ 1291 008a 1A80     		strh	r2, [r3]	@ movhi
+ 383:lvgl/src/lv_misc/lv_area.c **** }
+ 1292              		.loc 1 383 5 is_stmt 1 view .LVU392
+ 383:lvgl/src/lv_misc/lv_area.c **** }
+ 1293              		.loc 1 383 19 is_stmt 0 view .LVU393
+ 1294 008c 4288     		ldrh	r2, [r0, #2]
+ 383:lvgl/src/lv_misc/lv_area.c **** }
+ 1295              		.loc 1 383 12 view .LVU394
+ 1296 008e 5988     		ldrh	r1, [r3, #2]
+ 1297 0090 0A44     		add	r2, r2, r1
+ 1298 0092 5A80     		strh	r2, [r3, #2]	@ movhi
+ 384:lvgl/src/lv_misc/lv_area.c **** 
+ 1299              		.loc 1 384 1 view .LVU395
+ 1300 0094 30BC     		pop	{r4, r5}
+ 1301              	.LCFI18:
+ 1302              		.cfi_remember_state
+ 1303              		.cfi_restore 5
+ 1304              		.cfi_restore 4
+ 1305              		.cfi_def_cfa_offset 0
+ 1306 0096 7047     		bx	lr
+ 1307              	.LVL113:
+ 1308              	.L69:
+ 1309              	.LCFI19:
+ 1310              		.cfi_restore_state
+ 284:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 1311              		.loc 1 284 13 is_stmt 1 view .LVU396
+ 284:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 1312              		.loc 1 284 20 is_stmt 0 view .LVU397
+ 1313 0098 0022     		movs	r2, #0
+ 1314              	.LVL114:
+ 284:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 1315              		.loc 1 284 20 view .LVU398
+ 1316 009a 1A80     		strh	r2, [r3]	@ movhi
+ 285:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1317              		.loc 1 285 13 is_stmt 1 view .LVU399
+ 285:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1318              		.loc 1 285 20 is_stmt 0 view .LVU400
+ 1319 009c 5A80     		strh	r2, [r3, #2]	@ movhi
+ 286:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_IN_TOP_MID:
+ 1320              		.loc 1 286 13 is_stmt 1 view .LVU401
+ 1321 009e F1E7     		b	.L48
+ 1322              	.LVL115:
+ 1323              	.L68:
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 39
+
+
+ 288:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 1324              		.loc 1 288 13 view .LVU402
+ 1325              	.LBB130:
+ 1326              	.LBI130:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 1327              		.loc 2 107 26 view .LVU403
+ 1328              	.LBB131:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1329              		.loc 2 109 5 view .LVU404
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1330              		.loc 2 109 31 is_stmt 0 view .LVU405
+ 1331 00a0 8488     		ldrh	r4, [r0, #4]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1332              		.loc 2 109 44 view .LVU406
+ 1333 00a2 0288     		ldrh	r2, [r0]
+ 1334              	.LVL116:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1335              		.loc 2 109 36 view .LVU407
+ 1336 00a4 A41A     		subs	r4, r4, r2
+ 1337 00a6 A4B2     		uxth	r4, r4
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1338              		.loc 2 109 49 view .LVU408
+ 1339 00a8 0134     		adds	r4, r4, #1
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1340              		.loc 2 109 12 view .LVU409
+ 1341 00aa 24B2     		sxth	r4, r4
+ 1342              	.LVL117:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1343              		.loc 2 109 12 view .LVU410
+ 1344              	.LBE131:
+ 1345              	.LBE130:
+ 1346              	.LBB132:
+ 1347              	.LBI132:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 1348              		.loc 2 107 26 is_stmt 1 view .LVU411
+ 1349              	.LBB133:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1350              		.loc 2 109 5 view .LVU412
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1351              		.loc 2 109 31 is_stmt 0 view .LVU413
+ 1352 00ac 8A88     		ldrh	r2, [r1, #4]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1353              		.loc 2 109 44 view .LVU414
+ 1354 00ae 0988     		ldrh	r1, [r1]
+ 1355              	.LVL118:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1356              		.loc 2 109 36 view .LVU415
+ 1357 00b0 521A     		subs	r2, r2, r1
+ 1358 00b2 92B2     		uxth	r2, r2
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1359              		.loc 2 109 49 view .LVU416
+ 1360 00b4 0132     		adds	r2, r2, #1
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1361              		.loc 2 109 12 view .LVU417
+ 1362 00b6 12B2     		sxth	r2, r2
+ 1363              	.LVL119:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 40
+
+
+ 1364              		.loc 2 109 12 view .LVU418
+ 1365              	.LBE133:
+ 1366              	.LBE132:
+ 288:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 1367              		.loc 1 288 50 view .LVU419
+ 1368 00b8 04EBD474 		add	r4, r4, r4, lsr #31
+ 1369 00bc 02EBD272 		add	r2, r2, r2, lsr #31
+ 1370 00c0 5210     		asrs	r2, r2, #1
+ 1371 00c2 C2EB6402 		rsb	r2, r2, r4, asr #1
+ 288:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 1372              		.loc 1 288 20 view .LVU420
+ 1373 00c6 1A80     		strh	r2, [r3]	@ movhi
+ 289:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1374              		.loc 1 289 13 is_stmt 1 view .LVU421
+ 289:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1375              		.loc 1 289 20 is_stmt 0 view .LVU422
+ 1376 00c8 0022     		movs	r2, #0
+ 1377 00ca 5A80     		strh	r2, [r3, #2]	@ movhi
+ 290:lvgl/src/lv_misc/lv_area.c **** 
+ 1378              		.loc 1 290 13 is_stmt 1 view .LVU423
+ 1379 00cc DAE7     		b	.L48
+ 1380              	.LVL120:
+ 1381              	.L67:
+ 293:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 1382              		.loc 1 293 13 view .LVU424
+ 1383              	.LBB134:
+ 1384              	.LBI134:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 1385              		.loc 2 107 26 view .LVU425
+ 1386              	.LBB135:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1387              		.loc 2 109 5 view .LVU426
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1388              		.loc 2 109 31 is_stmt 0 view .LVU427
+ 1389 00ce 8288     		ldrh	r2, [r0, #4]
+ 1390              	.LVL121:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1391              		.loc 2 109 44 view .LVU428
+ 1392 00d0 0488     		ldrh	r4, [r0]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1393              		.loc 2 109 36 view .LVU429
+ 1394 00d2 121B     		subs	r2, r2, r4
+ 1395              	.LVL122:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1396              		.loc 2 109 36 view .LVU430
+ 1397              	.LBE135:
+ 1398              	.LBE134:
+ 1399              	.LBB136:
+ 1400              	.LBI136:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 1401              		.loc 2 107 26 is_stmt 1 view .LVU431
+ 1402              	.LBB137:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1403              		.loc 2 109 5 view .LVU432
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1404              		.loc 2 109 31 is_stmt 0 view .LVU433
+ 1405 00d4 8C88     		ldrh	r4, [r1, #4]
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 41
+
+
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1406              		.loc 2 109 44 view .LVU434
+ 1407 00d6 0988     		ldrh	r1, [r1]
+ 1408              	.LVL123:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1409              		.loc 2 109 44 view .LVU435
+ 1410              	.LBE137:
+ 1411              	.LBE136:
+ 293:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 1412              		.loc 1 293 46 view .LVU436
+ 1413 00d8 091B     		subs	r1, r1, r4
+ 1414 00da 11FA82F2 		uxtah	r2, r1, r2
+ 293:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 1415              		.loc 1 293 20 view .LVU437
+ 1416 00de 1A80     		strh	r2, [r3]	@ movhi
+ 294:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1417              		.loc 1 294 13 is_stmt 1 view .LVU438
+ 294:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1418              		.loc 1 294 20 is_stmt 0 view .LVU439
+ 1419 00e0 0022     		movs	r2, #0
+ 1420 00e2 5A80     		strh	r2, [r3, #2]	@ movhi
+ 295:lvgl/src/lv_misc/lv_area.c **** 
+ 1421              		.loc 1 295 13 is_stmt 1 view .LVU440
+ 1422 00e4 CEE7     		b	.L48
+ 1423              	.LVL124:
+ 1424              	.L66:
+ 298:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 1425              		.loc 1 298 13 view .LVU441
+ 298:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 1426              		.loc 1 298 20 is_stmt 0 view .LVU442
+ 1427 00e6 0022     		movs	r2, #0
+ 1428              	.LVL125:
+ 298:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 1429              		.loc 1 298 20 view .LVU443
+ 1430 00e8 1A80     		strh	r2, [r3]	@ movhi
+ 299:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1431              		.loc 1 299 13 is_stmt 1 view .LVU444
+ 1432              	.LVL126:
+ 1433              	.LBB138:
+ 1434              	.LBI138:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 1435              		.loc 2 117 26 view .LVU445
+ 1436              	.LBB139:
+ 1437              		.loc 2 119 5 view .LVU446
+ 1438              		.loc 2 119 31 is_stmt 0 view .LVU447
+ 1439 00ea C288     		ldrh	r2, [r0, #6]
+ 1440              		.loc 2 119 44 view .LVU448
+ 1441 00ec 4488     		ldrh	r4, [r0, #2]
+ 1442              		.loc 2 119 36 view .LVU449
+ 1443 00ee 121B     		subs	r2, r2, r4
+ 1444              	.LVL127:
+ 1445              		.loc 2 119 36 view .LVU450
+ 1446              	.LBE139:
+ 1447              	.LBE138:
+ 1448              	.LBB140:
+ 1449              	.LBI140:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 42
+
+
+ 1450              		.loc 2 117 26 is_stmt 1 view .LVU451
+ 1451              	.LBB141:
+ 1452              		.loc 2 119 5 view .LVU452
+ 1453              		.loc 2 119 31 is_stmt 0 view .LVU453
+ 1454 00f0 CC88     		ldrh	r4, [r1, #6]
+ 1455              		.loc 2 119 44 view .LVU454
+ 1456 00f2 4988     		ldrh	r1, [r1, #2]
+ 1457              	.LVL128:
+ 1458              		.loc 2 119 44 view .LVU455
+ 1459              	.LBE141:
+ 1460              	.LBE140:
+ 299:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1461              		.loc 1 299 47 view .LVU456
+ 1462 00f4 091B     		subs	r1, r1, r4
+ 1463 00f6 11FA82F2 		uxtah	r2, r1, r2
+ 299:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1464              		.loc 1 299 20 view .LVU457
+ 1465 00fa 5A80     		strh	r2, [r3, #2]	@ movhi
+ 300:lvgl/src/lv_misc/lv_area.c ****         case LV_ALIGN_IN_BOTTOM_MID:
+ 1466              		.loc 1 300 13 is_stmt 1 view .LVU458
+ 1467 00fc C2E7     		b	.L48
+ 1468              	.LVL129:
+ 1469              	.L65:
+ 302:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 1470              		.loc 1 302 13 view .LVU459
+ 1471              	.LBB142:
+ 1472              	.LBI142:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 1473              		.loc 2 107 26 view .LVU460
+ 1474              	.LBB143:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1475              		.loc 2 109 5 view .LVU461
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1476              		.loc 2 109 31 is_stmt 0 view .LVU462
+ 1477 00fe 8488     		ldrh	r4, [r0, #4]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1478              		.loc 2 109 44 view .LVU463
+ 1479 0100 0288     		ldrh	r2, [r0]
+ 1480              	.LVL130:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1481              		.loc 2 109 36 view .LVU464
+ 1482 0102 A41A     		subs	r4, r4, r2
+ 1483 0104 A4B2     		uxth	r4, r4
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1484              		.loc 2 109 49 view .LVU465
+ 1485 0106 0134     		adds	r4, r4, #1
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1486              		.loc 2 109 12 view .LVU466
+ 1487 0108 24B2     		sxth	r4, r4
+ 1488              	.LVL131:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1489              		.loc 2 109 12 view .LVU467
+ 1490              	.LBE143:
+ 1491              	.LBE142:
+ 1492              	.LBB144:
+ 1493              	.LBI144:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 43
+
+
+ 1494              		.loc 2 107 26 is_stmt 1 view .LVU468
+ 1495              	.LBB145:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1496              		.loc 2 109 5 view .LVU469
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1497              		.loc 2 109 31 is_stmt 0 view .LVU470
+ 1498 010a 8A88     		ldrh	r2, [r1, #4]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1499              		.loc 2 109 44 view .LVU471
+ 1500 010c 0D88     		ldrh	r5, [r1]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1501              		.loc 2 109 36 view .LVU472
+ 1502 010e 521B     		subs	r2, r2, r5
+ 1503 0110 92B2     		uxth	r2, r2
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1504              		.loc 2 109 49 view .LVU473
+ 1505 0112 0132     		adds	r2, r2, #1
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1506              		.loc 2 109 12 view .LVU474
+ 1507 0114 12B2     		sxth	r2, r2
+ 1508              	.LVL132:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1509              		.loc 2 109 12 view .LVU475
+ 1510              	.LBE145:
+ 1511              	.LBE144:
+ 302:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 1512              		.loc 1 302 50 view .LVU476
+ 1513 0116 04EBD474 		add	r4, r4, r4, lsr #31
+ 1514 011a 02EBD272 		add	r2, r2, r2, lsr #31
+ 1515 011e 5210     		asrs	r2, r2, #1
+ 1516 0120 C2EB6402 		rsb	r2, r2, r4, asr #1
+ 302:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 1517              		.loc 1 302 20 view .LVU477
+ 1518 0124 1A80     		strh	r2, [r3]	@ movhi
+ 303:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1519              		.loc 1 303 13 is_stmt 1 view .LVU478
+ 1520              	.LVL133:
+ 1521              	.LBB146:
+ 1522              	.LBI146:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 1523              		.loc 2 117 26 view .LVU479
+ 1524              	.LBB147:
+ 1525              		.loc 2 119 5 view .LVU480
+ 1526              		.loc 2 119 31 is_stmt 0 view .LVU481
+ 1527 0126 C288     		ldrh	r2, [r0, #6]
+ 1528              		.loc 2 119 44 view .LVU482
+ 1529 0128 4488     		ldrh	r4, [r0, #2]
+ 1530              		.loc 2 119 36 view .LVU483
+ 1531 012a 121B     		subs	r2, r2, r4
+ 1532              	.LVL134:
+ 1533              		.loc 2 119 36 view .LVU484
+ 1534              	.LBE147:
+ 1535              	.LBE146:
+ 1536              	.LBB148:
+ 1537              	.LBI148:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 1538              		.loc 2 117 26 is_stmt 1 view .LVU485
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 44
+
+
+ 1539              	.LBB149:
+ 1540              		.loc 2 119 5 view .LVU486
+ 1541              		.loc 2 119 31 is_stmt 0 view .LVU487
+ 1542 012c CC88     		ldrh	r4, [r1, #6]
+ 1543              		.loc 2 119 44 view .LVU488
+ 1544 012e 4988     		ldrh	r1, [r1, #2]
+ 1545              	.LVL135:
+ 1546              		.loc 2 119 44 view .LVU489
+ 1547              	.LBE149:
+ 1548              	.LBE148:
+ 303:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1549              		.loc 1 303 47 view .LVU490
+ 1550 0130 091B     		subs	r1, r1, r4
+ 1551 0132 11FA82F2 		uxtah	r2, r1, r2
+ 303:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1552              		.loc 1 303 20 view .LVU491
+ 1553 0136 5A80     		strh	r2, [r3, #2]	@ movhi
+ 304:lvgl/src/lv_misc/lv_area.c **** 
+ 1554              		.loc 1 304 13 is_stmt 1 view .LVU492
+ 1555 0138 A4E7     		b	.L48
+ 1556              	.LVL136:
+ 1557              	.L64:
+ 307:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 1558              		.loc 1 307 13 view .LVU493
+ 1559              	.LBB150:
+ 1560              	.LBI150:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 1561              		.loc 2 107 26 view .LVU494
+ 1562              	.LBB151:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1563              		.loc 2 109 5 view .LVU495
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1564              		.loc 2 109 31 is_stmt 0 view .LVU496
+ 1565 013a 8288     		ldrh	r2, [r0, #4]
+ 1566              	.LVL137:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1567              		.loc 2 109 44 view .LVU497
+ 1568 013c 0488     		ldrh	r4, [r0]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1569              		.loc 2 109 36 view .LVU498
+ 1570 013e 121B     		subs	r2, r2, r4
+ 1571              	.LVL138:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1572              		.loc 2 109 36 view .LVU499
+ 1573              	.LBE151:
+ 1574              	.LBE150:
+ 1575              	.LBB152:
+ 1576              	.LBI152:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 1577              		.loc 2 107 26 is_stmt 1 view .LVU500
+ 1578              	.LBB153:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1579              		.loc 2 109 5 view .LVU501
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1580              		.loc 2 109 31 is_stmt 0 view .LVU502
+ 1581 0140 8D88     		ldrh	r5, [r1, #4]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 45
+
+
+ 1582              		.loc 2 109 44 view .LVU503
+ 1583 0142 0C88     		ldrh	r4, [r1]
+ 1584              	.LVL139:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1585              		.loc 2 109 44 view .LVU504
+ 1586              	.LBE153:
+ 1587              	.LBE152:
+ 307:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 1588              		.loc 1 307 46 view .LVU505
+ 1589 0144 641B     		subs	r4, r4, r5
+ 1590 0146 14FA82F2 		uxtah	r2, r4, r2
+ 307:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 1591              		.loc 1 307 20 view .LVU506
+ 1592 014a 1A80     		strh	r2, [r3]	@ movhi
+ 308:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1593              		.loc 1 308 13 is_stmt 1 view .LVU507
+ 1594              	.LVL140:
+ 1595              	.LBB154:
+ 1596              	.LBI154:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 1597              		.loc 2 117 26 view .LVU508
+ 1598              	.LBB155:
+ 1599              		.loc 2 119 5 view .LVU509
+ 1600              		.loc 2 119 31 is_stmt 0 view .LVU510
+ 1601 014c C288     		ldrh	r2, [r0, #6]
+ 1602              		.loc 2 119 44 view .LVU511
+ 1603 014e 4488     		ldrh	r4, [r0, #2]
+ 1604              		.loc 2 119 36 view .LVU512
+ 1605 0150 121B     		subs	r2, r2, r4
+ 1606              	.LVL141:
+ 1607              		.loc 2 119 36 view .LVU513
+ 1608              	.LBE155:
+ 1609              	.LBE154:
+ 1610              	.LBB156:
+ 1611              	.LBI156:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 1612              		.loc 2 117 26 is_stmt 1 view .LVU514
+ 1613              	.LBB157:
+ 1614              		.loc 2 119 5 view .LVU515
+ 1615              		.loc 2 119 31 is_stmt 0 view .LVU516
+ 1616 0152 CC88     		ldrh	r4, [r1, #6]
+ 1617              		.loc 2 119 44 view .LVU517
+ 1618 0154 4988     		ldrh	r1, [r1, #2]
+ 1619              	.LVL142:
+ 1620              		.loc 2 119 44 view .LVU518
+ 1621              	.LBE157:
+ 1622              	.LBE156:
+ 308:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1623              		.loc 1 308 47 view .LVU519
+ 1624 0156 091B     		subs	r1, r1, r4
+ 1625 0158 11FA82F2 		uxtah	r2, r1, r2
+ 308:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1626              		.loc 1 308 20 view .LVU520
+ 1627 015c 5A80     		strh	r2, [r3, #2]	@ movhi
+ 309:lvgl/src/lv_misc/lv_area.c **** 
+ 1628              		.loc 1 309 13 is_stmt 1 view .LVU521
+ 1629 015e 91E7     		b	.L48
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 46
+
+
+ 1630              	.LVL143:
+ 1631              	.L63:
+ 312:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ 1632              		.loc 1 312 13 view .LVU522
+ 312:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ 1633              		.loc 1 312 20 is_stmt 0 view .LVU523
+ 1634 0160 0022     		movs	r2, #0
+ 1635              	.LVL144:
+ 312:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ 1636              		.loc 1 312 20 view .LVU524
+ 1637 0162 1A80     		strh	r2, [r3]	@ movhi
+ 313:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1638              		.loc 1 313 13 is_stmt 1 view .LVU525
+ 1639              	.LVL145:
+ 1640              	.LBB158:
+ 1641              	.LBI158:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 1642              		.loc 2 117 26 view .LVU526
+ 1643              	.LBB159:
+ 1644              		.loc 2 119 5 view .LVU527
+ 1645              		.loc 2 119 31 is_stmt 0 view .LVU528
+ 1646 0164 C488     		ldrh	r4, [r0, #6]
+ 1647              		.loc 2 119 44 view .LVU529
+ 1648 0166 4288     		ldrh	r2, [r0, #2]
+ 1649              		.loc 2 119 36 view .LVU530
+ 1650 0168 A41A     		subs	r4, r4, r2
+ 1651 016a A4B2     		uxth	r4, r4
+ 1652              		.loc 2 119 49 view .LVU531
+ 1653 016c 0134     		adds	r4, r4, #1
+ 1654              		.loc 2 119 12 view .LVU532
+ 1655 016e 24B2     		sxth	r4, r4
+ 1656              	.LVL146:
+ 1657              		.loc 2 119 12 view .LVU533
+ 1658              	.LBE159:
+ 1659              	.LBE158:
+ 1660              	.LBB160:
+ 1661              	.LBI160:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 1662              		.loc 2 117 26 is_stmt 1 view .LVU534
+ 1663              	.LBB161:
+ 1664              		.loc 2 119 5 view .LVU535
+ 1665              		.loc 2 119 31 is_stmt 0 view .LVU536
+ 1666 0170 CA88     		ldrh	r2, [r1, #6]
+ 1667              		.loc 2 119 44 view .LVU537
+ 1668 0172 4988     		ldrh	r1, [r1, #2]
+ 1669              	.LVL147:
+ 1670              		.loc 2 119 36 view .LVU538
+ 1671 0174 521A     		subs	r2, r2, r1
+ 1672 0176 92B2     		uxth	r2, r2
+ 1673              		.loc 2 119 49 view .LVU539
+ 1674 0178 0132     		adds	r2, r2, #1
+ 1675              		.loc 2 119 12 view .LVU540
+ 1676 017a 12B2     		sxth	r2, r2
+ 1677              	.LVL148:
+ 1678              		.loc 2 119 12 view .LVU541
+ 1679              	.LBE161:
+ 1680              	.LBE160:
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 47
+
+
+ 313:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1681              		.loc 1 313 51 view .LVU542
+ 1682 017c 04EBD474 		add	r4, r4, r4, lsr #31
+ 1683 0180 02EBD272 		add	r2, r2, r2, lsr #31
+ 1684 0184 5210     		asrs	r2, r2, #1
+ 1685 0186 C2EB6402 		rsb	r2, r2, r4, asr #1
+ 313:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1686              		.loc 1 313 20 view .LVU543
+ 1687 018a 5A80     		strh	r2, [r3, #2]	@ movhi
+ 314:lvgl/src/lv_misc/lv_area.c **** 
+ 1688              		.loc 1 314 13 is_stmt 1 view .LVU544
+ 1689 018c 7AE7     		b	.L48
+ 1690              	.LVL149:
+ 1691              	.L62:
+ 317:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ 1692              		.loc 1 317 13 view .LVU545
+ 1693              	.LBB162:
+ 1694              	.LBI162:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 1695              		.loc 2 107 26 view .LVU546
+ 1696              	.LBB163:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1697              		.loc 2 109 5 view .LVU547
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1698              		.loc 2 109 31 is_stmt 0 view .LVU548
+ 1699 018e 8288     		ldrh	r2, [r0, #4]
+ 1700              	.LVL150:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1701              		.loc 2 109 44 view .LVU549
+ 1702 0190 0488     		ldrh	r4, [r0]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1703              		.loc 2 109 36 view .LVU550
+ 1704 0192 121B     		subs	r2, r2, r4
+ 1705              	.LVL151:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1706              		.loc 2 109 36 view .LVU551
+ 1707              	.LBE163:
+ 1708              	.LBE162:
+ 1709              	.LBB164:
+ 1710              	.LBI164:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 1711              		.loc 2 107 26 is_stmt 1 view .LVU552
+ 1712              	.LBB165:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1713              		.loc 2 109 5 view .LVU553
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1714              		.loc 2 109 31 is_stmt 0 view .LVU554
+ 1715 0194 8D88     		ldrh	r5, [r1, #4]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1716              		.loc 2 109 44 view .LVU555
+ 1717 0196 0C88     		ldrh	r4, [r1]
+ 1718              	.LVL152:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1719              		.loc 2 109 44 view .LVU556
+ 1720              	.LBE165:
+ 1721              	.LBE164:
+ 317:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 48
+
+
+ 1722              		.loc 1 317 46 view .LVU557
+ 1723 0198 641B     		subs	r4, r4, r5
+ 1724 019a 14FA82F2 		uxtah	r2, r4, r2
+ 317:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ 1725              		.loc 1 317 20 view .LVU558
+ 1726 019e 1A80     		strh	r2, [r3]	@ movhi
+ 318:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1727              		.loc 1 318 13 is_stmt 1 view .LVU559
+ 1728              	.LVL153:
+ 1729              	.LBB166:
+ 1730              	.LBI166:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 1731              		.loc 2 117 26 view .LVU560
+ 1732              	.LBB167:
+ 1733              		.loc 2 119 5 view .LVU561
+ 1734              		.loc 2 119 31 is_stmt 0 view .LVU562
+ 1735 01a0 C488     		ldrh	r4, [r0, #6]
+ 1736              		.loc 2 119 44 view .LVU563
+ 1737 01a2 4288     		ldrh	r2, [r0, #2]
+ 1738              		.loc 2 119 36 view .LVU564
+ 1739 01a4 A41A     		subs	r4, r4, r2
+ 1740 01a6 A4B2     		uxth	r4, r4
+ 1741              		.loc 2 119 49 view .LVU565
+ 1742 01a8 0134     		adds	r4, r4, #1
+ 1743              		.loc 2 119 12 view .LVU566
+ 1744 01aa 24B2     		sxth	r4, r4
+ 1745              	.LVL154:
+ 1746              		.loc 2 119 12 view .LVU567
+ 1747              	.LBE167:
+ 1748              	.LBE166:
+ 1749              	.LBB168:
+ 1750              	.LBI168:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 1751              		.loc 2 117 26 is_stmt 1 view .LVU568
+ 1752              	.LBB169:
+ 1753              		.loc 2 119 5 view .LVU569
+ 1754              		.loc 2 119 31 is_stmt 0 view .LVU570
+ 1755 01ac CA88     		ldrh	r2, [r1, #6]
+ 1756              		.loc 2 119 44 view .LVU571
+ 1757 01ae 4988     		ldrh	r1, [r1, #2]
+ 1758              	.LVL155:
+ 1759              		.loc 2 119 36 view .LVU572
+ 1760 01b0 521A     		subs	r2, r2, r1
+ 1761 01b2 92B2     		uxth	r2, r2
+ 1762              		.loc 2 119 49 view .LVU573
+ 1763 01b4 0132     		adds	r2, r2, #1
+ 1764              		.loc 2 119 12 view .LVU574
+ 1765 01b6 12B2     		sxth	r2, r2
+ 1766              	.LVL156:
+ 1767              		.loc 2 119 12 view .LVU575
+ 1768              	.LBE169:
+ 1769              	.LBE168:
+ 318:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1770              		.loc 1 318 51 view .LVU576
+ 1771 01b8 04EBD474 		add	r4, r4, r4, lsr #31
+ 1772 01bc 02EBD272 		add	r2, r2, r2, lsr #31
+ 1773 01c0 5210     		asrs	r2, r2, #1
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 49
+
+
+ 1774 01c2 C2EB6402 		rsb	r2, r2, r4, asr #1
+ 318:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1775              		.loc 1 318 20 view .LVU577
+ 1776 01c6 5A80     		strh	r2, [r3, #2]	@ movhi
+ 319:lvgl/src/lv_misc/lv_area.c **** 
+ 1777              		.loc 1 319 13 is_stmt 1 view .LVU578
+ 1778 01c8 5CE7     		b	.L48
+ 1779              	.LVL157:
+ 1780              	.L61:
+ 322:lvgl/src/lv_misc/lv_area.c ****             res->y = -lv_area_get_height(to_align);
+ 1781              		.loc 1 322 13 view .LVU579
+ 322:lvgl/src/lv_misc/lv_area.c ****             res->y = -lv_area_get_height(to_align);
+ 1782              		.loc 1 322 20 is_stmt 0 view .LVU580
+ 1783 01ca 0022     		movs	r2, #0
+ 1784              	.LVL158:
+ 322:lvgl/src/lv_misc/lv_area.c ****             res->y = -lv_area_get_height(to_align);
+ 1785              		.loc 1 322 20 view .LVU581
+ 1786 01cc 1A80     		strh	r2, [r3]	@ movhi
+ 323:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1787              		.loc 1 323 13 is_stmt 1 view .LVU582
+ 1788              	.LVL159:
+ 1789              	.LBB170:
+ 1790              	.LBI170:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 1791              		.loc 2 117 26 view .LVU583
+ 1792              	.LBB171:
+ 1793              		.loc 2 119 5 view .LVU584
+ 1794              		.loc 2 119 31 is_stmt 0 view .LVU585
+ 1795 01ce CC88     		ldrh	r4, [r1, #6]
+ 1796              		.loc 2 119 44 view .LVU586
+ 1797 01d0 4A88     		ldrh	r2, [r1, #2]
+ 1798              	.LVL160:
+ 1799              		.loc 2 119 44 view .LVU587
+ 1800              	.LBE171:
+ 1801              	.LBE170:
+ 323:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1802              		.loc 1 323 20 view .LVU588
+ 1803 01d2 121B     		subs	r2, r2, r4
+ 1804 01d4 013A     		subs	r2, r2, #1
+ 1805 01d6 5A80     		strh	r2, [r3, #2]	@ movhi
+ 324:lvgl/src/lv_misc/lv_area.c **** 
+ 1806              		.loc 1 324 13 is_stmt 1 view .LVU589
+ 1807 01d8 54E7     		b	.L48
+ 1808              	.LVL161:
+ 1809              	.L60:
+ 327:lvgl/src/lv_misc/lv_area.c ****             res->y = -lv_area_get_height(to_align);
+ 1810              		.loc 1 327 13 view .LVU590
+ 1811              	.LBB172:
+ 1812              	.LBI172:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 1813              		.loc 2 107 26 view .LVU591
+ 1814              	.LBB173:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1815              		.loc 2 109 5 view .LVU592
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1816              		.loc 2 109 31 is_stmt 0 view .LVU593
+ 1817 01da 8488     		ldrh	r4, [r0, #4]
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 50
+
+
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1818              		.loc 2 109 44 view .LVU594
+ 1819 01dc 0288     		ldrh	r2, [r0]
+ 1820              	.LVL162:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1821              		.loc 2 109 36 view .LVU595
+ 1822 01de A41A     		subs	r4, r4, r2
+ 1823 01e0 A4B2     		uxth	r4, r4
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1824              		.loc 2 109 49 view .LVU596
+ 1825 01e2 0134     		adds	r4, r4, #1
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1826              		.loc 2 109 12 view .LVU597
+ 1827 01e4 24B2     		sxth	r4, r4
+ 1828              	.LVL163:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1829              		.loc 2 109 12 view .LVU598
+ 1830              	.LBE173:
+ 1831              	.LBE172:
+ 1832              	.LBB174:
+ 1833              	.LBI174:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 1834              		.loc 2 107 26 is_stmt 1 view .LVU599
+ 1835              	.LBB175:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1836              		.loc 2 109 5 view .LVU600
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1837              		.loc 2 109 31 is_stmt 0 view .LVU601
+ 1838 01e6 8A88     		ldrh	r2, [r1, #4]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1839              		.loc 2 109 44 view .LVU602
+ 1840 01e8 0D88     		ldrh	r5, [r1]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1841              		.loc 2 109 36 view .LVU603
+ 1842 01ea 521B     		subs	r2, r2, r5
+ 1843 01ec 92B2     		uxth	r2, r2
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1844              		.loc 2 109 49 view .LVU604
+ 1845 01ee 0132     		adds	r2, r2, #1
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1846              		.loc 2 109 12 view .LVU605
+ 1847 01f0 12B2     		sxth	r2, r2
+ 1848              	.LVL164:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1849              		.loc 2 109 12 view .LVU606
+ 1850              	.LBE175:
+ 1851              	.LBE174:
+ 327:lvgl/src/lv_misc/lv_area.c ****             res->y = -lv_area_get_height(to_align);
+ 1852              		.loc 1 327 50 view .LVU607
+ 1853 01f2 04EBD474 		add	r4, r4, r4, lsr #31
+ 1854 01f6 02EBD272 		add	r2, r2, r2, lsr #31
+ 1855 01fa 5210     		asrs	r2, r2, #1
+ 1856 01fc C2EB6402 		rsb	r2, r2, r4, asr #1
+ 327:lvgl/src/lv_misc/lv_area.c ****             res->y = -lv_area_get_height(to_align);
+ 1857              		.loc 1 327 20 view .LVU608
+ 1858 0200 1A80     		strh	r2, [r3]	@ movhi
+ 328:lvgl/src/lv_misc/lv_area.c ****             break;
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 51
+
+
+ 1859              		.loc 1 328 13 is_stmt 1 view .LVU609
+ 1860              	.LVL165:
+ 1861              	.LBB176:
+ 1862              	.LBI176:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 1863              		.loc 2 117 26 view .LVU610
+ 1864              	.LBB177:
+ 1865              		.loc 2 119 5 view .LVU611
+ 1866              		.loc 2 119 31 is_stmt 0 view .LVU612
+ 1867 0202 CC88     		ldrh	r4, [r1, #6]
+ 1868              		.loc 2 119 44 view .LVU613
+ 1869 0204 4A88     		ldrh	r2, [r1, #2]
+ 1870              	.LVL166:
+ 1871              		.loc 2 119 44 view .LVU614
+ 1872              	.LBE177:
+ 1873              	.LBE176:
+ 328:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1874              		.loc 1 328 20 view .LVU615
+ 1875 0206 121B     		subs	r2, r2, r4
+ 1876 0208 013A     		subs	r2, r2, #1
+ 1877 020a 5A80     		strh	r2, [r3, #2]	@ movhi
+ 329:lvgl/src/lv_misc/lv_area.c **** 
+ 1878              		.loc 1 329 13 is_stmt 1 view .LVU616
+ 1879 020c 3AE7     		b	.L48
+ 1880              	.LVL167:
+ 1881              	.L59:
+ 332:lvgl/src/lv_misc/lv_area.c ****             res->y = -lv_area_get_height(to_align);
+ 1882              		.loc 1 332 13 view .LVU617
+ 1883              	.LBB178:
+ 1884              	.LBI178:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 1885              		.loc 2 107 26 view .LVU618
+ 1886              	.LBB179:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1887              		.loc 2 109 5 view .LVU619
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1888              		.loc 2 109 31 is_stmt 0 view .LVU620
+ 1889 020e 8288     		ldrh	r2, [r0, #4]
+ 1890              	.LVL168:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1891              		.loc 2 109 44 view .LVU621
+ 1892 0210 0488     		ldrh	r4, [r0]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1893              		.loc 2 109 36 view .LVU622
+ 1894 0212 121B     		subs	r2, r2, r4
+ 1895              	.LVL169:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1896              		.loc 2 109 36 view .LVU623
+ 1897              	.LBE179:
+ 1898              	.LBE178:
+ 1899              	.LBB180:
+ 1900              	.LBI180:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 1901              		.loc 2 107 26 is_stmt 1 view .LVU624
+ 1902              	.LBB181:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1903              		.loc 2 109 5 view .LVU625
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 52
+
+
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1904              		.loc 2 109 31 is_stmt 0 view .LVU626
+ 1905 0214 8D88     		ldrh	r5, [r1, #4]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1906              		.loc 2 109 44 view .LVU627
+ 1907 0216 0C88     		ldrh	r4, [r1]
+ 1908              	.LVL170:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1909              		.loc 2 109 44 view .LVU628
+ 1910              	.LBE181:
+ 1911              	.LBE180:
+ 332:lvgl/src/lv_misc/lv_area.c ****             res->y = -lv_area_get_height(to_align);
+ 1912              		.loc 1 332 46 view .LVU629
+ 1913 0218 641B     		subs	r4, r4, r5
+ 1914 021a 14FA82F2 		uxtah	r2, r4, r2
+ 332:lvgl/src/lv_misc/lv_area.c ****             res->y = -lv_area_get_height(to_align);
+ 1915              		.loc 1 332 20 view .LVU630
+ 1916 021e 1A80     		strh	r2, [r3]	@ movhi
+ 333:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1917              		.loc 1 333 13 is_stmt 1 view .LVU631
+ 1918              	.LVL171:
+ 1919              	.LBB182:
+ 1920              	.LBI182:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 1921              		.loc 2 117 26 view .LVU632
+ 1922              	.LBB183:
+ 1923              		.loc 2 119 5 view .LVU633
+ 1924              		.loc 2 119 31 is_stmt 0 view .LVU634
+ 1925 0220 CC88     		ldrh	r4, [r1, #6]
+ 1926              		.loc 2 119 44 view .LVU635
+ 1927 0222 4A88     		ldrh	r2, [r1, #2]
+ 1928              	.LVL172:
+ 1929              		.loc 2 119 44 view .LVU636
+ 1930              	.LBE183:
+ 1931              	.LBE182:
+ 333:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1932              		.loc 1 333 20 view .LVU637
+ 1933 0224 121B     		subs	r2, r2, r4
+ 1934 0226 013A     		subs	r2, r2, #1
+ 1935 0228 5A80     		strh	r2, [r3, #2]	@ movhi
+ 334:lvgl/src/lv_misc/lv_area.c **** 
+ 1936              		.loc 1 334 13 is_stmt 1 view .LVU638
+ 1937 022a 2BE7     		b	.L48
+ 1938              	.LVL173:
+ 1939              	.L58:
+ 337:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base);
+ 1940              		.loc 1 337 13 view .LVU639
+ 337:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base);
+ 1941              		.loc 1 337 20 is_stmt 0 view .LVU640
+ 1942 022c 0022     		movs	r2, #0
+ 1943              	.LVL174:
+ 337:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base);
+ 1944              		.loc 1 337 20 view .LVU641
+ 1945 022e 1A80     		strh	r2, [r3]	@ movhi
+ 338:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1946              		.loc 1 338 13 is_stmt 1 view .LVU642
+ 1947              	.LVL175:
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 53
+
+
+ 1948              	.LBB184:
+ 1949              	.LBI184:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 1950              		.loc 2 117 26 view .LVU643
+ 1951              	.LBB185:
+ 1952              		.loc 2 119 5 view .LVU644
+ 1953              		.loc 2 119 31 is_stmt 0 view .LVU645
+ 1954 0230 C288     		ldrh	r2, [r0, #6]
+ 1955              		.loc 2 119 44 view .LVU646
+ 1956 0232 4188     		ldrh	r1, [r0, #2]
+ 1957              	.LVL176:
+ 1958              		.loc 2 119 36 view .LVU647
+ 1959 0234 521A     		subs	r2, r2, r1
+ 1960 0236 92B2     		uxth	r2, r2
+ 1961              		.loc 2 119 49 view .LVU648
+ 1962 0238 0132     		adds	r2, r2, #1
+ 1963              	.LVL177:
+ 1964              		.loc 2 119 49 view .LVU649
+ 1965              	.LBE185:
+ 1966              	.LBE184:
+ 338:lvgl/src/lv_misc/lv_area.c ****             break;
+ 1967              		.loc 1 338 20 view .LVU650
+ 1968 023a 5A80     		strh	r2, [r3, #2]	@ movhi
+ 339:lvgl/src/lv_misc/lv_area.c **** 
+ 1969              		.loc 1 339 13 is_stmt 1 view .LVU651
+ 1970 023c 22E7     		b	.L48
+ 1971              	.LVL178:
+ 1972              	.L57:
+ 342:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base);
+ 1973              		.loc 1 342 13 view .LVU652
+ 1974              	.LBB186:
+ 1975              	.LBI186:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 1976              		.loc 2 107 26 view .LVU653
+ 1977              	.LBB187:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1978              		.loc 2 109 5 view .LVU654
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1979              		.loc 2 109 31 is_stmt 0 view .LVU655
+ 1980 023e 8488     		ldrh	r4, [r0, #4]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1981              		.loc 2 109 44 view .LVU656
+ 1982 0240 0288     		ldrh	r2, [r0]
+ 1983              	.LVL179:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1984              		.loc 2 109 36 view .LVU657
+ 1985 0242 A41A     		subs	r4, r4, r2
+ 1986 0244 A4B2     		uxth	r4, r4
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1987              		.loc 2 109 49 view .LVU658
+ 1988 0246 0134     		adds	r4, r4, #1
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1989              		.loc 2 109 12 view .LVU659
+ 1990 0248 24B2     		sxth	r4, r4
+ 1991              	.LVL180:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1992              		.loc 2 109 12 view .LVU660
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 54
+
+
+ 1993              	.LBE187:
+ 1994              	.LBE186:
+ 1995              	.LBB188:
+ 1996              	.LBI188:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 1997              		.loc 2 107 26 is_stmt 1 view .LVU661
+ 1998              	.LBB189:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 1999              		.loc 2 109 5 view .LVU662
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2000              		.loc 2 109 31 is_stmt 0 view .LVU663
+ 2001 024a 8A88     		ldrh	r2, [r1, #4]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2002              		.loc 2 109 44 view .LVU664
+ 2003 024c 0988     		ldrh	r1, [r1]
+ 2004              	.LVL181:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2005              		.loc 2 109 36 view .LVU665
+ 2006 024e 521A     		subs	r2, r2, r1
+ 2007 0250 92B2     		uxth	r2, r2
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2008              		.loc 2 109 49 view .LVU666
+ 2009 0252 0132     		adds	r2, r2, #1
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2010              		.loc 2 109 12 view .LVU667
+ 2011 0254 12B2     		sxth	r2, r2
+ 2012              	.LVL182:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2013              		.loc 2 109 12 view .LVU668
+ 2014              	.LBE189:
+ 2015              	.LBE188:
+ 342:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base);
+ 2016              		.loc 1 342 50 view .LVU669
+ 2017 0256 04EBD474 		add	r4, r4, r4, lsr #31
+ 2018 025a 02EBD272 		add	r2, r2, r2, lsr #31
+ 2019 025e 5210     		asrs	r2, r2, #1
+ 2020 0260 C2EB6402 		rsb	r2, r2, r4, asr #1
+ 342:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base);
+ 2021              		.loc 1 342 20 view .LVU670
+ 2022 0264 1A80     		strh	r2, [r3]	@ movhi
+ 343:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2023              		.loc 1 343 13 is_stmt 1 view .LVU671
+ 2024              	.LVL183:
+ 2025              	.LBB190:
+ 2026              	.LBI190:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 2027              		.loc 2 117 26 view .LVU672
+ 2028              	.LBB191:
+ 2029              		.loc 2 119 5 view .LVU673
+ 2030              		.loc 2 119 31 is_stmt 0 view .LVU674
+ 2031 0266 C288     		ldrh	r2, [r0, #6]
+ 2032              		.loc 2 119 44 view .LVU675
+ 2033 0268 4188     		ldrh	r1, [r0, #2]
+ 2034              		.loc 2 119 36 view .LVU676
+ 2035 026a 521A     		subs	r2, r2, r1
+ 2036 026c 92B2     		uxth	r2, r2
+ 2037              		.loc 2 119 49 view .LVU677
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 55
+
+
+ 2038 026e 0132     		adds	r2, r2, #1
+ 2039              	.LVL184:
+ 2040              		.loc 2 119 49 view .LVU678
+ 2041              	.LBE191:
+ 2042              	.LBE190:
+ 343:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2043              		.loc 1 343 20 view .LVU679
+ 2044 0270 5A80     		strh	r2, [r3, #2]	@ movhi
+ 344:lvgl/src/lv_misc/lv_area.c **** 
+ 2045              		.loc 1 344 13 is_stmt 1 view .LVU680
+ 2046 0272 07E7     		b	.L48
+ 2047              	.LVL185:
+ 2048              	.L56:
+ 347:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base);
+ 2049              		.loc 1 347 13 view .LVU681
+ 2050              	.LBB192:
+ 2051              	.LBI192:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 2052              		.loc 2 107 26 view .LVU682
+ 2053              	.LBB193:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2054              		.loc 2 109 5 view .LVU683
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2055              		.loc 2 109 31 is_stmt 0 view .LVU684
+ 2056 0274 8288     		ldrh	r2, [r0, #4]
+ 2057              	.LVL186:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2058              		.loc 2 109 44 view .LVU685
+ 2059 0276 0488     		ldrh	r4, [r0]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2060              		.loc 2 109 36 view .LVU686
+ 2061 0278 121B     		subs	r2, r2, r4
+ 2062              	.LVL187:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2063              		.loc 2 109 36 view .LVU687
+ 2064              	.LBE193:
+ 2065              	.LBE192:
+ 2066              	.LBB194:
+ 2067              	.LBI194:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 2068              		.loc 2 107 26 is_stmt 1 view .LVU688
+ 2069              	.LBB195:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2070              		.loc 2 109 5 view .LVU689
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2071              		.loc 2 109 31 is_stmt 0 view .LVU690
+ 2072 027a 8C88     		ldrh	r4, [r1, #4]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2073              		.loc 2 109 44 view .LVU691
+ 2074 027c 0988     		ldrh	r1, [r1]
+ 2075              	.LVL188:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2076              		.loc 2 109 44 view .LVU692
+ 2077              	.LBE195:
+ 2078              	.LBE194:
+ 347:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base);
+ 2079              		.loc 1 347 46 view .LVU693
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 56
+
+
+ 2080 027e 091B     		subs	r1, r1, r4
+ 2081 0280 11FA82F2 		uxtah	r2, r1, r2
+ 347:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base);
+ 2082              		.loc 1 347 20 view .LVU694
+ 2083 0284 1A80     		strh	r2, [r3]	@ movhi
+ 348:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2084              		.loc 1 348 13 is_stmt 1 view .LVU695
+ 2085              	.LVL189:
+ 2086              	.LBB196:
+ 2087              	.LBI196:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 2088              		.loc 2 117 26 view .LVU696
+ 2089              	.LBB197:
+ 2090              		.loc 2 119 5 view .LVU697
+ 2091              		.loc 2 119 31 is_stmt 0 view .LVU698
+ 2092 0286 C288     		ldrh	r2, [r0, #6]
+ 2093              		.loc 2 119 44 view .LVU699
+ 2094 0288 4188     		ldrh	r1, [r0, #2]
+ 2095              		.loc 2 119 36 view .LVU700
+ 2096 028a 521A     		subs	r2, r2, r1
+ 2097 028c 92B2     		uxth	r2, r2
+ 2098              		.loc 2 119 49 view .LVU701
+ 2099 028e 0132     		adds	r2, r2, #1
+ 2100              	.LVL190:
+ 2101              		.loc 2 119 49 view .LVU702
+ 2102              	.LBE197:
+ 2103              	.LBE196:
+ 348:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2104              		.loc 1 348 20 view .LVU703
+ 2105 0290 5A80     		strh	r2, [r3, #2]	@ movhi
+ 349:lvgl/src/lv_misc/lv_area.c **** 
+ 2106              		.loc 1 349 13 is_stmt 1 view .LVU704
+ 2107 0292 F7E6     		b	.L48
+ 2108              	.LVL191:
+ 2109              	.L55:
+ 352:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 2110              		.loc 1 352 13 view .LVU705
+ 2111              	.LBB198:
+ 2112              	.LBI198:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 2113              		.loc 2 107 26 view .LVU706
+ 2114              	.LBB199:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2115              		.loc 2 109 5 view .LVU707
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2116              		.loc 2 109 31 is_stmt 0 view .LVU708
+ 2117 0294 8C88     		ldrh	r4, [r1, #4]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2118              		.loc 2 109 44 view .LVU709
+ 2119 0296 0A88     		ldrh	r2, [r1]
+ 2120              	.LVL192:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2121              		.loc 2 109 44 view .LVU710
+ 2122              	.LBE199:
+ 2123              	.LBE198:
+ 352:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 2124              		.loc 1 352 20 view .LVU711
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 57
+
+
+ 2125 0298 121B     		subs	r2, r2, r4
+ 2126 029a 013A     		subs	r2, r2, #1
+ 2127 029c 1A80     		strh	r2, [r3]	@ movhi
+ 353:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2128              		.loc 1 353 13 is_stmt 1 view .LVU712
+ 353:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2129              		.loc 1 353 20 is_stmt 0 view .LVU713
+ 2130 029e 0022     		movs	r2, #0
+ 2131 02a0 5A80     		strh	r2, [r3, #2]	@ movhi
+ 354:lvgl/src/lv_misc/lv_area.c **** 
+ 2132              		.loc 1 354 13 is_stmt 1 view .LVU714
+ 2133 02a2 EFE6     		b	.L48
+ 2134              	.LVL193:
+ 2135              	.L54:
+ 357:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ 2136              		.loc 1 357 13 view .LVU715
+ 2137              	.LBB200:
+ 2138              	.LBI200:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 2139              		.loc 2 107 26 view .LVU716
+ 2140              	.LBB201:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2141              		.loc 2 109 5 view .LVU717
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2142              		.loc 2 109 31 is_stmt 0 view .LVU718
+ 2143 02a4 8C88     		ldrh	r4, [r1, #4]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2144              		.loc 2 109 44 view .LVU719
+ 2145 02a6 0A88     		ldrh	r2, [r1]
+ 2146              	.LVL194:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2147              		.loc 2 109 44 view .LVU720
+ 2148              	.LBE201:
+ 2149              	.LBE200:
+ 357:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ 2150              		.loc 1 357 20 view .LVU721
+ 2151 02a8 121B     		subs	r2, r2, r4
+ 2152 02aa 013A     		subs	r2, r2, #1
+ 2153 02ac 1A80     		strh	r2, [r3]	@ movhi
+ 358:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2154              		.loc 1 358 13 is_stmt 1 view .LVU722
+ 2155              	.LVL195:
+ 2156              	.LBB202:
+ 2157              	.LBI202:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 2158              		.loc 2 117 26 view .LVU723
+ 2159              	.LBB203:
+ 2160              		.loc 2 119 5 view .LVU724
+ 2161              		.loc 2 119 31 is_stmt 0 view .LVU725
+ 2162 02ae C488     		ldrh	r4, [r0, #6]
+ 2163              		.loc 2 119 44 view .LVU726
+ 2164 02b0 4288     		ldrh	r2, [r0, #2]
+ 2165              		.loc 2 119 36 view .LVU727
+ 2166 02b2 A41A     		subs	r4, r4, r2
+ 2167 02b4 A4B2     		uxth	r4, r4
+ 2168              		.loc 2 119 49 view .LVU728
+ 2169 02b6 0134     		adds	r4, r4, #1
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 58
+
+
+ 2170              		.loc 2 119 12 view .LVU729
+ 2171 02b8 24B2     		sxth	r4, r4
+ 2172              	.LVL196:
+ 2173              		.loc 2 119 12 view .LVU730
+ 2174              	.LBE203:
+ 2175              	.LBE202:
+ 2176              	.LBB204:
+ 2177              	.LBI204:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 2178              		.loc 2 117 26 is_stmt 1 view .LVU731
+ 2179              	.LBB205:
+ 2180              		.loc 2 119 5 view .LVU732
+ 2181              		.loc 2 119 31 is_stmt 0 view .LVU733
+ 2182 02ba CA88     		ldrh	r2, [r1, #6]
+ 2183              		.loc 2 119 44 view .LVU734
+ 2184 02bc 4988     		ldrh	r1, [r1, #2]
+ 2185              	.LVL197:
+ 2186              		.loc 2 119 36 view .LVU735
+ 2187 02be 521A     		subs	r2, r2, r1
+ 2188 02c0 92B2     		uxth	r2, r2
+ 2189              		.loc 2 119 49 view .LVU736
+ 2190 02c2 0132     		adds	r2, r2, #1
+ 2191              		.loc 2 119 12 view .LVU737
+ 2192 02c4 12B2     		sxth	r2, r2
+ 2193              	.LVL198:
+ 2194              		.loc 2 119 12 view .LVU738
+ 2195              	.LBE205:
+ 2196              	.LBE204:
+ 358:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2197              		.loc 1 358 51 view .LVU739
+ 2198 02c6 04EBD474 		add	r4, r4, r4, lsr #31
+ 2199 02ca 02EBD272 		add	r2, r2, r2, lsr #31
+ 2200 02ce 5210     		asrs	r2, r2, #1
+ 2201 02d0 C2EB6402 		rsb	r2, r2, r4, asr #1
+ 358:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2202              		.loc 1 358 20 view .LVU740
+ 2203 02d4 5A80     		strh	r2, [r3, #2]	@ movhi
+ 359:lvgl/src/lv_misc/lv_area.c **** 
+ 2204              		.loc 1 359 13 is_stmt 1 view .LVU741
+ 2205 02d6 D5E6     		b	.L48
+ 2206              	.LVL199:
+ 2207              	.L53:
+ 362:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 2208              		.loc 1 362 13 view .LVU742
+ 2209              	.LBB206:
+ 2210              	.LBI206:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 2211              		.loc 2 107 26 view .LVU743
+ 2212              	.LBB207:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2213              		.loc 2 109 5 view .LVU744
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2214              		.loc 2 109 31 is_stmt 0 view .LVU745
+ 2215 02d8 8C88     		ldrh	r4, [r1, #4]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2216              		.loc 2 109 44 view .LVU746
+ 2217 02da 0A88     		ldrh	r2, [r1]
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 59
+
+
+ 2218              	.LVL200:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2219              		.loc 2 109 44 view .LVU747
+ 2220              	.LBE207:
+ 2221              	.LBE206:
+ 362:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 2222              		.loc 1 362 20 view .LVU748
+ 2223 02dc 121B     		subs	r2, r2, r4
+ 2224 02de 013A     		subs	r2, r2, #1
+ 2225 02e0 1A80     		strh	r2, [r3]	@ movhi
+ 363:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2226              		.loc 1 363 13 is_stmt 1 view .LVU749
+ 2227              	.LVL201:
+ 2228              	.LBB208:
+ 2229              	.LBI208:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 2230              		.loc 2 117 26 view .LVU750
+ 2231              	.LBB209:
+ 2232              		.loc 2 119 5 view .LVU751
+ 2233              		.loc 2 119 31 is_stmt 0 view .LVU752
+ 2234 02e2 C288     		ldrh	r2, [r0, #6]
+ 2235              		.loc 2 119 44 view .LVU753
+ 2236 02e4 4488     		ldrh	r4, [r0, #2]
+ 2237              		.loc 2 119 36 view .LVU754
+ 2238 02e6 121B     		subs	r2, r2, r4
+ 2239              	.LVL202:
+ 2240              		.loc 2 119 36 view .LVU755
+ 2241              	.LBE209:
+ 2242              	.LBE208:
+ 2243              	.LBB210:
+ 2244              	.LBI210:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 2245              		.loc 2 117 26 is_stmt 1 view .LVU756
+ 2246              	.LBB211:
+ 2247              		.loc 2 119 5 view .LVU757
+ 2248              		.loc 2 119 31 is_stmt 0 view .LVU758
+ 2249 02e8 CC88     		ldrh	r4, [r1, #6]
+ 2250              		.loc 2 119 44 view .LVU759
+ 2251 02ea 4988     		ldrh	r1, [r1, #2]
+ 2252              	.LVL203:
+ 2253              		.loc 2 119 44 view .LVU760
+ 2254              	.LBE211:
+ 2255              	.LBE210:
+ 363:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2256              		.loc 1 363 47 view .LVU761
+ 2257 02ec 091B     		subs	r1, r1, r4
+ 2258 02ee 11FA82F2 		uxtah	r2, r1, r2
+ 363:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2259              		.loc 1 363 20 view .LVU762
+ 2260 02f2 5A80     		strh	r2, [r3, #2]	@ movhi
+ 364:lvgl/src/lv_misc/lv_area.c **** 
+ 2261              		.loc 1 364 13 is_stmt 1 view .LVU763
+ 2262 02f4 C6E6     		b	.L48
+ 2263              	.LVL204:
+ 2264              	.L52:
+ 367:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 2265              		.loc 1 367 13 view .LVU764
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 60
+
+
+ 2266              	.LBB212:
+ 2267              	.LBI212:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 2268              		.loc 2 107 26 view .LVU765
+ 2269              	.LBB213:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2270              		.loc 2 109 5 view .LVU766
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2271              		.loc 2 109 31 is_stmt 0 view .LVU767
+ 2272 02f6 8288     		ldrh	r2, [r0, #4]
+ 2273              	.LVL205:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2274              		.loc 2 109 44 view .LVU768
+ 2275 02f8 0188     		ldrh	r1, [r0]
+ 2276              	.LVL206:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2277              		.loc 2 109 36 view .LVU769
+ 2278 02fa 521A     		subs	r2, r2, r1
+ 2279 02fc 92B2     		uxth	r2, r2
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2280              		.loc 2 109 49 view .LVU770
+ 2281 02fe 0132     		adds	r2, r2, #1
+ 2282              	.LVL207:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2283              		.loc 2 109 49 view .LVU771
+ 2284              	.LBE213:
+ 2285              	.LBE212:
+ 367:lvgl/src/lv_misc/lv_area.c ****             res->y = 0;
+ 2286              		.loc 1 367 20 view .LVU772
+ 2287 0300 1A80     		strh	r2, [r3]	@ movhi
+ 368:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2288              		.loc 1 368 13 is_stmt 1 view .LVU773
+ 368:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2289              		.loc 1 368 20 is_stmt 0 view .LVU774
+ 2290 0302 0022     		movs	r2, #0
+ 2291 0304 5A80     		strh	r2, [r3, #2]	@ movhi
+ 369:lvgl/src/lv_misc/lv_area.c **** 
+ 2292              		.loc 1 369 13 is_stmt 1 view .LVU775
+ 2293 0306 BDE6     		b	.L48
+ 2294              	.LVL208:
+ 2295              	.L51:
+ 372:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ 2296              		.loc 1 372 13 view .LVU776
+ 2297              	.LBB214:
+ 2298              	.LBI214:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 2299              		.loc 2 107 26 view .LVU777
+ 2300              	.LBB215:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2301              		.loc 2 109 5 view .LVU778
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2302              		.loc 2 109 31 is_stmt 0 view .LVU779
+ 2303 0308 8288     		ldrh	r2, [r0, #4]
+ 2304              	.LVL209:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2305              		.loc 2 109 44 view .LVU780
+ 2306 030a 0488     		ldrh	r4, [r0]
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 61
+
+
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2307              		.loc 2 109 36 view .LVU781
+ 2308 030c 121B     		subs	r2, r2, r4
+ 2309 030e 92B2     		uxth	r2, r2
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2310              		.loc 2 109 49 view .LVU782
+ 2311 0310 0132     		adds	r2, r2, #1
+ 2312              	.LVL210:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2313              		.loc 2 109 49 view .LVU783
+ 2314              	.LBE215:
+ 2315              	.LBE214:
+ 372:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) / 2 - lv_area_get_height(to_align) / 2;
+ 2316              		.loc 1 372 20 view .LVU784
+ 2317 0312 1A80     		strh	r2, [r3]	@ movhi
+ 373:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2318              		.loc 1 373 13 is_stmt 1 view .LVU785
+ 2319              	.LVL211:
+ 2320              	.LBB216:
+ 2321              	.LBI216:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 2322              		.loc 2 117 26 view .LVU786
+ 2323              	.LBB217:
+ 2324              		.loc 2 119 5 view .LVU787
+ 2325              		.loc 2 119 31 is_stmt 0 view .LVU788
+ 2326 0314 C488     		ldrh	r4, [r0, #6]
+ 2327              		.loc 2 119 44 view .LVU789
+ 2328 0316 4288     		ldrh	r2, [r0, #2]
+ 2329              		.loc 2 119 36 view .LVU790
+ 2330 0318 A41A     		subs	r4, r4, r2
+ 2331 031a A4B2     		uxth	r4, r4
+ 2332              		.loc 2 119 49 view .LVU791
+ 2333 031c 0134     		adds	r4, r4, #1
+ 2334              		.loc 2 119 12 view .LVU792
+ 2335 031e 24B2     		sxth	r4, r4
+ 2336              	.LVL212:
+ 2337              		.loc 2 119 12 view .LVU793
+ 2338              	.LBE217:
+ 2339              	.LBE216:
+ 2340              	.LBB218:
+ 2341              	.LBI218:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 2342              		.loc 2 117 26 is_stmt 1 view .LVU794
+ 2343              	.LBB219:
+ 2344              		.loc 2 119 5 view .LVU795
+ 2345              		.loc 2 119 31 is_stmt 0 view .LVU796
+ 2346 0320 CA88     		ldrh	r2, [r1, #6]
+ 2347              		.loc 2 119 44 view .LVU797
+ 2348 0322 4988     		ldrh	r1, [r1, #2]
+ 2349              	.LVL213:
+ 2350              		.loc 2 119 36 view .LVU798
+ 2351 0324 521A     		subs	r2, r2, r1
+ 2352 0326 92B2     		uxth	r2, r2
+ 2353              		.loc 2 119 49 view .LVU799
+ 2354 0328 0132     		adds	r2, r2, #1
+ 2355              		.loc 2 119 12 view .LVU800
+ 2356 032a 12B2     		sxth	r2, r2
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 62
+
+
+ 2357              	.LVL214:
+ 2358              		.loc 2 119 12 view .LVU801
+ 2359              	.LBE219:
+ 2360              	.LBE218:
+ 373:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2361              		.loc 1 373 51 view .LVU802
+ 2362 032c 04EBD474 		add	r4, r4, r4, lsr #31
+ 2363 0330 02EBD272 		add	r2, r2, r2, lsr #31
+ 2364 0334 5210     		asrs	r2, r2, #1
+ 2365 0336 C2EB6402 		rsb	r2, r2, r4, asr #1
+ 373:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2366              		.loc 1 373 20 view .LVU803
+ 2367 033a 5A80     		strh	r2, [r3, #2]	@ movhi
+ 374:lvgl/src/lv_misc/lv_area.c **** 
+ 2368              		.loc 1 374 13 is_stmt 1 view .LVU804
+ 2369 033c A2E6     		b	.L48
+ 2370              	.LVL215:
+ 2371              	.L49:
+ 377:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 2372              		.loc 1 377 13 view .LVU805
+ 2373              	.LBB220:
+ 2374              	.LBI220:
+ 107:lvgl/src/lv_misc/lv_area.h **** {
+ 2375              		.loc 2 107 26 view .LVU806
+ 2376              	.LBB221:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2377              		.loc 2 109 5 view .LVU807
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2378              		.loc 2 109 31 is_stmt 0 view .LVU808
+ 2379 033e 8288     		ldrh	r2, [r0, #4]
+ 2380              	.LVL216:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2381              		.loc 2 109 44 view .LVU809
+ 2382 0340 0488     		ldrh	r4, [r0]
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2383              		.loc 2 109 36 view .LVU810
+ 2384 0342 121B     		subs	r2, r2, r4
+ 2385 0344 92B2     		uxth	r2, r2
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2386              		.loc 2 109 49 view .LVU811
+ 2387 0346 0132     		adds	r2, r2, #1
+ 2388              	.LVL217:
+ 109:lvgl/src/lv_misc/lv_area.h **** }
+ 2389              		.loc 2 109 49 view .LVU812
+ 2390              	.LBE221:
+ 2391              	.LBE220:
+ 377:lvgl/src/lv_misc/lv_area.c ****             res->y = lv_area_get_height(base) - lv_area_get_height(to_align);
+ 2392              		.loc 1 377 20 view .LVU813
+ 2393 0348 1A80     		strh	r2, [r3]	@ movhi
+ 378:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2394              		.loc 1 378 13 is_stmt 1 view .LVU814
+ 2395              	.LVL218:
+ 2396              	.LBB222:
+ 2397              	.LBI222:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 2398              		.loc 2 117 26 view .LVU815
+ 2399              	.LBB223:
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 63
+
+
+ 2400              		.loc 2 119 5 view .LVU816
+ 2401              		.loc 2 119 31 is_stmt 0 view .LVU817
+ 2402 034a C288     		ldrh	r2, [r0, #6]
+ 2403              		.loc 2 119 44 view .LVU818
+ 2404 034c 4488     		ldrh	r4, [r0, #2]
+ 2405              		.loc 2 119 36 view .LVU819
+ 2406 034e 121B     		subs	r2, r2, r4
+ 2407              	.LVL219:
+ 2408              		.loc 2 119 36 view .LVU820
+ 2409              	.LBE223:
+ 2410              	.LBE222:
+ 2411              	.LBB224:
+ 2412              	.LBI224:
+ 117:lvgl/src/lv_misc/lv_area.h **** {
+ 2413              		.loc 2 117 26 is_stmt 1 view .LVU821
+ 2414              	.LBB225:
+ 2415              		.loc 2 119 5 view .LVU822
+ 2416              		.loc 2 119 31 is_stmt 0 view .LVU823
+ 2417 0350 CC88     		ldrh	r4, [r1, #6]
+ 2418              		.loc 2 119 44 view .LVU824
+ 2419 0352 4988     		ldrh	r1, [r1, #2]
+ 2420              	.LVL220:
+ 2421              		.loc 2 119 44 view .LVU825
+ 2422              	.LBE225:
+ 2423              	.LBE224:
+ 378:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2424              		.loc 1 378 47 view .LVU826
+ 2425 0354 091B     		subs	r1, r1, r4
+ 2426 0356 11FA82F2 		uxtah	r2, r1, r2
+ 378:lvgl/src/lv_misc/lv_area.c ****             break;
+ 2427              		.loc 1 378 20 view .LVU827
+ 2428 035a 5A80     		strh	r2, [r3, #2]	@ movhi
+ 379:lvgl/src/lv_misc/lv_area.c ****     }
+ 2429              		.loc 1 379 13 is_stmt 1 view .LVU828
+ 2430 035c 92E6     		b	.L48
+ 2431              		.cfi_endproc
+ 2432              	.LFE144:
+ 2434              		.text
+ 2435              	.Letext0:
+ 2436              		.file 3 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 2437              		.file 4 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 2438              		.file 5 "Drivers/CMSIS/Include/core_cm4.h"
+ 2439              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 2440              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 2441              		.file 8 "lvgl/lv_conf.h"
+ 2442              		.file 9 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 2443              		.file 10 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 2444              		.file 11 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-non
+ 2445              		.file 12 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 2446              		.file 13 "lvgl/src/lv_misc/lv_mem.h"
+ARM GAS  D:\Temp\cc9pVWhO.s 			page 64
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_area.c
+  D:\Temp\cc9pVWhO.s:18     .text.lv_point_within_circle:0000000000000000 $t
+  D:\Temp\cc9pVWhO.s:25     .text.lv_point_within_circle:0000000000000000 lv_point_within_circle
+  D:\Temp\cc9pVWhO.s:119    .text.lv_area_set:0000000000000000 $t
+  D:\Temp\cc9pVWhO.s:126    .text.lv_area_set:0000000000000000 lv_area_set
+  D:\Temp\cc9pVWhO.s:155    .text.lv_area_set_width:0000000000000000 $t
+  D:\Temp\cc9pVWhO.s:162    .text.lv_area_set_width:0000000000000000 lv_area_set_width
+  D:\Temp\cc9pVWhO.s:188    .text.lv_area_set_height:0000000000000000 $t
+  D:\Temp\cc9pVWhO.s:195    .text.lv_area_set_height:0000000000000000 lv_area_set_height
+  D:\Temp\cc9pVWhO.s:221    .text._lv_area_set_pos:0000000000000000 $t
+  D:\Temp\cc9pVWhO.s:228    .text._lv_area_set_pos:0000000000000000 _lv_area_set_pos
+  D:\Temp\cc9pVWhO.s:310    .text.lv_area_get_size:0000000000000000 $t
+  D:\Temp\cc9pVWhO.s:317    .text.lv_area_get_size:0000000000000000 lv_area_get_size
+  D:\Temp\cc9pVWhO.s:353    .text._lv_area_intersect:0000000000000000 $t
+  D:\Temp\cc9pVWhO.s:360    .text._lv_area_intersect:0000000000000000 _lv_area_intersect
+  D:\Temp\cc9pVWhO.s:458    .text._lv_area_join:0000000000000000 $t
+  D:\Temp\cc9pVWhO.s:465    .text._lv_area_join:0000000000000000 _lv_area_join
+  D:\Temp\cc9pVWhO.s:526    .text._lv_area_is_point_on:0000000000000000 $t
+  D:\Temp\cc9pVWhO.s:533    .text._lv_area_is_point_on:0000000000000000 _lv_area_is_point_on
+  D:\Temp\cc9pVWhO.s:882    .text._lv_area_is_on:0000000000000000 $t
+  D:\Temp\cc9pVWhO.s:889    .text._lv_area_is_on:0000000000000000 _lv_area_is_on
+  D:\Temp\cc9pVWhO.s:963    .text._lv_area_is_in:0000000000000000 $t
+  D:\Temp\cc9pVWhO.s:970    .text._lv_area_is_in:0000000000000000 _lv_area_is_in
+  D:\Temp\cc9pVWhO.s:1134   .text._lv_area_align:0000000000000000 $t
+  D:\Temp\cc9pVWhO.s:1141   .text._lv_area_align:0000000000000000 _lv_area_align
+  D:\Temp\cc9pVWhO.s:1160   .text._lv_area_align:000000000000000a $d
+  D:\Temp\cc9pVWhO.s:1181   .text._lv_area_align:0000000000000034 $t
+
+NO UNDEFINED SYMBOLS

@@ -1,0 +1,1082 @@
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_draw_triangle.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.lv_draw_polygon,"ax",%progbits
+  18              		.align	1
+  19              		.global	lv_draw_polygon
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	lv_draw_polygon:
+  27              	.LVL0:
+  28              	.LFB167:
+  29              		.file 1 "lvgl/src/lv_draw/lv_draw_triangle.c"
+   1:lvgl/src/lv_draw/lv_draw_triangle.c **** /**
+   2:lvgl/src/lv_draw/lv_draw_triangle.c ****  * @file lv_draw_triangle.c
+   3:lvgl/src/lv_draw/lv_draw_triangle.c ****  *
+   4:lvgl/src/lv_draw/lv_draw_triangle.c ****  */
+   5:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+   6:lvgl/src/lv_draw/lv_draw_triangle.c **** /*********************
+   7:lvgl/src/lv_draw/lv_draw_triangle.c ****  *      INCLUDES
+   8:lvgl/src/lv_draw/lv_draw_triangle.c ****  *********************/
+   9:lvgl/src/lv_draw/lv_draw_triangle.c **** #include "lv_draw_triangle.h"
+  10:lvgl/src/lv_draw/lv_draw_triangle.c **** #include "../lv_misc/lv_math.h"
+  11:lvgl/src/lv_draw/lv_draw_triangle.c **** #include "../lv_misc/lv_mem.h"
+  12:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+  13:lvgl/src/lv_draw/lv_draw_triangle.c **** /*********************
+  14:lvgl/src/lv_draw/lv_draw_triangle.c ****  *      DEFINES
+  15:lvgl/src/lv_draw/lv_draw_triangle.c ****  *********************/
+  16:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+  17:lvgl/src/lv_draw/lv_draw_triangle.c **** /**********************
+  18:lvgl/src/lv_draw/lv_draw_triangle.c ****  *      TYPEDEFS
+  19:lvgl/src/lv_draw/lv_draw_triangle.c ****  **********************/
+  20:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+  21:lvgl/src/lv_draw/lv_draw_triangle.c **** /**********************
+  22:lvgl/src/lv_draw/lv_draw_triangle.c ****  *  STATIC PROTOTYPES
+  23:lvgl/src/lv_draw/lv_draw_triangle.c ****  **********************/
+  24:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+  25:lvgl/src/lv_draw/lv_draw_triangle.c **** /**********************
+  26:lvgl/src/lv_draw/lv_draw_triangle.c ****  *  STATIC VARIABLES
+  27:lvgl/src/lv_draw/lv_draw_triangle.c ****  **********************/
+  28:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+  29:lvgl/src/lv_draw/lv_draw_triangle.c **** /**********************
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 2
+
+
+  30:lvgl/src/lv_draw/lv_draw_triangle.c ****  *      MACROS
+  31:lvgl/src/lv_draw/lv_draw_triangle.c ****  **********************/
+  32:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+  33:lvgl/src/lv_draw/lv_draw_triangle.c **** /**********************
+  34:lvgl/src/lv_draw/lv_draw_triangle.c ****  *   GLOBAL FUNCTIONS
+  35:lvgl/src/lv_draw/lv_draw_triangle.c ****  **********************/
+  36:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+  37:lvgl/src/lv_draw/lv_draw_triangle.c **** /**
+  38:lvgl/src/lv_draw/lv_draw_triangle.c ****  * Draw a triangle
+  39:lvgl/src/lv_draw/lv_draw_triangle.c ****  * @param points pointer to an array with 3 points
+  40:lvgl/src/lv_draw/lv_draw_triangle.c ****  * @param clip_area the triangle will be drawn only in this area
+  41:lvgl/src/lv_draw/lv_draw_triangle.c ****  * @param draw_dsc pointer to an initialized `lv_draw_rect_dsc_t` variable
+  42:lvgl/src/lv_draw/lv_draw_triangle.c ****  */
+  43:lvgl/src/lv_draw/lv_draw_triangle.c **** void lv_draw_triangle(const lv_point_t points[], const lv_area_t * clip_area, const lv_draw_rect_ds
+  44:lvgl/src/lv_draw/lv_draw_triangle.c **** {
+  45:lvgl/src/lv_draw/lv_draw_triangle.c ****     lv_draw_polygon(points, 3, clip_area, draw_dsc);
+  46:lvgl/src/lv_draw/lv_draw_triangle.c **** }
+  47:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+  48:lvgl/src/lv_draw/lv_draw_triangle.c **** /**
+  49:lvgl/src/lv_draw/lv_draw_triangle.c ****  * Draw a polygon. Only convex polygons are supported
+  50:lvgl/src/lv_draw/lv_draw_triangle.c ****  * @param points an array of points
+  51:lvgl/src/lv_draw/lv_draw_triangle.c ****  * @param point_cnt number of points
+  52:lvgl/src/lv_draw/lv_draw_triangle.c ****  * @param clip_area polygon will be drawn only in this area
+  53:lvgl/src/lv_draw/lv_draw_triangle.c ****  * @param draw_dsc pointer to an initialized `lv_draw_rect_dsc_t` variable
+  54:lvgl/src/lv_draw/lv_draw_triangle.c ****  */
+  55:lvgl/src/lv_draw/lv_draw_triangle.c **** void lv_draw_polygon(const lv_point_t points[], uint16_t point_cnt, const lv_area_t * clip_area,
+  56:lvgl/src/lv_draw/lv_draw_triangle.c ****                      const lv_draw_rect_dsc_t * draw_dsc)
+  57:lvgl/src/lv_draw/lv_draw_triangle.c **** {
+  30              		.loc 1 57 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 32
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  58:lvgl/src/lv_draw/lv_draw_triangle.c ****     if(point_cnt < 3) return;
+  34              		.loc 1 58 5 view .LVU1
+  35              		.loc 1 58 7 is_stmt 0 view .LVU2
+  36 0000 0229     		cmp	r1, #2
+  37 0002 40F24681 		bls	.L34
+  59:lvgl/src/lv_draw/lv_draw_triangle.c ****     if(points == NULL) return;
+  38              		.loc 1 59 5 is_stmt 1 view .LVU3
+  39              		.loc 1 59 7 is_stmt 0 view .LVU4
+  40 0006 0028     		cmp	r0, #0
+  41 0008 00F04381 		beq	.L34
+  57:lvgl/src/lv_draw/lv_draw_triangle.c ****     if(point_cnt < 3) return;
+  42              		.loc 1 57 1 view .LVU5
+  43 000c 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+  44              	.LCFI0:
+  45              		.cfi_def_cfa_offset 36
+  46              		.cfi_offset 4, -36
+  47              		.cfi_offset 5, -32
+  48              		.cfi_offset 6, -28
+  49              		.cfi_offset 7, -24
+  50              		.cfi_offset 8, -20
+  51              		.cfi_offset 9, -16
+  52              		.cfi_offset 10, -12
+  53              		.cfi_offset 11, -8
+  54              		.cfi_offset 14, -4
+  55 0010 8BB0     		sub	sp, sp, #44
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 3
+
+
+  56              	.LCFI1:
+  57              		.cfi_def_cfa_offset 80
+  58 0012 0593     		str	r3, [sp, #20]
+  59 0014 0492     		str	r2, [sp, #16]
+  60 0016 0F46     		mov	r7, r1
+  61 0018 0646     		mov	r6, r0
+  60:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+  61:lvgl/src/lv_draw/lv_draw_triangle.c ****     /*Join adjacent points if they are on the same coordinate*/
+  62:lvgl/src/lv_draw/lv_draw_triangle.c ****     lv_point_t * p = _lv_mem_buf_get(point_cnt * sizeof(lv_point_t));
+  62              		.loc 1 62 5 is_stmt 1 view .LVU6
+  63              		.loc 1 62 22 is_stmt 0 view .LVU7
+  64 001a 8800     		lsls	r0, r1, #2
+  65              	.LVL1:
+  66              		.loc 1 62 22 view .LVU8
+  67 001c FFF7FEFF 		bl	_lv_mem_buf_get
+  68              	.LVL2:
+  63:lvgl/src/lv_draw/lv_draw_triangle.c ****     if(p == NULL) return;
+  69              		.loc 1 63 5 is_stmt 1 view .LVU9
+  70              		.loc 1 63 7 is_stmt 0 view .LVU10
+  71 0020 0446     		mov	r4, r0
+  72 0022 0028     		cmp	r0, #0
+  73 0024 00F03281 		beq	.L1
+  64:lvgl/src/lv_draw/lv_draw_triangle.c ****     uint16_t i;
+  74              		.loc 1 64 5 is_stmt 1 view .LVU11
+  65:lvgl/src/lv_draw/lv_draw_triangle.c ****     uint16_t pcnt = 0;
+  75              		.loc 1 65 5 view .LVU12
+  76              	.LVL3:
+  66:lvgl/src/lv_draw/lv_draw_triangle.c ****     p[0] = points[0];
+  77              		.loc 1 66 5 view .LVU13
+  78              		.loc 1 66 10 is_stmt 0 view .LVU14
+  79 0028 3368     		ldr	r3, [r6]	@ unaligned
+  80 002a 0360     		str	r3, [r0]	@ unaligned
+  67:lvgl/src/lv_draw/lv_draw_triangle.c ****     for(i = 0; i < point_cnt - 1; i++) {
+  81              		.loc 1 67 5 is_stmt 1 view .LVU15
+  82              	.LVL4:
+  65:lvgl/src/lv_draw/lv_draw_triangle.c ****     uint16_t pcnt = 0;
+  83              		.loc 1 65 14 is_stmt 0 view .LVU16
+  84 002c 0025     		movs	r5, #0
+  85              		.loc 1 67 11 view .LVU17
+  86 002e 2B46     		mov	r3, r5
+  87              		.loc 1 67 5 view .LVU18
+  88 0030 06E0     		b	.L3
+  89              	.LVL5:
+  90              	.L4:
+  68:lvgl/src/lv_draw/lv_draw_triangle.c ****         if(points[i].x != points[i + 1].x || points[i].y != points[i + 1].y) {
+  69:lvgl/src/lv_draw/lv_draw_triangle.c ****             p[pcnt] = points[i];
+  91              		.loc 1 69 13 is_stmt 1 view .LVU19
+  92              		.loc 1 69 21 is_stmt 0 view .LVU20
+  93 0032 0A68     		ldr	r2, [r1]	@ unaligned
+  94 0034 44F82520 		str	r2, [r4, r5, lsl #2]	@ unaligned
+  70:lvgl/src/lv_draw/lv_draw_triangle.c ****             pcnt++;
+  95              		.loc 1 70 13 is_stmt 1 view .LVU21
+  96              		.loc 1 70 17 is_stmt 0 view .LVU22
+  97 0038 0135     		adds	r5, r5, #1
+  98              	.LVL6:
+  99              		.loc 1 70 17 view .LVU23
+ 100 003a ADB2     		uxth	r5, r5
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 4
+
+
+ 101              	.LVL7:
+ 102              	.L5:
+  67:lvgl/src/lv_draw/lv_draw_triangle.c ****     for(i = 0; i < point_cnt - 1; i++) {
+ 103              		.loc 1 67 36 discriminator 2 view .LVU24
+ 104 003c 0133     		adds	r3, r3, #1
+ 105              	.LVL8:
+  67:lvgl/src/lv_draw/lv_draw_triangle.c ****     for(i = 0; i < point_cnt - 1; i++) {
+ 106              		.loc 1 67 36 discriminator 2 view .LVU25
+ 107 003e 9BB2     		uxth	r3, r3
+ 108              	.LVL9:
+ 109              	.L3:
+  67:lvgl/src/lv_draw/lv_draw_triangle.c ****     for(i = 0; i < point_cnt - 1; i++) {
+ 110              		.loc 1 67 30 discriminator 1 view .LVU26
+ 111 0040 7A1E     		subs	r2, r7, #1
+  67:lvgl/src/lv_draw/lv_draw_triangle.c ****     for(i = 0; i < point_cnt - 1; i++) {
+ 112              		.loc 1 67 5 discriminator 1 view .LVU27
+ 113 0042 9342     		cmp	r3, r2
+ 114 0044 11DA     		bge	.L37
+  68:lvgl/src/lv_draw/lv_draw_triangle.c ****         if(points[i].x != points[i + 1].x || points[i].y != points[i + 1].y) {
+ 115              		.loc 1 68 9 is_stmt 1 view .LVU28
+  68:lvgl/src/lv_draw/lv_draw_triangle.c ****         if(points[i].x != points[i + 1].x || points[i].y != points[i + 1].y) {
+ 116              		.loc 1 68 18 is_stmt 0 view .LVU29
+ 117 0046 06EB8301 		add	r1, r6, r3, lsl #2
+  68:lvgl/src/lv_draw/lv_draw_triangle.c ****         if(points[i].x != points[i + 1].x || points[i].y != points[i + 1].y) {
+ 118              		.loc 1 68 21 view .LVU30
+ 119 004a 36F92300 		ldrsh	r0, [r6, r3, lsl #2]
+  68:lvgl/src/lv_draw/lv_draw_triangle.c ****         if(points[i].x != points[i + 1].x || points[i].y != points[i + 1].y) {
+ 120              		.loc 1 68 33 view .LVU31
+ 121 004e 5A1C     		adds	r2, r3, #1
+ 122 0050 06EB820C 		add	ip, r6, r2, lsl #2
+  68:lvgl/src/lv_draw/lv_draw_triangle.c ****         if(points[i].x != points[i + 1].x || points[i].y != points[i + 1].y) {
+ 123              		.loc 1 68 40 view .LVU32
+ 124 0054 36F92220 		ldrsh	r2, [r6, r2, lsl #2]
+  68:lvgl/src/lv_draw/lv_draw_triangle.c ****         if(points[i].x != points[i + 1].x || points[i].y != points[i + 1].y) {
+ 125              		.loc 1 68 11 view .LVU33
+ 126 0058 9042     		cmp	r0, r2
+ 127 005a EAD1     		bne	.L4
+  68:lvgl/src/lv_draw/lv_draw_triangle.c ****         if(points[i].x != points[i + 1].x || points[i].y != points[i + 1].y) {
+ 128              		.loc 1 68 55 discriminator 1 view .LVU34
+ 129 005c B1F90200 		ldrsh	r0, [r1, #2]
+  68:lvgl/src/lv_draw/lv_draw_triangle.c ****         if(points[i].x != points[i + 1].x || points[i].y != points[i + 1].y) {
+ 130              		.loc 1 68 74 discriminator 1 view .LVU35
+ 131 0060 BCF90220 		ldrsh	r2, [ip, #2]
+  68:lvgl/src/lv_draw/lv_draw_triangle.c ****         if(points[i].x != points[i + 1].x || points[i].y != points[i + 1].y) {
+ 132              		.loc 1 68 43 discriminator 1 view .LVU36
+ 133 0064 9042     		cmp	r0, r2
+ 134 0066 E4D1     		bne	.L4
+ 135 0068 E8E7     		b	.L5
+ 136              	.L37:
+  71:lvgl/src/lv_draw/lv_draw_triangle.c ****         }
+  72:lvgl/src/lv_draw/lv_draw_triangle.c ****     }
+  73:lvgl/src/lv_draw/lv_draw_triangle.c ****     /*The first and the last points are also adjacent */
+  74:lvgl/src/lv_draw/lv_draw_triangle.c ****     if(points[0].x != points[point_cnt - 1].x || points[0].y != points[point_cnt - 1].y) {
+ 137              		.loc 1 74 5 is_stmt 1 view .LVU37
+ 138              		.loc 1 74 17 is_stmt 0 view .LVU38
+ 139 006a B6F90010 		ldrsh	r1, [r6]
+ 140              		.loc 1 74 29 view .LVU39
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 5
+
+
+ 141 006e 07F18047 		add	r7, r7, #1073741824
+ 142 0072 013F     		subs	r7, r7, #1
+ 143 0074 06EB8703 		add	r3, r6, r7, lsl #2
+ 144              	.LVL10:
+ 145              		.loc 1 74 44 view .LVU40
+ 146 0078 36F92720 		ldrsh	r2, [r6, r7, lsl #2]
+ 147              		.loc 1 74 7 view .LVU41
+ 148 007c 9142     		cmp	r1, r2
+ 149 007e 0ED0     		beq	.L38
+ 150              	.L7:
+  75:lvgl/src/lv_draw/lv_draw_triangle.c ****         p[pcnt] = points[point_cnt - 1];
+ 151              		.loc 1 75 9 is_stmt 1 view .LVU42
+ 152              		.loc 1 75 17 is_stmt 0 view .LVU43
+ 153 0080 1B68     		ldr	r3, [r3]	@ unaligned
+ 154 0082 44F82530 		str	r3, [r4, r5, lsl #2]	@ unaligned
+  76:lvgl/src/lv_draw/lv_draw_triangle.c ****         pcnt++;
+ 155              		.loc 1 76 9 is_stmt 1 view .LVU44
+ 156              		.loc 1 76 13 is_stmt 0 view .LVU45
+ 157 0086 0135     		adds	r5, r5, #1
+ 158              	.LVL11:
+ 159              		.loc 1 76 13 view .LVU46
+ 160 0088 ADB2     		uxth	r5, r5
+ 161              	.LVL12:
+ 162              	.L8:
+  77:lvgl/src/lv_draw/lv_draw_triangle.c ****     }
+  78:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+  79:lvgl/src/lv_draw/lv_draw_triangle.c ****     point_cnt = pcnt;
+ 163              		.loc 1 79 5 is_stmt 1 view .LVU47
+  80:lvgl/src/lv_draw/lv_draw_triangle.c ****     if(point_cnt < 3) {
+ 164              		.loc 1 80 5 view .LVU48
+ 165              		.loc 1 80 7 is_stmt 0 view .LVU49
+ 166 008a 022D     		cmp	r5, #2
+ 167 008c 0ED9     		bls	.L39
+  81:lvgl/src/lv_draw/lv_draw_triangle.c ****         _lv_mem_buf_release(p);
+  82:lvgl/src/lv_draw/lv_draw_triangle.c ****         return;
+  83:lvgl/src/lv_draw/lv_draw_triangle.c ****     }
+  84:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+  85:lvgl/src/lv_draw/lv_draw_triangle.c ****     lv_area_t poly_coords = {.x1 = LV_COORD_MAX, .y1 = LV_COORD_MAX, .x2 = LV_COORD_MIN, .y2 = LV_C
+ 168              		.loc 1 85 5 is_stmt 1 view .LVU50
+ 169              		.loc 1 85 15 is_stmt 0 view .LVU51
+ 170 008e 814B     		ldr	r3, .L47
+ 171 0090 93E80300 		ldm	r3, {r0, r1}
+ 172 0094 0AAB     		add	r3, sp, #40
+ 173 0096 03E90300 		stmdb	r3, {r0, r1}
+  86:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+  87:lvgl/src/lv_draw/lv_draw_triangle.c ****     for(i = 0; i < point_cnt; i++) {
+ 174              		.loc 1 87 5 is_stmt 1 view .LVU52
+ 175              	.LVL13:
+ 176              		.loc 1 87 11 is_stmt 0 view .LVU53
+ 177 009a 0022     		movs	r2, #0
+ 178              		.loc 1 87 5 view .LVU54
+ 179 009c 32E0     		b	.L10
+ 180              	.LVL14:
+ 181              	.L38:
+  74:lvgl/src/lv_draw/lv_draw_triangle.c ****         p[pcnt] = points[point_cnt - 1];
+ 182              		.loc 1 74 59 discriminator 1 view .LVU55
+ 183 009e B6F90210 		ldrsh	r1, [r6, #2]
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 6
+
+
+  74:lvgl/src/lv_draw/lv_draw_triangle.c ****         p[pcnt] = points[point_cnt - 1];
+ 184              		.loc 1 74 86 discriminator 1 view .LVU56
+ 185 00a2 B3F90220 		ldrsh	r2, [r3, #2]
+  74:lvgl/src/lv_draw/lv_draw_triangle.c ****         p[pcnt] = points[point_cnt - 1];
+ 186              		.loc 1 74 47 discriminator 1 view .LVU57
+ 187 00a6 9142     		cmp	r1, r2
+ 188 00a8 EAD1     		bne	.L7
+ 189 00aa EEE7     		b	.L8
+ 190              	.LVL15:
+ 191              	.L39:
+  81:lvgl/src/lv_draw/lv_draw_triangle.c ****         _lv_mem_buf_release(p);
+ 192              		.loc 1 81 9 is_stmt 1 view .LVU58
+ 193 00ac 2046     		mov	r0, r4
+ 194 00ae FFF7FEFF 		bl	_lv_mem_buf_release
+ 195              	.LVL16:
+  82:lvgl/src/lv_draw/lv_draw_triangle.c ****     }
+ 196              		.loc 1 82 9 view .LVU59
+ 197 00b2 EBE0     		b	.L1
+ 198              	.LVL17:
+ 199              	.L11:
+  88:lvgl/src/lv_draw/lv_draw_triangle.c ****         poly_coords.x1 = LV_MATH_MIN(poly_coords.x1, p[i].x);
+ 200              		.loc 1 88 9 discriminator 3 view .LVU60
+ 201              		.loc 1 88 26 is_stmt 0 discriminator 3 view .LVU61
+ 202 00b4 04EB8201 		add	r1, r4, r2, lsl #2
+ 203 00b8 34F92230 		ldrsh	r3, [r4, r2, lsl #2]
+ 204 00bc BDF92000 		ldrsh	r0, [sp, #32]
+ 205 00c0 8342     		cmp	r3, r0
+ 206 00c2 A8BF     		it	ge
+ 207 00c4 0346     		movge	r3, r0
+ 208              		.loc 1 88 24 discriminator 3 view .LVU62
+ 209 00c6 ADF82030 		strh	r3, [sp, #32]	@ movhi
+  89:lvgl/src/lv_draw/lv_draw_triangle.c ****         poly_coords.y1 = LV_MATH_MIN(poly_coords.y1, p[i].y);
+ 210              		.loc 1 89 9 is_stmt 1 discriminator 3 view .LVU63
+ 211              		.loc 1 89 26 is_stmt 0 discriminator 3 view .LVU64
+ 212 00ca B1F90230 		ldrsh	r3, [r1, #2]
+ 213 00ce BDF92200 		ldrsh	r0, [sp, #34]
+ 214 00d2 8342     		cmp	r3, r0
+ 215 00d4 A8BF     		it	ge
+ 216 00d6 0346     		movge	r3, r0
+ 217              		.loc 1 89 24 discriminator 3 view .LVU65
+ 218 00d8 ADF82230 		strh	r3, [sp, #34]	@ movhi
+  90:lvgl/src/lv_draw/lv_draw_triangle.c ****         poly_coords.x2 = LV_MATH_MAX(poly_coords.x2, p[i].x);
+ 219              		.loc 1 90 9 is_stmt 1 discriminator 3 view .LVU66
+ 220              		.loc 1 90 26 is_stmt 0 discriminator 3 view .LVU67
+ 221 00dc 34F92230 		ldrsh	r3, [r4, r2, lsl #2]
+ 222 00e0 BDF92400 		ldrsh	r0, [sp, #36]
+ 223 00e4 8342     		cmp	r3, r0
+ 224 00e6 B8BF     		it	lt
+ 225 00e8 0346     		movlt	r3, r0
+ 226              		.loc 1 90 24 discriminator 3 view .LVU68
+ 227 00ea ADF82430 		strh	r3, [sp, #36]	@ movhi
+  91:lvgl/src/lv_draw/lv_draw_triangle.c ****         poly_coords.y2 = LV_MATH_MAX(poly_coords.y2, p[i].y);
+ 228              		.loc 1 91 9 is_stmt 1 discriminator 3 view .LVU69
+ 229              		.loc 1 91 26 is_stmt 0 discriminator 3 view .LVU70
+ 230 00ee B1F90230 		ldrsh	r3, [r1, #2]
+ 231 00f2 BDF92610 		ldrsh	r1, [sp, #38]
+ 232 00f6 8B42     		cmp	r3, r1
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 7
+
+
+ 233 00f8 B8BF     		it	lt
+ 234 00fa 0B46     		movlt	r3, r1
+ 235              		.loc 1 91 24 discriminator 3 view .LVU71
+ 236 00fc ADF82630 		strh	r3, [sp, #38]	@ movhi
+  87:lvgl/src/lv_draw/lv_draw_triangle.c ****         poly_coords.x1 = LV_MATH_MIN(poly_coords.x1, p[i].x);
+ 237              		.loc 1 87 32 discriminator 3 view .LVU72
+ 238 0100 0132     		adds	r2, r2, #1
+ 239              	.LVL18:
+  87:lvgl/src/lv_draw/lv_draw_triangle.c ****         poly_coords.x1 = LV_MATH_MIN(poly_coords.x1, p[i].x);
+ 240              		.loc 1 87 32 discriminator 3 view .LVU73
+ 241 0102 92B2     		uxth	r2, r2
+ 242              	.LVL19:
+ 243              	.L10:
+  87:lvgl/src/lv_draw/lv_draw_triangle.c ****         poly_coords.x1 = LV_MATH_MIN(poly_coords.x1, p[i].x);
+ 244              		.loc 1 87 5 discriminator 1 view .LVU74
+ 245 0104 AA42     		cmp	r2, r5
+ 246 0106 D5D3     		bcc	.L11
+  92:lvgl/src/lv_draw/lv_draw_triangle.c ****     }
+  93:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+  94:lvgl/src/lv_draw/lv_draw_triangle.c ****     bool is_common;
+ 247              		.loc 1 94 5 is_stmt 1 view .LVU75
+  95:lvgl/src/lv_draw/lv_draw_triangle.c ****     lv_area_t poly_mask;
+ 248              		.loc 1 95 5 view .LVU76
+  96:lvgl/src/lv_draw/lv_draw_triangle.c ****     is_common = _lv_area_intersect(&poly_mask, &poly_coords, clip_area);
+ 249              		.loc 1 96 5 view .LVU77
+ 250              		.loc 1 96 17 is_stmt 0 view .LVU78
+ 251 0108 049A     		ldr	r2, [sp, #16]
+ 252              	.LVL20:
+ 253              		.loc 1 96 17 view .LVU79
+ 254 010a 08A9     		add	r1, sp, #32
+ 255 010c 06A8     		add	r0, sp, #24
+ 256 010e FFF7FEFF 		bl	_lv_area_intersect
+ 257              	.LVL21:
+  97:lvgl/src/lv_draw/lv_draw_triangle.c ****     if(!is_common) {
+ 258              		.loc 1 97 5 is_stmt 1 view .LVU80
+ 259              		.loc 1 97 7 is_stmt 0 view .LVU81
+ 260 0112 0290     		str	r0, [sp, #8]
+ 261 0114 20B1     		cbz	r0, .L40
+  98:lvgl/src/lv_draw/lv_draw_triangle.c ****         _lv_mem_buf_release(p);
+  99:lvgl/src/lv_draw/lv_draw_triangle.c ****         return;
+ 100:lvgl/src/lv_draw/lv_draw_triangle.c ****     }
+ 101:lvgl/src/lv_draw/lv_draw_triangle.c ****     /*Find the lowest point*/
+ 102:lvgl/src/lv_draw/lv_draw_triangle.c ****     lv_coord_t y_min = p[0].y;
+ 262              		.loc 1 102 5 is_stmt 1 view .LVU82
+ 263              		.loc 1 102 16 is_stmt 0 view .LVU83
+ 264 0116 B4F90210 		ldrsh	r1, [r4, #2]
+ 265              	.LVL22:
+ 103:lvgl/src/lv_draw/lv_draw_triangle.c ****     int16_t y_min_i = 0;
+ 266              		.loc 1 103 5 is_stmt 1 view .LVU84
+ 104:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 105:lvgl/src/lv_draw/lv_draw_triangle.c ****     for(i = 1; i < point_cnt; i++) {
+ 267              		.loc 1 105 5 view .LVU85
+ 103:lvgl/src/lv_draw/lv_draw_triangle.c ****     int16_t y_min_i = 0;
+ 268              		.loc 1 103 13 is_stmt 0 view .LVU86
+ 269 011a 0026     		movs	r6, #0
+ 270              	.LVL23:
+ 271              		.loc 1 105 11 view .LVU87
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 8
+
+
+ 272 011c 0123     		movs	r3, #1
+ 273              		.loc 1 105 5 view .LVU88
+ 274 011e 05E0     		b	.L13
+ 275              	.LVL24:
+ 276              	.L40:
+  98:lvgl/src/lv_draw/lv_draw_triangle.c ****         return;
+ 277              		.loc 1 98 9 is_stmt 1 view .LVU89
+ 278 0120 2046     		mov	r0, r4
+ 279              	.LVL25:
+  98:lvgl/src/lv_draw/lv_draw_triangle.c ****         return;
+ 280              		.loc 1 98 9 is_stmt 0 view .LVU90
+ 281 0122 FFF7FEFF 		bl	_lv_mem_buf_release
+ 282              	.LVL26:
+  99:lvgl/src/lv_draw/lv_draw_triangle.c ****     }
+ 283              		.loc 1 99 9 is_stmt 1 view .LVU91
+ 284 0126 B1E0     		b	.L1
+ 285              	.LVL27:
+ 286              	.L14:
+ 287              		.loc 1 105 32 is_stmt 0 discriminator 2 view .LVU92
+ 288 0128 0133     		adds	r3, r3, #1
+ 289              	.LVL28:
+ 290              		.loc 1 105 32 discriminator 2 view .LVU93
+ 291 012a 9BB2     		uxth	r3, r3
+ 292              	.LVL29:
+ 293              	.L13:
+ 294              		.loc 1 105 5 discriminator 1 view .LVU94
+ 295 012c AB42     		cmp	r3, r5
+ 296 012e 08D2     		bcs	.L41
+ 106:lvgl/src/lv_draw/lv_draw_triangle.c ****         if(p[i].y < y_min) {
+ 297              		.loc 1 106 9 is_stmt 1 view .LVU95
+ 298              		.loc 1 106 13 is_stmt 0 view .LVU96
+ 299 0130 04EB8302 		add	r2, r4, r3, lsl #2
+ 300              		.loc 1 106 16 view .LVU97
+ 301 0134 B2F90220 		ldrsh	r2, [r2, #2]
+ 302              		.loc 1 106 11 view .LVU98
+ 303 0138 8A42     		cmp	r2, r1
+ 304 013a F5DA     		bge	.L14
+ 107:lvgl/src/lv_draw/lv_draw_triangle.c ****             y_min = p[i].y;
+ 305              		.loc 1 107 13 is_stmt 1 view .LVU99
+ 306              	.LVL30:
+ 108:lvgl/src/lv_draw/lv_draw_triangle.c ****             y_min_i = i;
+ 307              		.loc 1 108 13 view .LVU100
+ 308              		.loc 1 108 21 is_stmt 0 view .LVU101
+ 309 013c 1EB2     		sxth	r6, r3
+ 310              	.LVL31:
+ 107:lvgl/src/lv_draw/lv_draw_triangle.c ****             y_min = p[i].y;
+ 311              		.loc 1 107 19 view .LVU102
+ 312 013e 1146     		mov	r1, r2
+ 313 0140 F2E7     		b	.L14
+ 314              	.LVL32:
+ 315              	.L41:
+ 109:lvgl/src/lv_draw/lv_draw_triangle.c ****         }
+ 110:lvgl/src/lv_draw/lv_draw_triangle.c ****     }
+ 111:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 112:lvgl/src/lv_draw/lv_draw_triangle.c ****     lv_draw_mask_line_param_t * mp = _lv_mem_buf_get(sizeof(lv_draw_mask_line_param_t) * point_cnt)
+ 316              		.loc 1 112 5 is_stmt 1 view .LVU103
+ 317              		.loc 1 112 38 is_stmt 0 view .LVU104
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 9
+
+
+ 318 0142 AA46     		mov	r10, r5
+ 319 0144 2C20     		movs	r0, #44
+ 320              	.LVL33:
+ 321              		.loc 1 112 38 view .LVU105
+ 322 0146 00FB05F0 		mul	r0, r0, r5
+ 323 014a FFF7FEFF 		bl	_lv_mem_buf_get
+ 324              	.LVL34:
+ 325              		.loc 1 112 38 view .LVU106
+ 326 014e 0390     		str	r0, [sp, #12]
+ 327              	.LVL35:
+ 113:lvgl/src/lv_draw/lv_draw_triangle.c ****     lv_draw_mask_line_param_t * mp_next = mp;
+ 328              		.loc 1 113 5 is_stmt 1 view .LVU107
+ 114:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 115:lvgl/src/lv_draw/lv_draw_triangle.c ****     int32_t i_prev_left = y_min_i;
+ 329              		.loc 1 115 5 view .LVU108
+ 330              		.loc 1 115 13 is_stmt 0 view .LVU109
+ 331 0150 B046     		mov	r8, r6
+ 332              	.LVL36:
+ 116:lvgl/src/lv_draw/lv_draw_triangle.c ****     int32_t i_prev_right = y_min_i;
+ 333              		.loc 1 116 5 is_stmt 1 view .LVU110
+ 117:lvgl/src/lv_draw/lv_draw_triangle.c ****     int32_t i_next_left;
+ 334              		.loc 1 117 5 view .LVU111
+ 118:lvgl/src/lv_draw/lv_draw_triangle.c ****     int32_t i_next_right;
+ 335              		.loc 1 118 5 view .LVU112
+ 119:lvgl/src/lv_draw/lv_draw_triangle.c ****     uint32_t mask_cnt = 0;
+ 336              		.loc 1 119 5 view .LVU113
+ 120:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 121:lvgl/src/lv_draw/lv_draw_triangle.c ****     /*Get the index of the left and right points*/
+ 122:lvgl/src/lv_draw/lv_draw_triangle.c ****     i_next_left = y_min_i - 1;
+ 337              		.loc 1 122 5 view .LVU114
+ 123:lvgl/src/lv_draw/lv_draw_triangle.c ****     if(i_next_left < 0) i_next_left = point_cnt + i_next_left;
+ 338              		.loc 1 123 5 view .LVU115
+ 339              		.loc 1 123 7 is_stmt 0 view .LVU116
+ 340 0152 731E     		subs	r3, r6, #1
+ 341              	.LVL37:
+ 342              		.loc 1 123 7 view .LVU117
+ 343 0154 29D4     		bmi	.L42
+ 344              	.L16:
+ 124:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 125:lvgl/src/lv_draw/lv_draw_triangle.c ****     i_next_right = y_min_i + 1;
+ 345              		.loc 1 125 5 is_stmt 1 view .LVU118
+ 346              		.loc 1 125 18 is_stmt 0 view .LVU119
+ 347 0156 08F10102 		add	r2, r8, #1
+ 348              	.LVL38:
+ 126:lvgl/src/lv_draw/lv_draw_triangle.c ****     if(i_next_right > point_cnt - 1) i_next_right = 0;
+ 349              		.loc 1 126 5 is_stmt 1 view .LVU120
+ 350              		.loc 1 126 21 is_stmt 0 view .LVU121
+ 351 015a AB46     		mov	fp, r5
+ 352              		.loc 1 126 7 view .LVU122
+ 353 015c 9542     		cmp	r5, r2
+ 354 015e 00DC     		bgt	.L17
+ 355              		.loc 1 126 51 view .LVU123
+ 356 0160 0022     		movs	r2, #0
+ 357              	.LVL39:
+ 358              	.L17:
+ 127:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 128:lvgl/src/lv_draw/lv_draw_triangle.c ****     /* Check if the order of points is inverted or not.
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 10
+
+
+ 129:lvgl/src/lv_draw/lv_draw_triangle.c ****      * The normal case is when the left point is on `y_min_i - 1`
+ 130:lvgl/src/lv_draw/lv_draw_triangle.c ****      * Explanation:
+ 131:lvgl/src/lv_draw/lv_draw_triangle.c ****      *   if angle(p_left) < angle(p_right) -> inverted
+ 132:lvgl/src/lv_draw/lv_draw_triangle.c ****      *   dy_left/dx_left < dy_right/dx_right
+ 133:lvgl/src/lv_draw/lv_draw_triangle.c ****      *   dy_left * dx_right < dy_right * dx_left
+ 134:lvgl/src/lv_draw/lv_draw_triangle.c ****      */
+ 135:lvgl/src/lv_draw/lv_draw_triangle.c ****     lv_coord_t dxl = p[i_next_left].x - p[y_min_i].x;
+ 359              		.loc 1 135 5 is_stmt 1 view .LVU124
+ 360              		.loc 1 135 23 is_stmt 0 view .LVU125
+ 361 0162 04EB8307 		add	r7, r4, r3, lsl #2
+ 362              		.loc 1 135 36 view .LVU126
+ 363 0166 34F82330 		ldrh	r3, [r4, r3, lsl #2]
+ 364              	.LVL40:
+ 365              		.loc 1 135 42 view .LVU127
+ 366 016a 04EB8605 		add	r5, r4, r6, lsl #2
+ 367              	.LVL41:
+ 368              		.loc 1 135 51 view .LVU128
+ 369 016e 34F82600 		ldrh	r0, [r4, r6, lsl #2]
+ 370              	.LVL42:
+ 371              		.loc 1 135 39 view .LVU129
+ 372 0172 1B1A     		subs	r3, r3, r0
+ 373              		.loc 1 135 16 view .LVU130
+ 374 0174 19B2     		sxth	r1, r3
+ 375              	.LVL43:
+ 136:lvgl/src/lv_draw/lv_draw_triangle.c ****     lv_coord_t dxr = p[i_next_right].x - p[y_min_i].x;
+ 376              		.loc 1 136 5 is_stmt 1 view .LVU131
+ 377              		.loc 1 136 23 is_stmt 0 view .LVU132
+ 378 0176 04EB8203 		add	r3, r4, r2, lsl #2
+ 379              		.loc 1 136 37 view .LVU133
+ 380 017a 34F82220 		ldrh	r2, [r4, r2, lsl #2]
+ 381              	.LVL44:
+ 382              		.loc 1 136 40 view .LVU134
+ 383 017e 121A     		subs	r2, r2, r0
+ 384              		.loc 1 136 16 view .LVU135
+ 385 0180 10B2     		sxth	r0, r2
+ 386              	.LVL45:
+ 137:lvgl/src/lv_draw/lv_draw_triangle.c ****     lv_coord_t dyl = p[i_next_left].y - p[y_min_i].y;
+ 387              		.loc 1 137 5 is_stmt 1 view .LVU136
+ 388              		.loc 1 137 36 is_stmt 0 view .LVU137
+ 389 0182 7A88     		ldrh	r2, [r7, #2]
+ 390              		.loc 1 137 51 view .LVU138
+ 391 0184 6D88     		ldrh	r5, [r5, #2]
+ 392              		.loc 1 137 39 view .LVU139
+ 393 0186 521B     		subs	r2, r2, r5
+ 394              		.loc 1 137 16 view .LVU140
+ 395 0188 12B2     		sxth	r2, r2
+ 396              	.LVL46:
+ 138:lvgl/src/lv_draw/lv_draw_triangle.c ****     lv_coord_t dyr = p[i_next_right].y - p[y_min_i].y;
+ 397              		.loc 1 138 5 is_stmt 1 view .LVU141
+ 398              		.loc 1 138 37 is_stmt 0 view .LVU142
+ 399 018a 5B88     		ldrh	r3, [r3, #2]
+ 400              		.loc 1 138 40 view .LVU143
+ 401 018c 5B1B     		subs	r3, r3, r5
+ 402              		.loc 1 138 16 view .LVU144
+ 403 018e 1BB2     		sxth	r3, r3
+ 404              	.LVL47:
+ 139:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 11
+
+
+ 140:lvgl/src/lv_draw/lv_draw_triangle.c ****     bool inv = false;
+ 405              		.loc 1 140 5 is_stmt 1 view .LVU145
+ 141:lvgl/src/lv_draw/lv_draw_triangle.c ****     if(dyl * dxr < dyr * dxl) inv = true;
+ 406              		.loc 1 141 5 view .LVU146
+ 407              		.loc 1 141 12 is_stmt 0 view .LVU147
+ 408 0190 00FB02F2 		mul	r2, r0, r2
+ 409              	.LVL48:
+ 410              		.loc 1 141 24 view .LVU148
+ 411 0194 01FB03F3 		mul	r3, r1, r3
+ 412              	.LVL49:
+ 413              		.loc 1 141 7 view .LVU149
+ 414 0198 9A42     		cmp	r2, r3
+ 415 019a 01DB     		blt	.L18
+ 140:lvgl/src/lv_draw/lv_draw_triangle.c ****     if(dyl * dxr < dyr * dxl) inv = true;
+ 416              		.loc 1 140 10 view .LVU150
+ 417 019c 0023     		movs	r3, #0
+ 418 019e 0293     		str	r3, [sp, #8]
+ 419              	.L18:
+ 420 01a0 C146     		mov	r9, r8
+ 421 01a2 039B     		ldr	r3, [sp, #12]
+ 422 01a4 9E46     		mov	lr, r3
+ 423 01a6 0025     		movs	r5, #0
+ 424              	.LVL50:
+ 140:lvgl/src/lv_draw/lv_draw_triangle.c ****     if(dyl * dxr < dyr * dxl) inv = true;
+ 425              		.loc 1 140 10 view .LVU151
+ 426 01a8 33E0     		b	.L28
+ 427              	.LVL51:
+ 428              	.L42:
+ 123:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 429              		.loc 1 123 25 is_stmt 1 discriminator 1 view .LVU152
+ 123:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 430              		.loc 1 123 37 is_stmt 0 discriminator 1 view .LVU153
+ 431 01aa 2B44     		add	r3, r3, r5
+ 432              	.LVL52:
+ 123:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 433              		.loc 1 123 37 discriminator 1 view .LVU154
+ 434 01ac D3E7     		b	.L16
+ 435              	.LVL53:
+ 436              	.L46:
+ 142:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 143:lvgl/src/lv_draw/lv_draw_triangle.c ****     do {
+ 144:lvgl/src/lv_draw/lv_draw_triangle.c ****         if(!inv) {
+ 145:lvgl/src/lv_draw/lv_draw_triangle.c ****             i_next_left = i_prev_left - 1;
+ 146:lvgl/src/lv_draw/lv_draw_triangle.c ****             if(i_next_left < 0) i_next_left = point_cnt + i_next_left;
+ 437              		.loc 1 146 33 is_stmt 1 discriminator 1 view .LVU155
+ 438              		.loc 1 146 45 is_stmt 0 discriminator 1 view .LVU156
+ 439 01ae 5E44     		add	r6, r6, fp
+ 440              	.LVL54:
+ 441              		.loc 1 146 45 discriminator 1 view .LVU157
+ 442 01b0 35E0     		b	.L20
+ 443              	.LVL55:
+ 444              	.L19:
+ 147:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 148:lvgl/src/lv_draw/lv_draw_triangle.c ****             i_next_right = i_prev_right + 1;
+ 149:lvgl/src/lv_draw/lv_draw_triangle.c ****             if(i_next_right > point_cnt - 1) i_next_right = 0;
+ 150:lvgl/src/lv_draw/lv_draw_triangle.c ****         }
+ 151:lvgl/src/lv_draw/lv_draw_triangle.c ****         else {
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 12
+
+
+ 152:lvgl/src/lv_draw/lv_draw_triangle.c ****             i_next_left = i_prev_left + 1;
+ 445              		.loc 1 152 13 is_stmt 1 view .LVU158
+ 446              		.loc 1 152 25 is_stmt 0 view .LVU159
+ 447 01b2 08F10106 		add	r6, r8, #1
+ 448              	.LVL56:
+ 153:lvgl/src/lv_draw/lv_draw_triangle.c ****             if(i_next_left > point_cnt - 1) i_next_left = 0;
+ 449              		.loc 1 153 13 is_stmt 1 view .LVU160
+ 450              		.loc 1 153 15 is_stmt 0 view .LVU161
+ 451 01b6 B345     		cmp	fp, r6
+ 452 01b8 00DC     		bgt	.L22
+ 453              		.loc 1 153 57 view .LVU162
+ 454 01ba 0026     		movs	r6, #0
+ 455              	.LVL57:
+ 456              	.L22:
+ 154:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 155:lvgl/src/lv_draw/lv_draw_triangle.c ****             i_next_right = i_prev_right - 1;
+ 457              		.loc 1 155 13 is_stmt 1 view .LVU163
+ 156:lvgl/src/lv_draw/lv_draw_triangle.c ****             if(i_next_right < 0) i_next_right = point_cnt + i_next_right;
+ 458              		.loc 1 156 13 view .LVU164
+ 459              		.loc 1 156 15 is_stmt 0 view .LVU165
+ 460 01bc B9F10107 		subs	r7, r9, #1
+ 461              	.LVL58:
+ 462              		.loc 1 156 15 view .LVU166
+ 463 01c0 33D4     		bmi	.L43
+ 464              	.LVL59:
+ 465              	.L21:
+ 157:lvgl/src/lv_draw/lv_draw_triangle.c ****         }
+ 158:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 159:lvgl/src/lv_draw/lv_draw_triangle.c ****         if(p[i_next_left].y >=  p[i_prev_left].y) {
+ 466              		.loc 1 159 9 is_stmt 1 view .LVU167
+ 467              		.loc 1 159 13 is_stmt 0 view .LVU168
+ 468 01c2 B300     		lsls	r3, r6, #2
+ 469 01c4 E218     		adds	r2, r4, r3
+ 470              		.loc 1 159 26 view .LVU169
+ 471 01c6 B2F90200 		ldrsh	r0, [r2, #2]
+ 472              		.loc 1 159 34 view .LVU170
+ 473 01ca 4FEA8801 		lsl	r1, r8, #2
+ 474 01ce 6218     		adds	r2, r4, r1
+ 475              		.loc 1 159 47 view .LVU171
+ 476 01d0 B2F90220 		ldrsh	r2, [r2, #2]
+ 477              		.loc 1 159 11 view .LVU172
+ 478 01d4 9042     		cmp	r0, r2
+ 479 01d6 06DB     		blt	.L23
+ 160:lvgl/src/lv_draw/lv_draw_triangle.c ****             if(p[i_next_left].y != p[i_prev_left].y &&
+ 480              		.loc 1 160 13 is_stmt 1 view .LVU173
+ 481              		.loc 1 160 15 is_stmt 0 view .LVU174
+ 482 01d8 03D0     		beq	.L24
+ 161:lvgl/src/lv_draw/lv_draw_triangle.c ****                p[i_next_left].x !=  p[i_prev_left].x) {
+ 483              		.loc 1 161 30 discriminator 1 view .LVU175
+ 484 01da E35E     		ldrsh	r3, [r4, r3]
+ 485              		.loc 1 161 51 discriminator 1 view .LVU176
+ 486 01dc 615E     		ldrsh	r1, [r4, r1]
+ 160:lvgl/src/lv_draw/lv_draw_triangle.c ****             if(p[i_next_left].y != p[i_prev_left].y &&
+ 487              		.loc 1 160 53 discriminator 1 view .LVU177
+ 488 01de 8B42     		cmp	r3, r1
+ 489 01e0 25D1     		bne	.L44
+ 490              	.LVL60:
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 13
+
+
+ 491              	.L24:
+ 162:lvgl/src/lv_draw/lv_draw_triangle.c ****                 lv_draw_mask_line_points_init(mp_next, p[i_prev_left].x, p[i_prev_left].y,
+ 163:lvgl/src/lv_draw/lv_draw_triangle.c ****                                               p[i_next_left].x, p[i_next_left].y,
+ 164:lvgl/src/lv_draw/lv_draw_triangle.c ****                                               LV_DRAW_MASK_LINE_SIDE_RIGHT);
+ 165:lvgl/src/lv_draw/lv_draw_triangle.c ****                 lv_draw_mask_add(mp_next, mp);
+ 166:lvgl/src/lv_draw/lv_draw_triangle.c ****                 mp_next++;
+ 167:lvgl/src/lv_draw/lv_draw_triangle.c ****             }
+ 168:lvgl/src/lv_draw/lv_draw_triangle.c ****             mask_cnt++;
+ 492              		.loc 1 168 13 is_stmt 1 view .LVU178
+ 493              		.loc 1 168 21 is_stmt 0 view .LVU179
+ 494 01e2 0135     		adds	r5, r5, #1
+ 495              	.LVL61:
+ 169:lvgl/src/lv_draw/lv_draw_triangle.c ****             i_prev_left = i_next_left;
+ 496              		.loc 1 169 13 is_stmt 1 view .LVU180
+ 497              		.loc 1 169 25 is_stmt 0 view .LVU181
+ 498 01e4 B046     		mov	r8, r6
+ 499              	.LVL62:
+ 500              	.L23:
+ 170:lvgl/src/lv_draw/lv_draw_triangle.c ****         }
+ 171:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 172:lvgl/src/lv_draw/lv_draw_triangle.c ****         if(mask_cnt == point_cnt) break;
+ 501              		.loc 1 172 9 is_stmt 1 view .LVU182
+ 502              		.loc 1 172 11 is_stmt 0 view .LVU183
+ 503 01e6 AA45     		cmp	r10, r5
+ 504 01e8 41D0     		beq	.L25
+ 173:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 174:lvgl/src/lv_draw/lv_draw_triangle.c ****         if(p[i_next_right].y >=  p[i_prev_right].y) {
+ 505              		.loc 1 174 9 is_stmt 1 view .LVU184
+ 506              		.loc 1 174 13 is_stmt 0 view .LVU185
+ 507 01ea BB00     		lsls	r3, r7, #2
+ 508 01ec E218     		adds	r2, r4, r3
+ 509              		.loc 1 174 27 view .LVU186
+ 510 01ee B2F90200 		ldrsh	r0, [r2, #2]
+ 511              		.loc 1 174 35 view .LVU187
+ 512 01f2 4FEA8901 		lsl	r1, r9, #2
+ 513 01f6 6218     		adds	r2, r4, r1
+ 514              		.loc 1 174 49 view .LVU188
+ 515 01f8 B2F90220 		ldrsh	r2, [r2, #2]
+ 516              		.loc 1 174 11 view .LVU189
+ 517 01fc 9042     		cmp	r0, r2
+ 518 01fe 06DB     		blt	.L26
+ 175:lvgl/src/lv_draw/lv_draw_triangle.c ****             if(p[i_next_right].y != p[i_prev_right].y &&
+ 519              		.loc 1 175 13 is_stmt 1 view .LVU190
+ 520              		.loc 1 175 15 is_stmt 0 view .LVU191
+ 521 0200 03D0     		beq	.L27
+ 176:lvgl/src/lv_draw/lv_draw_triangle.c ****                p[i_next_right].x !=  p[i_prev_right].x) {
+ 522              		.loc 1 176 31 discriminator 1 view .LVU192
+ 523 0202 E35E     		ldrsh	r3, [r4, r3]
+ 524              		.loc 1 176 53 discriminator 1 view .LVU193
+ 525 0204 615E     		ldrsh	r1, [r4, r1]
+ 175:lvgl/src/lv_draw/lv_draw_triangle.c ****             if(p[i_next_right].y != p[i_prev_right].y &&
+ 526              		.loc 1 175 55 discriminator 1 view .LVU194
+ 527 0206 8B42     		cmp	r3, r1
+ 528 0208 22D1     		bne	.L45
+ 529              	.LVL63:
+ 530              	.L27:
+ 177:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 14
+
+
+ 178:lvgl/src/lv_draw/lv_draw_triangle.c ****                 lv_draw_mask_line_points_init(mp_next, p[i_prev_right].x, p[i_prev_right].y,
+ 179:lvgl/src/lv_draw/lv_draw_triangle.c ****                                               p[i_next_right].x, p[i_next_right].y,
+ 180:lvgl/src/lv_draw/lv_draw_triangle.c ****                                               LV_DRAW_MASK_LINE_SIDE_LEFT);
+ 181:lvgl/src/lv_draw/lv_draw_triangle.c ****                 lv_draw_mask_add(mp_next, mp);
+ 182:lvgl/src/lv_draw/lv_draw_triangle.c ****                 mp_next++;
+ 183:lvgl/src/lv_draw/lv_draw_triangle.c ****             }
+ 184:lvgl/src/lv_draw/lv_draw_triangle.c ****             mask_cnt++;
+ 531              		.loc 1 184 13 is_stmt 1 view .LVU195
+ 532              		.loc 1 184 21 is_stmt 0 view .LVU196
+ 533 020a 0135     		adds	r5, r5, #1
+ 534              	.LVL64:
+ 185:lvgl/src/lv_draw/lv_draw_triangle.c ****             i_prev_right = i_next_right;
+ 535              		.loc 1 185 13 is_stmt 1 view .LVU197
+ 536              		.loc 1 185 26 is_stmt 0 view .LVU198
+ 537 020c B946     		mov	r9, r7
+ 538              	.LVL65:
+ 539              	.L26:
+ 186:lvgl/src/lv_draw/lv_draw_triangle.c ****         }
+ 187:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 188:lvgl/src/lv_draw/lv_draw_triangle.c ****     } while(mask_cnt < point_cnt);
+ 540              		.loc 1 188 5 view .LVU199
+ 541 020e AA45     		cmp	r10, r5
+ 542 0210 2DD9     		bls	.L25
+ 543              	.LVL66:
+ 544              	.L28:
+ 143:lvgl/src/lv_draw/lv_draw_triangle.c ****         if(!inv) {
+ 545              		.loc 1 143 5 is_stmt 1 view .LVU200
+ 144:lvgl/src/lv_draw/lv_draw_triangle.c ****             i_next_left = i_prev_left - 1;
+ 546              		.loc 1 144 9 view .LVU201
+ 144:lvgl/src/lv_draw/lv_draw_triangle.c ****             i_next_left = i_prev_left - 1;
+ 547              		.loc 1 144 11 is_stmt 0 view .LVU202
+ 548 0212 029B     		ldr	r3, [sp, #8]
+ 549 0214 002B     		cmp	r3, #0
+ 550 0216 CCD1     		bne	.L19
+ 145:lvgl/src/lv_draw/lv_draw_triangle.c ****             if(i_next_left < 0) i_next_left = point_cnt + i_next_left;
+ 551              		.loc 1 145 13 is_stmt 1 view .LVU203
+ 552              	.LVL67:
+ 146:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 553              		.loc 1 146 13 view .LVU204
+ 146:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 554              		.loc 1 146 15 is_stmt 0 view .LVU205
+ 555 0218 B8F10106 		subs	r6, r8, #1
+ 556              	.LVL68:
+ 146:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 557              		.loc 1 146 15 view .LVU206
+ 558 021c C7D4     		bmi	.L46
+ 559              	.L20:
+ 148:lvgl/src/lv_draw/lv_draw_triangle.c ****             if(i_next_right > point_cnt - 1) i_next_right = 0;
+ 560              		.loc 1 148 13 is_stmt 1 view .LVU207
+ 148:lvgl/src/lv_draw/lv_draw_triangle.c ****             if(i_next_right > point_cnt - 1) i_next_right = 0;
+ 561              		.loc 1 148 26 is_stmt 0 view .LVU208
+ 562 021e 09F10107 		add	r7, r9, #1
+ 563              	.LVL69:
+ 149:lvgl/src/lv_draw/lv_draw_triangle.c ****         }
+ 564              		.loc 1 149 13 is_stmt 1 view .LVU209
+ 149:lvgl/src/lv_draw/lv_draw_triangle.c ****         }
+ 565              		.loc 1 149 15 is_stmt 0 view .LVU210
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 15
+
+
+ 566 0222 BB45     		cmp	fp, r7
+ 567 0224 CDDC     		bgt	.L21
+ 149:lvgl/src/lv_draw/lv_draw_triangle.c ****         }
+ 568              		.loc 1 149 59 view .LVU211
+ 569 0226 0027     		movs	r7, #0
+ 570              	.LVL70:
+ 149:lvgl/src/lv_draw/lv_draw_triangle.c ****         }
+ 571              		.loc 1 149 59 view .LVU212
+ 572 0228 CBE7     		b	.L21
+ 573              	.LVL71:
+ 574              	.L43:
+ 156:lvgl/src/lv_draw/lv_draw_triangle.c ****         }
+ 575              		.loc 1 156 34 is_stmt 1 discriminator 1 view .LVU213
+ 156:lvgl/src/lv_draw/lv_draw_triangle.c ****         }
+ 576              		.loc 1 156 47 is_stmt 0 discriminator 1 view .LVU214
+ 577 022a 5F44     		add	r7, r7, fp
+ 578              	.LVL72:
+ 156:lvgl/src/lv_draw/lv_draw_triangle.c ****         }
+ 579              		.loc 1 156 47 discriminator 1 view .LVU215
+ 580 022c C9E7     		b	.L21
+ 581              	.L44:
+ 162:lvgl/src/lv_draw/lv_draw_triangle.c ****                                               p[i_next_left].x, p[i_next_left].y,
+ 582              		.loc 1 162 17 is_stmt 1 view .LVU216
+ 583 022e 4FF0010C 		mov	ip, #1
+ 584 0232 CDF804C0 		str	ip, [sp, #4]
+ 585 0236 0090     		str	r0, [sp]
+ 586 0238 F046     		mov	r8, lr
+ 587              	.LVL73:
+ 162:lvgl/src/lv_draw/lv_draw_triangle.c ****                                               p[i_next_left].x, p[i_next_left].y,
+ 588              		.loc 1 162 17 is_stmt 0 view .LVU217
+ 589 023a 7046     		mov	r0, lr
+ 590 023c FFF7FEFF 		bl	lv_draw_mask_line_points_init
+ 591              	.LVL74:
+ 165:lvgl/src/lv_draw/lv_draw_triangle.c ****                 mp_next++;
+ 592              		.loc 1 165 17 is_stmt 1 view .LVU218
+ 593 0240 0399     		ldr	r1, [sp, #12]
+ 594 0242 4046     		mov	r0, r8
+ 595 0244 FFF7FEFF 		bl	lv_draw_mask_add
+ 596              	.LVL75:
+ 166:lvgl/src/lv_draw/lv_draw_triangle.c ****             }
+ 597              		.loc 1 166 17 view .LVU219
+ 166:lvgl/src/lv_draw/lv_draw_triangle.c ****             }
+ 598              		.loc 1 166 24 is_stmt 0 view .LVU220
+ 599 0248 4346     		mov	r3, r8
+ 600 024a 2C33     		adds	r3, r3, #44
+ 601 024c 9E46     		mov	lr, r3
+ 602              	.LVL76:
+ 166:lvgl/src/lv_draw/lv_draw_triangle.c ****             }
+ 603              		.loc 1 166 24 view .LVU221
+ 604 024e C8E7     		b	.L24
+ 605              	.LVL77:
+ 606              	.L45:
+ 178:lvgl/src/lv_draw/lv_draw_triangle.c ****                                               p[i_next_right].x, p[i_next_right].y,
+ 607              		.loc 1 178 17 is_stmt 1 view .LVU222
+ 608 0250 0026     		movs	r6, #0
+ 609              	.LVL78:
+ 178:lvgl/src/lv_draw/lv_draw_triangle.c ****                                               p[i_next_right].x, p[i_next_right].y,
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 16
+
+
+ 610              		.loc 1 178 17 is_stmt 0 view .LVU223
+ 611 0252 0196     		str	r6, [sp, #4]
+ 612 0254 0090     		str	r0, [sp]
+ 613 0256 7646     		mov	r6, lr
+ 614 0258 7046     		mov	r0, lr
+ 615 025a FFF7FEFF 		bl	lv_draw_mask_line_points_init
+ 616              	.LVL79:
+ 181:lvgl/src/lv_draw/lv_draw_triangle.c ****                 mp_next++;
+ 617              		.loc 1 181 17 is_stmt 1 view .LVU224
+ 618 025e 0399     		ldr	r1, [sp, #12]
+ 619 0260 3046     		mov	r0, r6
+ 620 0262 FFF7FEFF 		bl	lv_draw_mask_add
+ 621              	.LVL80:
+ 182:lvgl/src/lv_draw/lv_draw_triangle.c ****             }
+ 622              		.loc 1 182 17 view .LVU225
+ 182:lvgl/src/lv_draw/lv_draw_triangle.c ****             }
+ 623              		.loc 1 182 24 is_stmt 0 view .LVU226
+ 624 0266 3346     		mov	r3, r6
+ 625 0268 2C33     		adds	r3, r3, #44
+ 626 026a 9E46     		mov	lr, r3
+ 627              	.LVL81:
+ 182:lvgl/src/lv_draw/lv_draw_triangle.c ****             }
+ 628              		.loc 1 182 24 view .LVU227
+ 629 026c CDE7     		b	.L27
+ 630              	.LVL82:
+ 631              	.L25:
+ 189:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 190:lvgl/src/lv_draw/lv_draw_triangle.c ****     lv_draw_rect(&poly_coords, clip_area, draw_dsc);
+ 632              		.loc 1 190 5 is_stmt 1 view .LVU228
+ 633 026e 059A     		ldr	r2, [sp, #20]
+ 634 0270 0499     		ldr	r1, [sp, #16]
+ 635 0272 08A8     		add	r0, sp, #32
+ 636 0274 FFF7FEFF 		bl	lv_draw_rect
+ 637              	.LVL83:
+ 191:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 192:lvgl/src/lv_draw/lv_draw_triangle.c ****     lv_draw_mask_remove_custom(mp);
+ 638              		.loc 1 192 5 view .LVU229
+ 639 0278 039D     		ldr	r5, [sp, #12]
+ 640              	.LVL84:
+ 641              		.loc 1 192 5 is_stmt 0 view .LVU230
+ 642 027a 2846     		mov	r0, r5
+ 643 027c FFF7FEFF 		bl	lv_draw_mask_remove_custom
+ 644              	.LVL85:
+ 193:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 194:lvgl/src/lv_draw/lv_draw_triangle.c ****     _lv_mem_buf_release(mp);
+ 645              		.loc 1 194 5 is_stmt 1 view .LVU231
+ 646 0280 2846     		mov	r0, r5
+ 647 0282 FFF7FEFF 		bl	_lv_mem_buf_release
+ 648              	.LVL86:
+ 195:lvgl/src/lv_draw/lv_draw_triangle.c ****     _lv_mem_buf_release(p);
+ 649              		.loc 1 195 5 view .LVU232
+ 650 0286 2046     		mov	r0, r4
+ 651 0288 FFF7FEFF 		bl	_lv_mem_buf_release
+ 652              	.LVL87:
+ 653              	.L1:
+ 196:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 197:lvgl/src/lv_draw/lv_draw_triangle.c **** }
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 17
+
+
+ 654              		.loc 1 197 1 is_stmt 0 view .LVU233
+ 655 028c 0BB0     		add	sp, sp, #44
+ 656              	.LCFI2:
+ 657              		.cfi_def_cfa_offset 36
+ 658              		@ sp needed
+ 659 028e BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 660              	.LVL88:
+ 661              	.L34:
+ 662              	.LCFI3:
+ 663              		.cfi_def_cfa_offset 0
+ 664              		.cfi_restore 4
+ 665              		.cfi_restore 5
+ 666              		.cfi_restore 6
+ 667              		.cfi_restore 7
+ 668              		.cfi_restore 8
+ 669              		.cfi_restore 9
+ 670              		.cfi_restore 10
+ 671              		.cfi_restore 11
+ 672              		.cfi_restore 14
+ 673              		.loc 1 197 1 view .LVU234
+ 674 0292 7047     		bx	lr
+ 675              	.L48:
+ 676              		.align	2
+ 677              	.L47:
+ 678 0294 00000000 		.word	.LANCHOR0
+ 679              		.cfi_endproc
+ 680              	.LFE167:
+ 682              		.section	.text.lv_draw_triangle,"ax",%progbits
+ 683              		.align	1
+ 684              		.global	lv_draw_triangle
+ 685              		.syntax unified
+ 686              		.thumb
+ 687              		.thumb_func
+ 688              		.fpu fpv4-sp-d16
+ 690              	lv_draw_triangle:
+ 691              	.LVL89:
+ 692              	.LFB166:
+  44:lvgl/src/lv_draw/lv_draw_triangle.c ****     lv_draw_polygon(points, 3, clip_area, draw_dsc);
+ 693              		.loc 1 44 1 is_stmt 1 view -0
+ 694              		.cfi_startproc
+ 695              		@ args = 0, pretend = 0, frame = 0
+ 696              		@ frame_needed = 0, uses_anonymous_args = 0
+  44:lvgl/src/lv_draw/lv_draw_triangle.c ****     lv_draw_polygon(points, 3, clip_area, draw_dsc);
+ 697              		.loc 1 44 1 is_stmt 0 view .LVU236
+ 698 0000 08B5     		push	{r3, lr}
+ 699              	.LCFI4:
+ 700              		.cfi_def_cfa_offset 8
+ 701              		.cfi_offset 3, -8
+ 702              		.cfi_offset 14, -4
+  45:lvgl/src/lv_draw/lv_draw_triangle.c **** }
+ 703              		.loc 1 45 5 is_stmt 1 view .LVU237
+ 704 0002 1346     		mov	r3, r2
+ 705 0004 0A46     		mov	r2, r1
+ 706              	.LVL90:
+  45:lvgl/src/lv_draw/lv_draw_triangle.c **** }
+ 707              		.loc 1 45 5 is_stmt 0 view .LVU238
+ 708 0006 0321     		movs	r1, #3
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 18
+
+
+ 709              	.LVL91:
+  45:lvgl/src/lv_draw/lv_draw_triangle.c **** }
+ 710              		.loc 1 45 5 view .LVU239
+ 711 0008 FFF7FEFF 		bl	lv_draw_polygon
+ 712              	.LVL92:
+  46:lvgl/src/lv_draw/lv_draw_triangle.c **** 
+ 713              		.loc 1 46 1 view .LVU240
+ 714 000c 08BD     		pop	{r3, pc}
+ 715              		.cfi_endproc
+ 716              	.LFE166:
+ 718              		.section	.rodata
+ 719              		.align	2
+ 720              		.set	.LANCHOR0,. + 0
+ 721              	.LC0:
+ 722 0000 187C     		.short	31768
+ 723 0002 187C     		.short	31768
+ 724 0004 E883     		.short	-31768
+ 725 0006 E883     		.short	-31768
+ 726              		.text
+ 727              	.Letext0:
+ 728              		.file 2 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 729              		.file 3 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 730              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 731              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 732              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 733              		.file 7 "lvgl/lv_conf.h"
+ 734              		.file 8 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 735              		.file 9 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 736              		.file 10 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-non
+ 737              		.file 11 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 738              		.file 12 "lvgl/src/lv_draw/../lv_core/../lv_font/../lv_misc/lv_mem.h"
+ 739              		.file 13 "lvgl/src/lv_draw/../lv_core/../lv_font/../lv_misc/lv_area.h"
+ 740              		.file 14 "lvgl/src/lv_draw/../lv_core/../lv_font/lv_font.h"
+ 741              		.file 15 "lvgl/src/lv_draw/../lv_core/../lv_misc/lv_color.h"
+ 742              		.file 16 "lvgl/src/lv_draw/../lv_core/../lv_misc/lv_anim.h"
+ 743              		.file 17 "lvgl/src/lv_draw/../lv_core/../lv_draw/lv_draw_mask.h"
+ 744              		.file 18 "lvgl/src/lv_draw/../lv_core/../lv_draw/lv_draw_blend.h"
+ 745              		.file 19 "lvgl/src/lv_draw/../lv_core/lv_style.h"
+ 746              		.file 20 "lvgl/src/lv_draw/lv_draw_rect.h"
+ARM GAS  D:\Temp\ccHZ8O9A.s 			page 19
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_draw_triangle.c
+  D:\Temp\ccHZ8O9A.s:18     .text.lv_draw_polygon:0000000000000000 $t
+  D:\Temp\ccHZ8O9A.s:26     .text.lv_draw_polygon:0000000000000000 lv_draw_polygon
+  D:\Temp\ccHZ8O9A.s:678    .text.lv_draw_polygon:0000000000000294 $d
+  D:\Temp\ccHZ8O9A.s:683    .text.lv_draw_triangle:0000000000000000 $t
+  D:\Temp\ccHZ8O9A.s:690    .text.lv_draw_triangle:0000000000000000 lv_draw_triangle
+  D:\Temp\ccHZ8O9A.s:719    .rodata:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+_lv_mem_buf_get
+_lv_mem_buf_release
+_lv_area_intersect
+lv_draw_mask_line_points_init
+lv_draw_mask_add
+lv_draw_rect
+lv_draw_mask_remove_custom

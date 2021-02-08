@@ -1,0 +1,2350 @@
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_task.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.lv_task_time_remaining,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	lv_task_time_remaining:
+  26              	.LVL0:
+  27              	.LFB182:
+  28              		.file 1 "lvgl/src/lv_misc/lv_task.c"
+   1:lvgl/src/lv_misc/lv_task.c **** /**
+   2:lvgl/src/lv_misc/lv_task.c ****  * @file lv_task.c
+   3:lvgl/src/lv_misc/lv_task.c ****  * An 'lv_task' is a void (*fp) (struct _lv_task_t* param) type function which will be called perio
+   4:lvgl/src/lv_misc/lv_task.c ****  * A priority (5 levels + disable) can be assigned to lv_tasks.
+   5:lvgl/src/lv_misc/lv_task.c ****  */
+   6:lvgl/src/lv_misc/lv_task.c **** 
+   7:lvgl/src/lv_misc/lv_task.c **** /*********************
+   8:lvgl/src/lv_misc/lv_task.c ****  *      INCLUDES
+   9:lvgl/src/lv_misc/lv_task.c ****  *********************/
+  10:lvgl/src/lv_misc/lv_task.c **** #include <stddef.h>
+  11:lvgl/src/lv_misc/lv_task.c **** #include "lv_task.h"
+  12:lvgl/src/lv_misc/lv_task.c **** #include "../lv_misc/lv_debug.h"
+  13:lvgl/src/lv_misc/lv_task.c **** #include "../lv_hal/lv_hal_tick.h"
+  14:lvgl/src/lv_misc/lv_task.c **** #include "lv_gc.h"
+  15:lvgl/src/lv_misc/lv_task.c **** 
+  16:lvgl/src/lv_misc/lv_task.c **** /*********************
+  17:lvgl/src/lv_misc/lv_task.c ****  *      DEFINES
+  18:lvgl/src/lv_misc/lv_task.c ****  *********************/
+  19:lvgl/src/lv_misc/lv_task.c **** #define IDLE_MEAS_PERIOD 500 /*[ms]*/
+  20:lvgl/src/lv_misc/lv_task.c **** #define DEF_PRIO LV_TASK_PRIO_MID
+  21:lvgl/src/lv_misc/lv_task.c **** #define DEF_PERIOD 500
+  22:lvgl/src/lv_misc/lv_task.c **** 
+  23:lvgl/src/lv_misc/lv_task.c **** /**********************
+  24:lvgl/src/lv_misc/lv_task.c ****  *      TYPEDEFS
+  25:lvgl/src/lv_misc/lv_task.c ****  **********************/
+  26:lvgl/src/lv_misc/lv_task.c **** 
+  27:lvgl/src/lv_misc/lv_task.c **** /**********************
+  28:lvgl/src/lv_misc/lv_task.c ****  *  STATIC PROTOTYPES
+  29:lvgl/src/lv_misc/lv_task.c ****  **********************/
+  30:lvgl/src/lv_misc/lv_task.c **** static bool lv_task_exec(lv_task_t * task);
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 2
+
+
+  31:lvgl/src/lv_misc/lv_task.c **** static uint32_t lv_task_time_remaining(lv_task_t * task);
+  32:lvgl/src/lv_misc/lv_task.c **** 
+  33:lvgl/src/lv_misc/lv_task.c **** /**********************
+  34:lvgl/src/lv_misc/lv_task.c ****  *  STATIC VARIABLES
+  35:lvgl/src/lv_misc/lv_task.c ****  **********************/
+  36:lvgl/src/lv_misc/lv_task.c **** static bool lv_task_run  = false;
+  37:lvgl/src/lv_misc/lv_task.c **** static uint8_t idle_last = 0;
+  38:lvgl/src/lv_misc/lv_task.c **** static bool task_deleted;
+  39:lvgl/src/lv_misc/lv_task.c **** static bool task_list_changed;
+  40:lvgl/src/lv_misc/lv_task.c **** static bool task_created;
+  41:lvgl/src/lv_misc/lv_task.c **** 
+  42:lvgl/src/lv_misc/lv_task.c **** /**********************
+  43:lvgl/src/lv_misc/lv_task.c ****  *      MACROS
+  44:lvgl/src/lv_misc/lv_task.c ****  **********************/
+  45:lvgl/src/lv_misc/lv_task.c **** 
+  46:lvgl/src/lv_misc/lv_task.c **** /**********************
+  47:lvgl/src/lv_misc/lv_task.c ****  *   GLOBAL FUNCTIONS
+  48:lvgl/src/lv_misc/lv_task.c ****  **********************/
+  49:lvgl/src/lv_misc/lv_task.c **** 
+  50:lvgl/src/lv_misc/lv_task.c **** /**
+  51:lvgl/src/lv_misc/lv_task.c ****  * Init the lv_task module
+  52:lvgl/src/lv_misc/lv_task.c ****  */
+  53:lvgl/src/lv_misc/lv_task.c **** void _lv_task_core_init(void)
+  54:lvgl/src/lv_misc/lv_task.c **** {
+  55:lvgl/src/lv_misc/lv_task.c ****     _lv_ll_init(&LV_GC_ROOT(_lv_task_ll), sizeof(lv_task_t));
+  56:lvgl/src/lv_misc/lv_task.c **** 
+  57:lvgl/src/lv_misc/lv_task.c ****     /*Initially enable the lv_task handling*/
+  58:lvgl/src/lv_misc/lv_task.c ****     lv_task_enable(true);
+  59:lvgl/src/lv_misc/lv_task.c **** }
+  60:lvgl/src/lv_misc/lv_task.c **** 
+  61:lvgl/src/lv_misc/lv_task.c **** /**
+  62:lvgl/src/lv_misc/lv_task.c ****  * Call it periodically to handle lv_tasks.
+  63:lvgl/src/lv_misc/lv_task.c ****  * @return the time after which it must be called again
+  64:lvgl/src/lv_misc/lv_task.c ****  */
+  65:lvgl/src/lv_misc/lv_task.c **** LV_ATTRIBUTE_TASK_HANDLER uint32_t lv_task_handler(void)
+  66:lvgl/src/lv_misc/lv_task.c **** {
+  67:lvgl/src/lv_misc/lv_task.c ****     LV_LOG_TRACE("lv_task_handler started");
+  68:lvgl/src/lv_misc/lv_task.c **** 
+  69:lvgl/src/lv_misc/lv_task.c ****     /*Avoid concurrent running of the task handler*/
+  70:lvgl/src/lv_misc/lv_task.c ****     static bool already_running = false;
+  71:lvgl/src/lv_misc/lv_task.c ****     if(already_running) return 1;
+  72:lvgl/src/lv_misc/lv_task.c ****     already_running = true;
+  73:lvgl/src/lv_misc/lv_task.c **** 
+  74:lvgl/src/lv_misc/lv_task.c ****     if(lv_task_run == false) {
+  75:lvgl/src/lv_misc/lv_task.c ****         already_running = false; /*Release mutex*/
+  76:lvgl/src/lv_misc/lv_task.c ****         return 1;
+  77:lvgl/src/lv_misc/lv_task.c ****     }
+  78:lvgl/src/lv_misc/lv_task.c **** 
+  79:lvgl/src/lv_misc/lv_task.c ****     static uint32_t idle_period_start = 0;
+  80:lvgl/src/lv_misc/lv_task.c ****     static uint32_t busy_time         = 0;
+  81:lvgl/src/lv_misc/lv_task.c **** 
+  82:lvgl/src/lv_misc/lv_task.c ****     uint32_t handler_start = lv_tick_get();
+  83:lvgl/src/lv_misc/lv_task.c **** 
+  84:lvgl/src/lv_misc/lv_task.c ****     /* Run all task from the highest to the lowest priority
+  85:lvgl/src/lv_misc/lv_task.c ****      * If a lower priority task is executed check task again from the highest priority
+  86:lvgl/src/lv_misc/lv_task.c ****      * but on the priority of executed tasks don't run tasks before the executed*/
+  87:lvgl/src/lv_misc/lv_task.c ****     lv_task_t * task_interrupter = NULL;
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 3
+
+
+  88:lvgl/src/lv_misc/lv_task.c ****     lv_task_t * next;
+  89:lvgl/src/lv_misc/lv_task.c ****     bool end_flag;
+  90:lvgl/src/lv_misc/lv_task.c ****     do {
+  91:lvgl/src/lv_misc/lv_task.c ****         end_flag                 = true;
+  92:lvgl/src/lv_misc/lv_task.c ****         task_deleted             = false;
+  93:lvgl/src/lv_misc/lv_task.c ****         task_created             = false;
+  94:lvgl/src/lv_misc/lv_task.c ****         task_list_changed        = false;
+  95:lvgl/src/lv_misc/lv_task.c ****         LV_GC_ROOT(_lv_task_act) = _lv_ll_get_head(&LV_GC_ROOT(_lv_task_ll));
+  96:lvgl/src/lv_misc/lv_task.c ****         while(LV_GC_ROOT(_lv_task_act)) {
+  97:lvgl/src/lv_misc/lv_task.c ****             /* The task might be deleted if it runs only once ('once = 1')
+  98:lvgl/src/lv_misc/lv_task.c ****              * So get next element until the current is surely valid*/
+  99:lvgl/src/lv_misc/lv_task.c ****             next = _lv_ll_get_next(&LV_GC_ROOT(_lv_task_ll), LV_GC_ROOT(_lv_task_act));
+ 100:lvgl/src/lv_misc/lv_task.c **** 
+ 101:lvgl/src/lv_misc/lv_task.c ****             /*We reach priority of the turned off task. There is nothing more to do.*/
+ 102:lvgl/src/lv_misc/lv_task.c ****             if(LV_GC_ROOT(_lv_task_act)->prio == LV_TASK_PRIO_OFF) {
+ 103:lvgl/src/lv_misc/lv_task.c ****                 break;
+ 104:lvgl/src/lv_misc/lv_task.c ****             }
+ 105:lvgl/src/lv_misc/lv_task.c **** 
+ 106:lvgl/src/lv_misc/lv_task.c ****             /*Here is the interrupter task. Don't execute it again.*/
+ 107:lvgl/src/lv_misc/lv_task.c ****             if(LV_GC_ROOT(_lv_task_act) == task_interrupter) {
+ 108:lvgl/src/lv_misc/lv_task.c ****                 task_interrupter = NULL; /*From this point only task after the interrupter comes, s
+ 109:lvgl/src/lv_misc/lv_task.c ****                                             the interrupter is not interesting anymore*/
+ 110:lvgl/src/lv_misc/lv_task.c ****                 LV_GC_ROOT(_lv_task_act) = next;
+ 111:lvgl/src/lv_misc/lv_task.c ****                 continue; /*Load the next task*/
+ 112:lvgl/src/lv_misc/lv_task.c ****             }
+ 113:lvgl/src/lv_misc/lv_task.c **** 
+ 114:lvgl/src/lv_misc/lv_task.c ****             /*Just try to run the tasks with highest priority.*/
+ 115:lvgl/src/lv_misc/lv_task.c ****             if(LV_GC_ROOT(_lv_task_act)->prio == LV_TASK_PRIO_HIGHEST) {
+ 116:lvgl/src/lv_misc/lv_task.c ****                 lv_task_exec(LV_GC_ROOT(_lv_task_act));
+ 117:lvgl/src/lv_misc/lv_task.c ****             }
+ 118:lvgl/src/lv_misc/lv_task.c ****             /*Tasks with higher priority than the interrupted shall be run in every case*/
+ 119:lvgl/src/lv_misc/lv_task.c ****             else if(task_interrupter) {
+ 120:lvgl/src/lv_misc/lv_task.c ****                 if(LV_GC_ROOT(_lv_task_act)->prio > task_interrupter->prio) {
+ 121:lvgl/src/lv_misc/lv_task.c ****                     if(lv_task_exec(LV_GC_ROOT(_lv_task_act))) {
+ 122:lvgl/src/lv_misc/lv_task.c ****                         if(!task_created && !task_deleted) {
+ 123:lvgl/src/lv_misc/lv_task.c ****                             /*Check all tasks again from the highest priority */
+ 124:lvgl/src/lv_misc/lv_task.c ****                             task_interrupter = LV_GC_ROOT(_lv_task_act);
+ 125:lvgl/src/lv_misc/lv_task.c ****                             end_flag = false;
+ 126:lvgl/src/lv_misc/lv_task.c ****                             break;
+ 127:lvgl/src/lv_misc/lv_task.c ****                         }
+ 128:lvgl/src/lv_misc/lv_task.c ****                     }
+ 129:lvgl/src/lv_misc/lv_task.c ****                 }
+ 130:lvgl/src/lv_misc/lv_task.c ****             }
+ 131:lvgl/src/lv_misc/lv_task.c ****             /* It is no interrupter task or we already reached it earlier.
+ 132:lvgl/src/lv_misc/lv_task.c ****              * Just run the remaining tasks*/
+ 133:lvgl/src/lv_misc/lv_task.c ****             else {
+ 134:lvgl/src/lv_misc/lv_task.c ****                 if(lv_task_exec(LV_GC_ROOT(_lv_task_act))) {
+ 135:lvgl/src/lv_misc/lv_task.c ****                     if(!task_created && !task_deleted) {
+ 136:lvgl/src/lv_misc/lv_task.c ****                         task_interrupter = LV_GC_ROOT(_lv_task_act); /*Check all tasks again from t
+ 137:lvgl/src/lv_misc/lv_task.c ****                         end_flag         = false;
+ 138:lvgl/src/lv_misc/lv_task.c ****                         break;
+ 139:lvgl/src/lv_misc/lv_task.c ****                     }
+ 140:lvgl/src/lv_misc/lv_task.c ****                 }
+ 141:lvgl/src/lv_misc/lv_task.c ****             }
+ 142:lvgl/src/lv_misc/lv_task.c **** 
+ 143:lvgl/src/lv_misc/lv_task.c ****             /*If a task was created or deleted then this or the next item might be corrupted*/
+ 144:lvgl/src/lv_misc/lv_task.c ****             if(task_created || task_deleted) {
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 4
+
+
+ 145:lvgl/src/lv_misc/lv_task.c ****                 task_interrupter = NULL;
+ 146:lvgl/src/lv_misc/lv_task.c ****                 break;
+ 147:lvgl/src/lv_misc/lv_task.c ****             }
+ 148:lvgl/src/lv_misc/lv_task.c **** 
+ 149:lvgl/src/lv_misc/lv_task.c ****             if(task_list_changed) {
+ 150:lvgl/src/lv_misc/lv_task.c ****                 task_interrupter = NULL;
+ 151:lvgl/src/lv_misc/lv_task.c ****                 end_flag = false;
+ 152:lvgl/src/lv_misc/lv_task.c ****                 break;
+ 153:lvgl/src/lv_misc/lv_task.c ****             }
+ 154:lvgl/src/lv_misc/lv_task.c **** 
+ 155:lvgl/src/lv_misc/lv_task.c ****             LV_GC_ROOT(_lv_task_act) = next; /*Load the next task*/
+ 156:lvgl/src/lv_misc/lv_task.c ****         }
+ 157:lvgl/src/lv_misc/lv_task.c ****     } while(!end_flag);
+ 158:lvgl/src/lv_misc/lv_task.c **** 
+ 159:lvgl/src/lv_misc/lv_task.c ****     uint32_t time_till_next = LV_NO_TASK_READY;
+ 160:lvgl/src/lv_misc/lv_task.c ****     next = _lv_ll_get_head(&LV_GC_ROOT(_lv_task_ll));
+ 161:lvgl/src/lv_misc/lv_task.c ****     while(next && next->prio != LV_TASK_PRIO_OFF) {
+ 162:lvgl/src/lv_misc/lv_task.c ****         uint32_t delay = lv_task_time_remaining(next);
+ 163:lvgl/src/lv_misc/lv_task.c ****         if(delay < time_till_next)
+ 164:lvgl/src/lv_misc/lv_task.c ****             time_till_next = delay;
+ 165:lvgl/src/lv_misc/lv_task.c **** 
+ 166:lvgl/src/lv_misc/lv_task.c ****         next = _lv_ll_get_next(&LV_GC_ROOT(_lv_task_ll), next); /*Find the next task*/
+ 167:lvgl/src/lv_misc/lv_task.c ****     }
+ 168:lvgl/src/lv_misc/lv_task.c **** 
+ 169:lvgl/src/lv_misc/lv_task.c ****     busy_time += lv_tick_elaps(handler_start);
+ 170:lvgl/src/lv_misc/lv_task.c ****     uint32_t idle_period_time = lv_tick_elaps(idle_period_start);
+ 171:lvgl/src/lv_misc/lv_task.c ****     if(idle_period_time >= IDLE_MEAS_PERIOD) {
+ 172:lvgl/src/lv_misc/lv_task.c ****         idle_last         = (busy_time * 100) / idle_period_time;  /*Calculate the busy percentage*
+ 173:lvgl/src/lv_misc/lv_task.c ****         idle_last         = idle_last > 100 ? 0 : 100 - idle_last; /*But we need idle time*/
+ 174:lvgl/src/lv_misc/lv_task.c ****         busy_time         = 0;
+ 175:lvgl/src/lv_misc/lv_task.c ****         idle_period_start = lv_tick_get();
+ 176:lvgl/src/lv_misc/lv_task.c ****     }
+ 177:lvgl/src/lv_misc/lv_task.c **** 
+ 178:lvgl/src/lv_misc/lv_task.c ****     already_running = false; /*Release the mutex*/
+ 179:lvgl/src/lv_misc/lv_task.c **** 
+ 180:lvgl/src/lv_misc/lv_task.c ****     LV_LOG_TRACE("lv_task_handler ready");
+ 181:lvgl/src/lv_misc/lv_task.c ****     return time_till_next;
+ 182:lvgl/src/lv_misc/lv_task.c **** }
+ 183:lvgl/src/lv_misc/lv_task.c **** /**
+ 184:lvgl/src/lv_misc/lv_task.c ****  * Create an "empty" task. It needs to initialized with at least
+ 185:lvgl/src/lv_misc/lv_task.c ****  * `lv_task_set_cb` and `lv_task_set_period`
+ 186:lvgl/src/lv_misc/lv_task.c ****  * @return pointer to the created task
+ 187:lvgl/src/lv_misc/lv_task.c ****  */
+ 188:lvgl/src/lv_misc/lv_task.c **** lv_task_t * lv_task_create_basic(void)
+ 189:lvgl/src/lv_misc/lv_task.c **** {
+ 190:lvgl/src/lv_misc/lv_task.c ****     return lv_task_create(NULL, DEF_PERIOD, DEF_PRIO, NULL);
+ 191:lvgl/src/lv_misc/lv_task.c **** }
+ 192:lvgl/src/lv_misc/lv_task.c **** 
+ 193:lvgl/src/lv_misc/lv_task.c **** /**
+ 194:lvgl/src/lv_misc/lv_task.c ****  * Create a new lv_task
+ 195:lvgl/src/lv_misc/lv_task.c ****  * @param task_xcb a callback which is the task itself. It will be called periodically.
+ 196:lvgl/src/lv_misc/lv_task.c ****  *                 (the 'x' in the argument name indicates that its not a fully generic function be
+ 197:lvgl/src/lv_misc/lv_task.c ****  *                  the `func_name(object, callback, ...)` convention)
+ 198:lvgl/src/lv_misc/lv_task.c ****  * @param period call period in ms unit
+ 199:lvgl/src/lv_misc/lv_task.c ****  * @param prio priority of the task (LV_TASK_PRIO_OFF means the task is stopped)
+ 200:lvgl/src/lv_misc/lv_task.c ****  * @param user_data custom parameter
+ 201:lvgl/src/lv_misc/lv_task.c ****  * @return pointer to the new task
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 5
+
+
+ 202:lvgl/src/lv_misc/lv_task.c ****  */
+ 203:lvgl/src/lv_misc/lv_task.c **** lv_task_t * lv_task_create(lv_task_cb_t task_xcb, uint32_t period, lv_task_prio_t prio, void * user
+ 204:lvgl/src/lv_misc/lv_task.c **** {
+ 205:lvgl/src/lv_misc/lv_task.c ****     lv_task_t * new_task = NULL;
+ 206:lvgl/src/lv_misc/lv_task.c ****     lv_task_t * tmp;
+ 207:lvgl/src/lv_misc/lv_task.c **** 
+ 208:lvgl/src/lv_misc/lv_task.c ****     /*Create task lists in order of priority from high to low*/
+ 209:lvgl/src/lv_misc/lv_task.c ****     tmp = _lv_ll_get_head(&LV_GC_ROOT(_lv_task_ll));
+ 210:lvgl/src/lv_misc/lv_task.c **** 
+ 211:lvgl/src/lv_misc/lv_task.c ****     /*It's the first task*/
+ 212:lvgl/src/lv_misc/lv_task.c ****     if(NULL == tmp) {
+ 213:lvgl/src/lv_misc/lv_task.c ****         new_task = _lv_ll_ins_head(&LV_GC_ROOT(_lv_task_ll));
+ 214:lvgl/src/lv_misc/lv_task.c ****         LV_ASSERT_MEM(new_task);
+ 215:lvgl/src/lv_misc/lv_task.c ****         if(new_task == NULL) return NULL;
+ 216:lvgl/src/lv_misc/lv_task.c ****     }
+ 217:lvgl/src/lv_misc/lv_task.c ****     /*Insert the new task to proper place according to its priority*/
+ 218:lvgl/src/lv_misc/lv_task.c ****     else {
+ 219:lvgl/src/lv_misc/lv_task.c ****         do {
+ 220:lvgl/src/lv_misc/lv_task.c ****             if(tmp->prio <= prio) {
+ 221:lvgl/src/lv_misc/lv_task.c ****                 new_task = _lv_ll_ins_prev(&LV_GC_ROOT(_lv_task_ll), tmp);
+ 222:lvgl/src/lv_misc/lv_task.c ****                 LV_ASSERT_MEM(new_task);
+ 223:lvgl/src/lv_misc/lv_task.c ****                 if(new_task == NULL) return NULL;
+ 224:lvgl/src/lv_misc/lv_task.c ****                 break;
+ 225:lvgl/src/lv_misc/lv_task.c ****             }
+ 226:lvgl/src/lv_misc/lv_task.c ****             tmp = _lv_ll_get_next(&LV_GC_ROOT(_lv_task_ll), tmp);
+ 227:lvgl/src/lv_misc/lv_task.c ****         } while(tmp != NULL);
+ 228:lvgl/src/lv_misc/lv_task.c **** 
+ 229:lvgl/src/lv_misc/lv_task.c ****         /*Only too high priority tasks were found. Add the task to the end*/
+ 230:lvgl/src/lv_misc/lv_task.c ****         if(tmp == NULL) {
+ 231:lvgl/src/lv_misc/lv_task.c ****             new_task = _lv_ll_ins_tail(&LV_GC_ROOT(_lv_task_ll));
+ 232:lvgl/src/lv_misc/lv_task.c ****             LV_ASSERT_MEM(new_task);
+ 233:lvgl/src/lv_misc/lv_task.c ****             if(new_task == NULL) return NULL;
+ 234:lvgl/src/lv_misc/lv_task.c ****         }
+ 235:lvgl/src/lv_misc/lv_task.c ****     }
+ 236:lvgl/src/lv_misc/lv_task.c ****     task_list_changed = true;
+ 237:lvgl/src/lv_misc/lv_task.c **** 
+ 238:lvgl/src/lv_misc/lv_task.c ****     new_task->period  = period;
+ 239:lvgl/src/lv_misc/lv_task.c ****     new_task->task_cb = task_xcb;
+ 240:lvgl/src/lv_misc/lv_task.c ****     new_task->prio    = prio;
+ 241:lvgl/src/lv_misc/lv_task.c **** 
+ 242:lvgl/src/lv_misc/lv_task.c ****     new_task->repeat_count = -1;
+ 243:lvgl/src/lv_misc/lv_task.c ****     new_task->last_run = lv_tick_get();
+ 244:lvgl/src/lv_misc/lv_task.c **** 
+ 245:lvgl/src/lv_misc/lv_task.c ****     new_task->user_data = user_data;
+ 246:lvgl/src/lv_misc/lv_task.c **** 
+ 247:lvgl/src/lv_misc/lv_task.c ****     task_created = true;
+ 248:lvgl/src/lv_misc/lv_task.c **** 
+ 249:lvgl/src/lv_misc/lv_task.c ****     return new_task;
+ 250:lvgl/src/lv_misc/lv_task.c **** }
+ 251:lvgl/src/lv_misc/lv_task.c **** 
+ 252:lvgl/src/lv_misc/lv_task.c **** /**
+ 253:lvgl/src/lv_misc/lv_task.c ****  * Set the callback the task (the function to call periodically)
+ 254:lvgl/src/lv_misc/lv_task.c ****  * @param task pointer to a task
+ 255:lvgl/src/lv_misc/lv_task.c ****  * @param task_cb the function to call periodically
+ 256:lvgl/src/lv_misc/lv_task.c ****  */
+ 257:lvgl/src/lv_misc/lv_task.c **** void lv_task_set_cb(lv_task_t * task, lv_task_cb_t task_cb)
+ 258:lvgl/src/lv_misc/lv_task.c **** {
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 6
+
+
+ 259:lvgl/src/lv_misc/lv_task.c ****     task->task_cb = task_cb;
+ 260:lvgl/src/lv_misc/lv_task.c **** }
+ 261:lvgl/src/lv_misc/lv_task.c **** 
+ 262:lvgl/src/lv_misc/lv_task.c **** /**
+ 263:lvgl/src/lv_misc/lv_task.c ****  * Delete a lv_task
+ 264:lvgl/src/lv_misc/lv_task.c ****  * @param task pointer to task created by task
+ 265:lvgl/src/lv_misc/lv_task.c ****  */
+ 266:lvgl/src/lv_misc/lv_task.c **** void lv_task_del(lv_task_t * task)
+ 267:lvgl/src/lv_misc/lv_task.c **** {
+ 268:lvgl/src/lv_misc/lv_task.c ****     _lv_ll_remove(&LV_GC_ROOT(_lv_task_ll), task);
+ 269:lvgl/src/lv_misc/lv_task.c ****     task_list_changed = true;
+ 270:lvgl/src/lv_misc/lv_task.c **** 
+ 271:lvgl/src/lv_misc/lv_task.c ****     lv_mem_free(task);
+ 272:lvgl/src/lv_misc/lv_task.c **** 
+ 273:lvgl/src/lv_misc/lv_task.c ****     if(LV_GC_ROOT(_lv_task_act) == task) task_deleted = true; /*The active task was deleted*/
+ 274:lvgl/src/lv_misc/lv_task.c **** }
+ 275:lvgl/src/lv_misc/lv_task.c **** 
+ 276:lvgl/src/lv_misc/lv_task.c **** /**
+ 277:lvgl/src/lv_misc/lv_task.c ****  * Set new priority for a lv_task
+ 278:lvgl/src/lv_misc/lv_task.c ****  * @param task pointer to a lv_task
+ 279:lvgl/src/lv_misc/lv_task.c ****  * @param prio the new priority
+ 280:lvgl/src/lv_misc/lv_task.c ****  */
+ 281:lvgl/src/lv_misc/lv_task.c **** void lv_task_set_prio(lv_task_t * task, lv_task_prio_t prio)
+ 282:lvgl/src/lv_misc/lv_task.c **** {
+ 283:lvgl/src/lv_misc/lv_task.c ****     if(task->prio == prio) return;
+ 284:lvgl/src/lv_misc/lv_task.c **** 
+ 285:lvgl/src/lv_misc/lv_task.c ****     /*Find the tasks with new priority*/
+ 286:lvgl/src/lv_misc/lv_task.c ****     lv_task_t * i;
+ 287:lvgl/src/lv_misc/lv_task.c ****     _LV_LL_READ(LV_GC_ROOT(_lv_task_ll), i) {
+ 288:lvgl/src/lv_misc/lv_task.c ****         if(i->prio <= prio) {
+ 289:lvgl/src/lv_misc/lv_task.c ****             if(i != task) _lv_ll_move_before(&LV_GC_ROOT(_lv_task_ll), task, i);
+ 290:lvgl/src/lv_misc/lv_task.c ****             break;
+ 291:lvgl/src/lv_misc/lv_task.c ****         }
+ 292:lvgl/src/lv_misc/lv_task.c ****     }
+ 293:lvgl/src/lv_misc/lv_task.c **** 
+ 294:lvgl/src/lv_misc/lv_task.c ****     /*There was no such a low priority so far then add the node to the tail*/
+ 295:lvgl/src/lv_misc/lv_task.c ****     if(i == NULL) {
+ 296:lvgl/src/lv_misc/lv_task.c ****         _lv_ll_move_before(&LV_GC_ROOT(_lv_task_ll), task, NULL);
+ 297:lvgl/src/lv_misc/lv_task.c ****     }
+ 298:lvgl/src/lv_misc/lv_task.c ****     task_list_changed = true;
+ 299:lvgl/src/lv_misc/lv_task.c **** 
+ 300:lvgl/src/lv_misc/lv_task.c ****     task->prio = prio;
+ 301:lvgl/src/lv_misc/lv_task.c **** }
+ 302:lvgl/src/lv_misc/lv_task.c **** 
+ 303:lvgl/src/lv_misc/lv_task.c **** /**
+ 304:lvgl/src/lv_misc/lv_task.c ****  * Set new period for a lv_task
+ 305:lvgl/src/lv_misc/lv_task.c ****  * @param task pointer to a lv_task
+ 306:lvgl/src/lv_misc/lv_task.c ****  * @param period the new period
+ 307:lvgl/src/lv_misc/lv_task.c ****  */
+ 308:lvgl/src/lv_misc/lv_task.c **** void lv_task_set_period(lv_task_t * task, uint32_t period)
+ 309:lvgl/src/lv_misc/lv_task.c **** {
+ 310:lvgl/src/lv_misc/lv_task.c ****     task->period = period;
+ 311:lvgl/src/lv_misc/lv_task.c **** }
+ 312:lvgl/src/lv_misc/lv_task.c **** 
+ 313:lvgl/src/lv_misc/lv_task.c **** /**
+ 314:lvgl/src/lv_misc/lv_task.c ****  * Make a lv_task ready. It will not wait its period.
+ 315:lvgl/src/lv_misc/lv_task.c ****  * @param task pointer to a lv_task.
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 7
+
+
+ 316:lvgl/src/lv_misc/lv_task.c ****  */
+ 317:lvgl/src/lv_misc/lv_task.c **** void lv_task_ready(lv_task_t * task)
+ 318:lvgl/src/lv_misc/lv_task.c **** {
+ 319:lvgl/src/lv_misc/lv_task.c ****     task->last_run = lv_tick_get() - task->period - 1;
+ 320:lvgl/src/lv_misc/lv_task.c **** }
+ 321:lvgl/src/lv_misc/lv_task.c **** 
+ 322:lvgl/src/lv_misc/lv_task.c **** /**
+ 323:lvgl/src/lv_misc/lv_task.c ****  * Set the number of times a task will repeat.
+ 324:lvgl/src/lv_misc/lv_task.c ****  * @param task pointer to a lv_task.
+ 325:lvgl/src/lv_misc/lv_task.c ****  * @param repeat_count -1 : infinity;  0 : stop ;  n>0: residual times
+ 326:lvgl/src/lv_misc/lv_task.c ****  */
+ 327:lvgl/src/lv_misc/lv_task.c **** void lv_task_set_repeat_count(lv_task_t * task, int32_t repeat_count)
+ 328:lvgl/src/lv_misc/lv_task.c **** {
+ 329:lvgl/src/lv_misc/lv_task.c ****     task->repeat_count = repeat_count;
+ 330:lvgl/src/lv_misc/lv_task.c **** }
+ 331:lvgl/src/lv_misc/lv_task.c **** 
+ 332:lvgl/src/lv_misc/lv_task.c **** /**
+ 333:lvgl/src/lv_misc/lv_task.c ****  * Reset a lv_task.
+ 334:lvgl/src/lv_misc/lv_task.c ****  * It will be called the previously set period milliseconds later.
+ 335:lvgl/src/lv_misc/lv_task.c ****  * @param task pointer to a lv_task.
+ 336:lvgl/src/lv_misc/lv_task.c ****  */
+ 337:lvgl/src/lv_misc/lv_task.c **** void lv_task_reset(lv_task_t * task)
+ 338:lvgl/src/lv_misc/lv_task.c **** {
+ 339:lvgl/src/lv_misc/lv_task.c ****     task->last_run = lv_tick_get();
+ 340:lvgl/src/lv_misc/lv_task.c **** }
+ 341:lvgl/src/lv_misc/lv_task.c **** 
+ 342:lvgl/src/lv_misc/lv_task.c **** /**
+ 343:lvgl/src/lv_misc/lv_task.c ****  * Enable or disable the whole lv_task handling
+ 344:lvgl/src/lv_misc/lv_task.c ****  * @param en: true: lv_task handling is running, false: lv_task handling is suspended
+ 345:lvgl/src/lv_misc/lv_task.c ****  */
+ 346:lvgl/src/lv_misc/lv_task.c **** void lv_task_enable(bool en)
+ 347:lvgl/src/lv_misc/lv_task.c **** {
+ 348:lvgl/src/lv_misc/lv_task.c ****     lv_task_run = en;
+ 349:lvgl/src/lv_misc/lv_task.c **** }
+ 350:lvgl/src/lv_misc/lv_task.c **** 
+ 351:lvgl/src/lv_misc/lv_task.c **** /**
+ 352:lvgl/src/lv_misc/lv_task.c ****  * Get idle percentage
+ 353:lvgl/src/lv_misc/lv_task.c ****  * @return the lv_task idle in percentage
+ 354:lvgl/src/lv_misc/lv_task.c ****  */
+ 355:lvgl/src/lv_misc/lv_task.c **** uint8_t lv_task_get_idle(void)
+ 356:lvgl/src/lv_misc/lv_task.c **** {
+ 357:lvgl/src/lv_misc/lv_task.c ****     return idle_last;
+ 358:lvgl/src/lv_misc/lv_task.c **** }
+ 359:lvgl/src/lv_misc/lv_task.c **** 
+ 360:lvgl/src/lv_misc/lv_task.c **** /**
+ 361:lvgl/src/lv_misc/lv_task.c ****  * Iterate through the tasks
+ 362:lvgl/src/lv_misc/lv_task.c ****  * @param task NULL to start iteration or the previous return value to get the next task
+ 363:lvgl/src/lv_misc/lv_task.c ****  * @return the next task or NULL if there is no more task
+ 364:lvgl/src/lv_misc/lv_task.c ****  */
+ 365:lvgl/src/lv_misc/lv_task.c **** lv_task_t * lv_task_get_next(lv_task_t * task)
+ 366:lvgl/src/lv_misc/lv_task.c **** {
+ 367:lvgl/src/lv_misc/lv_task.c ****     if(task == NULL) return _lv_ll_get_head(&LV_GC_ROOT(_lv_task_ll));
+ 368:lvgl/src/lv_misc/lv_task.c ****     else return _lv_ll_get_next(&LV_GC_ROOT(_lv_task_ll), task);
+ 369:lvgl/src/lv_misc/lv_task.c **** }
+ 370:lvgl/src/lv_misc/lv_task.c **** 
+ 371:lvgl/src/lv_misc/lv_task.c **** /**********************
+ 372:lvgl/src/lv_misc/lv_task.c ****  *   STATIC FUNCTIONS
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 8
+
+
+ 373:lvgl/src/lv_misc/lv_task.c ****  **********************/
+ 374:lvgl/src/lv_misc/lv_task.c **** 
+ 375:lvgl/src/lv_misc/lv_task.c **** /**
+ 376:lvgl/src/lv_misc/lv_task.c ****  * Execute task if its the priority is appropriate
+ 377:lvgl/src/lv_misc/lv_task.c ****  * @param task pointer to lv_task
+ 378:lvgl/src/lv_misc/lv_task.c ****  * @return true: execute, false: not executed
+ 379:lvgl/src/lv_misc/lv_task.c ****  */
+ 380:lvgl/src/lv_misc/lv_task.c **** static bool lv_task_exec(lv_task_t * task)
+ 381:lvgl/src/lv_misc/lv_task.c **** {
+ 382:lvgl/src/lv_misc/lv_task.c ****     bool exec = false;
+ 383:lvgl/src/lv_misc/lv_task.c **** 
+ 384:lvgl/src/lv_misc/lv_task.c ****     if(lv_task_time_remaining(task) == 0) {
+ 385:lvgl/src/lv_misc/lv_task.c ****         task->last_run = lv_tick_get();
+ 386:lvgl/src/lv_misc/lv_task.c ****         if(task->task_cb) task->task_cb(task);
+ 387:lvgl/src/lv_misc/lv_task.c **** 
+ 388:lvgl/src/lv_misc/lv_task.c ****         /*Delete if it was a one shot lv_task*/
+ 389:lvgl/src/lv_misc/lv_task.c ****         if(task_deleted == false) { /*The task might be deleted by itself as well*/
+ 390:lvgl/src/lv_misc/lv_task.c ****             if(task->repeat_count > 0) {
+ 391:lvgl/src/lv_misc/lv_task.c ****                 task->repeat_count--;
+ 392:lvgl/src/lv_misc/lv_task.c ****             }
+ 393:lvgl/src/lv_misc/lv_task.c ****             if(task->repeat_count == 0) {
+ 394:lvgl/src/lv_misc/lv_task.c ****                 lv_task_del(task);
+ 395:lvgl/src/lv_misc/lv_task.c ****             }
+ 396:lvgl/src/lv_misc/lv_task.c ****         }
+ 397:lvgl/src/lv_misc/lv_task.c ****         exec = true;
+ 398:lvgl/src/lv_misc/lv_task.c ****     }
+ 399:lvgl/src/lv_misc/lv_task.c **** 
+ 400:lvgl/src/lv_misc/lv_task.c ****     return exec;
+ 401:lvgl/src/lv_misc/lv_task.c **** }
+ 402:lvgl/src/lv_misc/lv_task.c **** 
+ 403:lvgl/src/lv_misc/lv_task.c **** /**
+ 404:lvgl/src/lv_misc/lv_task.c ****  * Find out how much time remains before a task must be run.
+ 405:lvgl/src/lv_misc/lv_task.c ****  * @param task pointer to lv_task
+ 406:lvgl/src/lv_misc/lv_task.c ****  * @return the time remaining, or 0 if it needs to be run again
+ 407:lvgl/src/lv_misc/lv_task.c ****  */
+ 408:lvgl/src/lv_misc/lv_task.c **** static uint32_t lv_task_time_remaining(lv_task_t * task)
+ 409:lvgl/src/lv_misc/lv_task.c **** {
+  29              		.loc 1 409 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 409 1 is_stmt 0 view .LVU1
+  34 0000 10B5     		push	{r4, lr}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 8
+  37              		.cfi_offset 4, -8
+  38              		.cfi_offset 14, -4
+  39 0002 0446     		mov	r4, r0
+ 410:lvgl/src/lv_misc/lv_task.c ****     /*Check if at least 'period' time elapsed*/
+ 411:lvgl/src/lv_misc/lv_task.c ****     uint32_t elp = lv_tick_elaps(task->last_run);
+  40              		.loc 1 411 5 is_stmt 1 view .LVU2
+  41              		.loc 1 411 20 is_stmt 0 view .LVU3
+  42 0004 4068     		ldr	r0, [r0, #4]
+  43              	.LVL1:
+  44              		.loc 1 411 20 view .LVU4
+  45 0006 FFF7FEFF 		bl	lv_tick_elaps
+  46              	.LVL2:
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 9
+
+
+ 412:lvgl/src/lv_misc/lv_task.c ****     if(elp >= task->period)
+  47              		.loc 1 412 5 is_stmt 1 view .LVU5
+  48              		.loc 1 412 19 is_stmt 0 view .LVU6
+  49 000a 2368     		ldr	r3, [r4]
+  50              		.loc 1 412 7 view .LVU7
+  51 000c 8342     		cmp	r3, r0
+  52 000e 01D9     		bls	.L3
+ 413:lvgl/src/lv_misc/lv_task.c ****         return 0;
+ 414:lvgl/src/lv_misc/lv_task.c ****     return task->period - elp;
+  53              		.loc 1 414 5 is_stmt 1 view .LVU8
+  54              		.loc 1 414 25 is_stmt 0 view .LVU9
+  55 0010 181A     		subs	r0, r3, r0
+  56              	.LVL3:
+  57              	.L1:
+ 415:lvgl/src/lv_misc/lv_task.c **** }
+  58              		.loc 1 415 1 view .LVU10
+  59 0012 10BD     		pop	{r4, pc}
+  60              	.LVL4:
+  61              	.L3:
+ 413:lvgl/src/lv_misc/lv_task.c ****         return 0;
+  62              		.loc 1 413 16 view .LVU11
+  63 0014 0020     		movs	r0, #0
+  64              	.LVL5:
+ 413:lvgl/src/lv_misc/lv_task.c ****         return 0;
+  65              		.loc 1 413 16 view .LVU12
+  66 0016 FCE7     		b	.L1
+  67              		.cfi_endproc
+  68              	.LFE182:
+  70              		.section	.text.lv_task_create,"ax",%progbits
+  71              		.align	1
+  72              		.global	lv_task_create
+  73              		.syntax unified
+  74              		.thumb
+  75              		.thumb_func
+  76              		.fpu fpv4-sp-d16
+  78              	lv_task_create:
+  79              	.LVL6:
+  80              	.LFB170:
+ 204:lvgl/src/lv_misc/lv_task.c ****     lv_task_t * new_task = NULL;
+  81              		.loc 1 204 1 is_stmt 1 view -0
+  82              		.cfi_startproc
+  83              		@ args = 0, pretend = 0, frame = 0
+  84              		@ frame_needed = 0, uses_anonymous_args = 0
+ 204:lvgl/src/lv_misc/lv_task.c ****     lv_task_t * new_task = NULL;
+  85              		.loc 1 204 1 is_stmt 0 view .LVU14
+  86 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
+  87              	.LCFI1:
+  88              		.cfi_def_cfa_offset 32
+  89              		.cfi_offset 3, -32
+  90              		.cfi_offset 4, -28
+  91              		.cfi_offset 5, -24
+  92              		.cfi_offset 6, -20
+  93              		.cfi_offset 7, -16
+  94              		.cfi_offset 8, -12
+  95              		.cfi_offset 9, -8
+  96              		.cfi_offset 14, -4
+  97 0004 8046     		mov	r8, r0
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 10
+
+
+  98 0006 8946     		mov	r9, r1
+  99 0008 1546     		mov	r5, r2
+ 100 000a 1F46     		mov	r7, r3
+ 205:lvgl/src/lv_misc/lv_task.c ****     lv_task_t * tmp;
+ 101              		.loc 1 205 5 is_stmt 1 view .LVU15
+ 102              	.LVL7:
+ 206:lvgl/src/lv_misc/lv_task.c **** 
+ 103              		.loc 1 206 5 view .LVU16
+ 209:lvgl/src/lv_misc/lv_task.c **** 
+ 104              		.loc 1 209 5 view .LVU17
+ 209:lvgl/src/lv_misc/lv_task.c **** 
+ 105              		.loc 1 209 11 is_stmt 0 view .LVU18
+ 106 000c 2F48     		ldr	r0, .L25
+ 107              	.LVL8:
+ 209:lvgl/src/lv_misc/lv_task.c **** 
+ 108              		.loc 1 209 11 view .LVU19
+ 109 000e FFF7FEFF 		bl	_lv_ll_get_head
+ 110              	.LVL9:
+ 212:lvgl/src/lv_misc/lv_task.c ****         new_task = _lv_ll_ins_head(&LV_GC_ROOT(_lv_task_ll));
+ 111              		.loc 1 212 5 is_stmt 1 view .LVU20
+ 212:lvgl/src/lv_misc/lv_task.c ****         new_task = _lv_ll_ins_head(&LV_GC_ROOT(_lv_task_ll));
+ 112              		.loc 1 212 7 is_stmt 0 view .LVU21
+ 113 0012 0446     		mov	r4, r0
+ 114 0014 28B3     		cbz	r0, .L19
+ 115              	.L6:
+ 219:lvgl/src/lv_misc/lv_task.c ****             if(tmp->prio <= prio) {
+ 116              		.loc 1 219 9 is_stmt 1 view .LVU22
+ 220:lvgl/src/lv_misc/lv_task.c ****                 new_task = _lv_ll_ins_prev(&LV_GC_ROOT(_lv_task_ll), tmp);
+ 117              		.loc 1 220 13 view .LVU23
+ 220:lvgl/src/lv_misc/lv_task.c ****                 new_task = _lv_ll_ins_prev(&LV_GC_ROOT(_lv_task_ll), tmp);
+ 118              		.loc 1 220 19 is_stmt 0 view .LVU24
+ 119 0016 237D     		ldrb	r3, [r4, #20]	@ zero_extendqisi2
+ 120 0018 03F00703 		and	r3, r3, #7
+ 220:lvgl/src/lv_misc/lv_task.c ****                 new_task = _lv_ll_ins_prev(&LV_GC_ROOT(_lv_task_ll), tmp);
+ 121              		.loc 1 220 15 view .LVU25
+ 122 001c AB42     		cmp	r3, r5
+ 123 001e 30DD     		ble	.L20
+ 226:lvgl/src/lv_misc/lv_task.c ****         } while(tmp != NULL);
+ 124              		.loc 1 226 13 is_stmt 1 view .LVU26
+ 226:lvgl/src/lv_misc/lv_task.c ****         } while(tmp != NULL);
+ 125              		.loc 1 226 19 is_stmt 0 view .LVU27
+ 126 0020 2146     		mov	r1, r4
+ 127 0022 2A48     		ldr	r0, .L25
+ 128              	.LVL10:
+ 226:lvgl/src/lv_misc/lv_task.c ****         } while(tmp != NULL);
+ 129              		.loc 1 226 19 view .LVU28
+ 130 0024 FFF7FEFF 		bl	_lv_ll_get_next
+ 131              	.LVL11:
+ 227:lvgl/src/lv_misc/lv_task.c **** 
+ 132              		.loc 1 227 9 view .LVU29
+ 133 0028 0446     		mov	r4, r0
+ 134 002a 0028     		cmp	r0, #0
+ 135 002c F3D1     		bne	.L6
+ 226:lvgl/src/lv_misc/lv_task.c ****         } while(tmp != NULL);
+ 136              		.loc 1 226 19 view .LVU30
+ 137 002e 0346     		mov	r3, r0
+ 138              	.LVL12:
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 11
+
+
+ 139              	.L14:
+ 230:lvgl/src/lv_misc/lv_task.c ****             new_task = _lv_ll_ins_tail(&LV_GC_ROOT(_lv_task_ll));
+ 140              		.loc 1 230 9 is_stmt 1 view .LVU31
+ 230:lvgl/src/lv_misc/lv_task.c ****             new_task = _lv_ll_ins_tail(&LV_GC_ROOT(_lv_task_ll));
+ 141              		.loc 1 230 11 is_stmt 0 view .LVU32
+ 142 0030 002B     		cmp	r3, #0
+ 143 0032 38D0     		beq	.L21
+ 144              	.LVL13:
+ 145              	.L10:
+ 236:lvgl/src/lv_misc/lv_task.c **** 
+ 146              		.loc 1 236 5 is_stmt 1 view .LVU33
+ 236:lvgl/src/lv_misc/lv_task.c **** 
+ 147              		.loc 1 236 23 is_stmt 0 view .LVU34
+ 148 0034 0126     		movs	r6, #1
+ 149 0036 264B     		ldr	r3, .L25+4
+ 150 0038 1E70     		strb	r6, [r3]
+ 238:lvgl/src/lv_misc/lv_task.c ****     new_task->task_cb = task_xcb;
+ 151              		.loc 1 238 5 is_stmt 1 view .LVU35
+ 238:lvgl/src/lv_misc/lv_task.c ****     new_task->task_cb = task_xcb;
+ 152              		.loc 1 238 23 is_stmt 0 view .LVU36
+ 153 003a C4F80090 		str	r9, [r4]
+ 239:lvgl/src/lv_misc/lv_task.c ****     new_task->prio    = prio;
+ 154              		.loc 1 239 5 is_stmt 1 view .LVU37
+ 239:lvgl/src/lv_misc/lv_task.c ****     new_task->prio    = prio;
+ 155              		.loc 1 239 23 is_stmt 0 view .LVU38
+ 156 003e C4F80880 		str	r8, [r4, #8]
+ 240:lvgl/src/lv_misc/lv_task.c **** 
+ 157              		.loc 1 240 5 is_stmt 1 view .LVU39
+ 240:lvgl/src/lv_misc/lv_task.c **** 
+ 158              		.loc 1 240 23 is_stmt 0 view .LVU40
+ 159 0042 237D     		ldrb	r3, [r4, #20]	@ zero_extendqisi2
+ 160 0044 65F30203 		bfi	r3, r5, #0, #3
+ 161 0048 2375     		strb	r3, [r4, #20]
+ 242:lvgl/src/lv_misc/lv_task.c ****     new_task->last_run = lv_tick_get();
+ 162              		.loc 1 242 5 is_stmt 1 view .LVU41
+ 242:lvgl/src/lv_misc/lv_task.c ****     new_task->last_run = lv_tick_get();
+ 163              		.loc 1 242 28 is_stmt 0 view .LVU42
+ 164 004a 4FF0FF33 		mov	r3, #-1
+ 165 004e 2361     		str	r3, [r4, #16]
+ 243:lvgl/src/lv_misc/lv_task.c **** 
+ 166              		.loc 1 243 5 is_stmt 1 view .LVU43
+ 243:lvgl/src/lv_misc/lv_task.c **** 
+ 167              		.loc 1 243 26 is_stmt 0 view .LVU44
+ 168 0050 FFF7FEFF 		bl	lv_tick_get
+ 169              	.LVL14:
+ 243:lvgl/src/lv_misc/lv_task.c **** 
+ 170              		.loc 1 243 24 view .LVU45
+ 171 0054 6060     		str	r0, [r4, #4]
+ 245:lvgl/src/lv_misc/lv_task.c **** 
+ 172              		.loc 1 245 5 is_stmt 1 view .LVU46
+ 245:lvgl/src/lv_misc/lv_task.c **** 
+ 173              		.loc 1 245 25 is_stmt 0 view .LVU47
+ 174 0056 E760     		str	r7, [r4, #12]
+ 247:lvgl/src/lv_misc/lv_task.c **** 
+ 175              		.loc 1 247 5 is_stmt 1 view .LVU48
+ 247:lvgl/src/lv_misc/lv_task.c **** 
+ 176              		.loc 1 247 18 is_stmt 0 view .LVU49
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 12
+
+
+ 177 0058 1E4B     		ldr	r3, .L25+8
+ 178 005a 1E70     		strb	r6, [r3]
+ 249:lvgl/src/lv_misc/lv_task.c **** }
+ 179              		.loc 1 249 5 is_stmt 1 view .LVU50
+ 180              	.L5:
+ 250:lvgl/src/lv_misc/lv_task.c **** 
+ 181              		.loc 1 250 1 is_stmt 0 view .LVU51
+ 182 005c 2046     		mov	r0, r4
+ 183 005e BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 184              	.LVL15:
+ 185              	.L19:
+ 213:lvgl/src/lv_misc/lv_task.c ****         LV_ASSERT_MEM(new_task);
+ 186              		.loc 1 213 9 is_stmt 1 view .LVU52
+ 213:lvgl/src/lv_misc/lv_task.c ****         LV_ASSERT_MEM(new_task);
+ 187              		.loc 1 213 20 is_stmt 0 view .LVU53
+ 188 0062 1A48     		ldr	r0, .L25
+ 189              	.LVL16:
+ 213:lvgl/src/lv_misc/lv_task.c ****         LV_ASSERT_MEM(new_task);
+ 190              		.loc 1 213 20 view .LVU54
+ 191 0064 FFF7FEFF 		bl	_lv_ll_ins_head
+ 192              	.LVL17:
+ 193 0068 0446     		mov	r4, r0
+ 194              	.LVL18:
+ 214:lvgl/src/lv_misc/lv_task.c ****         if(new_task == NULL) return NULL;
+ 195              		.loc 1 214 9 is_stmt 1 view .LVU55
+ 214:lvgl/src/lv_misc/lv_task.c ****         if(new_task == NULL) return NULL;
+ 196              		.loc 1 214 9 view .LVU56
+ 197 006a FFF7FEFF 		bl	lv_debug_check_null
+ 198              	.LVL19:
+ 214:lvgl/src/lv_misc/lv_task.c ****         if(new_task == NULL) return NULL;
+ 199              		.loc 1 214 9 is_stmt 0 view .LVU57
+ 200 006e 10B1     		cbz	r0, .L22
+ 214:lvgl/src/lv_misc/lv_task.c ****         if(new_task == NULL) return NULL;
+ 201              		.loc 1 214 32 is_stmt 1 discriminator 2 view .LVU58
+ 215:lvgl/src/lv_misc/lv_task.c ****     }
+ 202              		.loc 1 215 9 discriminator 2 view .LVU59
+ 215:lvgl/src/lv_misc/lv_task.c ****     }
+ 203              		.loc 1 215 11 is_stmt 0 discriminator 2 view .LVU60
+ 204 0070 002C     		cmp	r4, #0
+ 205 0072 DFD1     		bne	.L10
+ 206 0074 F2E7     		b	.L5
+ 207              	.L22:
+ 214:lvgl/src/lv_misc/lv_task.c ****         if(new_task == NULL) return NULL;
+ 208              		.loc 1 214 9 is_stmt 1 discriminator 1 view .LVU61
+ 214:lvgl/src/lv_misc/lv_task.c ****         if(new_task == NULL) return NULL;
+ 209              		.loc 1 214 9 discriminator 1 view .LVU62
+ 210 0076 2246     		mov	r2, r4
+ 211 0078 0023     		movs	r3, #0
+ 212 007a 1748     		ldr	r0, .L25+12
+ 213 007c FFF7FEFF 		bl	lv_debug_log_error
+ 214              	.LVL20:
+ 215              	.L8:
+ 214:lvgl/src/lv_misc/lv_task.c ****         if(new_task == NULL) return NULL;
+ 216              		.loc 1 214 9 discriminator 1 view .LVU63
+ 214:lvgl/src/lv_misc/lv_task.c ****         if(new_task == NULL) return NULL;
+ 217              		.loc 1 214 9 discriminator 1 view .LVU64
+ 218 0080 FEE7     		b	.L8
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 13
+
+
+ 219              	.LVL21:
+ 220              	.L20:
+ 221:lvgl/src/lv_misc/lv_task.c ****                 LV_ASSERT_MEM(new_task);
+ 221              		.loc 1 221 17 view .LVU65
+ 221:lvgl/src/lv_misc/lv_task.c ****                 LV_ASSERT_MEM(new_task);
+ 222              		.loc 1 221 28 is_stmt 0 view .LVU66
+ 223 0082 2146     		mov	r1, r4
+ 224 0084 1148     		ldr	r0, .L25
+ 225              	.LVL22:
+ 221:lvgl/src/lv_misc/lv_task.c ****                 LV_ASSERT_MEM(new_task);
+ 226              		.loc 1 221 28 view .LVU67
+ 227 0086 FFF7FEFF 		bl	_lv_ll_ins_prev
+ 228              	.LVL23:
+ 229 008a 0646     		mov	r6, r0
+ 230              	.LVL24:
+ 222:lvgl/src/lv_misc/lv_task.c ****                 if(new_task == NULL) return NULL;
+ 231              		.loc 1 222 17 is_stmt 1 view .LVU68
+ 222:lvgl/src/lv_misc/lv_task.c ****                 if(new_task == NULL) return NULL;
+ 232              		.loc 1 222 17 view .LVU69
+ 233 008c FFF7FEFF 		bl	lv_debug_check_null
+ 234              	.LVL25:
+ 222:lvgl/src/lv_misc/lv_task.c ****                 if(new_task == NULL) return NULL;
+ 235              		.loc 1 222 17 is_stmt 0 view .LVU70
+ 236 0090 18B1     		cbz	r0, .L23
+ 222:lvgl/src/lv_misc/lv_task.c ****                 if(new_task == NULL) return NULL;
+ 237              		.loc 1 222 40 is_stmt 1 discriminator 2 view .LVU71
+ 223:lvgl/src/lv_misc/lv_task.c ****                 break;
+ 238              		.loc 1 223 17 discriminator 2 view .LVU72
+ 223:lvgl/src/lv_misc/lv_task.c ****                 break;
+ 239              		.loc 1 223 19 is_stmt 0 discriminator 2 view .LVU73
+ 240 0092 C6B1     		cbz	r6, .L17
+ 241 0094 2346     		mov	r3, r4
+ 221:lvgl/src/lv_misc/lv_task.c ****                 LV_ASSERT_MEM(new_task);
+ 242              		.loc 1 221 28 view .LVU74
+ 243 0096 3446     		mov	r4, r6
+ 244              	.LVL26:
+ 221:lvgl/src/lv_misc/lv_task.c ****                 LV_ASSERT_MEM(new_task);
+ 245              		.loc 1 221 28 view .LVU75
+ 246 0098 CAE7     		b	.L14
+ 247              	.LVL27:
+ 248              	.L23:
+ 222:lvgl/src/lv_misc/lv_task.c ****                 if(new_task == NULL) return NULL;
+ 249              		.loc 1 222 17 is_stmt 1 discriminator 1 view .LVU76
+ 222:lvgl/src/lv_misc/lv_task.c ****                 if(new_task == NULL) return NULL;
+ 250              		.loc 1 222 17 discriminator 1 view .LVU77
+ 251 009a 3246     		mov	r2, r6
+ 252 009c 0023     		movs	r3, #0
+ 253 009e 0E48     		ldr	r0, .L25+12
+ 254 00a0 FFF7FEFF 		bl	lv_debug_log_error
+ 255              	.LVL28:
+ 256              	.L13:
+ 222:lvgl/src/lv_misc/lv_task.c ****                 if(new_task == NULL) return NULL;
+ 257              		.loc 1 222 17 discriminator 2 view .LVU78
+ 222:lvgl/src/lv_misc/lv_task.c ****                 if(new_task == NULL) return NULL;
+ 258              		.loc 1 222 17 discriminator 2 view .LVU79
+ 259 00a4 FEE7     		b	.L13
+ 260              	.LVL29:
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 14
+
+
+ 261              	.L21:
+ 231:lvgl/src/lv_misc/lv_task.c ****             LV_ASSERT_MEM(new_task);
+ 262              		.loc 1 231 13 view .LVU80
+ 231:lvgl/src/lv_misc/lv_task.c ****             LV_ASSERT_MEM(new_task);
+ 263              		.loc 1 231 24 is_stmt 0 view .LVU81
+ 264 00a6 0948     		ldr	r0, .L25
+ 265 00a8 FFF7FEFF 		bl	_lv_ll_ins_tail
+ 266              	.LVL30:
+ 231:lvgl/src/lv_misc/lv_task.c ****             LV_ASSERT_MEM(new_task);
+ 267              		.loc 1 231 24 view .LVU82
+ 268 00ac 0446     		mov	r4, r0
+ 269              	.LVL31:
+ 232:lvgl/src/lv_misc/lv_task.c ****             if(new_task == NULL) return NULL;
+ 270              		.loc 1 232 13 is_stmt 1 view .LVU83
+ 232:lvgl/src/lv_misc/lv_task.c ****             if(new_task == NULL) return NULL;
+ 271              		.loc 1 232 13 view .LVU84
+ 272 00ae FFF7FEFF 		bl	lv_debug_check_null
+ 273              	.LVL32:
+ 232:lvgl/src/lv_misc/lv_task.c ****             if(new_task == NULL) return NULL;
+ 274              		.loc 1 232 13 is_stmt 0 view .LVU85
+ 275 00b2 10B1     		cbz	r0, .L24
+ 232:lvgl/src/lv_misc/lv_task.c ****             if(new_task == NULL) return NULL;
+ 276              		.loc 1 232 36 is_stmt 1 discriminator 2 view .LVU86
+ 233:lvgl/src/lv_misc/lv_task.c ****         }
+ 277              		.loc 1 233 13 discriminator 2 view .LVU87
+ 233:lvgl/src/lv_misc/lv_task.c ****         }
+ 278              		.loc 1 233 15 is_stmt 0 discriminator 2 view .LVU88
+ 279 00b4 002C     		cmp	r4, #0
+ 280 00b6 BDD1     		bne	.L10
+ 281 00b8 D0E7     		b	.L5
+ 282              	.L24:
+ 232:lvgl/src/lv_misc/lv_task.c ****             if(new_task == NULL) return NULL;
+ 283              		.loc 1 232 13 is_stmt 1 discriminator 1 view .LVU89
+ 232:lvgl/src/lv_misc/lv_task.c ****             if(new_task == NULL) return NULL;
+ 284              		.loc 1 232 13 discriminator 1 view .LVU90
+ 285 00ba 2246     		mov	r2, r4
+ 286 00bc 0023     		movs	r3, #0
+ 287 00be 0648     		ldr	r0, .L25+12
+ 288 00c0 FFF7FEFF 		bl	lv_debug_log_error
+ 289              	.LVL33:
+ 290              	.L16:
+ 232:lvgl/src/lv_misc/lv_task.c ****             if(new_task == NULL) return NULL;
+ 291              		.loc 1 232 13 discriminator 3 view .LVU91
+ 232:lvgl/src/lv_misc/lv_task.c ****             if(new_task == NULL) return NULL;
+ 292              		.loc 1 232 13 discriminator 3 view .LVU92
+ 293 00c4 FEE7     		b	.L16
+ 294              	.LVL34:
+ 295              	.L17:
+ 223:lvgl/src/lv_misc/lv_task.c ****                 break;
+ 296              		.loc 1 223 45 is_stmt 0 view .LVU93
+ 297 00c6 3446     		mov	r4, r6
+ 298              	.LVL35:
+ 223:lvgl/src/lv_misc/lv_task.c ****                 break;
+ 299              		.loc 1 223 45 view .LVU94
+ 300 00c8 C8E7     		b	.L5
+ 301              	.L26:
+ 302 00ca 00BF     		.align	2
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 15
+
+
+ 303              	.L25:
+ 304 00cc 00000000 		.word	_lv_task_ll
+ 305 00d0 00000000 		.word	.LANCHOR0
+ 306 00d4 00000000 		.word	.LANCHOR1
+ 307 00d8 00000000 		.word	.LC0
+ 308              		.cfi_endproc
+ 309              	.LFE170:
+ 311              		.section	.text.lv_task_create_basic,"ax",%progbits
+ 312              		.align	1
+ 313              		.global	lv_task_create_basic
+ 314              		.syntax unified
+ 315              		.thumb
+ 316              		.thumb_func
+ 317              		.fpu fpv4-sp-d16
+ 319              	lv_task_create_basic:
+ 320              	.LFB169:
+ 189:lvgl/src/lv_misc/lv_task.c ****     return lv_task_create(NULL, DEF_PERIOD, DEF_PRIO, NULL);
+ 321              		.loc 1 189 1 is_stmt 1 view -0
+ 322              		.cfi_startproc
+ 323              		@ args = 0, pretend = 0, frame = 0
+ 324              		@ frame_needed = 0, uses_anonymous_args = 0
+ 325 0000 08B5     		push	{r3, lr}
+ 326              	.LCFI2:
+ 327              		.cfi_def_cfa_offset 8
+ 328              		.cfi_offset 3, -8
+ 329              		.cfi_offset 14, -4
+ 190:lvgl/src/lv_misc/lv_task.c **** }
+ 330              		.loc 1 190 5 view .LVU96
+ 190:lvgl/src/lv_misc/lv_task.c **** }
+ 331              		.loc 1 190 12 is_stmt 0 view .LVU97
+ 332 0002 0023     		movs	r3, #0
+ 333 0004 0322     		movs	r2, #3
+ 334 0006 4FF4FA71 		mov	r1, #500
+ 335 000a 1846     		mov	r0, r3
+ 336 000c FFF7FEFF 		bl	lv_task_create
+ 337              	.LVL36:
+ 191:lvgl/src/lv_misc/lv_task.c **** 
+ 338              		.loc 1 191 1 view .LVU98
+ 339 0010 08BD     		pop	{r3, pc}
+ 340              		.cfi_endproc
+ 341              	.LFE169:
+ 343              		.section	.text.lv_task_set_cb,"ax",%progbits
+ 344              		.align	1
+ 345              		.global	lv_task_set_cb
+ 346              		.syntax unified
+ 347              		.thumb
+ 348              		.thumb_func
+ 349              		.fpu fpv4-sp-d16
+ 351              	lv_task_set_cb:
+ 352              	.LVL37:
+ 353              	.LFB171:
+ 258:lvgl/src/lv_misc/lv_task.c ****     task->task_cb = task_cb;
+ 354              		.loc 1 258 1 is_stmt 1 view -0
+ 355              		.cfi_startproc
+ 356              		@ args = 0, pretend = 0, frame = 0
+ 357              		@ frame_needed = 0, uses_anonymous_args = 0
+ 358              		@ link register save eliminated.
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 16
+
+
+ 259:lvgl/src/lv_misc/lv_task.c **** }
+ 359              		.loc 1 259 5 view .LVU100
+ 259:lvgl/src/lv_misc/lv_task.c **** }
+ 360              		.loc 1 259 19 is_stmt 0 view .LVU101
+ 361 0000 8160     		str	r1, [r0, #8]
+ 260:lvgl/src/lv_misc/lv_task.c **** 
+ 362              		.loc 1 260 1 view .LVU102
+ 363 0002 7047     		bx	lr
+ 364              		.cfi_endproc
+ 365              	.LFE171:
+ 367              		.section	.text.lv_task_del,"ax",%progbits
+ 368              		.align	1
+ 369              		.global	lv_task_del
+ 370              		.syntax unified
+ 371              		.thumb
+ 372              		.thumb_func
+ 373              		.fpu fpv4-sp-d16
+ 375              	lv_task_del:
+ 376              	.LVL38:
+ 377              	.LFB172:
+ 267:lvgl/src/lv_misc/lv_task.c ****     _lv_ll_remove(&LV_GC_ROOT(_lv_task_ll), task);
+ 378              		.loc 1 267 1 is_stmt 1 view -0
+ 379              		.cfi_startproc
+ 380              		@ args = 0, pretend = 0, frame = 0
+ 381              		@ frame_needed = 0, uses_anonymous_args = 0
+ 267:lvgl/src/lv_misc/lv_task.c ****     _lv_ll_remove(&LV_GC_ROOT(_lv_task_ll), task);
+ 382              		.loc 1 267 1 is_stmt 0 view .LVU104
+ 383 0000 10B5     		push	{r4, lr}
+ 384              	.LCFI3:
+ 385              		.cfi_def_cfa_offset 8
+ 386              		.cfi_offset 4, -8
+ 387              		.cfi_offset 14, -4
+ 388 0002 0446     		mov	r4, r0
+ 268:lvgl/src/lv_misc/lv_task.c ****     task_list_changed = true;
+ 389              		.loc 1 268 5 is_stmt 1 view .LVU105
+ 390 0004 0146     		mov	r1, r0
+ 391 0006 0948     		ldr	r0, .L34
+ 392              	.LVL39:
+ 268:lvgl/src/lv_misc/lv_task.c ****     task_list_changed = true;
+ 393              		.loc 1 268 5 is_stmt 0 view .LVU106
+ 394 0008 FFF7FEFF 		bl	_lv_ll_remove
+ 395              	.LVL40:
+ 269:lvgl/src/lv_misc/lv_task.c **** 
+ 396              		.loc 1 269 5 is_stmt 1 view .LVU107
+ 269:lvgl/src/lv_misc/lv_task.c **** 
+ 397              		.loc 1 269 23 is_stmt 0 view .LVU108
+ 398 000c 084B     		ldr	r3, .L34+4
+ 399 000e 0122     		movs	r2, #1
+ 400 0010 1A70     		strb	r2, [r3]
+ 271:lvgl/src/lv_misc/lv_task.c **** 
+ 401              		.loc 1 271 5 is_stmt 1 view .LVU109
+ 402 0012 2046     		mov	r0, r4
+ 403 0014 FFF7FEFF 		bl	lv_mem_free
+ 404              	.LVL41:
+ 273:lvgl/src/lv_misc/lv_task.c **** }
+ 405              		.loc 1 273 5 view .LVU110
+ 273:lvgl/src/lv_misc/lv_task.c **** }
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 17
+
+
+ 406              		.loc 1 273 33 is_stmt 0 view .LVU111
+ 407 0018 064B     		ldr	r3, .L34+8
+ 408 001a 1B68     		ldr	r3, [r3]
+ 273:lvgl/src/lv_misc/lv_task.c **** }
+ 409              		.loc 1 273 7 view .LVU112
+ 410 001c A342     		cmp	r3, r4
+ 411 001e 00D0     		beq	.L33
+ 412              	.L30:
+ 274:lvgl/src/lv_misc/lv_task.c **** 
+ 413              		.loc 1 274 1 view .LVU113
+ 414 0020 10BD     		pop	{r4, pc}
+ 415              	.LVL42:
+ 416              	.L33:
+ 273:lvgl/src/lv_misc/lv_task.c **** }
+ 417              		.loc 1 273 42 is_stmt 1 discriminator 1 view .LVU114
+ 273:lvgl/src/lv_misc/lv_task.c **** }
+ 418              		.loc 1 273 55 is_stmt 0 discriminator 1 view .LVU115
+ 419 0022 054B     		ldr	r3, .L34+12
+ 420 0024 0122     		movs	r2, #1
+ 421 0026 1A70     		strb	r2, [r3]
+ 274:lvgl/src/lv_misc/lv_task.c **** 
+ 422              		.loc 1 274 1 discriminator 1 view .LVU116
+ 423 0028 FAE7     		b	.L30
+ 424              	.L35:
+ 425 002a 00BF     		.align	2
+ 426              	.L34:
+ 427 002c 00000000 		.word	_lv_task_ll
+ 428 0030 00000000 		.word	.LANCHOR0
+ 429 0034 00000000 		.word	_lv_task_act
+ 430 0038 00000000 		.word	.LANCHOR2
+ 431              		.cfi_endproc
+ 432              	.LFE172:
+ 434              		.section	.text.lv_task_exec,"ax",%progbits
+ 435              		.align	1
+ 436              		.syntax unified
+ 437              		.thumb
+ 438              		.thumb_func
+ 439              		.fpu fpv4-sp-d16
+ 441              	lv_task_exec:
+ 442              	.LVL43:
+ 443              	.LFB181:
+ 381:lvgl/src/lv_misc/lv_task.c ****     bool exec = false;
+ 444              		.loc 1 381 1 is_stmt 1 view -0
+ 445              		.cfi_startproc
+ 446              		@ args = 0, pretend = 0, frame = 0
+ 447              		@ frame_needed = 0, uses_anonymous_args = 0
+ 381:lvgl/src/lv_misc/lv_task.c ****     bool exec = false;
+ 448              		.loc 1 381 1 is_stmt 0 view .LVU118
+ 449 0000 10B5     		push	{r4, lr}
+ 450              	.LCFI4:
+ 451              		.cfi_def_cfa_offset 8
+ 452              		.cfi_offset 4, -8
+ 453              		.cfi_offset 14, -4
+ 454 0002 0446     		mov	r4, r0
+ 382:lvgl/src/lv_misc/lv_task.c **** 
+ 455              		.loc 1 382 5 is_stmt 1 view .LVU119
+ 456              	.LVL44:
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 18
+
+
+ 384:lvgl/src/lv_misc/lv_task.c ****         task->last_run = lv_tick_get();
+ 457              		.loc 1 384 5 view .LVU120
+ 384:lvgl/src/lv_misc/lv_task.c ****         task->last_run = lv_tick_get();
+ 458              		.loc 1 384 8 is_stmt 0 view .LVU121
+ 459 0004 FFF7FEFF 		bl	lv_task_time_remaining
+ 460              	.LVL45:
+ 384:lvgl/src/lv_misc/lv_task.c ****         task->last_run = lv_tick_get();
+ 461              		.loc 1 384 7 view .LVU122
+ 462 0008 08B1     		cbz	r0, .L43
+ 382:lvgl/src/lv_misc/lv_task.c **** 
+ 463              		.loc 1 382 10 view .LVU123
+ 464 000a 0020     		movs	r0, #0
+ 465              	.L37:
+ 466              	.LVL46:
+ 400:lvgl/src/lv_misc/lv_task.c **** }
+ 467              		.loc 1 400 5 is_stmt 1 view .LVU124
+ 401:lvgl/src/lv_misc/lv_task.c **** 
+ 468              		.loc 1 401 1 is_stmt 0 view .LVU125
+ 469 000c 10BD     		pop	{r4, pc}
+ 470              	.LVL47:
+ 471              	.L43:
+ 385:lvgl/src/lv_misc/lv_task.c ****         if(task->task_cb) task->task_cb(task);
+ 472              		.loc 1 385 9 is_stmt 1 view .LVU126
+ 385:lvgl/src/lv_misc/lv_task.c ****         if(task->task_cb) task->task_cb(task);
+ 473              		.loc 1 385 26 is_stmt 0 view .LVU127
+ 474 000e FFF7FEFF 		bl	lv_tick_get
+ 475              	.LVL48:
+ 385:lvgl/src/lv_misc/lv_task.c ****         if(task->task_cb) task->task_cb(task);
+ 476              		.loc 1 385 24 view .LVU128
+ 477 0012 6060     		str	r0, [r4, #4]
+ 386:lvgl/src/lv_misc/lv_task.c **** 
+ 478              		.loc 1 386 9 is_stmt 1 view .LVU129
+ 386:lvgl/src/lv_misc/lv_task.c **** 
+ 479              		.loc 1 386 16 is_stmt 0 view .LVU130
+ 480 0014 A368     		ldr	r3, [r4, #8]
+ 386:lvgl/src/lv_misc/lv_task.c **** 
+ 481              		.loc 1 386 11 view .LVU131
+ 482 0016 0BB1     		cbz	r3, .L38
+ 386:lvgl/src/lv_misc/lv_task.c **** 
+ 483              		.loc 1 386 27 is_stmt 1 discriminator 1 view .LVU132
+ 484 0018 2046     		mov	r0, r4
+ 485 001a 9847     		blx	r3
+ 486              	.LVL49:
+ 487              	.L38:
+ 389:lvgl/src/lv_misc/lv_task.c ****             if(task->repeat_count > 0) {
+ 488              		.loc 1 389 9 view .LVU133
+ 389:lvgl/src/lv_misc/lv_task.c ****             if(task->repeat_count > 0) {
+ 489              		.loc 1 389 25 is_stmt 0 view .LVU134
+ 490 001c 084B     		ldr	r3, .L45
+ 491 001e 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 389:lvgl/src/lv_misc/lv_task.c ****             if(task->repeat_count > 0) {
+ 492              		.loc 1 389 11 view .LVU135
+ 493 0020 0028     		cmp	r0, #0
+ 494 0022 F3D1     		bne	.L37
+ 390:lvgl/src/lv_misc/lv_task.c ****                 task->repeat_count--;
+ 495              		.loc 1 390 13 is_stmt 1 view .LVU136
+ 390:lvgl/src/lv_misc/lv_task.c ****                 task->repeat_count--;
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 19
+
+
+ 496              		.loc 1 390 20 is_stmt 0 view .LVU137
+ 497 0024 2369     		ldr	r3, [r4, #16]
+ 390:lvgl/src/lv_misc/lv_task.c ****                 task->repeat_count--;
+ 498              		.loc 1 390 15 view .LVU138
+ 499 0026 002B     		cmp	r3, #0
+ 500 0028 01DD     		ble	.L39
+ 391:lvgl/src/lv_misc/lv_task.c ****             }
+ 501              		.loc 1 391 17 is_stmt 1 view .LVU139
+ 391:lvgl/src/lv_misc/lv_task.c ****             }
+ 502              		.loc 1 391 35 is_stmt 0 view .LVU140
+ 503 002a 013B     		subs	r3, r3, #1
+ 504 002c 2361     		str	r3, [r4, #16]
+ 505              	.L39:
+ 393:lvgl/src/lv_misc/lv_task.c ****                 lv_task_del(task);
+ 506              		.loc 1 393 13 is_stmt 1 view .LVU141
+ 393:lvgl/src/lv_misc/lv_task.c ****                 lv_task_del(task);
+ 507              		.loc 1 393 20 is_stmt 0 view .LVU142
+ 508 002e 2369     		ldr	r3, [r4, #16]
+ 393:lvgl/src/lv_misc/lv_task.c ****                 lv_task_del(task);
+ 509              		.loc 1 393 15 view .LVU143
+ 510 0030 0BB1     		cbz	r3, .L44
+ 397:lvgl/src/lv_misc/lv_task.c ****     }
+ 511              		.loc 1 397 14 view .LVU144
+ 512 0032 0120     		movs	r0, #1
+ 513 0034 EAE7     		b	.L37
+ 514              	.L44:
+ 394:lvgl/src/lv_misc/lv_task.c ****             }
+ 515              		.loc 1 394 17 is_stmt 1 view .LVU145
+ 516 0036 2046     		mov	r0, r4
+ 517 0038 FFF7FEFF 		bl	lv_task_del
+ 518              	.LVL50:
+ 397:lvgl/src/lv_misc/lv_task.c ****     }
+ 519              		.loc 1 397 14 is_stmt 0 view .LVU146
+ 520 003c 0120     		movs	r0, #1
+ 521 003e E5E7     		b	.L37
+ 522              	.L46:
+ 523              		.align	2
+ 524              	.L45:
+ 525 0040 00000000 		.word	.LANCHOR2
+ 526              		.cfi_endproc
+ 527              	.LFE181:
+ 529              		.section	.text.lv_task_handler,"ax",%progbits
+ 530              		.align	1
+ 531              		.global	lv_task_handler
+ 532              		.syntax unified
+ 533              		.thumb
+ 534              		.thumb_func
+ 535              		.fpu fpv4-sp-d16
+ 537              	lv_task_handler:
+ 538              	.LFB168:
+  66:lvgl/src/lv_misc/lv_task.c ****     LV_LOG_TRACE("lv_task_handler started");
+ 539              		.loc 1 66 1 is_stmt 1 view -0
+ 540              		.cfi_startproc
+ 541              		@ args = 0, pretend = 0, frame = 0
+ 542              		@ frame_needed = 0, uses_anonymous_args = 0
+ 543 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 544              	.LCFI5:
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 20
+
+
+ 545              		.cfi_def_cfa_offset 24
+ 546              		.cfi_offset 3, -24
+ 547              		.cfi_offset 4, -20
+ 548              		.cfi_offset 5, -16
+ 549              		.cfi_offset 6, -12
+ 550              		.cfi_offset 7, -8
+ 551              		.cfi_offset 14, -4
+  67:lvgl/src/lv_misc/lv_task.c **** 
+ 552              		.loc 1 67 44 view .LVU148
+  70:lvgl/src/lv_misc/lv_task.c ****     if(already_running) return 1;
+ 553              		.loc 1 70 5 view .LVU149
+  71:lvgl/src/lv_misc/lv_task.c ****     already_running = true;
+ 554              		.loc 1 71 5 view .LVU150
+  71:lvgl/src/lv_misc/lv_task.c ****     already_running = true;
+ 555              		.loc 1 71 8 is_stmt 0 view .LVU151
+ 556 0002 5F4B     		ldr	r3, .L77
+ 557 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  71:lvgl/src/lv_misc/lv_task.c ****     already_running = true;
+ 558              		.loc 1 71 7 view .LVU152
+ 559 0006 002B     		cmp	r3, #0
+ 560 0008 40F0B680 		bne	.L65
+  72:lvgl/src/lv_misc/lv_task.c **** 
+ 561              		.loc 1 72 5 is_stmt 1 view .LVU153
+  72:lvgl/src/lv_misc/lv_task.c **** 
+ 562              		.loc 1 72 21 is_stmt 0 view .LVU154
+ 563 000c 5C4B     		ldr	r3, .L77
+ 564 000e 0122     		movs	r2, #1
+ 565 0010 1A70     		strb	r2, [r3]
+  74:lvgl/src/lv_misc/lv_task.c ****         already_running = false; /*Release mutex*/
+ 566              		.loc 1 74 5 is_stmt 1 view .LVU155
+  74:lvgl/src/lv_misc/lv_task.c ****         already_running = false; /*Release mutex*/
+ 567              		.loc 1 74 20 is_stmt 0 view .LVU156
+ 568 0012 5C4B     		ldr	r3, .L77+4
+ 569 0014 1D78     		ldrb	r5, [r3]	@ zero_extendqisi2
+  74:lvgl/src/lv_misc/lv_task.c ****         already_running = false; /*Release mutex*/
+ 570              		.loc 1 74 7 view .LVU157
+ 571 0016 25B9     		cbnz	r5, .L49
+  75:lvgl/src/lv_misc/lv_task.c ****         return 1;
+ 572              		.loc 1 75 9 is_stmt 1 view .LVU158
+  75:lvgl/src/lv_misc/lv_task.c ****         return 1;
+ 573              		.loc 1 75 25 is_stmt 0 view .LVU159
+ 574 0018 594B     		ldr	r3, .L77
+ 575 001a 0022     		movs	r2, #0
+ 576 001c 1A70     		strb	r2, [r3]
+  76:lvgl/src/lv_misc/lv_task.c ****     }
+ 577              		.loc 1 76 9 is_stmt 1 view .LVU160
+  76:lvgl/src/lv_misc/lv_task.c ****     }
+ 578              		.loc 1 76 16 is_stmt 0 view .LVU161
+ 579 001e 0125     		movs	r5, #1
+ 580 0020 ABE0     		b	.L47
+ 581              	.L49:
+  79:lvgl/src/lv_misc/lv_task.c ****     static uint32_t busy_time         = 0;
+ 582              		.loc 1 79 5 is_stmt 1 view .LVU162
+  80:lvgl/src/lv_misc/lv_task.c **** 
+ 583              		.loc 1 80 5 view .LVU163
+  82:lvgl/src/lv_misc/lv_task.c **** 
+ 584              		.loc 1 82 5 view .LVU164
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 21
+
+
+  82:lvgl/src/lv_misc/lv_task.c **** 
+ 585              		.loc 1 82 30 is_stmt 0 view .LVU165
+ 586 0022 FFF7FEFF 		bl	lv_tick_get
+ 587              	.LVL51:
+ 588 0026 0646     		mov	r6, r0
+ 589              	.LVL52:
+  87:lvgl/src/lv_misc/lv_task.c ****     lv_task_t * next;
+ 590              		.loc 1 87 5 is_stmt 1 view .LVU166
+  87:lvgl/src/lv_misc/lv_task.c ****     lv_task_t * next;
+ 591              		.loc 1 87 17 is_stmt 0 view .LVU167
+ 592 0028 0024     		movs	r4, #0
+ 593 002a 4EE0     		b	.L58
+ 594              	.LVL53:
+ 595              	.L74:
+ 108:lvgl/src/lv_misc/lv_task.c ****                                             the interrupter is not interesting anymore*/
+ 596              		.loc 1 108 17 is_stmt 1 view .LVU168
+ 110:lvgl/src/lv_misc/lv_task.c ****                 continue; /*Load the next task*/
+ 597              		.loc 1 110 17 view .LVU169
+ 110:lvgl/src/lv_misc/lv_task.c ****                 continue; /*Load the next task*/
+ 598              		.loc 1 110 42 is_stmt 0 view .LVU170
+ 599 002c 564B     		ldr	r3, .L77+8
+ 600 002e 1F60     		str	r7, [r3]
+ 111:lvgl/src/lv_misc/lv_task.c ****             }
+ 601              		.loc 1 111 17 is_stmt 1 view .LVU171
+ 108:lvgl/src/lv_misc/lv_task.c ****                                             the interrupter is not interesting anymore*/
+ 602              		.loc 1 108 34 is_stmt 0 view .LVU172
+ 603 0030 0024     		movs	r4, #0
+ 111:lvgl/src/lv_misc/lv_task.c ****             }
+ 604              		.loc 1 111 17 view .LVU173
+ 605 0032 0FE0     		b	.L50
+ 606              	.LVL54:
+ 607              	.L75:
+ 116:lvgl/src/lv_misc/lv_task.c ****             }
+ 608              		.loc 1 116 17 is_stmt 1 view .LVU174
+ 609 0034 FFF7FEFF 		bl	lv_task_exec
+ 610              	.LVL55:
+ 611              	.L55:
+ 144:lvgl/src/lv_misc/lv_task.c ****                 task_interrupter = NULL;
+ 612              		.loc 1 144 13 view .LVU175
+ 144:lvgl/src/lv_misc/lv_task.c ****                 task_interrupter = NULL;
+ 613              		.loc 1 144 16 is_stmt 0 view .LVU176
+ 614 0038 544B     		ldr	r3, .L77+12
+ 615 003a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 144:lvgl/src/lv_misc/lv_task.c ****                 task_interrupter = NULL;
+ 616              		.loc 1 144 15 view .LVU177
+ 617 003c 002B     		cmp	r3, #0
+ 618 003e 53D1     		bne	.L67
+ 144:lvgl/src/lv_misc/lv_task.c ****                 task_interrupter = NULL;
+ 619              		.loc 1 144 29 discriminator 1 view .LVU178
+ 620 0040 534B     		ldr	r3, .L77+16
+ 621 0042 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 622 0044 002B     		cmp	r3, #0
+ 623 0046 51D1     		bne	.L68
+ 149:lvgl/src/lv_misc/lv_task.c ****                 task_interrupter = NULL;
+ 624              		.loc 1 149 13 is_stmt 1 view .LVU179
+ 149:lvgl/src/lv_misc/lv_task.c ****                 task_interrupter = NULL;
+ 625              		.loc 1 149 16 is_stmt 0 view .LVU180
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 22
+
+
+ 626 0048 524A     		ldr	r2, .L77+20
+ 627 004a 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 149:lvgl/src/lv_misc/lv_task.c ****                 task_interrupter = NULL;
+ 628              		.loc 1 149 15 view .LVU181
+ 629 004c 002A     		cmp	r2, #0
+ 630 004e 4FD1     		bne	.L69
+ 155:lvgl/src/lv_misc/lv_task.c ****         }
+ 631              		.loc 1 155 13 is_stmt 1 view .LVU182
+ 155:lvgl/src/lv_misc/lv_task.c ****         }
+ 632              		.loc 1 155 38 is_stmt 0 view .LVU183
+ 633 0050 4D4B     		ldr	r3, .L77+8
+ 634 0052 1F60     		str	r7, [r3]
+ 635              	.LVL56:
+ 636              	.L50:
+  96:lvgl/src/lv_misc/lv_task.c ****             /* The task might be deleted if it runs only once ('once = 1')
+ 637              		.loc 1 96 15 view .LVU184
+ 638 0054 4C4B     		ldr	r3, .L77+8
+ 639 0056 1968     		ldr	r1, [r3]
+  96:lvgl/src/lv_misc/lv_task.c ****             /* The task might be deleted if it runs only once ('once = 1')
+ 640              		.loc 1 96 14 view .LVU185
+ 641 0058 0029     		cmp	r1, #0
+ 642 005a 34D0     		beq	.L73
+  99:lvgl/src/lv_misc/lv_task.c **** 
+ 643              		.loc 1 99 13 is_stmt 1 view .LVU186
+  99:lvgl/src/lv_misc/lv_task.c **** 
+ 644              		.loc 1 99 20 is_stmt 0 view .LVU187
+ 645 005c 4E48     		ldr	r0, .L77+24
+ 646 005e FFF7FEFF 		bl	_lv_ll_get_next
+ 647              	.LVL57:
+ 648 0062 0746     		mov	r7, r0
+ 649              	.LVL58:
+ 102:lvgl/src/lv_misc/lv_task.c ****                 break;
+ 650              		.loc 1 102 13 is_stmt 1 view .LVU188
+ 102:lvgl/src/lv_misc/lv_task.c ****                 break;
+ 651              		.loc 1 102 40 is_stmt 0 view .LVU189
+ 652 0064 484B     		ldr	r3, .L77+8
+ 653 0066 1868     		ldr	r0, [r3]
+ 654              	.LVL59:
+ 102:lvgl/src/lv_misc/lv_task.c ****                 break;
+ 655              		.loc 1 102 47 view .LVU190
+ 656 0068 037D     		ldrb	r3, [r0, #20]	@ zero_extendqisi2
+ 102:lvgl/src/lv_misc/lv_task.c ****                 break;
+ 657              		.loc 1 102 15 view .LVU191
+ 658 006a 13F00703 		ands	r3, r3, #7
+ 659 006e 39D0     		beq	.L66
+ 107:lvgl/src/lv_misc/lv_task.c ****                 task_interrupter = NULL; /*From this point only task after the interrupter comes, s
+ 660              		.loc 1 107 13 is_stmt 1 view .LVU192
+ 107:lvgl/src/lv_misc/lv_task.c ****                 task_interrupter = NULL; /*From this point only task after the interrupter comes, s
+ 661              		.loc 1 107 15 is_stmt 0 view .LVU193
+ 662 0070 A042     		cmp	r0, r4
+ 663 0072 DBD0     		beq	.L74
+ 115:lvgl/src/lv_misc/lv_task.c ****                 lv_task_exec(LV_GC_ROOT(_lv_task_act));
+ 664              		.loc 1 115 13 is_stmt 1 view .LVU194
+ 115:lvgl/src/lv_misc/lv_task.c ****                 lv_task_exec(LV_GC_ROOT(_lv_task_act));
+ 665              		.loc 1 115 15 is_stmt 0 view .LVU195
+ 666 0074 052B     		cmp	r3, #5
+ 667 0076 DDD0     		beq	.L75
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 23
+
+
+ 119:lvgl/src/lv_misc/lv_task.c ****                 if(LV_GC_ROOT(_lv_task_act)->prio > task_interrupter->prio) {
+ 668              		.loc 1 119 18 is_stmt 1 view .LVU196
+ 119:lvgl/src/lv_misc/lv_task.c ****                 if(LV_GC_ROOT(_lv_task_act)->prio > task_interrupter->prio) {
+ 669              		.loc 1 119 20 is_stmt 0 view .LVU197
+ 670 0078 B4B1     		cbz	r4, .L56
+ 120:lvgl/src/lv_misc/lv_task.c ****                     if(lv_task_exec(LV_GC_ROOT(_lv_task_act))) {
+ 671              		.loc 1 120 17 is_stmt 1 view .LVU198
+ 120:lvgl/src/lv_misc/lv_task.c ****                     if(lv_task_exec(LV_GC_ROOT(_lv_task_act))) {
+ 672              		.loc 1 120 44 is_stmt 0 view .LVU199
+ 673 007a 027D     		ldrb	r2, [r0, #20]	@ zero_extendqisi2
+ 674 007c 02F00702 		and	r2, r2, #7
+ 120:lvgl/src/lv_misc/lv_task.c ****                     if(lv_task_exec(LV_GC_ROOT(_lv_task_act))) {
+ 675              		.loc 1 120 69 view .LVU200
+ 676 0080 237D     		ldrb	r3, [r4, #20]	@ zero_extendqisi2
+ 677 0082 03F00703 		and	r3, r3, #7
+ 120:lvgl/src/lv_misc/lv_task.c ****                     if(lv_task_exec(LV_GC_ROOT(_lv_task_act))) {
+ 678              		.loc 1 120 19 view .LVU201
+ 679 0086 9A42     		cmp	r2, r3
+ 680 0088 D6D9     		bls	.L55
+ 121:lvgl/src/lv_misc/lv_task.c ****                         if(!task_created && !task_deleted) {
+ 681              		.loc 1 121 21 is_stmt 1 view .LVU202
+ 121:lvgl/src/lv_misc/lv_task.c ****                         if(!task_created && !task_deleted) {
+ 682              		.loc 1 121 24 is_stmt 0 view .LVU203
+ 683 008a FFF7FEFF 		bl	lv_task_exec
+ 684              	.LVL60:
+ 121:lvgl/src/lv_misc/lv_task.c ****                         if(!task_created && !task_deleted) {
+ 685              		.loc 1 121 23 view .LVU204
+ 686 008e 0028     		cmp	r0, #0
+ 687 0090 D2D0     		beq	.L55
+ 122:lvgl/src/lv_misc/lv_task.c ****                             /*Check all tasks again from the highest priority */
+ 688              		.loc 1 122 25 is_stmt 1 view .LVU205
+ 122:lvgl/src/lv_misc/lv_task.c ****                             /*Check all tasks again from the highest priority */
+ 689              		.loc 1 122 28 is_stmt 0 view .LVU206
+ 690 0092 3E4B     		ldr	r3, .L77+12
+ 691 0094 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 122:lvgl/src/lv_misc/lv_task.c ****                             /*Check all tasks again from the highest priority */
+ 692              		.loc 1 122 27 view .LVU207
+ 693 0096 002B     		cmp	r3, #0
+ 694 0098 CED1     		bne	.L55
+ 122:lvgl/src/lv_misc/lv_task.c ****                             /*Check all tasks again from the highest priority */
+ 695              		.loc 1 122 45 discriminator 1 view .LVU208
+ 696 009a 3D4B     		ldr	r3, .L77+16
+ 697 009c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 122:lvgl/src/lv_misc/lv_task.c ****                             /*Check all tasks again from the highest priority */
+ 698              		.loc 1 122 42 discriminator 1 view .LVU209
+ 699 009e 002B     		cmp	r3, #0
+ 700 00a0 CAD1     		bne	.L55
+ 124:lvgl/src/lv_misc/lv_task.c ****                             end_flag = false;
+ 701              		.loc 1 124 29 is_stmt 1 view .LVU210
+ 124:lvgl/src/lv_misc/lv_task.c ****                             end_flag = false;
+ 702              		.loc 1 124 46 is_stmt 0 view .LVU211
+ 703 00a2 394A     		ldr	r2, .L77+8
+ 704 00a4 1468     		ldr	r4, [r2]
+ 705              	.LVL61:
+ 125:lvgl/src/lv_misc/lv_task.c ****                             break;
+ 706              		.loc 1 125 29 is_stmt 1 view .LVU212
+ 126:lvgl/src/lv_misc/lv_task.c ****                         }
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 24
+
+
+ 707              		.loc 1 126 29 view .LVU213
+ 708 00a6 0FE0     		b	.L51
+ 709              	.LVL62:
+ 710              	.L56:
+ 134:lvgl/src/lv_misc/lv_task.c ****                     if(!task_created && !task_deleted) {
+ 711              		.loc 1 134 17 view .LVU214
+ 134:lvgl/src/lv_misc/lv_task.c ****                     if(!task_created && !task_deleted) {
+ 712              		.loc 1 134 20 is_stmt 0 view .LVU215
+ 713 00a8 FFF7FEFF 		bl	lv_task_exec
+ 714              	.LVL63:
+ 134:lvgl/src/lv_misc/lv_task.c ****                     if(!task_created && !task_deleted) {
+ 715              		.loc 1 134 19 view .LVU216
+ 716 00ac 0028     		cmp	r0, #0
+ 717 00ae C3D0     		beq	.L55
+ 135:lvgl/src/lv_misc/lv_task.c ****                         task_interrupter = LV_GC_ROOT(_lv_task_act); /*Check all tasks again from t
+ 718              		.loc 1 135 21 is_stmt 1 view .LVU217
+ 135:lvgl/src/lv_misc/lv_task.c ****                         task_interrupter = LV_GC_ROOT(_lv_task_act); /*Check all tasks again from t
+ 719              		.loc 1 135 24 is_stmt 0 view .LVU218
+ 720 00b0 364B     		ldr	r3, .L77+12
+ 721 00b2 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 135:lvgl/src/lv_misc/lv_task.c ****                         task_interrupter = LV_GC_ROOT(_lv_task_act); /*Check all tasks again from t
+ 722              		.loc 1 135 23 view .LVU219
+ 723 00b4 002B     		cmp	r3, #0
+ 724 00b6 BFD1     		bne	.L55
+ 135:lvgl/src/lv_misc/lv_task.c ****                         task_interrupter = LV_GC_ROOT(_lv_task_act); /*Check all tasks again from t
+ 725              		.loc 1 135 41 discriminator 1 view .LVU220
+ 726 00b8 354B     		ldr	r3, .L77+16
+ 727 00ba 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 135:lvgl/src/lv_misc/lv_task.c ****                         task_interrupter = LV_GC_ROOT(_lv_task_act); /*Check all tasks again from t
+ 728              		.loc 1 135 38 discriminator 1 view .LVU221
+ 729 00bc 002B     		cmp	r3, #0
+ 730 00be BBD1     		bne	.L55
+ 136:lvgl/src/lv_misc/lv_task.c ****                         end_flag         = false;
+ 731              		.loc 1 136 25 is_stmt 1 view .LVU222
+ 136:lvgl/src/lv_misc/lv_task.c ****                         end_flag         = false;
+ 732              		.loc 1 136 42 is_stmt 0 view .LVU223
+ 733 00c0 314A     		ldr	r2, .L77+8
+ 734 00c2 1468     		ldr	r4, [r2]
+ 735              	.LVL64:
+ 137:lvgl/src/lv_misc/lv_task.c ****                         break;
+ 736              		.loc 1 137 25 is_stmt 1 view .LVU224
+ 138:lvgl/src/lv_misc/lv_task.c ****                     }
+ 737              		.loc 1 138 25 view .LVU225
+ 738 00c4 00E0     		b	.L51
+ 739              	.LVL65:
+ 740              	.L73:
+  91:lvgl/src/lv_misc/lv_task.c ****         task_deleted             = false;
+ 741              		.loc 1 91 34 is_stmt 0 view .LVU226
+ 742 00c6 2B46     		mov	r3, r5
+ 743              	.LVL66:
+ 744              	.L51:
+ 157:lvgl/src/lv_misc/lv_task.c **** 
+ 745              		.loc 1 157 5 view .LVU227
+ 746 00c8 A3B9     		cbnz	r3, .L76
+ 747              	.LVL67:
+ 748              	.L58:
+  88:lvgl/src/lv_misc/lv_task.c ****     bool end_flag;
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 25
+
+
+ 749              		.loc 1 88 5 is_stmt 1 view .LVU228
+  89:lvgl/src/lv_misc/lv_task.c ****     do {
+ 750              		.loc 1 89 5 view .LVU229
+  90:lvgl/src/lv_misc/lv_task.c ****         end_flag                 = true;
+ 751              		.loc 1 90 5 view .LVU230
+  91:lvgl/src/lv_misc/lv_task.c ****         task_deleted             = false;
+ 752              		.loc 1 91 9 view .LVU231
+  92:lvgl/src/lv_misc/lv_task.c ****         task_created             = false;
+ 753              		.loc 1 92 9 view .LVU232
+  92:lvgl/src/lv_misc/lv_task.c ****         task_created             = false;
+ 754              		.loc 1 92 34 is_stmt 0 view .LVU233
+ 755 00ca 0023     		movs	r3, #0
+ 756 00cc 304A     		ldr	r2, .L77+16
+ 757 00ce 1370     		strb	r3, [r2]
+  93:lvgl/src/lv_misc/lv_task.c ****         task_list_changed        = false;
+ 758              		.loc 1 93 9 is_stmt 1 view .LVU234
+  93:lvgl/src/lv_misc/lv_task.c ****         task_list_changed        = false;
+ 759              		.loc 1 93 34 is_stmt 0 view .LVU235
+ 760 00d0 2E4A     		ldr	r2, .L77+12
+ 761 00d2 1370     		strb	r3, [r2]
+  94:lvgl/src/lv_misc/lv_task.c ****         LV_GC_ROOT(_lv_task_act) = _lv_ll_get_head(&LV_GC_ROOT(_lv_task_ll));
+ 762              		.loc 1 94 9 is_stmt 1 view .LVU236
+  94:lvgl/src/lv_misc/lv_task.c ****         LV_GC_ROOT(_lv_task_act) = _lv_ll_get_head(&LV_GC_ROOT(_lv_task_ll));
+ 763              		.loc 1 94 34 is_stmt 0 view .LVU237
+ 764 00d4 2F4A     		ldr	r2, .L77+20
+ 765 00d6 1370     		strb	r3, [r2]
+  95:lvgl/src/lv_misc/lv_task.c ****         while(LV_GC_ROOT(_lv_task_act)) {
+ 766              		.loc 1 95 9 is_stmt 1 view .LVU238
+  95:lvgl/src/lv_misc/lv_task.c ****         while(LV_GC_ROOT(_lv_task_act)) {
+ 767              		.loc 1 95 36 is_stmt 0 view .LVU239
+ 768 00d8 2F48     		ldr	r0, .L77+24
+ 769 00da FFF7FEFF 		bl	_lv_ll_get_head
+ 770              	.LVL68:
+  95:lvgl/src/lv_misc/lv_task.c ****         while(LV_GC_ROOT(_lv_task_act)) {
+ 771              		.loc 1 95 34 view .LVU240
+ 772 00de 2A4B     		ldr	r3, .L77+8
+ 773 00e0 1860     		str	r0, [r3]
+  96:lvgl/src/lv_misc/lv_task.c ****             /* The task might be deleted if it runs only once ('once = 1')
+ 774              		.loc 1 96 9 is_stmt 1 view .LVU241
+  96:lvgl/src/lv_misc/lv_task.c ****             /* The task might be deleted if it runs only once ('once = 1')
+ 775              		.loc 1 96 14 is_stmt 0 view .LVU242
+ 776 00e2 B7E7     		b	.L50
+ 777              	.LVL69:
+ 778              	.L66:
+  91:lvgl/src/lv_misc/lv_task.c ****         task_deleted             = false;
+ 779              		.loc 1 91 34 view .LVU243
+ 780 00e4 2B46     		mov	r3, r5
+ 781 00e6 EFE7     		b	.L51
+ 782              	.L67:
+ 145:lvgl/src/lv_misc/lv_task.c ****                 break;
+ 783              		.loc 1 145 34 view .LVU244
+ 784 00e8 0024     		movs	r4, #0
+ 785              	.LVL70:
+ 145:lvgl/src/lv_misc/lv_task.c ****                 break;
+ 786              		.loc 1 145 34 view .LVU245
+ 787 00ea EDE7     		b	.L51
+ 788              	.LVL71:
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 26
+
+
+ 789              	.L68:
+ 145:lvgl/src/lv_misc/lv_task.c ****                 break;
+ 790              		.loc 1 145 34 view .LVU246
+ 791 00ec 0024     		movs	r4, #0
+ 792              	.LVL72:
+ 145:lvgl/src/lv_misc/lv_task.c ****                 break;
+ 793              		.loc 1 145 34 view .LVU247
+ 794 00ee EBE7     		b	.L51
+ 795              	.LVL73:
+ 796              	.L69:
+ 150:lvgl/src/lv_misc/lv_task.c ****                 end_flag = false;
+ 797              		.loc 1 150 34 view .LVU248
+ 798 00f0 0024     		movs	r4, #0
+ 799              	.LVL74:
+ 150:lvgl/src/lv_misc/lv_task.c ****                 end_flag = false;
+ 800              		.loc 1 150 34 view .LVU249
+ 801 00f2 E9E7     		b	.L51
+ 802              	.LVL75:
+ 803              	.L76:
+ 159:lvgl/src/lv_misc/lv_task.c ****     next = _lv_ll_get_head(&LV_GC_ROOT(_lv_task_ll));
+ 804              		.loc 1 159 5 is_stmt 1 view .LVU250
+ 160:lvgl/src/lv_misc/lv_task.c ****     while(next && next->prio != LV_TASK_PRIO_OFF) {
+ 805              		.loc 1 160 5 view .LVU251
+ 160:lvgl/src/lv_misc/lv_task.c ****     while(next && next->prio != LV_TASK_PRIO_OFF) {
+ 806              		.loc 1 160 12 is_stmt 0 view .LVU252
+ 807 00f4 2848     		ldr	r0, .L77+24
+ 808 00f6 FFF7FEFF 		bl	_lv_ll_get_head
+ 809              	.LVL76:
+ 160:lvgl/src/lv_misc/lv_task.c ****     while(next && next->prio != LV_TASK_PRIO_OFF) {
+ 810              		.loc 1 160 12 view .LVU253
+ 811 00fa 0446     		mov	r4, r0
+ 812              	.LVL77:
+ 161:lvgl/src/lv_misc/lv_task.c ****         uint32_t delay = lv_task_time_remaining(next);
+ 813              		.loc 1 161 5 is_stmt 1 view .LVU254
+ 159:lvgl/src/lv_misc/lv_task.c ****     next = _lv_ll_get_head(&LV_GC_ROOT(_lv_task_ll));
+ 814              		.loc 1 159 14 is_stmt 0 view .LVU255
+ 815 00fc 4FF0FF35 		mov	r5, #-1
+ 161:lvgl/src/lv_misc/lv_task.c ****         uint32_t delay = lv_task_time_remaining(next);
+ 816              		.loc 1 161 10 view .LVU256
+ 817 0100 04E0     		b	.L59
+ 818              	.LVL78:
+ 819              	.L60:
+ 820              	.LBB2:
+ 166:lvgl/src/lv_misc/lv_task.c ****     }
+ 821              		.loc 1 166 9 is_stmt 1 view .LVU257
+ 166:lvgl/src/lv_misc/lv_task.c ****     }
+ 822              		.loc 1 166 16 is_stmt 0 view .LVU258
+ 823 0102 2146     		mov	r1, r4
+ 824 0104 2448     		ldr	r0, .L77+24
+ 825              	.LVL79:
+ 166:lvgl/src/lv_misc/lv_task.c ****     }
+ 826              		.loc 1 166 16 view .LVU259
+ 827 0106 FFF7FEFF 		bl	_lv_ll_get_next
+ 828              	.LVL80:
+ 829 010a 0446     		mov	r4, r0
+ 830              	.LVL81:
+ 831              	.L59:
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 27
+
+
+ 166:lvgl/src/lv_misc/lv_task.c ****     }
+ 832              		.loc 1 166 16 view .LVU260
+ 833              	.LBE2:
+ 161:lvgl/src/lv_misc/lv_task.c ****         uint32_t delay = lv_task_time_remaining(next);
+ 834              		.loc 1 161 10 view .LVU261
+ 835 010c 54B1     		cbz	r4, .L61
+ 161:lvgl/src/lv_misc/lv_task.c ****         uint32_t delay = lv_task_time_remaining(next);
+ 836              		.loc 1 161 30 discriminator 1 view .LVU262
+ 837 010e 237D     		ldrb	r3, [r4, #20]	@ zero_extendqisi2
+ 161:lvgl/src/lv_misc/lv_task.c ****         uint32_t delay = lv_task_time_remaining(next);
+ 838              		.loc 1 161 16 discriminator 1 view .LVU263
+ 839 0110 13F0070F 		tst	r3, #7
+ 840 0114 06D0     		beq	.L61
+ 841              	.LBB3:
+ 162:lvgl/src/lv_misc/lv_task.c ****         if(delay < time_till_next)
+ 842              		.loc 1 162 9 is_stmt 1 view .LVU264
+ 162:lvgl/src/lv_misc/lv_task.c ****         if(delay < time_till_next)
+ 843              		.loc 1 162 26 is_stmt 0 view .LVU265
+ 844 0116 2046     		mov	r0, r4
+ 162:lvgl/src/lv_misc/lv_task.c ****         if(delay < time_till_next)
+ 845              		.loc 1 162 26 view .LVU266
+ 846 0118 FFF7FEFF 		bl	lv_task_time_remaining
+ 847              	.LVL82:
+ 163:lvgl/src/lv_misc/lv_task.c ****             time_till_next = delay;
+ 848              		.loc 1 163 9 is_stmt 1 view .LVU267
+ 163:lvgl/src/lv_misc/lv_task.c ****             time_till_next = delay;
+ 849              		.loc 1 163 11 is_stmt 0 view .LVU268
+ 850 011c 8542     		cmp	r5, r0
+ 851 011e F0D9     		bls	.L60
+ 164:lvgl/src/lv_misc/lv_task.c **** 
+ 852              		.loc 1 164 28 view .LVU269
+ 853 0120 0546     		mov	r5, r0
+ 854              	.LVL83:
+ 164:lvgl/src/lv_misc/lv_task.c **** 
+ 855              		.loc 1 164 28 view .LVU270
+ 856 0122 EEE7     		b	.L60
+ 857              	.LVL84:
+ 858              	.L61:
+ 164:lvgl/src/lv_misc/lv_task.c **** 
+ 859              		.loc 1 164 28 view .LVU271
+ 860              	.LBE3:
+ 169:lvgl/src/lv_misc/lv_task.c ****     uint32_t idle_period_time = lv_tick_elaps(idle_period_start);
+ 861              		.loc 1 169 5 is_stmt 1 view .LVU272
+ 169:lvgl/src/lv_misc/lv_task.c ****     uint32_t idle_period_time = lv_tick_elaps(idle_period_start);
+ 862              		.loc 1 169 18 is_stmt 0 view .LVU273
+ 863 0124 3046     		mov	r0, r6
+ 864              	.LVL85:
+ 169:lvgl/src/lv_misc/lv_task.c ****     uint32_t idle_period_time = lv_tick_elaps(idle_period_start);
+ 865              		.loc 1 169 18 view .LVU274
+ 866 0126 FFF7FEFF 		bl	lv_tick_elaps
+ 867              	.LVL86:
+ 169:lvgl/src/lv_misc/lv_task.c ****     uint32_t idle_period_time = lv_tick_elaps(idle_period_start);
+ 868              		.loc 1 169 15 view .LVU275
+ 869 012a 1C4A     		ldr	r2, .L77+28
+ 870 012c 1368     		ldr	r3, [r2]
+ 871 012e 0344     		add	r3, r3, r0
+ 872 0130 1360     		str	r3, [r2]
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 28
+
+
+ 170:lvgl/src/lv_misc/lv_task.c ****     if(idle_period_time >= IDLE_MEAS_PERIOD) {
+ 873              		.loc 1 170 5 is_stmt 1 view .LVU276
+ 170:lvgl/src/lv_misc/lv_task.c ****     if(idle_period_time >= IDLE_MEAS_PERIOD) {
+ 874              		.loc 1 170 33 is_stmt 0 view .LVU277
+ 875 0132 1B4B     		ldr	r3, .L77+32
+ 876 0134 1868     		ldr	r0, [r3]
+ 877 0136 FFF7FEFF 		bl	lv_tick_elaps
+ 878              	.LVL87:
+ 171:lvgl/src/lv_misc/lv_task.c ****         idle_last         = (busy_time * 100) / idle_period_time;  /*Calculate the busy percentage*
+ 879              		.loc 1 171 5 is_stmt 1 view .LVU278
+ 171:lvgl/src/lv_misc/lv_task.c ****         idle_last         = (busy_time * 100) / idle_period_time;  /*Calculate the busy percentage*
+ 880              		.loc 1 171 7 is_stmt 0 view .LVU279
+ 881 013a B0F5FA7F 		cmp	r0, #500
+ 882 013e 15D3     		bcc	.L63
+ 172:lvgl/src/lv_misc/lv_task.c ****         idle_last         = idle_last > 100 ? 0 : 100 - idle_last; /*But we need idle time*/
+ 883              		.loc 1 172 9 is_stmt 1 view .LVU280
+ 172:lvgl/src/lv_misc/lv_task.c ****         idle_last         = idle_last > 100 ? 0 : 100 - idle_last; /*But we need idle time*/
+ 884              		.loc 1 172 40 is_stmt 0 view .LVU281
+ 885 0140 164B     		ldr	r3, .L77+28
+ 886 0142 1A68     		ldr	r2, [r3]
+ 887 0144 6423     		movs	r3, #100
+ 888 0146 03FB02F3 		mul	r3, r3, r2
+ 172:lvgl/src/lv_misc/lv_task.c ****         idle_last         = idle_last > 100 ? 0 : 100 - idle_last; /*But we need idle time*/
+ 889              		.loc 1 172 47 view .LVU282
+ 890 014a B3FBF0F3 		udiv	r3, r3, r0
+ 172:lvgl/src/lv_misc/lv_task.c ****         idle_last         = idle_last > 100 ? 0 : 100 - idle_last; /*But we need idle time*/
+ 891              		.loc 1 172 27 view .LVU283
+ 892 014e DBB2     		uxtb	r3, r3
+ 173:lvgl/src/lv_misc/lv_task.c ****         busy_time         = 0;
+ 893              		.loc 1 173 9 is_stmt 1 view .LVU284
+ 173:lvgl/src/lv_misc/lv_task.c ****         busy_time         = 0;
+ 894              		.loc 1 173 27 is_stmt 0 view .LVU285
+ 895 0150 642B     		cmp	r3, #100
+ 896 0152 0FD8     		bhi	.L71
+ 173:lvgl/src/lv_misc/lv_task.c ****         busy_time         = 0;
+ 897              		.loc 1 173 27 discriminator 1 view .LVU286
+ 898 0154 C3F16403 		rsb	r3, r3, #100
+ 899 0158 DBB2     		uxtb	r3, r3
+ 900              	.L64:
+ 173:lvgl/src/lv_misc/lv_task.c ****         busy_time         = 0;
+ 901              		.loc 1 173 27 discriminator 4 view .LVU287
+ 902 015a 124A     		ldr	r2, .L77+36
+ 903 015c 1370     		strb	r3, [r2]
+ 174:lvgl/src/lv_misc/lv_task.c ****         idle_period_start = lv_tick_get();
+ 904              		.loc 1 174 9 is_stmt 1 discriminator 4 view .LVU288
+ 174:lvgl/src/lv_misc/lv_task.c ****         idle_period_start = lv_tick_get();
+ 905              		.loc 1 174 27 is_stmt 0 discriminator 4 view .LVU289
+ 906 015e 0F4B     		ldr	r3, .L77+28
+ 907 0160 0022     		movs	r2, #0
+ 908 0162 1A60     		str	r2, [r3]
+ 175:lvgl/src/lv_misc/lv_task.c ****     }
+ 909              		.loc 1 175 9 is_stmt 1 discriminator 4 view .LVU290
+ 175:lvgl/src/lv_misc/lv_task.c ****     }
+ 910              		.loc 1 175 29 is_stmt 0 discriminator 4 view .LVU291
+ 911 0164 FFF7FEFF 		bl	lv_tick_get
+ 912              	.LVL88:
+ 175:lvgl/src/lv_misc/lv_task.c ****     }
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 29
+
+
+ 913              		.loc 1 175 27 discriminator 4 view .LVU292
+ 914 0168 0D4B     		ldr	r3, .L77+32
+ 915 016a 1860     		str	r0, [r3]
+ 916              	.L63:
+ 178:lvgl/src/lv_misc/lv_task.c **** 
+ 917              		.loc 1 178 5 is_stmt 1 view .LVU293
+ 178:lvgl/src/lv_misc/lv_task.c **** 
+ 918              		.loc 1 178 21 is_stmt 0 view .LVU294
+ 919 016c 044B     		ldr	r3, .L77
+ 920 016e 0022     		movs	r2, #0
+ 921 0170 1A70     		strb	r2, [r3]
+ 180:lvgl/src/lv_misc/lv_task.c ****     return time_till_next;
+ 922              		.loc 1 180 42 is_stmt 1 view .LVU295
+ 181:lvgl/src/lv_misc/lv_task.c **** }
+ 923              		.loc 1 181 5 view .LVU296
+ 181:lvgl/src/lv_misc/lv_task.c **** }
+ 924              		.loc 1 181 12 is_stmt 0 view .LVU297
+ 925 0172 02E0     		b	.L47
+ 926              	.LVL89:
+ 927              	.L71:
+ 173:lvgl/src/lv_misc/lv_task.c ****         busy_time         = 0;
+ 928              		.loc 1 173 27 view .LVU298
+ 929 0174 0023     		movs	r3, #0
+ 930 0176 F0E7     		b	.L64
+ 931              	.LVL90:
+ 932              	.L65:
+  71:lvgl/src/lv_misc/lv_task.c ****     already_running = true;
+ 933              		.loc 1 71 32 view .LVU299
+ 934 0178 0125     		movs	r5, #1
+ 935              	.L47:
+ 182:lvgl/src/lv_misc/lv_task.c **** /**
+ 936              		.loc 1 182 1 view .LVU300
+ 937 017a 2846     		mov	r0, r5
+ 938 017c F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 939              	.L78:
+ 940 017e 00BF     		.align	2
+ 941              	.L77:
+ 942 0180 00000000 		.word	.LANCHOR3
+ 943 0184 00000000 		.word	.LANCHOR4
+ 944 0188 00000000 		.word	_lv_task_act
+ 945 018c 00000000 		.word	.LANCHOR1
+ 946 0190 00000000 		.word	.LANCHOR2
+ 947 0194 00000000 		.word	.LANCHOR0
+ 948 0198 00000000 		.word	_lv_task_ll
+ 949 019c 00000000 		.word	.LANCHOR5
+ 950 01a0 00000000 		.word	.LANCHOR6
+ 951 01a4 00000000 		.word	.LANCHOR7
+ 952              		.cfi_endproc
+ 953              	.LFE168:
+ 955              		.section	.text.lv_task_set_prio,"ax",%progbits
+ 956              		.align	1
+ 957              		.global	lv_task_set_prio
+ 958              		.syntax unified
+ 959              		.thumb
+ 960              		.thumb_func
+ 961              		.fpu fpv4-sp-d16
+ 963              	lv_task_set_prio:
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 30
+
+
+ 964              	.LVL91:
+ 965              	.LFB173:
+ 282:lvgl/src/lv_misc/lv_task.c ****     if(task->prio == prio) return;
+ 966              		.loc 1 282 1 is_stmt 1 view -0
+ 967              		.cfi_startproc
+ 968              		@ args = 0, pretend = 0, frame = 0
+ 969              		@ frame_needed = 0, uses_anonymous_args = 0
+ 282:lvgl/src/lv_misc/lv_task.c ****     if(task->prio == prio) return;
+ 970              		.loc 1 282 1 is_stmt 0 view .LVU302
+ 971 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 972              	.LCFI6:
+ 973              		.cfi_def_cfa_offset 24
+ 974              		.cfi_offset 3, -24
+ 975              		.cfi_offset 4, -20
+ 976              		.cfi_offset 5, -16
+ 977              		.cfi_offset 6, -12
+ 978              		.cfi_offset 7, -8
+ 979              		.cfi_offset 14, -4
+ 283:lvgl/src/lv_misc/lv_task.c **** 
+ 980              		.loc 1 283 5 is_stmt 1 view .LVU303
+ 283:lvgl/src/lv_misc/lv_task.c **** 
+ 981              		.loc 1 283 12 is_stmt 0 view .LVU304
+ 982 0002 037D     		ldrb	r3, [r0, #20]	@ zero_extendqisi2
+ 983 0004 03F00703 		and	r3, r3, #7
+ 283:lvgl/src/lv_misc/lv_task.c **** 
+ 984              		.loc 1 283 7 view .LVU305
+ 985 0008 8B42     		cmp	r3, r1
+ 986 000a 21D0     		beq	.L79
+ 987 000c 0D46     		mov	r5, r1
+ 988 000e 0F46     		mov	r7, r1
+ 989 0010 0646     		mov	r6, r0
+ 286:lvgl/src/lv_misc/lv_task.c ****     _LV_LL_READ(LV_GC_ROOT(_lv_task_ll), i) {
+ 990              		.loc 1 286 5 is_stmt 1 view .LVU306
+ 287:lvgl/src/lv_misc/lv_task.c ****         if(i->prio <= prio) {
+ 991              		.loc 1 287 5 view .LVU307
+ 992 0012 1348     		ldr	r0, .L89
+ 993              	.LVL92:
+ 287:lvgl/src/lv_misc/lv_task.c ****         if(i->prio <= prio) {
+ 994              		.loc 1 287 5 is_stmt 0 view .LVU308
+ 995 0014 FFF7FEFF 		bl	_lv_ll_get_head
+ 996              	.LVL93:
+ 287:lvgl/src/lv_misc/lv_task.c ****         if(i->prio <= prio) {
+ 997              		.loc 1 287 5 view .LVU309
+ 998 0018 0446     		mov	r4, r0
+ 999              	.LVL94:
+ 1000              	.L81:
+ 287:lvgl/src/lv_misc/lv_task.c ****         if(i->prio <= prio) {
+ 1001              		.loc 1 287 5 discriminator 1 view .LVU310
+ 1002 001a 8CB1     		cbz	r4, .L83
+ 288:lvgl/src/lv_misc/lv_task.c ****             if(i != task) _lv_ll_move_before(&LV_GC_ROOT(_lv_task_ll), task, i);
+ 1003              		.loc 1 288 9 is_stmt 1 view .LVU311
+ 288:lvgl/src/lv_misc/lv_task.c ****             if(i != task) _lv_ll_move_before(&LV_GC_ROOT(_lv_task_ll), task, i);
+ 1004              		.loc 1 288 13 is_stmt 0 view .LVU312
+ 1005 001c 237D     		ldrb	r3, [r4, #20]	@ zero_extendqisi2
+ 1006 001e 03F00703 		and	r3, r3, #7
+ 288:lvgl/src/lv_misc/lv_task.c ****             if(i != task) _lv_ll_move_before(&LV_GC_ROOT(_lv_task_ll), task, i);
+ 1007              		.loc 1 288 11 view .LVU313
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 31
+
+
+ 1008 0022 9D42     		cmp	r5, r3
+ 1009 0024 05DA     		bge	.L87
+ 287:lvgl/src/lv_misc/lv_task.c ****         if(i->prio <= prio) {
+ 1010              		.loc 1 287 5 discriminator 2 view .LVU314
+ 1011 0026 2146     		mov	r1, r4
+ 1012 0028 0D48     		ldr	r0, .L89
+ 1013              	.LVL95:
+ 287:lvgl/src/lv_misc/lv_task.c ****         if(i->prio <= prio) {
+ 1014              		.loc 1 287 5 discriminator 2 view .LVU315
+ 1015 002a FFF7FEFF 		bl	_lv_ll_get_next
+ 1016              	.LVL96:
+ 287:lvgl/src/lv_misc/lv_task.c ****         if(i->prio <= prio) {
+ 1017              		.loc 1 287 5 discriminator 2 view .LVU316
+ 1018 002e 0446     		mov	r4, r0
+ 1019              	.LVL97:
+ 287:lvgl/src/lv_misc/lv_task.c ****         if(i->prio <= prio) {
+ 1020              		.loc 1 287 5 discriminator 2 view .LVU317
+ 1021 0030 F3E7     		b	.L81
+ 1022              	.L87:
+ 289:lvgl/src/lv_misc/lv_task.c ****             break;
+ 1023              		.loc 1 289 13 is_stmt 1 view .LVU318
+ 289:lvgl/src/lv_misc/lv_task.c ****             break;
+ 1024              		.loc 1 289 15 is_stmt 0 view .LVU319
+ 1025 0032 B442     		cmp	r4, r6
+ 1026 0034 04D0     		beq	.L83
+ 289:lvgl/src/lv_misc/lv_task.c ****             break;
+ 1027              		.loc 1 289 27 is_stmt 1 discriminator 1 view .LVU320
+ 1028 0036 2246     		mov	r2, r4
+ 1029 0038 3146     		mov	r1, r6
+ 1030 003a 0948     		ldr	r0, .L89
+ 1031              	.LVL98:
+ 289:lvgl/src/lv_misc/lv_task.c ****             break;
+ 1032              		.loc 1 289 27 is_stmt 0 discriminator 1 view .LVU321
+ 1033 003c FFF7FEFF 		bl	_lv_ll_move_before
+ 1034              	.LVL99:
+ 1035              	.L83:
+ 295:lvgl/src/lv_misc/lv_task.c ****         _lv_ll_move_before(&LV_GC_ROOT(_lv_task_ll), task, NULL);
+ 1036              		.loc 1 295 5 is_stmt 1 view .LVU322
+ 295:lvgl/src/lv_misc/lv_task.c ****         _lv_ll_move_before(&LV_GC_ROOT(_lv_task_ll), task, NULL);
+ 1037              		.loc 1 295 7 is_stmt 0 view .LVU323
+ 1038 0040 3CB1     		cbz	r4, .L88
+ 1039              	.L85:
+ 298:lvgl/src/lv_misc/lv_task.c **** 
+ 1040              		.loc 1 298 5 is_stmt 1 view .LVU324
+ 298:lvgl/src/lv_misc/lv_task.c **** 
+ 1041              		.loc 1 298 23 is_stmt 0 view .LVU325
+ 1042 0042 084B     		ldr	r3, .L89+4
+ 1043 0044 0122     		movs	r2, #1
+ 1044 0046 1A70     		strb	r2, [r3]
+ 300:lvgl/src/lv_misc/lv_task.c **** }
+ 1045              		.loc 1 300 5 is_stmt 1 view .LVU326
+ 300:lvgl/src/lv_misc/lv_task.c **** }
+ 1046              		.loc 1 300 16 is_stmt 0 view .LVU327
+ 1047 0048 337D     		ldrb	r3, [r6, #20]	@ zero_extendqisi2
+ 1048 004a 67F30203 		bfi	r3, r7, #0, #3
+ 1049 004e 3375     		strb	r3, [r6, #20]
+ 1050              	.LVL100:
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 32
+
+
+ 1051              	.L79:
+ 301:lvgl/src/lv_misc/lv_task.c **** 
+ 1052              		.loc 1 301 1 view .LVU328
+ 1053 0050 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 1054              	.LVL101:
+ 1055              	.L88:
+ 296:lvgl/src/lv_misc/lv_task.c ****     }
+ 1056              		.loc 1 296 9 is_stmt 1 view .LVU329
+ 1057 0052 0022     		movs	r2, #0
+ 1058 0054 3146     		mov	r1, r6
+ 1059 0056 0248     		ldr	r0, .L89
+ 1060 0058 FFF7FEFF 		bl	_lv_ll_move_before
+ 1061              	.LVL102:
+ 1062 005c F1E7     		b	.L85
+ 1063              	.L90:
+ 1064 005e 00BF     		.align	2
+ 1065              	.L89:
+ 1066 0060 00000000 		.word	_lv_task_ll
+ 1067 0064 00000000 		.word	.LANCHOR0
+ 1068              		.cfi_endproc
+ 1069              	.LFE173:
+ 1071              		.section	.text.lv_task_set_period,"ax",%progbits
+ 1072              		.align	1
+ 1073              		.global	lv_task_set_period
+ 1074              		.syntax unified
+ 1075              		.thumb
+ 1076              		.thumb_func
+ 1077              		.fpu fpv4-sp-d16
+ 1079              	lv_task_set_period:
+ 1080              	.LVL103:
+ 1081              	.LFB174:
+ 309:lvgl/src/lv_misc/lv_task.c ****     task->period = period;
+ 1082              		.loc 1 309 1 view -0
+ 1083              		.cfi_startproc
+ 1084              		@ args = 0, pretend = 0, frame = 0
+ 1085              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1086              		@ link register save eliminated.
+ 310:lvgl/src/lv_misc/lv_task.c **** }
+ 1087              		.loc 1 310 5 view .LVU331
+ 310:lvgl/src/lv_misc/lv_task.c **** }
+ 1088              		.loc 1 310 18 is_stmt 0 view .LVU332
+ 1089 0000 0160     		str	r1, [r0]
+ 311:lvgl/src/lv_misc/lv_task.c **** 
+ 1090              		.loc 1 311 1 view .LVU333
+ 1091 0002 7047     		bx	lr
+ 1092              		.cfi_endproc
+ 1093              	.LFE174:
+ 1095              		.section	.text.lv_task_ready,"ax",%progbits
+ 1096              		.align	1
+ 1097              		.global	lv_task_ready
+ 1098              		.syntax unified
+ 1099              		.thumb
+ 1100              		.thumb_func
+ 1101              		.fpu fpv4-sp-d16
+ 1103              	lv_task_ready:
+ 1104              	.LVL104:
+ 1105              	.LFB175:
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 33
+
+
+ 318:lvgl/src/lv_misc/lv_task.c ****     task->last_run = lv_tick_get() - task->period - 1;
+ 1106              		.loc 1 318 1 is_stmt 1 view -0
+ 1107              		.cfi_startproc
+ 1108              		@ args = 0, pretend = 0, frame = 0
+ 1109              		@ frame_needed = 0, uses_anonymous_args = 0
+ 318:lvgl/src/lv_misc/lv_task.c ****     task->last_run = lv_tick_get() - task->period - 1;
+ 1110              		.loc 1 318 1 is_stmt 0 view .LVU335
+ 1111 0000 10B5     		push	{r4, lr}
+ 1112              	.LCFI7:
+ 1113              		.cfi_def_cfa_offset 8
+ 1114              		.cfi_offset 4, -8
+ 1115              		.cfi_offset 14, -4
+ 1116 0002 0446     		mov	r4, r0
+ 319:lvgl/src/lv_misc/lv_task.c **** }
+ 1117              		.loc 1 319 5 is_stmt 1 view .LVU336
+ 319:lvgl/src/lv_misc/lv_task.c **** }
+ 1118              		.loc 1 319 22 is_stmt 0 view .LVU337
+ 1119 0004 FFF7FEFF 		bl	lv_tick_get
+ 1120              	.LVL105:
+ 319:lvgl/src/lv_misc/lv_task.c **** }
+ 1121              		.loc 1 319 42 view .LVU338
+ 1122 0008 2368     		ldr	r3, [r4]
+ 319:lvgl/src/lv_misc/lv_task.c **** }
+ 1123              		.loc 1 319 36 view .LVU339
+ 1124 000a C01A     		subs	r0, r0, r3
+ 319:lvgl/src/lv_misc/lv_task.c **** }
+ 1125              		.loc 1 319 51 view .LVU340
+ 1126 000c 0138     		subs	r0, r0, #1
+ 319:lvgl/src/lv_misc/lv_task.c **** }
+ 1127              		.loc 1 319 20 view .LVU341
+ 1128 000e 6060     		str	r0, [r4, #4]
+ 320:lvgl/src/lv_misc/lv_task.c **** 
+ 1129              		.loc 1 320 1 view .LVU342
+ 1130 0010 10BD     		pop	{r4, pc}
+ 320:lvgl/src/lv_misc/lv_task.c **** 
+ 1131              		.loc 1 320 1 view .LVU343
+ 1132              		.cfi_endproc
+ 1133              	.LFE175:
+ 1135              		.section	.text.lv_task_set_repeat_count,"ax",%progbits
+ 1136              		.align	1
+ 1137              		.global	lv_task_set_repeat_count
+ 1138              		.syntax unified
+ 1139              		.thumb
+ 1140              		.thumb_func
+ 1141              		.fpu fpv4-sp-d16
+ 1143              	lv_task_set_repeat_count:
+ 1144              	.LVL106:
+ 1145              	.LFB176:
+ 328:lvgl/src/lv_misc/lv_task.c ****     task->repeat_count = repeat_count;
+ 1146              		.loc 1 328 1 is_stmt 1 view -0
+ 1147              		.cfi_startproc
+ 1148              		@ args = 0, pretend = 0, frame = 0
+ 1149              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1150              		@ link register save eliminated.
+ 329:lvgl/src/lv_misc/lv_task.c **** }
+ 1151              		.loc 1 329 5 view .LVU345
+ 329:lvgl/src/lv_misc/lv_task.c **** }
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 34
+
+
+ 1152              		.loc 1 329 24 is_stmt 0 view .LVU346
+ 1153 0000 0161     		str	r1, [r0, #16]
+ 330:lvgl/src/lv_misc/lv_task.c **** 
+ 1154              		.loc 1 330 1 view .LVU347
+ 1155 0002 7047     		bx	lr
+ 1156              		.cfi_endproc
+ 1157              	.LFE176:
+ 1159              		.section	.text.lv_task_reset,"ax",%progbits
+ 1160              		.align	1
+ 1161              		.global	lv_task_reset
+ 1162              		.syntax unified
+ 1163              		.thumb
+ 1164              		.thumb_func
+ 1165              		.fpu fpv4-sp-d16
+ 1167              	lv_task_reset:
+ 1168              	.LVL107:
+ 1169              	.LFB177:
+ 338:lvgl/src/lv_misc/lv_task.c ****     task->last_run = lv_tick_get();
+ 1170              		.loc 1 338 1 is_stmt 1 view -0
+ 1171              		.cfi_startproc
+ 1172              		@ args = 0, pretend = 0, frame = 0
+ 1173              		@ frame_needed = 0, uses_anonymous_args = 0
+ 338:lvgl/src/lv_misc/lv_task.c ****     task->last_run = lv_tick_get();
+ 1174              		.loc 1 338 1 is_stmt 0 view .LVU349
+ 1175 0000 10B5     		push	{r4, lr}
+ 1176              	.LCFI8:
+ 1177              		.cfi_def_cfa_offset 8
+ 1178              		.cfi_offset 4, -8
+ 1179              		.cfi_offset 14, -4
+ 1180 0002 0446     		mov	r4, r0
+ 339:lvgl/src/lv_misc/lv_task.c **** }
+ 1181              		.loc 1 339 5 is_stmt 1 view .LVU350
+ 339:lvgl/src/lv_misc/lv_task.c **** }
+ 1182              		.loc 1 339 22 is_stmt 0 view .LVU351
+ 1183 0004 FFF7FEFF 		bl	lv_tick_get
+ 1184              	.LVL108:
+ 339:lvgl/src/lv_misc/lv_task.c **** }
+ 1185              		.loc 1 339 20 view .LVU352
+ 1186 0008 6060     		str	r0, [r4, #4]
+ 340:lvgl/src/lv_misc/lv_task.c **** 
+ 1187              		.loc 1 340 1 view .LVU353
+ 1188 000a 10BD     		pop	{r4, pc}
+ 340:lvgl/src/lv_misc/lv_task.c **** 
+ 1189              		.loc 1 340 1 view .LVU354
+ 1190              		.cfi_endproc
+ 1191              	.LFE177:
+ 1193              		.section	.text.lv_task_enable,"ax",%progbits
+ 1194              		.align	1
+ 1195              		.global	lv_task_enable
+ 1196              		.syntax unified
+ 1197              		.thumb
+ 1198              		.thumb_func
+ 1199              		.fpu fpv4-sp-d16
+ 1201              	lv_task_enable:
+ 1202              	.LVL109:
+ 1203              	.LFB178:
+ 347:lvgl/src/lv_misc/lv_task.c ****     lv_task_run = en;
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 35
+
+
+ 1204              		.loc 1 347 1 is_stmt 1 view -0
+ 1205              		.cfi_startproc
+ 1206              		@ args = 0, pretend = 0, frame = 0
+ 1207              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1208              		@ link register save eliminated.
+ 348:lvgl/src/lv_misc/lv_task.c **** }
+ 1209              		.loc 1 348 5 view .LVU356
+ 348:lvgl/src/lv_misc/lv_task.c **** }
+ 1210              		.loc 1 348 17 is_stmt 0 view .LVU357
+ 1211 0000 014B     		ldr	r3, .L98
+ 1212 0002 1870     		strb	r0, [r3]
+ 349:lvgl/src/lv_misc/lv_task.c **** 
+ 1213              		.loc 1 349 1 view .LVU358
+ 1214 0004 7047     		bx	lr
+ 1215              	.L99:
+ 1216 0006 00BF     		.align	2
+ 1217              	.L98:
+ 1218 0008 00000000 		.word	.LANCHOR4
+ 1219              		.cfi_endproc
+ 1220              	.LFE178:
+ 1222              		.section	.text._lv_task_core_init,"ax",%progbits
+ 1223              		.align	1
+ 1224              		.global	_lv_task_core_init
+ 1225              		.syntax unified
+ 1226              		.thumb
+ 1227              		.thumb_func
+ 1228              		.fpu fpv4-sp-d16
+ 1230              	_lv_task_core_init:
+ 1231              	.LFB167:
+  54:lvgl/src/lv_misc/lv_task.c ****     _lv_ll_init(&LV_GC_ROOT(_lv_task_ll), sizeof(lv_task_t));
+ 1232              		.loc 1 54 1 is_stmt 1 view -0
+ 1233              		.cfi_startproc
+ 1234              		@ args = 0, pretend = 0, frame = 0
+ 1235              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1236 0000 08B5     		push	{r3, lr}
+ 1237              	.LCFI9:
+ 1238              		.cfi_def_cfa_offset 8
+ 1239              		.cfi_offset 3, -8
+ 1240              		.cfi_offset 14, -4
+  55:lvgl/src/lv_misc/lv_task.c **** 
+ 1241              		.loc 1 55 5 view .LVU360
+ 1242 0002 1821     		movs	r1, #24
+ 1243 0004 0348     		ldr	r0, .L102
+ 1244 0006 FFF7FEFF 		bl	_lv_ll_init
+ 1245              	.LVL110:
+  58:lvgl/src/lv_misc/lv_task.c **** }
+ 1246              		.loc 1 58 5 view .LVU361
+ 1247 000a 0120     		movs	r0, #1
+ 1248 000c FFF7FEFF 		bl	lv_task_enable
+ 1249              	.LVL111:
+  59:lvgl/src/lv_misc/lv_task.c **** 
+ 1250              		.loc 1 59 1 is_stmt 0 view .LVU362
+ 1251 0010 08BD     		pop	{r3, pc}
+ 1252              	.L103:
+ 1253 0012 00BF     		.align	2
+ 1254              	.L102:
+ 1255 0014 00000000 		.word	_lv_task_ll
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 36
+
+
+ 1256              		.cfi_endproc
+ 1257              	.LFE167:
+ 1259              		.section	.text.lv_task_get_idle,"ax",%progbits
+ 1260              		.align	1
+ 1261              		.global	lv_task_get_idle
+ 1262              		.syntax unified
+ 1263              		.thumb
+ 1264              		.thumb_func
+ 1265              		.fpu fpv4-sp-d16
+ 1267              	lv_task_get_idle:
+ 1268              	.LFB179:
+ 356:lvgl/src/lv_misc/lv_task.c ****     return idle_last;
+ 1269              		.loc 1 356 1 is_stmt 1 view -0
+ 1270              		.cfi_startproc
+ 1271              		@ args = 0, pretend = 0, frame = 0
+ 1272              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1273              		@ link register save eliminated.
+ 357:lvgl/src/lv_misc/lv_task.c **** }
+ 1274              		.loc 1 357 5 view .LVU364
+ 358:lvgl/src/lv_misc/lv_task.c **** 
+ 1275              		.loc 1 358 1 is_stmt 0 view .LVU365
+ 1276 0000 014B     		ldr	r3, .L105
+ 1277 0002 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 1278 0004 7047     		bx	lr
+ 1279              	.L106:
+ 1280 0006 00BF     		.align	2
+ 1281              	.L105:
+ 1282 0008 00000000 		.word	.LANCHOR7
+ 1283              		.cfi_endproc
+ 1284              	.LFE179:
+ 1286              		.section	.text.lv_task_get_next,"ax",%progbits
+ 1287              		.align	1
+ 1288              		.global	lv_task_get_next
+ 1289              		.syntax unified
+ 1290              		.thumb
+ 1291              		.thumb_func
+ 1292              		.fpu fpv4-sp-d16
+ 1294              	lv_task_get_next:
+ 1295              	.LVL112:
+ 1296              	.LFB180:
+ 366:lvgl/src/lv_misc/lv_task.c ****     if(task == NULL) return _lv_ll_get_head(&LV_GC_ROOT(_lv_task_ll));
+ 1297              		.loc 1 366 1 is_stmt 1 view -0
+ 1298              		.cfi_startproc
+ 1299              		@ args = 0, pretend = 0, frame = 0
+ 1300              		@ frame_needed = 0, uses_anonymous_args = 0
+ 366:lvgl/src/lv_misc/lv_task.c ****     if(task == NULL) return _lv_ll_get_head(&LV_GC_ROOT(_lv_task_ll));
+ 1301              		.loc 1 366 1 is_stmt 0 view .LVU367
+ 1302 0000 08B5     		push	{r3, lr}
+ 1303              	.LCFI10:
+ 1304              		.cfi_def_cfa_offset 8
+ 1305              		.cfi_offset 3, -8
+ 1306              		.cfi_offset 14, -4
+ 367:lvgl/src/lv_misc/lv_task.c ****     else return _lv_ll_get_next(&LV_GC_ROOT(_lv_task_ll), task);
+ 1307              		.loc 1 367 5 is_stmt 1 view .LVU368
+ 367:lvgl/src/lv_misc/lv_task.c ****     else return _lv_ll_get_next(&LV_GC_ROOT(_lv_task_ll), task);
+ 1308              		.loc 1 367 7 is_stmt 0 view .LVU369
+ 1309 0002 20B1     		cbz	r0, .L111
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 37
+
+
+ 1310 0004 0146     		mov	r1, r0
+ 368:lvgl/src/lv_misc/lv_task.c **** }
+ 1311              		.loc 1 368 10 is_stmt 1 view .LVU370
+ 368:lvgl/src/lv_misc/lv_task.c **** }
+ 1312              		.loc 1 368 17 is_stmt 0 view .LVU371
+ 1313 0006 0448     		ldr	r0, .L112
+ 1314              	.LVL113:
+ 368:lvgl/src/lv_misc/lv_task.c **** }
+ 1315              		.loc 1 368 17 view .LVU372
+ 1316 0008 FFF7FEFF 		bl	_lv_ll_get_next
+ 1317              	.LVL114:
+ 1318              	.L107:
+ 369:lvgl/src/lv_misc/lv_task.c **** 
+ 1319              		.loc 1 369 1 view .LVU373
+ 1320 000c 08BD     		pop	{r3, pc}
+ 1321              	.LVL115:
+ 1322              	.L111:
+ 367:lvgl/src/lv_misc/lv_task.c ****     else return _lv_ll_get_next(&LV_GC_ROOT(_lv_task_ll), task);
+ 1323              		.loc 1 367 22 is_stmt 1 discriminator 1 view .LVU374
+ 367:lvgl/src/lv_misc/lv_task.c ****     else return _lv_ll_get_next(&LV_GC_ROOT(_lv_task_ll), task);
+ 1324              		.loc 1 367 29 is_stmt 0 discriminator 1 view .LVU375
+ 1325 000e 0248     		ldr	r0, .L112
+ 1326              	.LVL116:
+ 367:lvgl/src/lv_misc/lv_task.c ****     else return _lv_ll_get_next(&LV_GC_ROOT(_lv_task_ll), task);
+ 1327              		.loc 1 367 29 discriminator 1 view .LVU376
+ 1328 0010 FFF7FEFF 		bl	_lv_ll_get_head
+ 1329              	.LVL117:
+ 1330 0014 FAE7     		b	.L107
+ 1331              	.L113:
+ 1332 0016 00BF     		.align	2
+ 1333              	.L112:
+ 1334 0018 00000000 		.word	_lv_task_ll
+ 1335              		.cfi_endproc
+ 1336              	.LFE180:
+ 1338              		.section	.bss.already_running.10340,"aw",%nobits
+ 1339              		.set	.LANCHOR3,. + 0
+ 1342              	already_running.10340:
+ 1343 0000 00       		.space	1
+ 1344              		.section	.bss.busy_time.10342,"aw",%nobits
+ 1345              		.align	2
+ 1346              		.set	.LANCHOR5,. + 0
+ 1349              	busy_time.10342:
+ 1350 0000 00000000 		.space	4
+ 1351              		.section	.bss.idle_last,"aw",%nobits
+ 1352              		.set	.LANCHOR7,. + 0
+ 1355              	idle_last:
+ 1356 0000 00       		.space	1
+ 1357              		.section	.bss.idle_period_start.10341,"aw",%nobits
+ 1358              		.align	2
+ 1359              		.set	.LANCHOR6,. + 0
+ 1362              	idle_period_start.10341:
+ 1363 0000 00000000 		.space	4
+ 1364              		.section	.bss.lv_task_run,"aw",%nobits
+ 1365              		.set	.LANCHOR4,. + 0
+ 1368              	lv_task_run:
+ 1369 0000 00       		.space	1
+ 1370              		.section	.bss.task_created,"aw",%nobits
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 38
+
+
+ 1371              		.set	.LANCHOR1,. + 0
+ 1374              	task_created:
+ 1375 0000 00       		.space	1
+ 1376              		.section	.bss.task_deleted,"aw",%nobits
+ 1377              		.set	.LANCHOR2,. + 0
+ 1380              	task_deleted:
+ 1381 0000 00       		.space	1
+ 1382              		.section	.bss.task_list_changed,"aw",%nobits
+ 1383              		.set	.LANCHOR0,. + 0
+ 1386              	task_list_changed:
+ 1387 0000 00       		.space	1
+ 1388              		.section	.rodata.lv_task_create.str1.4,"aMS",%progbits,1
+ 1389              		.align	2
+ 1390              	.LC0:
+ 1391 0000 4F757420 		.ascii	"Out of memory\000"
+ 1391      6F66206D 
+ 1391      656D6F72 
+ 1391      7900
+ 1392              		.text
+ 1393              	.Letext0:
+ 1394              		.file 2 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1395              		.file 3 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1396              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 1397              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 1398              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 1399              		.file 7 "lvgl/lv_conf.h"
+ 1400              		.file 8 "lvgl/src/lv_misc/lv_types.h"
+ 1401              		.file 9 "lvgl/src/lv_misc/lv_mem.h"
+ 1402              		.file 10 "lvgl/src/lv_misc/lv_ll.h"
+ 1403              		.file 11 "lvgl/src/lv_misc/lv_task.h"
+ 1404              		.file 12 "lvgl/src/lv_misc/../lv_draw/../lv_misc/lv_color.h"
+ 1405              		.file 13 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1406              		.file 14 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1407              		.file 15 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-non
+ 1408              		.file 16 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1409              		.file 17 "lvgl/src/lv_misc/../lv_draw/lv_img_buf.h"
+ 1410              		.file 18 "lvgl/src/lv_misc/../lv_draw/../lv_core/../lv_font/lv_font.h"
+ 1411              		.file 19 "lvgl/src/lv_misc/../lv_draw/../lv_core/../lv_misc/lv_anim.h"
+ 1412              		.file 20 "lvgl/src/lv_misc/../lv_draw/../lv_core/../lv_draw/lv_draw_mask.h"
+ 1413              		.file 21 "lvgl/src/lv_misc/../lv_draw/lv_img_decoder.h"
+ 1414              		.file 22 "lvgl/src/lv_misc/../lv_draw/lv_img_cache.h"
+ 1415              		.file 23 "lvgl/src/lv_misc/lv_gc.h"
+ 1416              		.file 24 "lvgl/src/lv_misc/../lv_hal/lv_hal_tick.h"
+ 1417              		.file 25 "lvgl/src/lv_misc/../lv_misc/lv_debug.h"
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 39
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_task.c
+  D:\Temp\ccefaMgJ.s:18     .text.lv_task_time_remaining:0000000000000000 $t
+  D:\Temp\ccefaMgJ.s:25     .text.lv_task_time_remaining:0000000000000000 lv_task_time_remaining
+  D:\Temp\ccefaMgJ.s:71     .text.lv_task_create:0000000000000000 $t
+  D:\Temp\ccefaMgJ.s:78     .text.lv_task_create:0000000000000000 lv_task_create
+  D:\Temp\ccefaMgJ.s:304    .text.lv_task_create:00000000000000cc $d
+  D:\Temp\ccefaMgJ.s:312    .text.lv_task_create_basic:0000000000000000 $t
+  D:\Temp\ccefaMgJ.s:319    .text.lv_task_create_basic:0000000000000000 lv_task_create_basic
+  D:\Temp\ccefaMgJ.s:344    .text.lv_task_set_cb:0000000000000000 $t
+  D:\Temp\ccefaMgJ.s:351    .text.lv_task_set_cb:0000000000000000 lv_task_set_cb
+  D:\Temp\ccefaMgJ.s:368    .text.lv_task_del:0000000000000000 $t
+  D:\Temp\ccefaMgJ.s:375    .text.lv_task_del:0000000000000000 lv_task_del
+  D:\Temp\ccefaMgJ.s:427    .text.lv_task_del:000000000000002c $d
+  D:\Temp\ccefaMgJ.s:435    .text.lv_task_exec:0000000000000000 $t
+  D:\Temp\ccefaMgJ.s:441    .text.lv_task_exec:0000000000000000 lv_task_exec
+  D:\Temp\ccefaMgJ.s:525    .text.lv_task_exec:0000000000000040 $d
+  D:\Temp\ccefaMgJ.s:530    .text.lv_task_handler:0000000000000000 $t
+  D:\Temp\ccefaMgJ.s:537    .text.lv_task_handler:0000000000000000 lv_task_handler
+  D:\Temp\ccefaMgJ.s:942    .text.lv_task_handler:0000000000000180 $d
+  D:\Temp\ccefaMgJ.s:956    .text.lv_task_set_prio:0000000000000000 $t
+  D:\Temp\ccefaMgJ.s:963    .text.lv_task_set_prio:0000000000000000 lv_task_set_prio
+  D:\Temp\ccefaMgJ.s:1066   .text.lv_task_set_prio:0000000000000060 $d
+  D:\Temp\ccefaMgJ.s:1072   .text.lv_task_set_period:0000000000000000 $t
+  D:\Temp\ccefaMgJ.s:1079   .text.lv_task_set_period:0000000000000000 lv_task_set_period
+  D:\Temp\ccefaMgJ.s:1096   .text.lv_task_ready:0000000000000000 $t
+  D:\Temp\ccefaMgJ.s:1103   .text.lv_task_ready:0000000000000000 lv_task_ready
+  D:\Temp\ccefaMgJ.s:1136   .text.lv_task_set_repeat_count:0000000000000000 $t
+  D:\Temp\ccefaMgJ.s:1143   .text.lv_task_set_repeat_count:0000000000000000 lv_task_set_repeat_count
+  D:\Temp\ccefaMgJ.s:1160   .text.lv_task_reset:0000000000000000 $t
+  D:\Temp\ccefaMgJ.s:1167   .text.lv_task_reset:0000000000000000 lv_task_reset
+  D:\Temp\ccefaMgJ.s:1194   .text.lv_task_enable:0000000000000000 $t
+  D:\Temp\ccefaMgJ.s:1201   .text.lv_task_enable:0000000000000000 lv_task_enable
+  D:\Temp\ccefaMgJ.s:1218   .text.lv_task_enable:0000000000000008 $d
+  D:\Temp\ccefaMgJ.s:1223   .text._lv_task_core_init:0000000000000000 $t
+  D:\Temp\ccefaMgJ.s:1230   .text._lv_task_core_init:0000000000000000 _lv_task_core_init
+  D:\Temp\ccefaMgJ.s:1255   .text._lv_task_core_init:0000000000000014 $d
+  D:\Temp\ccefaMgJ.s:1260   .text.lv_task_get_idle:0000000000000000 $t
+  D:\Temp\ccefaMgJ.s:1267   .text.lv_task_get_idle:0000000000000000 lv_task_get_idle
+  D:\Temp\ccefaMgJ.s:1282   .text.lv_task_get_idle:0000000000000008 $d
+  D:\Temp\ccefaMgJ.s:1287   .text.lv_task_get_next:0000000000000000 $t
+  D:\Temp\ccefaMgJ.s:1294   .text.lv_task_get_next:0000000000000000 lv_task_get_next
+  D:\Temp\ccefaMgJ.s:1334   .text.lv_task_get_next:0000000000000018 $d
+  D:\Temp\ccefaMgJ.s:1342   .bss.already_running.10340:0000000000000000 already_running.10340
+  D:\Temp\ccefaMgJ.s:1343   .bss.already_running.10340:0000000000000000 $d
+  D:\Temp\ccefaMgJ.s:1345   .bss.busy_time.10342:0000000000000000 $d
+  D:\Temp\ccefaMgJ.s:1349   .bss.busy_time.10342:0000000000000000 busy_time.10342
+  D:\Temp\ccefaMgJ.s:1355   .bss.idle_last:0000000000000000 idle_last
+  D:\Temp\ccefaMgJ.s:1356   .bss.idle_last:0000000000000000 $d
+  D:\Temp\ccefaMgJ.s:1358   .bss.idle_period_start.10341:0000000000000000 $d
+  D:\Temp\ccefaMgJ.s:1362   .bss.idle_period_start.10341:0000000000000000 idle_period_start.10341
+  D:\Temp\ccefaMgJ.s:1368   .bss.lv_task_run:0000000000000000 lv_task_run
+  D:\Temp\ccefaMgJ.s:1369   .bss.lv_task_run:0000000000000000 $d
+  D:\Temp\ccefaMgJ.s:1374   .bss.task_created:0000000000000000 task_created
+  D:\Temp\ccefaMgJ.s:1375   .bss.task_created:0000000000000000 $d
+  D:\Temp\ccefaMgJ.s:1380   .bss.task_deleted:0000000000000000 task_deleted
+  D:\Temp\ccefaMgJ.s:1381   .bss.task_deleted:0000000000000000 $d
+ARM GAS  D:\Temp\ccefaMgJ.s 			page 40
+
+
+  D:\Temp\ccefaMgJ.s:1386   .bss.task_list_changed:0000000000000000 task_list_changed
+  D:\Temp\ccefaMgJ.s:1387   .bss.task_list_changed:0000000000000000 $d
+  D:\Temp\ccefaMgJ.s:1389   .rodata.lv_task_create.str1.4:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+lv_tick_elaps
+_lv_ll_get_head
+_lv_ll_get_next
+lv_tick_get
+_lv_ll_ins_head
+lv_debug_check_null
+lv_debug_log_error
+_lv_ll_ins_prev
+_lv_ll_ins_tail
+_lv_task_ll
+_lv_ll_remove
+lv_mem_free
+_lv_task_act
+_lv_ll_move_before
+_lv_ll_init

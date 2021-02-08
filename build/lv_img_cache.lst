@@ -1,0 +1,1045 @@
+ARM GAS  D:\Temp\cczBtDPa.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_img_cache.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text._lv_img_cache_open,"ax",%progbits
+  18              		.align	1
+  19              		.global	_lv_img_cache_open
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	_lv_img_cache_open:
+  27              	.LVL0:
+  28              	.LFB167:
+  29              		.file 1 "lvgl/src/lv_draw/lv_img_cache.c"
+   1:lvgl/src/lv_draw/lv_img_cache.c **** /**
+   2:lvgl/src/lv_draw/lv_img_cache.c ****  * @file lv_img_cache.c
+   3:lvgl/src/lv_draw/lv_img_cache.c ****  *
+   4:lvgl/src/lv_draw/lv_img_cache.c ****  */
+   5:lvgl/src/lv_draw/lv_img_cache.c **** 
+   6:lvgl/src/lv_draw/lv_img_cache.c **** /*********************
+   7:lvgl/src/lv_draw/lv_img_cache.c ****  *      INCLUDES
+   8:lvgl/src/lv_draw/lv_img_cache.c ****  *********************/
+   9:lvgl/src/lv_draw/lv_img_cache.c **** #include "../lv_misc/lv_debug.h"
+  10:lvgl/src/lv_draw/lv_img_cache.c **** #include "lv_img_cache.h"
+  11:lvgl/src/lv_draw/lv_img_cache.c **** #include "lv_img_decoder.h"
+  12:lvgl/src/lv_draw/lv_img_cache.c **** #include "lv_draw_img.h"
+  13:lvgl/src/lv_draw/lv_img_cache.c **** #include "../lv_hal/lv_hal_tick.h"
+  14:lvgl/src/lv_draw/lv_img_cache.c **** #include "../lv_misc/lv_gc.h"
+  15:lvgl/src/lv_draw/lv_img_cache.c **** 
+  16:lvgl/src/lv_draw/lv_img_cache.c **** /*********************
+  17:lvgl/src/lv_draw/lv_img_cache.c ****  *      DEFINES
+  18:lvgl/src/lv_draw/lv_img_cache.c ****  *********************/
+  19:lvgl/src/lv_draw/lv_img_cache.c **** /*Decrement life with this value on every open*/
+  20:lvgl/src/lv_draw/lv_img_cache.c **** #define LV_IMG_CACHE_AGING 1
+  21:lvgl/src/lv_draw/lv_img_cache.c **** 
+  22:lvgl/src/lv_draw/lv_img_cache.c **** /*Boost life by this factor (multiply time_to_open with this value)*/
+  23:lvgl/src/lv_draw/lv_img_cache.c **** #define LV_IMG_CACHE_LIFE_GAIN 1
+  24:lvgl/src/lv_draw/lv_img_cache.c **** 
+  25:lvgl/src/lv_draw/lv_img_cache.c **** /*Don't let life to be greater than this limit because it would require a lot of time to
+  26:lvgl/src/lv_draw/lv_img_cache.c ****  * "die" from very high values */
+  27:lvgl/src/lv_draw/lv_img_cache.c **** #define LV_IMG_CACHE_LIFE_LIMIT 1000
+  28:lvgl/src/lv_draw/lv_img_cache.c **** 
+  29:lvgl/src/lv_draw/lv_img_cache.c **** /**********************
+ARM GAS  D:\Temp\cczBtDPa.s 			page 2
+
+
+  30:lvgl/src/lv_draw/lv_img_cache.c ****  *      TYPEDEFS
+  31:lvgl/src/lv_draw/lv_img_cache.c ****  **********************/
+  32:lvgl/src/lv_draw/lv_img_cache.c **** 
+  33:lvgl/src/lv_draw/lv_img_cache.c **** /**********************
+  34:lvgl/src/lv_draw/lv_img_cache.c ****  *  STATIC PROTOTYPES
+  35:lvgl/src/lv_draw/lv_img_cache.c ****  **********************/
+  36:lvgl/src/lv_draw/lv_img_cache.c **** #if LV_IMG_CACHE_DEF_SIZE == 0
+  37:lvgl/src/lv_draw/lv_img_cache.c ****     static lv_img_cache_entry_t cache_temp;
+  38:lvgl/src/lv_draw/lv_img_cache.c **** #endif
+  39:lvgl/src/lv_draw/lv_img_cache.c **** 
+  40:lvgl/src/lv_draw/lv_img_cache.c **** /**********************
+  41:lvgl/src/lv_draw/lv_img_cache.c ****  *  STATIC VARIABLES
+  42:lvgl/src/lv_draw/lv_img_cache.c ****  **********************/
+  43:lvgl/src/lv_draw/lv_img_cache.c **** #if LV_IMG_CACHE_DEF_SIZE
+  44:lvgl/src/lv_draw/lv_img_cache.c ****     static uint16_t entry_cnt;
+  45:lvgl/src/lv_draw/lv_img_cache.c **** #endif
+  46:lvgl/src/lv_draw/lv_img_cache.c **** 
+  47:lvgl/src/lv_draw/lv_img_cache.c **** /**********************
+  48:lvgl/src/lv_draw/lv_img_cache.c ****  *      MACROS
+  49:lvgl/src/lv_draw/lv_img_cache.c ****  **********************/
+  50:lvgl/src/lv_draw/lv_img_cache.c **** 
+  51:lvgl/src/lv_draw/lv_img_cache.c **** /**********************
+  52:lvgl/src/lv_draw/lv_img_cache.c ****  *   GLOBAL FUNCTIONS
+  53:lvgl/src/lv_draw/lv_img_cache.c ****  **********************/
+  54:lvgl/src/lv_draw/lv_img_cache.c **** 
+  55:lvgl/src/lv_draw/lv_img_cache.c **** /**
+  56:lvgl/src/lv_draw/lv_img_cache.c ****  * Open an image using the image decoder interface and cache it.
+  57:lvgl/src/lv_draw/lv_img_cache.c ****  * The image will be left open meaning if the image decoder open callback allocated memory then it 
+  58:lvgl/src/lv_draw/lv_img_cache.c ****  * The image is closed if a new image is opened and the new image takes its place in the cache.
+  59:lvgl/src/lv_draw/lv_img_cache.c ****  * @param src source of the image. Path to file or pointer to an `lv_img_dsc_t` variable
+  60:lvgl/src/lv_draw/lv_img_cache.c ****  * @param color color The color of the image with `LV_IMG_CF_ALPHA_...`
+  61:lvgl/src/lv_draw/lv_img_cache.c ****  * @return pointer to the cache entry or NULL if can open the image
+  62:lvgl/src/lv_draw/lv_img_cache.c ****  */
+  63:lvgl/src/lv_draw/lv_img_cache.c **** lv_img_cache_entry_t * _lv_img_cache_open(const void * src, lv_color_t color)
+  64:lvgl/src/lv_draw/lv_img_cache.c **** {
+  30              		.loc 1 64 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 64 1 is_stmt 0 view .LVU1
+  35 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+  36              	.LCFI0:
+  37              		.cfi_def_cfa_offset 24
+  38              		.cfi_offset 4, -24
+  39              		.cfi_offset 5, -20
+  40              		.cfi_offset 6, -16
+  41              		.cfi_offset 7, -12
+  42              		.cfi_offset 8, -8
+  43              		.cfi_offset 14, -4
+  65:lvgl/src/lv_draw/lv_img_cache.c ****     /*Is the image cached?*/
+  66:lvgl/src/lv_draw/lv_img_cache.c ****     lv_img_cache_entry_t * cached_src = NULL;
+  44              		.loc 1 66 5 is_stmt 1 view .LVU2
+  45              	.LVL1:
+  67:lvgl/src/lv_draw/lv_img_cache.c **** 
+  68:lvgl/src/lv_draw/lv_img_cache.c **** #if LV_IMG_CACHE_DEF_SIZE
+  69:lvgl/src/lv_draw/lv_img_cache.c ****     if(entry_cnt == 0) {
+  46              		.loc 1 69 5 view .LVU3
+ARM GAS  D:\Temp\cczBtDPa.s 			page 3
+
+
+  47              		.loc 1 69 18 is_stmt 0 view .LVU4
+  48 0004 484B     		ldr	r3, .L29
+  49 0006 1F88     		ldrh	r7, [r3]
+  50              		.loc 1 69 7 view .LVU5
+  51 0008 002F     		cmp	r7, #0
+  52 000a 00F08880 		beq	.L18
+  70:lvgl/src/lv_draw/lv_img_cache.c ****         LV_LOG_WARN("lv_img_cache_open: the cache size is 0");
+  71:lvgl/src/lv_draw/lv_img_cache.c ****         return NULL;
+  72:lvgl/src/lv_draw/lv_img_cache.c ****     }
+  73:lvgl/src/lv_draw/lv_img_cache.c **** 
+  74:lvgl/src/lv_draw/lv_img_cache.c ****     lv_img_cache_entry_t * cache = LV_GC_ROOT(_lv_img_cache_array);
+  53              		.loc 1 74 5 is_stmt 1 view .LVU6
+  54              		.loc 1 74 28 is_stmt 0 view .LVU7
+  55 000e 474B     		ldr	r3, .L29+4
+  56 0010 1E68     		ldr	r6, [r3]
+  57              	.LVL2:
+  75:lvgl/src/lv_draw/lv_img_cache.c **** 
+  76:lvgl/src/lv_draw/lv_img_cache.c ****     /*Decrement all lifes. Make the entries older*/
+  77:lvgl/src/lv_draw/lv_img_cache.c ****     uint16_t i;
+  58              		.loc 1 77 5 is_stmt 1 view .LVU8
+  78:lvgl/src/lv_draw/lv_img_cache.c ****     for(i = 0; i < entry_cnt; i++) {
+  59              		.loc 1 78 5 view .LVU9
+  60              		.loc 1 78 11 is_stmt 0 view .LVU10
+  61 0012 0023     		movs	r3, #0
+  62              		.loc 1 78 5 view .LVU11
+  63 0014 01E0     		b	.L3
+  64              	.LVL3:
+  65              	.L4:
+  66              		.loc 1 78 32 discriminator 2 view .LVU12
+  67 0016 0133     		adds	r3, r3, #1
+  68              	.LVL4:
+  69              		.loc 1 78 32 discriminator 2 view .LVU13
+  70 0018 9BB2     		uxth	r3, r3
+  71              	.LVL5:
+  72              	.L3:
+  73              		.loc 1 78 5 discriminator 1 view .LVU14
+  74 001a 9F42     		cmp	r7, r3
+  75 001c 0AD9     		bls	.L22
+  79:lvgl/src/lv_draw/lv_img_cache.c ****         if(cache[i].life > INT32_MIN + LV_IMG_CACHE_AGING) {
+  76              		.loc 1 79 9 is_stmt 1 view .LVU15
+  77              		.loc 1 79 17 is_stmt 0 view .LVU16
+  78 001e 03EBC302 		add	r2, r3, r3, lsl #3
+  79 0022 9400     		lsls	r4, r2, #2
+  80 0024 3444     		add	r4, r4, r6
+  81              		.loc 1 79 20 view .LVU17
+  82 0026 226A     		ldr	r2, [r4, #32]
+  83              		.loc 1 79 11 view .LVU18
+  84 0028 414D     		ldr	r5, .L29+8
+  85 002a AA42     		cmp	r2, r5
+  86 002c F3DB     		blt	.L4
+  80:lvgl/src/lv_draw/lv_img_cache.c ****             cache[i].life -= LV_IMG_CACHE_AGING;
+  87              		.loc 1 80 13 is_stmt 1 view .LVU19
+  88              		.loc 1 80 27 is_stmt 0 view .LVU20
+  89 002e 013A     		subs	r2, r2, #1
+  90 0030 2262     		str	r2, [r4, #32]
+  91 0032 F0E7     		b	.L4
+  92              	.L22:
+ARM GAS  D:\Temp\cczBtDPa.s 			page 4
+
+
+  93              		.loc 1 80 27 view .LVU21
+  94 0034 8846     		mov	r8, r1	@ movhi
+  95 0036 0746     		mov	r7, r0
+  81:lvgl/src/lv_draw/lv_img_cache.c ****         }
+  82:lvgl/src/lv_draw/lv_img_cache.c ****     }
+  83:lvgl/src/lv_draw/lv_img_cache.c **** 
+  84:lvgl/src/lv_draw/lv_img_cache.c ****     for(i = 0; i < entry_cnt; i++) {
+  96              		.loc 1 84 11 view .LVU22
+  97 0038 0024     		movs	r4, #0
+  98 003a 03E0     		b	.L6
+  99              	.LVL6:
+ 100              	.L7:
+ 101              	.LBB2:
+  85:lvgl/src/lv_draw/lv_img_cache.c ****         bool match = false;
+  86:lvgl/src/lv_draw/lv_img_cache.c ****         lv_img_src_t src_type = lv_img_src_get_type(cache[i].dec_dsc.src);
+  87:lvgl/src/lv_draw/lv_img_cache.c ****         if(src_type == LV_IMG_SRC_VARIABLE) {
+  88:lvgl/src/lv_draw/lv_img_cache.c ****             if(cache[i].dec_dsc.src == src && cache[i].dec_dsc.color.full == color.full) match = tr
+  89:lvgl/src/lv_draw/lv_img_cache.c ****         }
+  90:lvgl/src/lv_draw/lv_img_cache.c ****         else if(src_type == LV_IMG_SRC_FILE) {
+ 102              		.loc 1 90 14 is_stmt 1 view .LVU23
+ 103              		.loc 1 90 16 is_stmt 0 view .LVU24
+ 104 003c 0128     		cmp	r0, #1
+ 105 003e 17D0     		beq	.L23
+ 106              	.LVL7:
+ 107              	.L8:
+ 108              		.loc 1 90 16 view .LVU25
+ 109              	.LBE2:
+  84:lvgl/src/lv_draw/lv_img_cache.c ****         bool match = false;
+ 110              		.loc 1 84 32 discriminator 2 view .LVU26
+ 111 0040 0134     		adds	r4, r4, #1
+ 112              	.LVL8:
+  84:lvgl/src/lv_draw/lv_img_cache.c ****         bool match = false;
+ 113              		.loc 1 84 32 discriminator 2 view .LVU27
+ 114 0042 A4B2     		uxth	r4, r4
+ 115              	.LVL9:
+ 116              	.L6:
+  84:lvgl/src/lv_draw/lv_img_cache.c ****         bool match = false;
+ 117              		.loc 1 84 18 discriminator 1 view .LVU28
+ 118 0044 384B     		ldr	r3, .L29
+ 119 0046 1B88     		ldrh	r3, [r3]
+  84:lvgl/src/lv_draw/lv_img_cache.c ****         bool match = false;
+ 120              		.loc 1 84 5 discriminator 1 view .LVU29
+ 121 0048 A342     		cmp	r3, r4
+ 122 004a 22D9     		bls	.L24
+ 123              	.LBB3:
+  85:lvgl/src/lv_draw/lv_img_cache.c ****         bool match = false;
+ 124              		.loc 1 85 9 is_stmt 1 view .LVU30
+ 125              	.LVL10:
+  86:lvgl/src/lv_draw/lv_img_cache.c ****         if(src_type == LV_IMG_SRC_VARIABLE) {
+ 126              		.loc 1 86 9 view .LVU31
+  86:lvgl/src/lv_draw/lv_img_cache.c ****         if(src_type == LV_IMG_SRC_VARIABLE) {
+ 127              		.loc 1 86 58 is_stmt 0 view .LVU32
+ 128 004c 04EBC403 		add	r3, r4, r4, lsl #3
+ 129 0050 9D00     		lsls	r5, r3, #2
+ 130 0052 3544     		add	r5, r5, r6
+  86:lvgl/src/lv_draw/lv_img_cache.c ****         if(src_type == LV_IMG_SRC_VARIABLE) {
+ 131              		.loc 1 86 33 view .LVU33
+ARM GAS  D:\Temp\cczBtDPa.s 			page 5
+
+
+ 132 0054 6868     		ldr	r0, [r5, #4]
+ 133 0056 FFF7FEFF 		bl	lv_img_src_get_type
+ 134              	.LVL11:
+  87:lvgl/src/lv_draw/lv_img_cache.c ****             if(cache[i].dec_dsc.src == src && cache[i].dec_dsc.color.full == color.full) match = tr
+ 135              		.loc 1 87 9 is_stmt 1 view .LVU34
+  87:lvgl/src/lv_draw/lv_img_cache.c ****             if(cache[i].dec_dsc.src == src && cache[i].dec_dsc.color.full == color.full) match = tr
+ 136              		.loc 1 87 11 is_stmt 0 view .LVU35
+ 137 005a 0028     		cmp	r0, #0
+ 138 005c EED1     		bne	.L7
+  88:lvgl/src/lv_draw/lv_img_cache.c ****         }
+ 139              		.loc 1 88 13 is_stmt 1 view .LVU36
+  88:lvgl/src/lv_draw/lv_img_cache.c ****         }
+ 140              		.loc 1 88 32 is_stmt 0 view .LVU37
+ 141 005e 6B68     		ldr	r3, [r5, #4]
+  88:lvgl/src/lv_draw/lv_img_cache.c ****         }
+ 142              		.loc 1 88 15 view .LVU38
+ 143 0060 BB42     		cmp	r3, r7
+ 144 0062 EDD1     		bne	.L8
+  88:lvgl/src/lv_draw/lv_img_cache.c ****         }
+ 145              		.loc 1 88 69 discriminator 1 view .LVU39
+ 146 0064 2A89     		ldrh	r2, [r5, #8]
+  88:lvgl/src/lv_draw/lv_img_cache.c ****         }
+ 147              		.loc 1 88 83 discriminator 1 view .LVU40
+ 148 0066 1FFA88F3 		uxth	r3, r8
+  88:lvgl/src/lv_draw/lv_img_cache.c ****         }
+ 149              		.loc 1 88 44 discriminator 1 view .LVU41
+ 150 006a 9A42     		cmp	r2, r3
+ 151 006c E8D1     		bne	.L8
+ 152 006e 05E0     		b	.L9
+ 153              	.L23:
+  91:lvgl/src/lv_draw/lv_img_cache.c ****             if(strcmp(cache[i].dec_dsc.src, src) == 0) match = true;
+ 154              		.loc 1 91 13 is_stmt 1 view .LVU42
+ 155              		.loc 1 91 16 is_stmt 0 view .LVU43
+ 156 0070 3946     		mov	r1, r7
+ 157 0072 6868     		ldr	r0, [r5, #4]
+ 158              	.LVL12:
+ 159              		.loc 1 91 16 view .LVU44
+ 160 0074 FFF7FEFF 		bl	strcmp
+ 161              	.LVL13:
+ 162              		.loc 1 91 15 view .LVU45
+ 163 0078 0028     		cmp	r0, #0
+ 164 007a E1D1     		bne	.L8
+ 165              	.L9:
+  92:lvgl/src/lv_draw/lv_img_cache.c ****         }
+  93:lvgl/src/lv_draw/lv_img_cache.c **** 
+  94:lvgl/src/lv_draw/lv_img_cache.c ****         if(match) {
+  95:lvgl/src/lv_draw/lv_img_cache.c ****             /* If opened increment its life.
+  96:lvgl/src/lv_draw/lv_img_cache.c ****              * Image difficult to open should live longer to keep avoid frequent their recaching.
+  97:lvgl/src/lv_draw/lv_img_cache.c ****              * Therefore increase `life` with `time_to_open`*/
+  98:lvgl/src/lv_draw/lv_img_cache.c ****             cached_src = &cache[i];
+ 166              		.loc 1 98 13 is_stmt 1 view .LVU46
+ 167              	.LVL14:
+  99:lvgl/src/lv_draw/lv_img_cache.c ****             cached_src->life += cached_src->dec_dsc.time_to_open * LV_IMG_CACHE_LIFE_GAIN;
+ 168              		.loc 1 99 13 view .LVU47
+ 169              		.loc 1 99 52 is_stmt 0 view .LVU48
+ 170 007c 6B69     		ldr	r3, [r5, #20]
+ 171              		.loc 1 99 30 view .LVU49
+ARM GAS  D:\Temp\cczBtDPa.s 			page 6
+
+
+ 172 007e 2A6A     		ldr	r2, [r5, #32]
+ 173 0080 1344     		add	r3, r3, r2
+ 174 0082 2B62     		str	r3, [r5, #32]
+ 100:lvgl/src/lv_draw/lv_img_cache.c ****             if(cached_src->life > LV_IMG_CACHE_LIFE_LIMIT) cached_src->life = LV_IMG_CACHE_LIFE_LIM
+ 175              		.loc 1 100 13 is_stmt 1 view .LVU50
+ 176              		.loc 1 100 15 is_stmt 0 view .LVU51
+ 177 0084 B3F57A7F 		cmp	r3, #1000
+ 178 0088 04DD     		ble	.L10
+ 179              		.loc 1 100 60 is_stmt 1 discriminator 1 view .LVU52
+ 180              		.loc 1 100 77 is_stmt 0 discriminator 1 view .LVU53
+ 181 008a 4FF47A73 		mov	r3, #1000
+ 182 008e 2B62     		str	r3, [r5, #32]
+ 183 0090 00E0     		b	.L10
+ 184              	.LVL15:
+ 185              	.L24:
+ 186              		.loc 1 100 77 discriminator 1 view .LVU54
+ 187              	.LBE3:
+  66:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 188              		.loc 1 66 28 view .LVU55
+ 189 0092 0025     		movs	r5, #0
+ 190              	.LVL16:
+ 191              	.L10:
+ 101:lvgl/src/lv_draw/lv_img_cache.c ****             LV_LOG_TRACE("image draw: image found in the cache");
+ 102:lvgl/src/lv_draw/lv_img_cache.c ****             break;
+ 103:lvgl/src/lv_draw/lv_img_cache.c ****         }
+ 104:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 105:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 106:lvgl/src/lv_draw/lv_img_cache.c ****     /*The image is not cached then cache it now*/
+ 107:lvgl/src/lv_draw/lv_img_cache.c ****     if(cached_src) return cached_src;
+ 192              		.loc 1 107 5 is_stmt 1 view .LVU56
+ 193              		.loc 1 107 7 is_stmt 0 view .LVU57
+ 194 0094 15B1     		cbz	r5, .L25
+ 195              	.LVL17:
+ 196              	.L1:
+ 108:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 109:lvgl/src/lv_draw/lv_img_cache.c ****     /*Find an entry to reuse. Select the entry with the least life*/
+ 110:lvgl/src/lv_draw/lv_img_cache.c ****     cached_src = &cache[0];
+ 111:lvgl/src/lv_draw/lv_img_cache.c ****     for(i = 1; i < entry_cnt; i++) {
+ 112:lvgl/src/lv_draw/lv_img_cache.c ****         if(cache[i].life < cached_src->life) {
+ 113:lvgl/src/lv_draw/lv_img_cache.c ****             cached_src = &cache[i];
+ 114:lvgl/src/lv_draw/lv_img_cache.c ****         }
+ 115:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 116:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 117:lvgl/src/lv_draw/lv_img_cache.c ****     /*Close the decoder to reuse if it was opened (has a valid source)*/
+ 118:lvgl/src/lv_draw/lv_img_cache.c ****     if(cached_src->dec_dsc.src) {
+ 119:lvgl/src/lv_draw/lv_img_cache.c ****         lv_img_decoder_close(&cached_src->dec_dsc);
+ 120:lvgl/src/lv_draw/lv_img_cache.c ****         LV_LOG_INFO("image draw: cache miss, close and reuse an entry");
+ 121:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 122:lvgl/src/lv_draw/lv_img_cache.c ****     else {
+ 123:lvgl/src/lv_draw/lv_img_cache.c ****         LV_LOG_INFO("image draw: cache miss, cached to an empty entry");
+ 124:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 125:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 126:lvgl/src/lv_draw/lv_img_cache.c **** #else
+ 127:lvgl/src/lv_draw/lv_img_cache.c ****     cached_src = &cache_temp;
+ 128:lvgl/src/lv_draw/lv_img_cache.c **** #endif
+ 129:lvgl/src/lv_draw/lv_img_cache.c ****     /*Open the image and measure the time to open*/
+ 130:lvgl/src/lv_draw/lv_img_cache.c ****     uint32_t t_start;
+ARM GAS  D:\Temp\cczBtDPa.s 			page 7
+
+
+ 131:lvgl/src/lv_draw/lv_img_cache.c ****     t_start                          = lv_tick_get();
+ 132:lvgl/src/lv_draw/lv_img_cache.c ****     cached_src->dec_dsc.time_to_open = 0;
+ 133:lvgl/src/lv_draw/lv_img_cache.c ****     lv_res_t open_res                = lv_img_decoder_open(&cached_src->dec_dsc, src, color);
+ 134:lvgl/src/lv_draw/lv_img_cache.c ****     if(open_res == LV_RES_INV) {
+ 135:lvgl/src/lv_draw/lv_img_cache.c ****         LV_LOG_WARN("Image draw cannot open the image resource");
+ 136:lvgl/src/lv_draw/lv_img_cache.c ****         lv_img_decoder_close(&cached_src->dec_dsc);
+ 137:lvgl/src/lv_draw/lv_img_cache.c ****         _lv_memset_00(&cached_src->dec_dsc, sizeof(lv_img_decoder_dsc_t));
+ 138:lvgl/src/lv_draw/lv_img_cache.c ****         _lv_memset_00(cached_src, sizeof(lv_img_cache_entry_t));
+ 139:lvgl/src/lv_draw/lv_img_cache.c ****         cached_src->life = INT32_MIN; /*Make the empty entry very "weak" to force its use  */
+ 140:lvgl/src/lv_draw/lv_img_cache.c ****         return NULL;
+ 141:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 142:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 143:lvgl/src/lv_draw/lv_img_cache.c ****     cached_src->life = 0;
+ 144:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 145:lvgl/src/lv_draw/lv_img_cache.c ****     /*If `time_to_open` was not set in the open function set it here*/
+ 146:lvgl/src/lv_draw/lv_img_cache.c ****     if(cached_src->dec_dsc.time_to_open == 0) {
+ 147:lvgl/src/lv_draw/lv_img_cache.c ****         cached_src->dec_dsc.time_to_open = lv_tick_elaps(t_start);
+ 148:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 149:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 150:lvgl/src/lv_draw/lv_img_cache.c ****     if(cached_src->dec_dsc.time_to_open == 0) cached_src->dec_dsc.time_to_open = 1;
+ 151:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 152:lvgl/src/lv_draw/lv_img_cache.c ****     return cached_src;
+ 153:lvgl/src/lv_draw/lv_img_cache.c **** }
+ 197              		.loc 1 153 1 view .LVU58
+ 198 0096 2846     		mov	r0, r5
+ 199 0098 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 200              	.LVL18:
+ 201              	.L25:
+ 110:lvgl/src/lv_draw/lv_img_cache.c ****     for(i = 1; i < entry_cnt; i++) {
+ 202              		.loc 1 110 16 view .LVU59
+ 203 009c 3446     		mov	r4, r6
+ 204              	.LVL19:
+ 111:lvgl/src/lv_draw/lv_img_cache.c ****         if(cache[i].life < cached_src->life) {
+ 205              		.loc 1 111 11 view .LVU60
+ 206 009e 0123     		movs	r3, #1
+ 207 00a0 01E0     		b	.L12
+ 208              	.LVL20:
+ 209              	.L13:
+ 111:lvgl/src/lv_draw/lv_img_cache.c ****         if(cache[i].life < cached_src->life) {
+ 210              		.loc 1 111 32 discriminator 2 view .LVU61
+ 211 00a2 0133     		adds	r3, r3, #1
+ 212              	.LVL21:
+ 111:lvgl/src/lv_draw/lv_img_cache.c ****         if(cache[i].life < cached_src->life) {
+ 213              		.loc 1 111 32 discriminator 2 view .LVU62
+ 214 00a4 9BB2     		uxth	r3, r3
+ 215              	.LVL22:
+ 216              	.L12:
+ 111:lvgl/src/lv_draw/lv_img_cache.c ****         if(cache[i].life < cached_src->life) {
+ 217              		.loc 1 111 18 discriminator 1 view .LVU63
+ 218 00a6 204A     		ldr	r2, .L29
+ 219 00a8 1288     		ldrh	r2, [r2]
+ 111:lvgl/src/lv_draw/lv_img_cache.c ****         if(cache[i].life < cached_src->life) {
+ 220              		.loc 1 111 5 discriminator 1 view .LVU64
+ 221 00aa 9A42     		cmp	r2, r3
+ 222 00ac 09D9     		bls	.L26
+ 112:lvgl/src/lv_draw/lv_img_cache.c ****             cached_src = &cache[i];
+ 223              		.loc 1 112 9 is_stmt 1 view .LVU65
+ARM GAS  D:\Temp\cczBtDPa.s 			page 8
+
+
+ 112:lvgl/src/lv_draw/lv_img_cache.c ****             cached_src = &cache[i];
+ 224              		.loc 1 112 17 is_stmt 0 view .LVU66
+ 225 00ae 03EBC301 		add	r1, r3, r3, lsl #3
+ 226 00b2 8A00     		lsls	r2, r1, #2
+ 227 00b4 3244     		add	r2, r2, r6
+ 112:lvgl/src/lv_draw/lv_img_cache.c ****             cached_src = &cache[i];
+ 228              		.loc 1 112 20 view .LVU67
+ 229 00b6 106A     		ldr	r0, [r2, #32]
+ 112:lvgl/src/lv_draw/lv_img_cache.c ****             cached_src = &cache[i];
+ 230              		.loc 1 112 38 view .LVU68
+ 231 00b8 216A     		ldr	r1, [r4, #32]
+ 112:lvgl/src/lv_draw/lv_img_cache.c ****             cached_src = &cache[i];
+ 232              		.loc 1 112 11 view .LVU69
+ 233 00ba 8842     		cmp	r0, r1
+ 234 00bc F1DA     		bge	.L13
+ 113:lvgl/src/lv_draw/lv_img_cache.c ****         }
+ 235              		.loc 1 113 24 view .LVU70
+ 236 00be 1446     		mov	r4, r2
+ 237              	.LVL23:
+ 113:lvgl/src/lv_draw/lv_img_cache.c ****         }
+ 238              		.loc 1 113 24 view .LVU71
+ 239 00c0 EFE7     		b	.L13
+ 240              	.LVL24:
+ 241              	.L26:
+ 118:lvgl/src/lv_draw/lv_img_cache.c ****         lv_img_decoder_close(&cached_src->dec_dsc);
+ 242              		.loc 1 118 5 is_stmt 1 view .LVU72
+ 118:lvgl/src/lv_draw/lv_img_cache.c ****         lv_img_decoder_close(&cached_src->dec_dsc);
+ 243              		.loc 1 118 27 is_stmt 0 view .LVU73
+ 244 00c2 6368     		ldr	r3, [r4, #4]
+ 245              	.LVL25:
+ 118:lvgl/src/lv_draw/lv_img_cache.c ****         lv_img_decoder_close(&cached_src->dec_dsc);
+ 246              		.loc 1 118 7 view .LVU74
+ 247 00c4 13B1     		cbz	r3, .L15
+ 119:lvgl/src/lv_draw/lv_img_cache.c ****         LV_LOG_INFO("image draw: cache miss, close and reuse an entry");
+ 248              		.loc 1 119 9 is_stmt 1 view .LVU75
+ 249 00c6 2046     		mov	r0, r4
+ 250 00c8 FFF7FEFF 		bl	lv_img_decoder_close
+ 251              	.LVL26:
+ 120:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 252              		.loc 1 120 72 view .LVU76
+ 253              	.L15:
+ 123:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 254              		.loc 1 123 72 view .LVU77
+ 130:lvgl/src/lv_draw/lv_img_cache.c ****     t_start                          = lv_tick_get();
+ 255              		.loc 1 130 5 view .LVU78
+ 131:lvgl/src/lv_draw/lv_img_cache.c ****     cached_src->dec_dsc.time_to_open = 0;
+ 256              		.loc 1 131 5 view .LVU79
+ 131:lvgl/src/lv_draw/lv_img_cache.c ****     cached_src->dec_dsc.time_to_open = 0;
+ 257              		.loc 1 131 40 is_stmt 0 view .LVU80
+ 258 00cc FFF7FEFF 		bl	lv_tick_get
+ 259              	.LVL27:
+ 260 00d0 0646     		mov	r6, r0
+ 261              	.LVL28:
+ 132:lvgl/src/lv_draw/lv_img_cache.c ****     lv_res_t open_res                = lv_img_decoder_open(&cached_src->dec_dsc, src, color);
+ 262              		.loc 1 132 5 is_stmt 1 view .LVU81
+ 132:lvgl/src/lv_draw/lv_img_cache.c ****     lv_res_t open_res                = lv_img_decoder_open(&cached_src->dec_dsc, src, color);
+ 263              		.loc 1 132 38 is_stmt 0 view .LVU82
+ARM GAS  D:\Temp\cczBtDPa.s 			page 9
+
+
+ 264 00d2 0023     		movs	r3, #0
+ 265 00d4 6361     		str	r3, [r4, #20]
+ 133:lvgl/src/lv_draw/lv_img_cache.c ****     if(open_res == LV_RES_INV) {
+ 266              		.loc 1 133 5 is_stmt 1 view .LVU83
+ 133:lvgl/src/lv_draw/lv_img_cache.c ****     if(open_res == LV_RES_INV) {
+ 267              		.loc 1 133 40 is_stmt 0 view .LVU84
+ 268 00d6 4246     		mov	r2, r8	@ movhi
+ 269 00d8 3946     		mov	r1, r7
+ 270 00da 2046     		mov	r0, r4
+ 271              	.LVL29:
+ 133:lvgl/src/lv_draw/lv_img_cache.c ****     if(open_res == LV_RES_INV) {
+ 272              		.loc 1 133 40 view .LVU85
+ 273 00dc FFF7FEFF 		bl	lv_img_decoder_open
+ 274              	.LVL30:
+ 134:lvgl/src/lv_draw/lv_img_cache.c ****         LV_LOG_WARN("Image draw cannot open the image resource");
+ 275              		.loc 1 134 5 is_stmt 1 view .LVU86
+ 134:lvgl/src/lv_draw/lv_img_cache.c ****         LV_LOG_WARN("Image draw cannot open the image resource");
+ 276              		.loc 1 134 7 is_stmt 0 view .LVU87
+ 277 00e0 48B1     		cbz	r0, .L27
+ 143:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 278              		.loc 1 143 5 is_stmt 1 view .LVU88
+ 143:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 279              		.loc 1 143 22 is_stmt 0 view .LVU89
+ 280 00e2 0023     		movs	r3, #0
+ 281 00e4 2362     		str	r3, [r4, #32]
+ 146:lvgl/src/lv_draw/lv_img_cache.c ****         cached_src->dec_dsc.time_to_open = lv_tick_elaps(t_start);
+ 282              		.loc 1 146 5 is_stmt 1 view .LVU90
+ 146:lvgl/src/lv_draw/lv_img_cache.c ****         cached_src->dec_dsc.time_to_open = lv_tick_elaps(t_start);
+ 283              		.loc 1 146 27 is_stmt 0 view .LVU91
+ 284 00e6 6369     		ldr	r3, [r4, #20]
+ 146:lvgl/src/lv_draw/lv_img_cache.c ****         cached_src->dec_dsc.time_to_open = lv_tick_elaps(t_start);
+ 285              		.loc 1 146 7 view .LVU92
+ 286 00e8 A3B1     		cbz	r3, .L28
+ 287              	.LVL31:
+ 288              	.L17:
+ 150:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 289              		.loc 1 150 5 is_stmt 1 view .LVU93
+ 150:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 290              		.loc 1 150 27 is_stmt 0 view .LVU94
+ 291 00ea 6369     		ldr	r3, [r4, #20]
+ 150:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 292              		.loc 1 150 7 view .LVU95
+ 293 00ec CBB9     		cbnz	r3, .L20
+ 150:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 294              		.loc 1 150 47 is_stmt 1 discriminator 1 view .LVU96
+ 150:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 295              		.loc 1 150 80 is_stmt 0 discriminator 1 view .LVU97
+ 296 00ee 0123     		movs	r3, #1
+ 297 00f0 6361     		str	r3, [r4, #20]
+ 152:lvgl/src/lv_draw/lv_img_cache.c **** }
+ 298              		.loc 1 152 12 discriminator 1 view .LVU98
+ 299 00f2 2546     		mov	r5, r4
+ 300 00f4 CFE7     		b	.L1
+ 301              	.LVL32:
+ 302              	.L27:
+ 135:lvgl/src/lv_draw/lv_img_cache.c ****         lv_img_decoder_close(&cached_src->dec_dsc);
+ 303              		.loc 1 135 65 is_stmt 1 view .LVU99
+ARM GAS  D:\Temp\cczBtDPa.s 			page 10
+
+
+ 136:lvgl/src/lv_draw/lv_img_cache.c ****         _lv_memset_00(&cached_src->dec_dsc, sizeof(lv_img_decoder_dsc_t));
+ 304              		.loc 1 136 9 view .LVU100
+ 305 00f6 2046     		mov	r0, r4
+ 306              	.LVL33:
+ 136:lvgl/src/lv_draw/lv_img_cache.c ****         _lv_memset_00(&cached_src->dec_dsc, sizeof(lv_img_decoder_dsc_t));
+ 307              		.loc 1 136 9 is_stmt 0 view .LVU101
+ 308 00f8 FFF7FEFF 		bl	lv_img_decoder_close
+ 309              	.LVL34:
+ 137:lvgl/src/lv_draw/lv_img_cache.c ****         _lv_memset_00(cached_src, sizeof(lv_img_cache_entry_t));
+ 310              		.loc 1 137 9 is_stmt 1 view .LVU102
+ 311 00fc 2021     		movs	r1, #32
+ 312 00fe 2046     		mov	r0, r4
+ 313 0100 FFF7FEFF 		bl	_lv_memset_00
+ 314              	.LVL35:
+ 138:lvgl/src/lv_draw/lv_img_cache.c ****         cached_src->life = INT32_MIN; /*Make the empty entry very "weak" to force its use  */
+ 315              		.loc 1 138 9 view .LVU103
+ 316 0104 2421     		movs	r1, #36
+ 317 0106 2046     		mov	r0, r4
+ 318 0108 FFF7FEFF 		bl	_lv_memset_00
+ 319              	.LVL36:
+ 139:lvgl/src/lv_draw/lv_img_cache.c ****         return NULL;
+ 320              		.loc 1 139 9 view .LVU104
+ 139:lvgl/src/lv_draw/lv_img_cache.c ****         return NULL;
+ 321              		.loc 1 139 26 is_stmt 0 view .LVU105
+ 322 010c 4FF00043 		mov	r3, #-2147483648
+ 323 0110 2362     		str	r3, [r4, #32]
+ 140:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 324              		.loc 1 140 9 is_stmt 1 view .LVU106
+ 140:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 325              		.loc 1 140 16 is_stmt 0 view .LVU107
+ 326 0112 C0E7     		b	.L1
+ 327              	.LVL37:
+ 328              	.L28:
+ 147:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 329              		.loc 1 147 9 is_stmt 1 view .LVU108
+ 147:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 330              		.loc 1 147 44 is_stmt 0 view .LVU109
+ 331 0114 3046     		mov	r0, r6
+ 332              	.LVL38:
+ 147:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 333              		.loc 1 147 44 view .LVU110
+ 334 0116 FFF7FEFF 		bl	lv_tick_elaps
+ 335              	.LVL39:
+ 147:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 336              		.loc 1 147 42 view .LVU111
+ 337 011a 6061     		str	r0, [r4, #20]
+ 338 011c E5E7     		b	.L17
+ 339              	.LVL40:
+ 340              	.L18:
+  71:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 341              		.loc 1 71 16 view .LVU112
+ 342 011e 0025     		movs	r5, #0
+ 343 0120 B9E7     		b	.L1
+ 344              	.LVL41:
+ 345              	.L20:
+ 152:lvgl/src/lv_draw/lv_img_cache.c **** }
+ 346              		.loc 1 152 12 view .LVU113
+ARM GAS  D:\Temp\cczBtDPa.s 			page 11
+
+
+ 347 0122 2546     		mov	r5, r4
+ 348 0124 B7E7     		b	.L1
+ 349              	.L30:
+ 350 0126 00BF     		.align	2
+ 351              	.L29:
+ 352 0128 00000000 		.word	.LANCHOR0
+ 353 012c 00000000 		.word	_lv_img_cache_array
+ 354 0130 02000080 		.word	-2147483646
+ 355              		.cfi_endproc
+ 356              	.LFE167:
+ 358              		.section	.text.lv_img_cache_invalidate_src,"ax",%progbits
+ 359              		.align	1
+ 360              		.global	lv_img_cache_invalidate_src
+ 361              		.syntax unified
+ 362              		.thumb
+ 363              		.thumb_func
+ 364              		.fpu fpv4-sp-d16
+ 366              	lv_img_cache_invalidate_src:
+ 367              	.LVL42:
+ 368              	.LFB169:
+ 154:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 155:lvgl/src/lv_draw/lv_img_cache.c **** /**
+ 156:lvgl/src/lv_draw/lv_img_cache.c ****  * Set the number of images to be cached.
+ 157:lvgl/src/lv_draw/lv_img_cache.c ****  * More cached images mean more opened image at same time which might mean more memory usage.
+ 158:lvgl/src/lv_draw/lv_img_cache.c ****  * E.g. if 20 PNG or JPG images are open in the RAM they consume memory while opened in the cache.
+ 159:lvgl/src/lv_draw/lv_img_cache.c ****  * @param new_entry_cnt number of image to cache
+ 160:lvgl/src/lv_draw/lv_img_cache.c ****  */
+ 161:lvgl/src/lv_draw/lv_img_cache.c **** void lv_img_cache_set_size(uint16_t new_entry_cnt)
+ 162:lvgl/src/lv_draw/lv_img_cache.c **** {
+ 163:lvgl/src/lv_draw/lv_img_cache.c **** #if LV_IMG_CACHE_DEF_SIZE == 0
+ 164:lvgl/src/lv_draw/lv_img_cache.c ****     LV_UNUSED(new_entry_cnt);
+ 165:lvgl/src/lv_draw/lv_img_cache.c ****     LV_LOG_WARN("Can't change cache size because it's disabled by LV_IMG_CACHE_DEF_SIZE = 0");
+ 166:lvgl/src/lv_draw/lv_img_cache.c **** #else
+ 167:lvgl/src/lv_draw/lv_img_cache.c ****     if(LV_GC_ROOT(_lv_img_cache_array) != NULL) {
+ 168:lvgl/src/lv_draw/lv_img_cache.c ****         /*Clean the cache before free it*/
+ 169:lvgl/src/lv_draw/lv_img_cache.c ****         lv_img_cache_invalidate_src(NULL);
+ 170:lvgl/src/lv_draw/lv_img_cache.c ****         lv_mem_free(LV_GC_ROOT(_lv_img_cache_array));
+ 171:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 172:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 173:lvgl/src/lv_draw/lv_img_cache.c ****     /*Reallocate the cache*/
+ 174:lvgl/src/lv_draw/lv_img_cache.c ****     LV_GC_ROOT(_lv_img_cache_array) = lv_mem_alloc(sizeof(lv_img_cache_entry_t) * new_entry_cnt);
+ 175:lvgl/src/lv_draw/lv_img_cache.c ****     LV_ASSERT_MEM(LV_GC_ROOT(_lv_img_cache_array));
+ 176:lvgl/src/lv_draw/lv_img_cache.c ****     if(LV_GC_ROOT(_lv_img_cache_array) == NULL) {
+ 177:lvgl/src/lv_draw/lv_img_cache.c ****         entry_cnt = 0;
+ 178:lvgl/src/lv_draw/lv_img_cache.c ****         return;
+ 179:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 180:lvgl/src/lv_draw/lv_img_cache.c ****     entry_cnt = new_entry_cnt;
+ 181:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 182:lvgl/src/lv_draw/lv_img_cache.c ****     /*Clean the cache*/
+ 183:lvgl/src/lv_draw/lv_img_cache.c ****     uint16_t i;
+ 184:lvgl/src/lv_draw/lv_img_cache.c ****     for(i = 0; i < entry_cnt; i++) {
+ 185:lvgl/src/lv_draw/lv_img_cache.c ****         _lv_memset_00(&LV_GC_ROOT(_lv_img_cache_array)[i].dec_dsc, sizeof(lv_img_decoder_dsc_t));
+ 186:lvgl/src/lv_draw/lv_img_cache.c ****         _lv_memset_00(&LV_GC_ROOT(_lv_img_cache_array)[i], sizeof(lv_img_cache_entry_t));
+ 187:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 188:lvgl/src/lv_draw/lv_img_cache.c **** #endif
+ 189:lvgl/src/lv_draw/lv_img_cache.c **** }
+ 190:lvgl/src/lv_draw/lv_img_cache.c **** 
+ARM GAS  D:\Temp\cczBtDPa.s 			page 12
+
+
+ 191:lvgl/src/lv_draw/lv_img_cache.c **** /**
+ 192:lvgl/src/lv_draw/lv_img_cache.c ****  * Invalidate an image source in the cache.
+ 193:lvgl/src/lv_draw/lv_img_cache.c ****  * Useful if the image source is updated therefore it needs to be cached again.
+ 194:lvgl/src/lv_draw/lv_img_cache.c ****  * @param src an image source path to a file or pointer to an `lv_img_dsc_t` variable.
+ 195:lvgl/src/lv_draw/lv_img_cache.c ****  */
+ 196:lvgl/src/lv_draw/lv_img_cache.c **** void lv_img_cache_invalidate_src(const void * src)
+ 197:lvgl/src/lv_draw/lv_img_cache.c **** {
+ 369              		.loc 1 197 1 is_stmt 1 view -0
+ 370              		.cfi_startproc
+ 371              		@ args = 0, pretend = 0, frame = 0
+ 372              		@ frame_needed = 0, uses_anonymous_args = 0
+ 373              		.loc 1 197 1 is_stmt 0 view .LVU115
+ 374 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 375              	.LCFI1:
+ 376              		.cfi_def_cfa_offset 24
+ 377              		.cfi_offset 3, -24
+ 378              		.cfi_offset 4, -20
+ 379              		.cfi_offset 5, -16
+ 380              		.cfi_offset 6, -12
+ 381              		.cfi_offset 7, -8
+ 382              		.cfi_offset 14, -4
+ 383 0002 0646     		mov	r6, r0
+ 198:lvgl/src/lv_draw/lv_img_cache.c **** #if LV_IMG_CACHE_DEF_SIZE
+ 199:lvgl/src/lv_draw/lv_img_cache.c ****     lv_img_cache_entry_t * cache = LV_GC_ROOT(_lv_img_cache_array);
+ 384              		.loc 1 199 5 is_stmt 1 view .LVU116
+ 385              		.loc 1 199 28 is_stmt 0 view .LVU117
+ 386 0004 104B     		ldr	r3, .L39
+ 387 0006 1F68     		ldr	r7, [r3]
+ 388              	.LVL43:
+ 200:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 201:lvgl/src/lv_draw/lv_img_cache.c ****     uint16_t i;
+ 389              		.loc 1 201 5 is_stmt 1 view .LVU118
+ 202:lvgl/src/lv_draw/lv_img_cache.c ****     for(i = 0; i < entry_cnt; i++) {
+ 390              		.loc 1 202 5 view .LVU119
+ 391              		.loc 1 202 11 is_stmt 0 view .LVU120
+ 392 0008 0024     		movs	r4, #0
+ 393              		.loc 1 202 5 view .LVU121
+ 394 000a 0DE0     		b	.L32
+ 395              	.LVL44:
+ 396              	.L33:
+ 203:lvgl/src/lv_draw/lv_img_cache.c ****         if(cache[i].dec_dsc.src == src || src == NULL) {
+ 204:lvgl/src/lv_draw/lv_img_cache.c ****             if(cache[i].dec_dsc.src != NULL) {
+ 397              		.loc 1 204 13 is_stmt 1 view .LVU122
+ 398              		.loc 1 204 15 is_stmt 0 view .LVU123
+ 399 000c 13B1     		cbz	r3, .L35
+ 205:lvgl/src/lv_draw/lv_img_cache.c ****                 lv_img_decoder_close(&cache[i].dec_dsc);
+ 400              		.loc 1 205 17 is_stmt 1 view .LVU124
+ 401 000e 2846     		mov	r0, r5
+ 402 0010 FFF7FEFF 		bl	lv_img_decoder_close
+ 403              	.LVL45:
+ 404              	.L35:
+ 206:lvgl/src/lv_draw/lv_img_cache.c ****             }
+ 207:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 208:lvgl/src/lv_draw/lv_img_cache.c ****             _lv_memset_00(&cache[i].dec_dsc, sizeof(lv_img_decoder_dsc_t));
+ 405              		.loc 1 208 13 view .LVU125
+ 406 0014 2021     		movs	r1, #32
+ 407 0016 2846     		mov	r0, r5
+ARM GAS  D:\Temp\cczBtDPa.s 			page 13
+
+
+ 408 0018 FFF7FEFF 		bl	_lv_memset_00
+ 409              	.LVL46:
+ 209:lvgl/src/lv_draw/lv_img_cache.c ****             _lv_memset_00(&cache[i], sizeof(lv_img_cache_entry_t));
+ 410              		.loc 1 209 13 view .LVU126
+ 411 001c 2421     		movs	r1, #36
+ 412 001e 2846     		mov	r0, r5
+ 413 0020 FFF7FEFF 		bl	_lv_memset_00
+ 414              	.LVL47:
+ 415              	.L34:
+ 202:lvgl/src/lv_draw/lv_img_cache.c ****         if(cache[i].dec_dsc.src == src || src == NULL) {
+ 416              		.loc 1 202 32 is_stmt 0 discriminator 2 view .LVU127
+ 417 0024 0134     		adds	r4, r4, #1
+ 418              	.LVL48:
+ 202:lvgl/src/lv_draw/lv_img_cache.c ****         if(cache[i].dec_dsc.src == src || src == NULL) {
+ 419              		.loc 1 202 32 discriminator 2 view .LVU128
+ 420 0026 A4B2     		uxth	r4, r4
+ 421              	.LVL49:
+ 422              	.L32:
+ 202:lvgl/src/lv_draw/lv_img_cache.c ****         if(cache[i].dec_dsc.src == src || src == NULL) {
+ 423              		.loc 1 202 18 discriminator 1 view .LVU129
+ 424 0028 084B     		ldr	r3, .L39+4
+ 425 002a 1B88     		ldrh	r3, [r3]
+ 202:lvgl/src/lv_draw/lv_img_cache.c ****         if(cache[i].dec_dsc.src == src || src == NULL) {
+ 426              		.loc 1 202 5 discriminator 1 view .LVU130
+ 427 002c A342     		cmp	r3, r4
+ 428 002e 09D9     		bls	.L38
+ 203:lvgl/src/lv_draw/lv_img_cache.c ****             if(cache[i].dec_dsc.src != NULL) {
+ 429              		.loc 1 203 9 is_stmt 1 view .LVU131
+ 203:lvgl/src/lv_draw/lv_img_cache.c ****             if(cache[i].dec_dsc.src != NULL) {
+ 430              		.loc 1 203 17 is_stmt 0 view .LVU132
+ 431 0030 04EBC403 		add	r3, r4, r4, lsl #3
+ 432 0034 9D00     		lsls	r5, r3, #2
+ 433 0036 3D44     		add	r5, r5, r7
+ 203:lvgl/src/lv_draw/lv_img_cache.c ****             if(cache[i].dec_dsc.src != NULL) {
+ 434              		.loc 1 203 28 view .LVU133
+ 435 0038 6B68     		ldr	r3, [r5, #4]
+ 203:lvgl/src/lv_draw/lv_img_cache.c ****             if(cache[i].dec_dsc.src != NULL) {
+ 436              		.loc 1 203 11 view .LVU134
+ 437 003a B342     		cmp	r3, r6
+ 438 003c E6D0     		beq	.L33
+ 203:lvgl/src/lv_draw/lv_img_cache.c ****             if(cache[i].dec_dsc.src != NULL) {
+ 439              		.loc 1 203 40 discriminator 1 view .LVU135
+ 440 003e 002E     		cmp	r6, #0
+ 441 0040 F0D1     		bne	.L34
+ 442 0042 E3E7     		b	.L33
+ 443              	.L38:
+ 210:lvgl/src/lv_draw/lv_img_cache.c ****         }
+ 211:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 212:lvgl/src/lv_draw/lv_img_cache.c **** #endif
+ 213:lvgl/src/lv_draw/lv_img_cache.c **** }
+ 444              		.loc 1 213 1 view .LVU136
+ 445 0044 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 446              	.LVL50:
+ 447              	.L40:
+ 448              		.loc 1 213 1 view .LVU137
+ 449 0046 00BF     		.align	2
+ 450              	.L39:
+ARM GAS  D:\Temp\cczBtDPa.s 			page 14
+
+
+ 451 0048 00000000 		.word	_lv_img_cache_array
+ 452 004c 00000000 		.word	.LANCHOR0
+ 453              		.cfi_endproc
+ 454              	.LFE169:
+ 456              		.section	.text.lv_img_cache_set_size,"ax",%progbits
+ 457              		.align	1
+ 458              		.global	lv_img_cache_set_size
+ 459              		.syntax unified
+ 460              		.thumb
+ 461              		.thumb_func
+ 462              		.fpu fpv4-sp-d16
+ 464              	lv_img_cache_set_size:
+ 465              	.LVL51:
+ 466              	.LFB168:
+ 162:lvgl/src/lv_draw/lv_img_cache.c **** #if LV_IMG_CACHE_DEF_SIZE == 0
+ 467              		.loc 1 162 1 is_stmt 1 view -0
+ 468              		.cfi_startproc
+ 469              		@ args = 0, pretend = 0, frame = 0
+ 470              		@ frame_needed = 0, uses_anonymous_args = 0
+ 162:lvgl/src/lv_draw/lv_img_cache.c **** #if LV_IMG_CACHE_DEF_SIZE == 0
+ 471              		.loc 1 162 1 is_stmt 0 view .LVU139
+ 472 0000 70B5     		push	{r4, r5, r6, lr}
+ 473              	.LCFI2:
+ 474              		.cfi_def_cfa_offset 16
+ 475              		.cfi_offset 4, -16
+ 476              		.cfi_offset 5, -12
+ 477              		.cfi_offset 6, -8
+ 478              		.cfi_offset 14, -4
+ 479 0002 0446     		mov	r4, r0
+ 167:lvgl/src/lv_draw/lv_img_cache.c ****         /*Clean the cache before free it*/
+ 480              		.loc 1 167 5 is_stmt 1 view .LVU140
+ 167:lvgl/src/lv_draw/lv_img_cache.c ****         /*Clean the cache before free it*/
+ 481              		.loc 1 167 40 is_stmt 0 view .LVU141
+ 482 0004 1D4B     		ldr	r3, .L52
+ 483 0006 1B68     		ldr	r3, [r3]
+ 167:lvgl/src/lv_draw/lv_img_cache.c ****         /*Clean the cache before free it*/
+ 484              		.loc 1 167 7 view .LVU142
+ 485 0008 33B1     		cbz	r3, .L42
+ 169:lvgl/src/lv_draw/lv_img_cache.c ****         lv_mem_free(LV_GC_ROOT(_lv_img_cache_array));
+ 486              		.loc 1 169 9 is_stmt 1 view .LVU143
+ 487 000a 0020     		movs	r0, #0
+ 488              	.LVL52:
+ 169:lvgl/src/lv_draw/lv_img_cache.c ****         lv_mem_free(LV_GC_ROOT(_lv_img_cache_array));
+ 489              		.loc 1 169 9 is_stmt 0 view .LVU144
+ 490 000c FFF7FEFF 		bl	lv_img_cache_invalidate_src
+ 491              	.LVL53:
+ 170:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 492              		.loc 1 170 9 is_stmt 1 view .LVU145
+ 493 0010 1A4B     		ldr	r3, .L52
+ 494 0012 1868     		ldr	r0, [r3]
+ 495 0014 FFF7FEFF 		bl	lv_mem_free
+ 496              	.LVL54:
+ 497              	.L42:
+ 174:lvgl/src/lv_draw/lv_img_cache.c ****     LV_ASSERT_MEM(LV_GC_ROOT(_lv_img_cache_array));
+ 498              		.loc 1 174 5 view .LVU146
+ 174:lvgl/src/lv_draw/lv_img_cache.c ****     LV_ASSERT_MEM(LV_GC_ROOT(_lv_img_cache_array));
+ 499              		.loc 1 174 39 is_stmt 0 view .LVU147
+ARM GAS  D:\Temp\cczBtDPa.s 			page 15
+
+
+ 500 0018 04EBC403 		add	r3, r4, r4, lsl #3
+ 501 001c 9800     		lsls	r0, r3, #2
+ 502 001e FFF7FEFF 		bl	lv_mem_alloc
+ 503              	.LVL55:
+ 174:lvgl/src/lv_draw/lv_img_cache.c ****     LV_ASSERT_MEM(LV_GC_ROOT(_lv_img_cache_array));
+ 504              		.loc 1 174 37 view .LVU148
+ 505 0022 164B     		ldr	r3, .L52
+ 506 0024 1860     		str	r0, [r3]
+ 175:lvgl/src/lv_draw/lv_img_cache.c ****     if(LV_GC_ROOT(_lv_img_cache_array) == NULL) {
+ 507              		.loc 1 175 5 is_stmt 1 view .LVU149
+ 175:lvgl/src/lv_draw/lv_img_cache.c ****     if(LV_GC_ROOT(_lv_img_cache_array) == NULL) {
+ 508              		.loc 1 175 5 view .LVU150
+ 509 0026 FFF7FEFF 		bl	lv_debug_check_null
+ 510              	.LVL56:
+ 511 002a 30B1     		cbz	r0, .L50
+ 175:lvgl/src/lv_draw/lv_img_cache.c ****     if(LV_GC_ROOT(_lv_img_cache_array) == NULL) {
+ 512              		.loc 1 175 51 discriminator 2 view .LVU151
+ 176:lvgl/src/lv_draw/lv_img_cache.c ****         entry_cnt = 0;
+ 513              		.loc 1 176 5 discriminator 2 view .LVU152
+ 176:lvgl/src/lv_draw/lv_img_cache.c ****         entry_cnt = 0;
+ 514              		.loc 1 176 40 is_stmt 0 discriminator 2 view .LVU153
+ 515 002c 134B     		ldr	r3, .L52
+ 516 002e 1B68     		ldr	r3, [r3]
+ 176:lvgl/src/lv_draw/lv_img_cache.c ****         entry_cnt = 0;
+ 517              		.loc 1 176 7 discriminator 2 view .LVU154
+ 518 0030 53B1     		cbz	r3, .L51
+ 180:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 519              		.loc 1 180 5 is_stmt 1 view .LVU155
+ 180:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 520              		.loc 1 180 15 is_stmt 0 view .LVU156
+ 521 0032 134B     		ldr	r3, .L52+4
+ 522 0034 1C80     		strh	r4, [r3]	@ movhi
+ 183:lvgl/src/lv_draw/lv_img_cache.c ****     for(i = 0; i < entry_cnt; i++) {
+ 523              		.loc 1 183 5 is_stmt 1 view .LVU157
+ 184:lvgl/src/lv_draw/lv_img_cache.c ****         _lv_memset_00(&LV_GC_ROOT(_lv_img_cache_array)[i].dec_dsc, sizeof(lv_img_decoder_dsc_t));
+ 524              		.loc 1 184 5 view .LVU158
+ 525              	.LVL57:
+ 184:lvgl/src/lv_draw/lv_img_cache.c ****         _lv_memset_00(&LV_GC_ROOT(_lv_img_cache_array)[i].dec_dsc, sizeof(lv_img_decoder_dsc_t));
+ 526              		.loc 1 184 11 is_stmt 0 view .LVU159
+ 527 0036 0024     		movs	r4, #0
+ 184:lvgl/src/lv_draw/lv_img_cache.c ****         _lv_memset_00(&LV_GC_ROOT(_lv_img_cache_array)[i].dec_dsc, sizeof(lv_img_decoder_dsc_t));
+ 528              		.loc 1 184 5 view .LVU160
+ 529 0038 1AE0     		b	.L47
+ 530              	.LVL58:
+ 531              	.L50:
+ 175:lvgl/src/lv_draw/lv_img_cache.c ****     if(LV_GC_ROOT(_lv_img_cache_array) == NULL) {
+ 532              		.loc 1 175 5 is_stmt 1 discriminator 1 view .LVU161
+ 175:lvgl/src/lv_draw/lv_img_cache.c ****     if(LV_GC_ROOT(_lv_img_cache_array) == NULL) {
+ 533              		.loc 1 175 5 discriminator 1 view .LVU162
+ 534 003a 104B     		ldr	r3, .L52
+ 535 003c 1A68     		ldr	r2, [r3]
+ 536 003e 0023     		movs	r3, #0
+ 537 0040 1048     		ldr	r0, .L52+8
+ 538 0042 FFF7FEFF 		bl	lv_debug_log_error
+ 539              	.LVL59:
+ 540              	.L44:
+ 175:lvgl/src/lv_draw/lv_img_cache.c ****     if(LV_GC_ROOT(_lv_img_cache_array) == NULL) {
+ARM GAS  D:\Temp\cczBtDPa.s 			page 16
+
+
+ 541              		.loc 1 175 5 discriminator 1 view .LVU163
+ 175:lvgl/src/lv_draw/lv_img_cache.c ****     if(LV_GC_ROOT(_lv_img_cache_array) == NULL) {
+ 542              		.loc 1 175 5 discriminator 1 view .LVU164
+ 543 0046 FEE7     		b	.L44
+ 544              	.L51:
+ 177:lvgl/src/lv_draw/lv_img_cache.c ****         return;
+ 545              		.loc 1 177 9 view .LVU165
+ 177:lvgl/src/lv_draw/lv_img_cache.c ****         return;
+ 546              		.loc 1 177 19 is_stmt 0 view .LVU166
+ 547 0048 0D4B     		ldr	r3, .L52+4
+ 548 004a 0022     		movs	r2, #0
+ 549 004c 1A80     		strh	r2, [r3]	@ movhi
+ 178:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 550              		.loc 1 178 9 is_stmt 1 view .LVU167
+ 551 004e 13E0     		b	.L41
+ 552              	.LVL60:
+ 553              	.L48:
+ 185:lvgl/src/lv_draw/lv_img_cache.c ****         _lv_memset_00(&LV_GC_ROOT(_lv_img_cache_array)[i], sizeof(lv_img_cache_entry_t));
+ 554              		.loc 1 185 9 discriminator 3 view .LVU168
+ 185:lvgl/src/lv_draw/lv_img_cache.c ****         _lv_memset_00(&LV_GC_ROOT(_lv_img_cache_array)[i], sizeof(lv_img_cache_entry_t));
+ 555              		.loc 1 185 55 is_stmt 0 discriminator 3 view .LVU169
+ 556 0050 04EBC403 		add	r3, r4, r4, lsl #3
+ 557 0054 9D00     		lsls	r5, r3, #2
+ 558 0056 094E     		ldr	r6, .L52
+ 559 0058 3068     		ldr	r0, [r6]
+ 185:lvgl/src/lv_draw/lv_img_cache.c ****         _lv_memset_00(&LV_GC_ROOT(_lv_img_cache_array)[i], sizeof(lv_img_cache_entry_t));
+ 560              		.loc 1 185 9 discriminator 3 view .LVU170
+ 561 005a 2021     		movs	r1, #32
+ 562 005c 2844     		add	r0, r0, r5
+ 563 005e FFF7FEFF 		bl	_lv_memset_00
+ 564              	.LVL61:
+ 186:lvgl/src/lv_draw/lv_img_cache.c ****     }
+ 565              		.loc 1 186 9 is_stmt 1 discriminator 3 view .LVU171
+ 566 0062 3068     		ldr	r0, [r6]
+ 567 0064 2421     		movs	r1, #36
+ 568 0066 2844     		add	r0, r0, r5
+ 569 0068 FFF7FEFF 		bl	_lv_memset_00
+ 570              	.LVL62:
+ 184:lvgl/src/lv_draw/lv_img_cache.c ****         _lv_memset_00(&LV_GC_ROOT(_lv_img_cache_array)[i].dec_dsc, sizeof(lv_img_decoder_dsc_t));
+ 571              		.loc 1 184 32 is_stmt 0 discriminator 3 view .LVU172
+ 572 006c 0134     		adds	r4, r4, #1
+ 573              	.LVL63:
+ 184:lvgl/src/lv_draw/lv_img_cache.c ****         _lv_memset_00(&LV_GC_ROOT(_lv_img_cache_array)[i].dec_dsc, sizeof(lv_img_decoder_dsc_t));
+ 574              		.loc 1 184 32 discriminator 3 view .LVU173
+ 575 006e A4B2     		uxth	r4, r4
+ 576              	.LVL64:
+ 577              	.L47:
+ 184:lvgl/src/lv_draw/lv_img_cache.c ****         _lv_memset_00(&LV_GC_ROOT(_lv_img_cache_array)[i].dec_dsc, sizeof(lv_img_decoder_dsc_t));
+ 578              		.loc 1 184 18 discriminator 1 view .LVU174
+ 579 0070 034B     		ldr	r3, .L52+4
+ 580 0072 1B88     		ldrh	r3, [r3]
+ 184:lvgl/src/lv_draw/lv_img_cache.c ****         _lv_memset_00(&LV_GC_ROOT(_lv_img_cache_array)[i].dec_dsc, sizeof(lv_img_decoder_dsc_t));
+ 581              		.loc 1 184 5 discriminator 1 view .LVU175
+ 582 0074 A342     		cmp	r3, r4
+ 583 0076 EBD8     		bhi	.L48
+ 584              	.LVL65:
+ 585              	.L41:
+ARM GAS  D:\Temp\cczBtDPa.s 			page 17
+
+
+ 189:lvgl/src/lv_draw/lv_img_cache.c **** 
+ 586              		.loc 1 189 1 view .LVU176
+ 587 0078 70BD     		pop	{r4, r5, r6, pc}
+ 588              	.L53:
+ 589 007a 00BF     		.align	2
+ 590              	.L52:
+ 591 007c 00000000 		.word	_lv_img_cache_array
+ 592 0080 00000000 		.word	.LANCHOR0
+ 593 0084 00000000 		.word	.LC0
+ 594              		.cfi_endproc
+ 595              	.LFE168:
+ 597              		.section	.bss.entry_cnt,"aw",%nobits
+ 598              		.align	1
+ 599              		.set	.LANCHOR0,. + 0
+ 602              	entry_cnt:
+ 603 0000 0000     		.space	2
+ 604              		.section	.rodata.lv_img_cache_set_size.str1.4,"aMS",%progbits,1
+ 605              		.align	2
+ 606              	.LC0:
+ 607 0000 4F757420 		.ascii	"Out of memory\000"
+ 607      6F66206D 
+ 607      656D6F72 
+ 607      7900
+ 608              		.text
+ 609              	.Letext0:
+ 610              		.file 2 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 611              		.file 3 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 612              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 613              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 614              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 615              		.file 7 "lvgl/lv_conf.h"
+ 616              		.file 8 "lvgl/src/lv_draw/../lv_misc/lv_color.h"
+ 617              		.file 9 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 618              		.file 10 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 619              		.file 11 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-non
+ 620              		.file 12 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 621              		.file 13 "lvgl/src/lv_draw/../lv_misc/lv_types.h"
+ 622              		.file 14 "lvgl/src/lv_draw/../lv_misc/lv_mem.h"
+ 623              		.file 15 "lvgl/src/lv_draw/lv_img_buf.h"
+ 624              		.file 16 "lvgl/src/lv_draw/../lv_core/../lv_font/lv_font.h"
+ 625              		.file 17 "lvgl/src/lv_draw/../lv_core/../lv_misc/lv_anim.h"
+ 626              		.file 18 "lvgl/src/lv_draw/../lv_core/../lv_draw/lv_draw_mask.h"
+ 627              		.file 19 "lvgl/src/lv_draw/lv_img_decoder.h"
+ 628              		.file 20 "lvgl/src/lv_draw/lv_img_cache.h"
+ 629              		.file 21 "lvgl/src/lv_draw/../lv_misc/lv_ll.h"
+ 630              		.file 22 "lvgl/src/lv_draw/../lv_misc/lv_task.h"
+ 631              		.file 23 "lvgl/src/lv_draw/../lv_misc/lv_gc.h"
+ 632              		.file 24 "lvgl/src/lv_draw/../lv_misc/lv_debug.h"
+ 633              		.file 25 "lvgl/src/lv_draw/lv_draw_img.h"
+ 634              		.file 26 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 635              		.file 27 "lvgl/src/lv_draw/../lv_hal/lv_hal_tick.h"
+ARM GAS  D:\Temp\cczBtDPa.s 			page 18
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_img_cache.c
+  D:\Temp\cczBtDPa.s:18     .text._lv_img_cache_open:0000000000000000 $t
+  D:\Temp\cczBtDPa.s:26     .text._lv_img_cache_open:0000000000000000 _lv_img_cache_open
+  D:\Temp\cczBtDPa.s:352    .text._lv_img_cache_open:0000000000000128 $d
+  D:\Temp\cczBtDPa.s:359    .text.lv_img_cache_invalidate_src:0000000000000000 $t
+  D:\Temp\cczBtDPa.s:366    .text.lv_img_cache_invalidate_src:0000000000000000 lv_img_cache_invalidate_src
+  D:\Temp\cczBtDPa.s:451    .text.lv_img_cache_invalidate_src:0000000000000048 $d
+  D:\Temp\cczBtDPa.s:457    .text.lv_img_cache_set_size:0000000000000000 $t
+  D:\Temp\cczBtDPa.s:464    .text.lv_img_cache_set_size:0000000000000000 lv_img_cache_set_size
+  D:\Temp\cczBtDPa.s:591    .text.lv_img_cache_set_size:000000000000007c $d
+  D:\Temp\cczBtDPa.s:598    .bss.entry_cnt:0000000000000000 $d
+  D:\Temp\cczBtDPa.s:602    .bss.entry_cnt:0000000000000000 entry_cnt
+  D:\Temp\cczBtDPa.s:605    .rodata.lv_img_cache_set_size.str1.4:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+lv_img_src_get_type
+strcmp
+lv_img_decoder_close
+lv_tick_get
+lv_img_decoder_open
+_lv_memset_00
+lv_tick_elaps
+_lv_img_cache_array
+lv_mem_free
+lv_mem_alloc
+lv_debug_check_null
+lv_debug_log_error

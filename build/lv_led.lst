@@ -1,0 +1,2125 @@
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_led.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.lv_led_signal,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	lv_led_signal:
+  26              	.LVL0:
+  27              	.LFB465:
+  28              		.file 1 "lvgl/src/lv_widgets/lv_led.c"
+   1:lvgl/src/lv_widgets/lv_led.c **** /**
+   2:lvgl/src/lv_widgets/lv_led.c ****  * @file lv_led.c
+   3:lvgl/src/lv_widgets/lv_led.c ****  *
+   4:lvgl/src/lv_widgets/lv_led.c ****  */
+   5:lvgl/src/lv_widgets/lv_led.c **** 
+   6:lvgl/src/lv_widgets/lv_led.c **** /*********************
+   7:lvgl/src/lv_widgets/lv_led.c ****  *      INCLUDES
+   8:lvgl/src/lv_widgets/lv_led.c ****  *********************/
+   9:lvgl/src/lv_widgets/lv_led.c **** #include "lv_led.h"
+  10:lvgl/src/lv_widgets/lv_led.c **** #if LV_USE_LED != 0
+  11:lvgl/src/lv_widgets/lv_led.c **** 
+  12:lvgl/src/lv_widgets/lv_led.c **** #include "../lv_misc/lv_debug.h"
+  13:lvgl/src/lv_widgets/lv_led.c **** #include "../lv_themes/lv_theme.h"
+  14:lvgl/src/lv_widgets/lv_led.c **** #include "../lv_draw/lv_draw.h"
+  15:lvgl/src/lv_widgets/lv_led.c **** 
+  16:lvgl/src/lv_widgets/lv_led.c **** /*********************
+  17:lvgl/src/lv_widgets/lv_led.c ****  *      DEFINES
+  18:lvgl/src/lv_widgets/lv_led.c ****  *********************/
+  19:lvgl/src/lv_widgets/lv_led.c **** #define LV_OBJX_NAME "lv_led"
+  20:lvgl/src/lv_widgets/lv_led.c **** 
+  21:lvgl/src/lv_widgets/lv_led.c **** #define LV_LED_WIDTH_DEF (LV_DPI / 3)
+  22:lvgl/src/lv_widgets/lv_led.c **** #define LV_LED_HEIGHT_DEF (LV_DPI / 3)
+  23:lvgl/src/lv_widgets/lv_led.c **** 
+  24:lvgl/src/lv_widgets/lv_led.c **** /**********************
+  25:lvgl/src/lv_widgets/lv_led.c ****  *      TYPEDEFS
+  26:lvgl/src/lv_widgets/lv_led.c ****  **********************/
+  27:lvgl/src/lv_widgets/lv_led.c **** 
+  28:lvgl/src/lv_widgets/lv_led.c **** /**********************
+  29:lvgl/src/lv_widgets/lv_led.c ****  *  STATIC PROTOTYPES
+  30:lvgl/src/lv_widgets/lv_led.c ****  **********************/
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 2
+
+
+  31:lvgl/src/lv_widgets/lv_led.c **** static lv_design_res_t lv_led_design(lv_obj_t * led, const lv_area_t * clip_area, lv_design_mode_t 
+  32:lvgl/src/lv_widgets/lv_led.c **** static lv_res_t lv_led_signal(lv_obj_t * led, lv_signal_t sign, void * param);
+  33:lvgl/src/lv_widgets/lv_led.c **** 
+  34:lvgl/src/lv_widgets/lv_led.c **** /**********************
+  35:lvgl/src/lv_widgets/lv_led.c ****  *  STATIC VARIABLES
+  36:lvgl/src/lv_widgets/lv_led.c ****  **********************/
+  37:lvgl/src/lv_widgets/lv_led.c **** static lv_design_cb_t ancestor_design;
+  38:lvgl/src/lv_widgets/lv_led.c **** static lv_signal_cb_t ancestor_signal;
+  39:lvgl/src/lv_widgets/lv_led.c **** 
+  40:lvgl/src/lv_widgets/lv_led.c **** /**********************
+  41:lvgl/src/lv_widgets/lv_led.c ****  *      MACROS
+  42:lvgl/src/lv_widgets/lv_led.c ****  **********************/
+  43:lvgl/src/lv_widgets/lv_led.c **** 
+  44:lvgl/src/lv_widgets/lv_led.c **** /**********************
+  45:lvgl/src/lv_widgets/lv_led.c ****  *   GLOBAL FUNCTIONS
+  46:lvgl/src/lv_widgets/lv_led.c ****  **********************/
+  47:lvgl/src/lv_widgets/lv_led.c **** 
+  48:lvgl/src/lv_widgets/lv_led.c **** /**
+  49:lvgl/src/lv_widgets/lv_led.c ****  * Create a led objects
+  50:lvgl/src/lv_widgets/lv_led.c ****  * @param par pointer to an object, it will be the parent of the new led
+  51:lvgl/src/lv_widgets/lv_led.c ****  * @param copy pointer to a led object, if not NULL then the new object will be copied from it
+  52:lvgl/src/lv_widgets/lv_led.c ****  * @return pointer to the created led
+  53:lvgl/src/lv_widgets/lv_led.c ****  */
+  54:lvgl/src/lv_widgets/lv_led.c **** lv_obj_t * lv_led_create(lv_obj_t * par, const lv_obj_t * copy)
+  55:lvgl/src/lv_widgets/lv_led.c **** {
+  56:lvgl/src/lv_widgets/lv_led.c ****     LV_LOG_TRACE("led create started");
+  57:lvgl/src/lv_widgets/lv_led.c **** 
+  58:lvgl/src/lv_widgets/lv_led.c ****     /*Create the ancestor basic object*/
+  59:lvgl/src/lv_widgets/lv_led.c ****     lv_obj_t * led = lv_obj_create(par, copy);
+  60:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_MEM(led);
+  61:lvgl/src/lv_widgets/lv_led.c ****     if(led == NULL) return NULL;
+  62:lvgl/src/lv_widgets/lv_led.c **** 
+  63:lvgl/src/lv_widgets/lv_led.c ****     if(ancestor_signal == NULL) ancestor_signal = lv_obj_get_signal_cb(led);
+  64:lvgl/src/lv_widgets/lv_led.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(led);
+  65:lvgl/src/lv_widgets/lv_led.c **** 
+  66:lvgl/src/lv_widgets/lv_led.c ****     /*Allocate the object type specific extended data*/
+  67:lvgl/src/lv_widgets/lv_led.c ****     lv_led_ext_t * ext = lv_obj_allocate_ext_attr(led, sizeof(lv_led_ext_t));
+  68:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_MEM(ext);
+  69:lvgl/src/lv_widgets/lv_led.c ****     if(ext == NULL) {
+  70:lvgl/src/lv_widgets/lv_led.c ****         lv_obj_del(led);
+  71:lvgl/src/lv_widgets/lv_led.c ****         return NULL;
+  72:lvgl/src/lv_widgets/lv_led.c ****     }
+  73:lvgl/src/lv_widgets/lv_led.c **** 
+  74:lvgl/src/lv_widgets/lv_led.c ****     ext->bright = LV_LED_BRIGHT_MAX;
+  75:lvgl/src/lv_widgets/lv_led.c **** 
+  76:lvgl/src/lv_widgets/lv_led.c ****     lv_obj_set_signal_cb(led, lv_led_signal);
+  77:lvgl/src/lv_widgets/lv_led.c ****     lv_obj_set_design_cb(led, lv_led_design);
+  78:lvgl/src/lv_widgets/lv_led.c **** 
+  79:lvgl/src/lv_widgets/lv_led.c ****     /*Init the new led object*/
+  80:lvgl/src/lv_widgets/lv_led.c ****     if(copy == NULL) {
+  81:lvgl/src/lv_widgets/lv_led.c ****         lv_obj_set_size(led, LV_LED_WIDTH_DEF, LV_LED_HEIGHT_DEF);
+  82:lvgl/src/lv_widgets/lv_led.c **** 
+  83:lvgl/src/lv_widgets/lv_led.c ****         lv_theme_apply(led, LV_THEME_LED);
+  84:lvgl/src/lv_widgets/lv_led.c ****     }
+  85:lvgl/src/lv_widgets/lv_led.c ****     /*Copy an existing object*/
+  86:lvgl/src/lv_widgets/lv_led.c ****     else {
+  87:lvgl/src/lv_widgets/lv_led.c ****         lv_led_ext_t * copy_ext = lv_obj_get_ext_attr(copy);
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 3
+
+
+  88:lvgl/src/lv_widgets/lv_led.c ****         ext->bright             = copy_ext->bright;
+  89:lvgl/src/lv_widgets/lv_led.c **** 
+  90:lvgl/src/lv_widgets/lv_led.c ****         /*Refresh the style with new signal function*/
+  91:lvgl/src/lv_widgets/lv_led.c ****         lv_obj_refresh_style(led, LV_OBJ_PART_ALL, LV_STYLE_PROP_ALL);
+  92:lvgl/src/lv_widgets/lv_led.c ****     }
+  93:lvgl/src/lv_widgets/lv_led.c **** 
+  94:lvgl/src/lv_widgets/lv_led.c ****     LV_LOG_INFO("led created");
+  95:lvgl/src/lv_widgets/lv_led.c **** 
+  96:lvgl/src/lv_widgets/lv_led.c ****     return led;
+  97:lvgl/src/lv_widgets/lv_led.c **** }
+  98:lvgl/src/lv_widgets/lv_led.c **** 
+  99:lvgl/src/lv_widgets/lv_led.c **** /*=====================
+ 100:lvgl/src/lv_widgets/lv_led.c ****  * Setter functions
+ 101:lvgl/src/lv_widgets/lv_led.c ****  *====================*/
+ 102:lvgl/src/lv_widgets/lv_led.c **** 
+ 103:lvgl/src/lv_widgets/lv_led.c **** /**
+ 104:lvgl/src/lv_widgets/lv_led.c ****  * Set the brightness of a LED object
+ 105:lvgl/src/lv_widgets/lv_led.c ****  * @param led pointer to a LED object
+ 106:lvgl/src/lv_widgets/lv_led.c ****  * @param bright LV_LED_BRIGHT_MIN (max. dark) ... LV_LED_BRIGHT_MAX (max. light)
+ 107:lvgl/src/lv_widgets/lv_led.c ****  */
+ 108:lvgl/src/lv_widgets/lv_led.c **** void lv_led_set_bright(lv_obj_t * led, uint8_t bright)
+ 109:lvgl/src/lv_widgets/lv_led.c **** {
+ 110:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_OBJ(led, LV_OBJX_NAME);
+ 111:lvgl/src/lv_widgets/lv_led.c **** 
+ 112:lvgl/src/lv_widgets/lv_led.c ****     /*Set the brightness*/
+ 113:lvgl/src/lv_widgets/lv_led.c ****     lv_led_ext_t * ext = lv_obj_get_ext_attr(led);
+ 114:lvgl/src/lv_widgets/lv_led.c ****     if(ext->bright == bright) return;
+ 115:lvgl/src/lv_widgets/lv_led.c **** 
+ 116:lvgl/src/lv_widgets/lv_led.c ****     if(bright <= LV_LED_BRIGHT_MIN) bright = LV_LED_BRIGHT_MIN;
+ 117:lvgl/src/lv_widgets/lv_led.c ****     if(bright >= LV_LED_BRIGHT_MAX) bright = LV_LED_BRIGHT_MAX;
+ 118:lvgl/src/lv_widgets/lv_led.c **** 
+ 119:lvgl/src/lv_widgets/lv_led.c ****     ext->bright = bright;
+ 120:lvgl/src/lv_widgets/lv_led.c **** 
+ 121:lvgl/src/lv_widgets/lv_led.c ****     /*Invalidate the object there fore it will be redrawn*/
+ 122:lvgl/src/lv_widgets/lv_led.c ****     lv_obj_invalidate(led);
+ 123:lvgl/src/lv_widgets/lv_led.c **** }
+ 124:lvgl/src/lv_widgets/lv_led.c **** 
+ 125:lvgl/src/lv_widgets/lv_led.c **** /**
+ 126:lvgl/src/lv_widgets/lv_led.c ****  * Light on a LED
+ 127:lvgl/src/lv_widgets/lv_led.c ****  * @param led pointer to a LED object
+ 128:lvgl/src/lv_widgets/lv_led.c ****  */
+ 129:lvgl/src/lv_widgets/lv_led.c **** void lv_led_on(lv_obj_t * led)
+ 130:lvgl/src/lv_widgets/lv_led.c **** {
+ 131:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_OBJ(led, LV_OBJX_NAME);
+ 132:lvgl/src/lv_widgets/lv_led.c **** 
+ 133:lvgl/src/lv_widgets/lv_led.c ****     lv_led_set_bright(led, LV_LED_BRIGHT_MAX);
+ 134:lvgl/src/lv_widgets/lv_led.c **** }
+ 135:lvgl/src/lv_widgets/lv_led.c **** 
+ 136:lvgl/src/lv_widgets/lv_led.c **** /**
+ 137:lvgl/src/lv_widgets/lv_led.c ****  * Light off a LED
+ 138:lvgl/src/lv_widgets/lv_led.c ****  * @param led pointer to a LED object
+ 139:lvgl/src/lv_widgets/lv_led.c ****  */
+ 140:lvgl/src/lv_widgets/lv_led.c **** void lv_led_off(lv_obj_t * led)
+ 141:lvgl/src/lv_widgets/lv_led.c **** {
+ 142:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_OBJ(led, LV_OBJX_NAME);
+ 143:lvgl/src/lv_widgets/lv_led.c **** 
+ 144:lvgl/src/lv_widgets/lv_led.c ****     lv_led_set_bright(led, LV_LED_BRIGHT_MIN);
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 4
+
+
+ 145:lvgl/src/lv_widgets/lv_led.c **** }
+ 146:lvgl/src/lv_widgets/lv_led.c **** 
+ 147:lvgl/src/lv_widgets/lv_led.c **** /**
+ 148:lvgl/src/lv_widgets/lv_led.c ****  * Toggle the state of a LED
+ 149:lvgl/src/lv_widgets/lv_led.c ****  * @param led pointer to a LED object
+ 150:lvgl/src/lv_widgets/lv_led.c ****  */
+ 151:lvgl/src/lv_widgets/lv_led.c **** void lv_led_toggle(lv_obj_t * led)
+ 152:lvgl/src/lv_widgets/lv_led.c **** {
+ 153:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_OBJ(led, LV_OBJX_NAME);
+ 154:lvgl/src/lv_widgets/lv_led.c **** 
+ 155:lvgl/src/lv_widgets/lv_led.c ****     uint8_t bright = lv_led_get_bright(led);
+ 156:lvgl/src/lv_widgets/lv_led.c ****     if(bright > (LV_LED_BRIGHT_MIN + LV_LED_BRIGHT_MAX) >> 1)
+ 157:lvgl/src/lv_widgets/lv_led.c ****         lv_led_off(led);
+ 158:lvgl/src/lv_widgets/lv_led.c ****     else
+ 159:lvgl/src/lv_widgets/lv_led.c ****         lv_led_on(led);
+ 160:lvgl/src/lv_widgets/lv_led.c **** }
+ 161:lvgl/src/lv_widgets/lv_led.c **** 
+ 162:lvgl/src/lv_widgets/lv_led.c **** /*=====================
+ 163:lvgl/src/lv_widgets/lv_led.c ****  * Getter functions
+ 164:lvgl/src/lv_widgets/lv_led.c ****  *====================*/
+ 165:lvgl/src/lv_widgets/lv_led.c **** 
+ 166:lvgl/src/lv_widgets/lv_led.c **** /**
+ 167:lvgl/src/lv_widgets/lv_led.c ****  * Get the brightness of a LEd object
+ 168:lvgl/src/lv_widgets/lv_led.c ****  * @param led pointer to LED object
+ 169:lvgl/src/lv_widgets/lv_led.c ****  * @return bright 0 (max. dark) ... 255 (max. light)
+ 170:lvgl/src/lv_widgets/lv_led.c ****  */
+ 171:lvgl/src/lv_widgets/lv_led.c **** uint8_t lv_led_get_bright(const lv_obj_t * led)
+ 172:lvgl/src/lv_widgets/lv_led.c **** {
+ 173:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_OBJ(led, LV_OBJX_NAME);
+ 174:lvgl/src/lv_widgets/lv_led.c **** 
+ 175:lvgl/src/lv_widgets/lv_led.c ****     lv_led_ext_t * ext = lv_obj_get_ext_attr(led);
+ 176:lvgl/src/lv_widgets/lv_led.c ****     return ext->bright;
+ 177:lvgl/src/lv_widgets/lv_led.c **** }
+ 178:lvgl/src/lv_widgets/lv_led.c **** 
+ 179:lvgl/src/lv_widgets/lv_led.c **** /**********************
+ 180:lvgl/src/lv_widgets/lv_led.c ****  *   STATIC FUNCTIONS
+ 181:lvgl/src/lv_widgets/lv_led.c ****  **********************/
+ 182:lvgl/src/lv_widgets/lv_led.c **** 
+ 183:lvgl/src/lv_widgets/lv_led.c **** /**
+ 184:lvgl/src/lv_widgets/lv_led.c ****  * Handle the drawing related tasks of the leds
+ 185:lvgl/src/lv_widgets/lv_led.c ****  * @param led pointer to an object
+ 186:lvgl/src/lv_widgets/lv_led.c ****  * @param clip_area the object will be drawn only in this area
+ 187:lvgl/src/lv_widgets/lv_led.c ****  * @param mode LV_DESIGN_COVER_CHK: only check if the object fully covers the 'mask_p' area
+ 188:lvgl/src/lv_widgets/lv_led.c ****  *                                  (return 'true' if yes)
+ 189:lvgl/src/lv_widgets/lv_led.c ****  *             LV_DESIGN_DRAW: draw the object (always return 'true')
+ 190:lvgl/src/lv_widgets/lv_led.c ****  *             LV_DESIGN_DRAW_POST: drawing after every children are drawn
+ 191:lvgl/src/lv_widgets/lv_led.c ****  * @param return an element of `lv_design_res_t`
+ 192:lvgl/src/lv_widgets/lv_led.c ****  */
+ 193:lvgl/src/lv_widgets/lv_led.c **** static lv_design_res_t lv_led_design(lv_obj_t * led, const lv_area_t * clip_area, lv_design_mode_t 
+ 194:lvgl/src/lv_widgets/lv_led.c **** {
+ 195:lvgl/src/lv_widgets/lv_led.c ****     if(mode == LV_DESIGN_COVER_CHK) {
+ 196:lvgl/src/lv_widgets/lv_led.c ****         /*Return false if the object is not covers the clip_area area*/
+ 197:lvgl/src/lv_widgets/lv_led.c ****         return ancestor_design(led, clip_area, mode);
+ 198:lvgl/src/lv_widgets/lv_led.c ****     }
+ 199:lvgl/src/lv_widgets/lv_led.c ****     else if(mode == LV_DESIGN_DRAW_MAIN) {
+ 200:lvgl/src/lv_widgets/lv_led.c ****         /*Make darker colors in a temporary style according to the brightness*/
+ 201:lvgl/src/lv_widgets/lv_led.c ****         lv_led_ext_t * ext       = lv_obj_get_ext_attr(led);
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 5
+
+
+ 202:lvgl/src/lv_widgets/lv_led.c **** 
+ 203:lvgl/src/lv_widgets/lv_led.c ****         lv_draw_rect_dsc_t rect_dsc;
+ 204:lvgl/src/lv_widgets/lv_led.c ****         lv_draw_rect_dsc_init(&rect_dsc);
+ 205:lvgl/src/lv_widgets/lv_led.c ****         lv_obj_init_draw_rect_dsc(led, LV_LED_PART_MAIN, &rect_dsc);
+ 206:lvgl/src/lv_widgets/lv_led.c **** 
+ 207:lvgl/src/lv_widgets/lv_led.c ****         /*Mix. the color with black proportionally with brightness*/
+ 208:lvgl/src/lv_widgets/lv_led.c ****         rect_dsc.bg_color   = lv_color_mix(rect_dsc.bg_color, LV_COLOR_BLACK, ext->bright);
+ 209:lvgl/src/lv_widgets/lv_led.c ****         rect_dsc.bg_grad_color   = lv_color_mix(rect_dsc.bg_grad_color, LV_COLOR_BLACK, ext->bright
+ 210:lvgl/src/lv_widgets/lv_led.c ****         rect_dsc.border_color = lv_color_mix(rect_dsc.border_color, LV_COLOR_BLACK, ext->bright);
+ 211:lvgl/src/lv_widgets/lv_led.c ****         rect_dsc.shadow_color = lv_color_mix(rect_dsc.shadow_color, LV_COLOR_BLACK, ext->bright);
+ 212:lvgl/src/lv_widgets/lv_led.c **** 
+ 213:lvgl/src/lv_widgets/lv_led.c ****         /*Set the current shadow width according to brightness proportionally between LV_LED_BRIGHT
+ 214:lvgl/src/lv_widgets/lv_led.c ****          * and LV_LED_BRIGHT_ON*/
+ 215:lvgl/src/lv_widgets/lv_led.c ****         rect_dsc.shadow_width = ((ext->bright - LV_LED_BRIGHT_MIN) * rect_dsc.shadow_width) /
+ 216:lvgl/src/lv_widgets/lv_led.c ****                                 (LV_LED_BRIGHT_MAX - LV_LED_BRIGHT_MIN);
+ 217:lvgl/src/lv_widgets/lv_led.c ****         rect_dsc.shadow_spread = ((ext->bright - LV_LED_BRIGHT_MIN) * rect_dsc.shadow_spread) /
+ 218:lvgl/src/lv_widgets/lv_led.c ****                                  (LV_LED_BRIGHT_MAX - LV_LED_BRIGHT_MIN);
+ 219:lvgl/src/lv_widgets/lv_led.c **** 
+ 220:lvgl/src/lv_widgets/lv_led.c ****         lv_draw_rect(&led->coords, clip_area, &rect_dsc);
+ 221:lvgl/src/lv_widgets/lv_led.c ****     }
+ 222:lvgl/src/lv_widgets/lv_led.c ****     return LV_DESIGN_RES_OK;
+ 223:lvgl/src/lv_widgets/lv_led.c **** }
+ 224:lvgl/src/lv_widgets/lv_led.c **** 
+ 225:lvgl/src/lv_widgets/lv_led.c **** /**
+ 226:lvgl/src/lv_widgets/lv_led.c ****  * Signal function of the led
+ 227:lvgl/src/lv_widgets/lv_led.c ****  * @param led pointer to a led object
+ 228:lvgl/src/lv_widgets/lv_led.c ****  * @param sign a signal type from lv_signal_t enum
+ 229:lvgl/src/lv_widgets/lv_led.c ****  * @param param pointer to a signal specific variable
+ 230:lvgl/src/lv_widgets/lv_led.c ****  * @return LV_RES_OK: the object is not deleted in the function; LV_RES_INV: the object is deleted
+ 231:lvgl/src/lv_widgets/lv_led.c ****  */
+ 232:lvgl/src/lv_widgets/lv_led.c **** static lv_res_t lv_led_signal(lv_obj_t * led, lv_signal_t sign, void * param)
+ 233:lvgl/src/lv_widgets/lv_led.c **** {
+  29              		.loc 1 233 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 233 1 is_stmt 0 view .LVU1
+  34 0000 38B5     		push	{r3, r4, r5, lr}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 16
+  37              		.cfi_offset 3, -16
+  38              		.cfi_offset 4, -12
+  39              		.cfi_offset 5, -8
+  40              		.cfi_offset 14, -4
+  41 0002 0D46     		mov	r5, r1
+  42 0004 1446     		mov	r4, r2
+ 234:lvgl/src/lv_widgets/lv_led.c ****     lv_res_t res;
+  43              		.loc 1 234 5 is_stmt 1 view .LVU2
+ 235:lvgl/src/lv_widgets/lv_led.c **** 
+ 236:lvgl/src/lv_widgets/lv_led.c ****     /* Include the ancient signal function */
+ 237:lvgl/src/lv_widgets/lv_led.c ****     res = ancestor_signal(led, sign, param);
+  44              		.loc 1 237 5 view .LVU3
+  45              		.loc 1 237 11 is_stmt 0 view .LVU4
+  46 0006 0A4B     		ldr	r3, .L9
+  47 0008 1B68     		ldr	r3, [r3]
+  48 000a 9847     		blx	r3
+  49              	.LVL1:
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 6
+
+
+ 238:lvgl/src/lv_widgets/lv_led.c ****     if(res != LV_RES_OK) return res;
+  50              		.loc 1 238 5 is_stmt 1 view .LVU5
+  51              		.loc 1 238 7 is_stmt 0 view .LVU6
+  52 000c 0128     		cmp	r0, #1
+  53 000e 01D1     		bne	.L2
+ 239:lvgl/src/lv_widgets/lv_led.c **** 
+ 240:lvgl/src/lv_widgets/lv_led.c ****     if(sign == LV_SIGNAL_GET_TYPE) {
+  54              		.loc 1 240 5 is_stmt 1 view .LVU7
+  55              		.loc 1 240 7 is_stmt 0 view .LVU8
+  56 0010 072D     		cmp	r5, #7
+  57 0012 00D0     		beq	.L8
+  58              	.L2:
+ 241:lvgl/src/lv_widgets/lv_led.c ****         lv_obj_type_t * buf = param;
+ 242:lvgl/src/lv_widgets/lv_led.c ****         uint8_t i;
+ 243:lvgl/src/lv_widgets/lv_led.c ****         for(i = 0; i < LV_MAX_ANCESTOR_NUM - 1; i++) { /*Find the last set data*/
+ 244:lvgl/src/lv_widgets/lv_led.c ****             if(buf->type[i] == NULL) break;
+ 245:lvgl/src/lv_widgets/lv_led.c ****         }
+ 246:lvgl/src/lv_widgets/lv_led.c ****         buf->type[i] = "lv_led";
+ 247:lvgl/src/lv_widgets/lv_led.c ****     }
+ 248:lvgl/src/lv_widgets/lv_led.c **** 
+ 249:lvgl/src/lv_widgets/lv_led.c ****     return res;
+ 250:lvgl/src/lv_widgets/lv_led.c **** }
+  59              		.loc 1 250 1 view .LVU9
+  60 0014 38BD     		pop	{r3, r4, r5, pc}
+  61              	.LVL2:
+  62              	.L8:
+  63              	.LBB2:
+ 243:lvgl/src/lv_widgets/lv_led.c ****             if(buf->type[i] == NULL) break;
+  64              		.loc 1 243 15 view .LVU10
+  65 0016 0023     		movs	r3, #0
+  66              	.L3:
+  67              	.LVL3:
+ 243:lvgl/src/lv_widgets/lv_led.c ****             if(buf->type[i] == NULL) break;
+  68              		.loc 1 243 9 discriminator 1 view .LVU11
+  69 0018 062B     		cmp	r3, #6
+  70 001a 05D8     		bhi	.L4
+ 244:lvgl/src/lv_widgets/lv_led.c ****         }
+  71              		.loc 1 244 13 is_stmt 1 view .LVU12
+ 244:lvgl/src/lv_widgets/lv_led.c ****         }
+  72              		.loc 1 244 25 is_stmt 0 view .LVU13
+  73 001c 54F82320 		ldr	r2, [r4, r3, lsl #2]
+ 244:lvgl/src/lv_widgets/lv_led.c ****         }
+  74              		.loc 1 244 15 view .LVU14
+  75 0020 12B1     		cbz	r2, .L4
+ 243:lvgl/src/lv_widgets/lv_led.c ****             if(buf->type[i] == NULL) break;
+  76              		.loc 1 243 50 discriminator 2 view .LVU15
+  77 0022 0133     		adds	r3, r3, #1
+  78              	.LVL4:
+ 243:lvgl/src/lv_widgets/lv_led.c ****             if(buf->type[i] == NULL) break;
+  79              		.loc 1 243 50 discriminator 2 view .LVU16
+  80 0024 DBB2     		uxtb	r3, r3
+  81              	.LVL5:
+ 243:lvgl/src/lv_widgets/lv_led.c ****             if(buf->type[i] == NULL) break;
+  82              		.loc 1 243 50 discriminator 2 view .LVU17
+  83 0026 F7E7     		b	.L3
+  84              	.L4:
+ 246:lvgl/src/lv_widgets/lv_led.c ****     }
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 7
+
+
+  85              		.loc 1 246 9 is_stmt 1 view .LVU18
+ 246:lvgl/src/lv_widgets/lv_led.c ****     }
+  86              		.loc 1 246 22 is_stmt 0 view .LVU19
+  87 0028 024A     		ldr	r2, .L9+4
+  88 002a 44F82320 		str	r2, [r4, r3, lsl #2]
+  89 002e F1E7     		b	.L2
+  90              	.L10:
+  91              		.align	2
+  92              	.L9:
+  93 0030 00000000 		.word	.LANCHOR0
+  94 0034 00000000 		.word	.LC0
+  95              	.LBE2:
+  96              		.cfi_endproc
+  97              	.LFE465:
+  99              		.section	.text.lv_led_design,"ax",%progbits
+ 100              		.align	1
+ 101              		.syntax unified
+ 102              		.thumb
+ 103              		.thumb_func
+ 104              		.fpu fpv4-sp-d16
+ 106              	lv_led_design:
+ 107              	.LVL6:
+ 108              	.LFB464:
+ 194:lvgl/src/lv_widgets/lv_led.c ****     if(mode == LV_DESIGN_COVER_CHK) {
+ 109              		.loc 1 194 1 is_stmt 1 view -0
+ 110              		.cfi_startproc
+ 111              		@ args = 0, pretend = 0, frame = 88
+ 112              		@ frame_needed = 0, uses_anonymous_args = 0
+ 194:lvgl/src/lv_widgets/lv_led.c ****     if(mode == LV_DESIGN_COVER_CHK) {
+ 113              		.loc 1 194 1 is_stmt 0 view .LVU21
+ 114 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 115              	.LCFI1:
+ 116              		.cfi_def_cfa_offset 20
+ 117              		.cfi_offset 4, -20
+ 118              		.cfi_offset 5, -16
+ 119              		.cfi_offset 6, -12
+ 120              		.cfi_offset 7, -8
+ 121              		.cfi_offset 14, -4
+ 122 0002 97B0     		sub	sp, sp, #92
+ 123              	.LCFI2:
+ 124              		.cfi_def_cfa_offset 112
+ 125 0004 0446     		mov	r4, r0
+ 126 0006 0E46     		mov	r6, r1
+ 195:lvgl/src/lv_widgets/lv_led.c ****         /*Return false if the object is not covers the clip_area area*/
+ 127              		.loc 1 195 5 is_stmt 1 view .LVU22
+ 195:lvgl/src/lv_widgets/lv_led.c ****         /*Return false if the object is not covers the clip_area area*/
+ 128              		.loc 1 195 7 is_stmt 0 view .LVU23
+ 129 0008 022A     		cmp	r2, #2
+ 130 000a 03D0     		beq	.L16
+ 199:lvgl/src/lv_widgets/lv_led.c ****         /*Make darker colors in a temporary style according to the brightness*/
+ 131              		.loc 1 199 10 is_stmt 1 view .LVU24
+ 199:lvgl/src/lv_widgets/lv_led.c ****         /*Make darker colors in a temporary style according to the brightness*/
+ 132              		.loc 1 199 12 is_stmt 0 view .LVU25
+ 133 000c 32B1     		cbz	r2, .L17
+ 222:lvgl/src/lv_widgets/lv_led.c **** }
+ 134              		.loc 1 222 12 view .LVU26
+ 135 000e 0020     		movs	r0, #0
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 8
+
+
+ 136              	.LVL7:
+ 137              	.L13:
+ 223:lvgl/src/lv_widgets/lv_led.c **** 
+ 138              		.loc 1 223 1 view .LVU27
+ 139 0010 17B0     		add	sp, sp, #92
+ 140              	.LCFI3:
+ 141              		.cfi_remember_state
+ 142              		.cfi_def_cfa_offset 20
+ 143              		@ sp needed
+ 144 0012 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 145              	.LVL8:
+ 146              	.L16:
+ 147              	.LCFI4:
+ 148              		.cfi_restore_state
+ 197:lvgl/src/lv_widgets/lv_led.c ****     }
+ 149              		.loc 1 197 9 is_stmt 1 view .LVU28
+ 197:lvgl/src/lv_widgets/lv_led.c ****     }
+ 150              		.loc 1 197 16 is_stmt 0 view .LVU29
+ 151 0014 744B     		ldr	r3, .L18
+ 152 0016 1B68     		ldr	r3, [r3]
+ 153 0018 9847     		blx	r3
+ 154              	.LVL9:
+ 197:lvgl/src/lv_widgets/lv_led.c ****     }
+ 155              		.loc 1 197 16 view .LVU30
+ 156 001a F9E7     		b	.L13
+ 157              	.LVL10:
+ 158              	.L17:
+ 159              	.LBB12:
+ 201:lvgl/src/lv_widgets/lv_led.c **** 
+ 160              		.loc 1 201 9 is_stmt 1 view .LVU31
+ 201:lvgl/src/lv_widgets/lv_led.c **** 
+ 161              		.loc 1 201 36 is_stmt 0 view .LVU32
+ 162 001c FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 163              	.LVL11:
+ 201:lvgl/src/lv_widgets/lv_led.c **** 
+ 164              		.loc 1 201 36 view .LVU33
+ 165 0020 0546     		mov	r5, r0
+ 166              	.LVL12:
+ 203:lvgl/src/lv_widgets/lv_led.c ****         lv_draw_rect_dsc_init(&rect_dsc);
+ 167              		.loc 1 203 9 is_stmt 1 view .LVU34
+ 204:lvgl/src/lv_widgets/lv_led.c ****         lv_obj_init_draw_rect_dsc(led, LV_LED_PART_MAIN, &rect_dsc);
+ 168              		.loc 1 204 9 view .LVU35
+ 169 0022 01A8     		add	r0, sp, #4
+ 170              	.LVL13:
+ 204:lvgl/src/lv_widgets/lv_led.c ****         lv_obj_init_draw_rect_dsc(led, LV_LED_PART_MAIN, &rect_dsc);
+ 171              		.loc 1 204 9 is_stmt 0 view .LVU36
+ 172 0024 FFF7FEFF 		bl	lv_draw_rect_dsc_init
+ 173              	.LVL14:
+ 205:lvgl/src/lv_widgets/lv_led.c **** 
+ 174              		.loc 1 205 9 is_stmt 1 view .LVU37
+ 175 0028 01AA     		add	r2, sp, #4
+ 176 002a 0021     		movs	r1, #0
+ 177 002c 2046     		mov	r0, r4
+ 178 002e FFF7FEFF 		bl	lv_obj_init_draw_rect_dsc
+ 179              	.LVL15:
+ 208:lvgl/src/lv_widgets/lv_led.c ****         rect_dsc.bg_grad_color   = lv_color_mix(rect_dsc.bg_grad_color, LV_COLOR_BLACK, ext->bright
+ 180              		.loc 1 208 9 view .LVU38
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 9
+
+
+ 208:lvgl/src/lv_widgets/lv_led.c ****         rect_dsc.bg_grad_color   = lv_color_mix(rect_dsc.bg_grad_color, LV_COLOR_BLACK, ext->bright
+ 181              		.loc 1 208 31 is_stmt 0 view .LVU39
+ 182 0032 2878     		ldrb	r0, [r5]	@ zero_extendqisi2
+ 183 0034 BDF80630 		ldrh	r3, [sp, #6]
+ 184              	.LVL16:
+ 185              	.LBB13:
+ 186              	.LBI13:
+ 187              		.file 2 "lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h"
+   1:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** /**
+   2:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * @file lv_color.h
+   3:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  *
+   4:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  */
+   5:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+   6:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #ifndef LV_COLOR_H
+   7:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_H
+   8:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+   9:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #ifdef __cplusplus
+  10:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** extern "C" {
+  11:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #endif
+  12:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+  13:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** /*********************
+  14:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  *      INCLUDES
+  15:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  *********************/
+  16:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #include "../lv_conf_internal.h"
+  17:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #include "lv_math.h"
+  18:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+  19:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** /*Error checking*/
+  20:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 24
+  21:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #error "LV_COLOR_DEPTH 24 is deprecated. Use LV_COLOR_DEPTH 32 instead (lv_conf.h)"
+  22:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #endif
+  23:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+  24:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_DEPTH != 32 && LV_COLOR_SCREEN_TRANSP != 0
+  25:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #error "LV_COLOR_SCREEN_TRANSP requires LV_COLOR_DEPTH == 32. Set it in lv_conf.h"
+  26:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #endif
+  27:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+  28:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_DEPTH != 16 && LV_COLOR_16_SWAP != 0
+  29:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #error "LV_COLOR_16_SWAP requires LV_COLOR_DEPTH == 16. Set it in lv_conf.h"
+  30:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #endif
+  31:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+  32:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #include <stdint.h>
+  33:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+  34:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** /*********************
+  35:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  *      DEFINES
+  36:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  *********************/
+  37:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_WHITE   LV_COLOR_MAKE(0xFF, 0xFF, 0xFF)
+  38:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_SILVER  LV_COLOR_MAKE(0xC0, 0xC0, 0xC0)
+  39:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_GRAY    LV_COLOR_MAKE(0x80, 0x80, 0x80)
+  40:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_BLACK   LV_COLOR_MAKE(0x00, 0x00, 0x00)
+  41:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_RED     LV_COLOR_MAKE(0xFF, 0x00, 0x00)
+  42:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_MAROON  LV_COLOR_MAKE(0x80, 0x00, 0x00)
+  43:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_YELLOW  LV_COLOR_MAKE(0xFF, 0xFF, 0x00)
+  44:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_OLIVE   LV_COLOR_MAKE(0x80, 0x80, 0x00)
+  45:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_LIME    LV_COLOR_MAKE(0x00, 0xFF, 0x00)
+  46:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_GREEN   LV_COLOR_MAKE(0x00, 0x80, 0x00)
+  47:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_CYAN    LV_COLOR_MAKE(0x00, 0xFF, 0xFF)
+  48:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_AQUA    LV_COLOR_CYAN
+  49:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_TEAL    LV_COLOR_MAKE(0x00, 0x80, 0x80)
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 10
+
+
+  50:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_BLUE    LV_COLOR_MAKE(0x00, 0x00, 0xFF)
+  51:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_NAVY    LV_COLOR_MAKE(0x00, 0x00, 0x80)
+  52:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_MAGENTA LV_COLOR_MAKE(0xFF, 0x00, 0xFF)
+  53:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_PURPLE  LV_COLOR_MAKE(0x80, 0x00, 0x80)
+  54:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_ORANGE  LV_COLOR_MAKE(0xFF, 0xA5, 0x00)
+  55:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+  56:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** /**
+  57:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * Opacity percentages.
+  58:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  */
+  59:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** enum {
+  60:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_OPA_TRANSP = 0,
+  61:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_OPA_0      = 0,
+  62:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_OPA_10     = 25,
+  63:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_OPA_20     = 51,
+  64:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_OPA_30     = 76,
+  65:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_OPA_40     = 102,
+  66:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_OPA_50     = 127,
+  67:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_OPA_60     = 153,
+  68:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_OPA_70     = 178,
+  69:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_OPA_80     = 204,
+  70:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_OPA_90     = 229,
+  71:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_OPA_100    = 255,
+  72:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_OPA_COVER  = 255,
+  73:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** };
+  74:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+  75:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_OPA_MIN 2    /*Opacities below this will be transparent*/
+  76:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_OPA_MAX 253  /*Opacities above this will fully cover*/
+  77:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+  78:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 1
+  79:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_SIZE 8
+  80:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 8
+  81:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_SIZE 8
+  82:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 16
+  83:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_SIZE 16
+  84:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 32
+  85:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_SIZE 32
+  86:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #else
+  87:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #error "Invalid LV_COLOR_DEPTH in lv_conf.h! Set it to 1, 8, 16 or 32!"
+  88:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #endif
+  89:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+  90:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** /* Adjust color mix functions rounding.
+  91:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * GPUs might calculate color mix (blending) differently.
+  92:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * Should be in range of 0..254
+  93:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * 0: no adjustment, get the integer part of the result (round down)
+  94:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * 64: round up from x.75
+  95:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * 128: round up from half
+  96:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * 192: round up from x.25
+  97:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * 254: round up */
+  98:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #ifndef LV_COLOR_MIX_ROUND_OFS
+  99:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 32
+ 100:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_MIX_ROUND_OFS 0
+ 101:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #else
+ 102:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define LV_COLOR_MIX_ROUND_OFS 128
+ 103:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #endif
+ 104:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #endif
+ 105:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 106:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** /*---------------------------------------
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 11
+
+
+ 107:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * Macros for all existing color depths
+ 108:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * to set/get values of the color channels
+ 109:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  *------------------------------------------*/
+ 110:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_R1(c, v) (c).ch.red = (uint8_t)((v) & 0x1)
+ 111:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_G1(c, v) (c).ch.green = (uint8_t)((v) & 0x1)
+ 112:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_B1(c, v) (c).ch.blue = (uint8_t)((v) & 0x1)
+ 113:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_A1(c, v) do {} while(0)
+ 114:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 115:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_R1(c) (c).ch.red
+ 116:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_G1(c) (c).ch.green
+ 117:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_B1(c) (c).ch.blue
+ 118:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_A1(c) 0xFF
+ 119:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 120:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_R8(c, v) (c).ch.red = (uint8_t)((v) & 0x7U)
+ 121:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_G8(c, v) (c).ch.green = (uint8_t)((v) & 0x7U)
+ 122:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_B8(c, v) (c).ch.blue = (uint8_t)((v) & 0x3U)
+ 123:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_A8(c, v) do {} while(0)
+ 124:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 125:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_R8(c) (c).ch.red
+ 126:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_G8(c) (c).ch.green
+ 127:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_B8(c) (c).ch.blue
+ 128:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_A8(c) 0xFF
+ 129:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 130:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_R16(c, v) (c).ch.red = (uint8_t)((v) & 0x1FU)
+ 131:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_16_SWAP == 0
+ 132:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_G16(c, v) (c).ch.green = (uint8_t)((v) & 0x3FU)
+ 133:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #else
+ 134:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_G16(c, v) {(c).ch.green_h = (uint8_t)(((v) >> 3) & 0x7); (c).ch.green_l = (ui
+ 135:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #endif
+ 136:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_B16(c, v) (c).ch.blue = (uint8_t)((v) & 0x1FU)
+ 137:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_A16(c, v) do {} while(0)
+ 138:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 139:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_R16(c) (c).ch.red
+ 140:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_16_SWAP == 0
+ 141:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_G16(c) (c).ch.green
+ 142:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #else
+ 143:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_G16(c) (((c).ch.green_h << 3) + (c).ch.green_l)
+ 144:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #endif
+ 145:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_B16(c) (c).ch.blue
+ 146:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_A16(c) 0xFF
+ 147:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 148:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_R32(c, v) (c).ch.red = (uint8_t)((v) & 0xFF)
+ 149:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_G32(c, v) (c).ch.green = (uint8_t)((v) & 0xFF)
+ 150:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_B32(c, v) (c).ch.blue = (uint8_t)((v) & 0xFF)
+ 151:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_A32(c, v) (c).ch.alpha = (uint8_t)((v) & 0xFF)
+ 152:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 153:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_R32(c) (c).ch.red
+ 154:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_G32(c) (c).ch.green
+ 155:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_B32(c) (c).ch.blue
+ 156:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_A32(c) (c).ch.alpha
+ 157:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 158:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** /*---------------------------------------
+ 159:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * Macros for the current color depth
+ 160:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * to set/get values of the color channels
+ 161:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  *------------------------------------------*/
+ 162:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 1
+ 163:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_R(c, v) LV_COLOR_SET_R1(c,v)
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 12
+
+
+ 164:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_G(c, v) LV_COLOR_SET_G1(c,v)
+ 165:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_B(c, v) LV_COLOR_SET_B1(c,v)
+ 166:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_A(c, v) LV_COLOR_SET_A1(c,v)
+ 167:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 168:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_R(c) LV_COLOR_GET_R1(c)
+ 169:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_G(c) LV_COLOR_GET_G1(c)
+ 170:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_B(c) LV_COLOR_GET_B1(c)
+ 171:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_A(c) LV_COLOR_GET_A1(c)
+ 172:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 173:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 8
+ 174:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_R(c, v) LV_COLOR_SET_R8(c,v)
+ 175:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_G(c, v) LV_COLOR_SET_G8(c,v)
+ 176:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_B(c, v) LV_COLOR_SET_B8(c,v)
+ 177:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_A(c, v) LV_COLOR_SET_A8(c,v)
+ 178:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 179:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_R(c) LV_COLOR_GET_R8(c)
+ 180:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_G(c) LV_COLOR_GET_G8(c)
+ 181:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_B(c) LV_COLOR_GET_B8(c)
+ 182:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_A(c) LV_COLOR_GET_A8(c)
+ 183:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 184:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 16
+ 185:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_R(c, v) LV_COLOR_SET_R16(c,v)
+ 186:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_G(c, v) LV_COLOR_SET_G16(c,v)
+ 187:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_B(c, v) LV_COLOR_SET_B16(c,v)
+ 188:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_A(c, v) LV_COLOR_SET_A16(c,v)
+ 189:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 190:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_R(c) LV_COLOR_GET_R16(c)
+ 191:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_G(c) LV_COLOR_GET_G16(c)
+ 192:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_B(c) LV_COLOR_GET_B16(c)
+ 193:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_A(c) LV_COLOR_GET_A16(c)
+ 194:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 195:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 32
+ 196:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_R(c, v) LV_COLOR_SET_R32(c,v)
+ 197:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_G(c, v) LV_COLOR_SET_G32(c,v)
+ 198:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_B(c, v) LV_COLOR_SET_B32(c,v)
+ 199:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_SET_A(c, v) LV_COLOR_SET_A32(c,v)
+ 200:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 201:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_R(c) LV_COLOR_GET_R32(c)
+ 202:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_G(c) LV_COLOR_GET_G32(c)
+ 203:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_B(c) LV_COLOR_GET_B32(c)
+ 204:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # define LV_COLOR_GET_A(c) LV_COLOR_GET_A32(c)
+ 205:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #endif
+ 206:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 207:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** /**********************
+ 208:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  *      TYPEDEFS
+ 209:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  **********************/
+ 210:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 211:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** typedef union {
+ 212:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     uint8_t full; /*must be declared first to set all bits of byte via initializer list */
+ 213:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     union {
+ 214:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         uint8_t blue : 1;
+ 215:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         uint8_t green : 1;
+ 216:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         uint8_t red : 1;
+ 217:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     } ch;
+ 218:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** } lv_color1_t;
+ 219:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 220:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** typedef union {
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 13
+
+
+ 221:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     struct {
+ 222:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         uint8_t blue : 2;
+ 223:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         uint8_t green : 3;
+ 224:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         uint8_t red : 3;
+ 225:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     } ch;
+ 226:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     uint8_t full;
+ 227:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** } lv_color8_t;
+ 228:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 229:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** typedef union {
+ 230:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     struct {
+ 231:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_16_SWAP == 0
+ 232:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         uint16_t blue : 5;
+ 233:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         uint16_t green : 6;
+ 234:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         uint16_t red : 5;
+ 235:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #else
+ 236:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         uint16_t green_h : 3;
+ 237:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         uint16_t red : 5;
+ 238:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         uint16_t blue : 5;
+ 239:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         uint16_t green_l : 3;
+ 240:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #endif
+ 241:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     } ch;
+ 242:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     uint16_t full;
+ 243:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** } lv_color16_t;
+ 244:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 245:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** typedef union {
+ 246:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     struct {
+ 247:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         uint8_t blue;
+ 248:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         uint8_t green;
+ 249:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         uint8_t red;
+ 250:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         uint8_t alpha;
+ 251:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     } ch;
+ 252:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     uint32_t full;
+ 253:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** } lv_color32_t;
+ 254:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 255:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 1
+ 256:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** typedef uint8_t lv_color_int_t;
+ 257:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** typedef lv_color1_t lv_color_t;
+ 258:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define _LV_COLOR_ZERO_INITIALIZER {0x00}
+ 259:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 8
+ 260:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** typedef uint8_t lv_color_int_t;
+ 261:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** typedef lv_color8_t lv_color_t;
+ 262:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define _LV_COLOR_ZERO_INITIALIZER {{0x00, 0x00, 0x00}}
+ 263:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 16
+ 264:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** typedef uint16_t lv_color_int_t;
+ 265:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** typedef lv_color16_t lv_color_t;
+ 266:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # if LV_COLOR_16_SWAP == 0
+ 267:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #  define _LV_COLOR_ZERO_INITIALIZER {{0x00, 0x00, 0x00}}
+ 268:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # else
+ 269:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #  define _LV_COLOR_ZERO_INITIALIZER {{0x00, 0x00, 0x00, 0x00}}
+ 270:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** # endif
+ 271:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 32
+ 272:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** typedef uint32_t lv_color_int_t;
+ 273:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** typedef lv_color32_t lv_color_t;
+ 274:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #define _LV_COLOR_ZERO_INITIALIZER {{0x00, 0x00, 0x00, 0x00}}
+ 275:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #else
+ 276:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #error "Invalid LV_COLOR_DEPTH in lv_conf.h! Set it to 1, 8, 16 or 32!"
+ 277:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #endif
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 14
+
+
+ 278:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 279:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** typedef struct {
+ 280:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     uint16_t h;
+ 281:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     uint8_t s;
+ 282:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     uint8_t v;
+ 283:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** } lv_color_hsv_t;
+ 284:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 285:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** //! @cond Doxygen_Suppress
+ 286:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** /*No idea where the guard is required but else throws warnings in the docs*/
+ 287:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** typedef uint8_t lv_opa_t;
+ 288:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** //! @endcond
+ 289:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 290:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** /**********************
+ 291:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * GLOBAL PROTOTYPES
+ 292:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  **********************/
+ 293:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 294:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** /*In color conversations:
+ 295:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * - When converting to bigger color type the LSB weight of 1 LSB is calculated
+ 296:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  *   E.g. 16 bit Red has 5 bits
+ 297:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  *         8 bit Red has 3 bits
+ 298:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  *        ----------------------
+ 299:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  *        8 bit red LSB = (2^5 - 1) / (2^3 - 1) = 31 / 7 = 4
+ 300:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  *
+ 301:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * - When calculating to smaller color type simply shift out the LSBs
+ 302:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  *   E.g.  8 bit Red has 3 bits
+ 303:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  *        16 bit Red has 5 bits
+ 304:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  *        ----------------------
+ 305:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  *         Shift right with 5 - 3 = 2
+ 306:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  */
+ 307:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** static inline uint8_t lv_color_to1(lv_color_t color)
+ 308:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** {
+ 309:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 1
+ 310:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     return color.full;
+ 311:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 8
+ 312:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     if((LV_COLOR_GET_R(color) & 0x4) || (LV_COLOR_GET_G(color) & 0x4) || (LV_COLOR_GET_B(color) & 0
+ 313:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         return 1;
+ 314:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     }
+ 315:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     else {
+ 316:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         return 0;
+ 317:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     }
+ 318:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 16
+ 319:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     if((LV_COLOR_GET_R(color) & 0x10) || (LV_COLOR_GET_G(color) & 0x20) || (LV_COLOR_GET_B(color) &
+ 320:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         return 1;
+ 321:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     }
+ 322:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     else {
+ 323:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         return 0;
+ 324:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     }
+ 325:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 32
+ 326:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     if((LV_COLOR_GET_R(color) & 0x80) || (LV_COLOR_GET_G(color) & 0x80) || (LV_COLOR_GET_B(color) &
+ 327:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         return 1;
+ 328:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     }
+ 329:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     else {
+ 330:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         return 0;
+ 331:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     }
+ 332:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #endif
+ 333:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** }
+ 334:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 15
+
+
+ 335:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** static inline uint8_t lv_color_to8(lv_color_t color)
+ 336:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** {
+ 337:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 1
+ 338:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     if(color.full == 0)
+ 339:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         return 0;
+ 340:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     else
+ 341:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         return 0xFF;
+ 342:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 8
+ 343:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     return color.full;
+ 344:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 16
+ 345:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     lv_color8_t ret;
+ 346:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_R8(ret, LV_COLOR_GET_R(color) >> 2); /* 5 - 3  = 2*/
+ 347:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_G8(ret, LV_COLOR_GET_G(color) >> 3); /* 6 - 3  = 3*/
+ 348:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_B8(ret, LV_COLOR_GET_B(color) >> 3); /* 5 - 2  = 3*/
+ 349:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     return ret.full;
+ 350:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 32
+ 351:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     lv_color8_t ret;
+ 352:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_R8(ret, LV_COLOR_GET_R(color) >> 5); /* 8 - 3  = 5*/
+ 353:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_G8(ret, LV_COLOR_GET_G(color) >> 5); /* 8 - 3  = 5*/
+ 354:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_B8(ret, LV_COLOR_GET_B(color) >> 6); /* 8 - 2  = 6*/
+ 355:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     return ret.full;
+ 356:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #endif
+ 357:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** }
+ 358:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 359:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** static inline uint16_t lv_color_to16(lv_color_t color)
+ 360:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** {
+ 361:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 1
+ 362:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     if(color.full == 0)
+ 363:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         return 0;
+ 364:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     else
+ 365:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         return 0xFFFF;
+ 366:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 8
+ 367:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     lv_color16_t ret;
+ 368:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_R16(ret, LV_COLOR_GET_R(color) * 4);  /*(2^5 - 1)/(2^3 - 1) = 31/7 = 4*/
+ 369:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_G16(ret, LV_COLOR_GET_G(color) * 9);  /*(2^6 - 1)/(2^3 - 1) = 63/7 = 9*/
+ 370:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_B16(ret, LV_COLOR_GET_B(color) * 10); /*(2^5 - 1)/(2^2 - 1) = 31/3 = 10*/
+ 371:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     return ret.full;
+ 372:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 16
+ 373:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     return color.full;
+ 374:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 32
+ 375:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     lv_color16_t ret;
+ 376:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_R16(ret, LV_COLOR_GET_R(color) >> 3); /* 8 - 5  = 3*/
+ 377:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_G16(ret, LV_COLOR_GET_G(color) >> 2); /* 8 - 6  = 2*/
+ 378:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_B16(ret, LV_COLOR_GET_B(color) >> 3); /* 8 - 5  = 3*/
+ 379:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     return ret.full;
+ 380:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #endif
+ 381:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** }
+ 382:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 383:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** static inline uint32_t lv_color_to32(lv_color_t color)
+ 384:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** {
+ 385:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 1
+ 386:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     if(color.full == 0)
+ 387:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         return 0xFF000000;
+ 388:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     else
+ 389:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****         return 0xFFFFFFFF;
+ 390:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 8
+ 391:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     lv_color32_t ret;
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 16
+
+
+ 392:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_R32(ret, LV_COLOR_GET_R(color) * 36); /*(2^8 - 1)/(2^3 - 1) = 255/7 = 36*/
+ 393:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_G32(ret, LV_COLOR_GET_G(color) * 36); /*(2^8 - 1)/(2^3 - 1) = 255/7 = 36*/
+ 394:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_B32(ret, LV_COLOR_GET_B(color) * 85); /*(2^8 - 1)/(2^2 - 1) = 255/3 = 85*/
+ 395:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_A32(ret, 0xFF);
+ 396:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     return ret.full;
+ 397:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 16
+ 398:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     /**
+ 399:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      * The floating point math for conversion is:
+ 400:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *  valueto = valuefrom * ( (2^bitsto - 1) / (float)(2^bitsfrom - 1) )
+ 401:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      * The faster integer math for conversion is:
+ 402:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *  valueto = ( valuefrom * multiplier + adder ) >> divisor
+ 403:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *   multiplier = FLOOR( ( (2^bitsto - 1) << divisor ) / (float)(2^bitsfrom - 1) )
+ 404:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *
+ 405:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      * Find the first divisor where ( adder >> divisor ) <= 0
+ 406:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *
+ 407:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      * 5-bit to 8-bit: ( 31 * multiplier + adder ) >> divisor = 255
+ 408:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      * divisor  multiplier  adder  min (0)  max (31)
+ 409:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *       0           8      7        7       255
+ 410:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *       1          16     14        7       255
+ 411:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *       2          32     28        7       255
+ 412:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *       3          65     25        3       255
+ 413:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *       4         131     19        1       255
+ 414:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *       5         263      7        0       255
+ 415:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *
+ 416:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      * 6-bit to 8-bit: 255 = ( 63 * multiplier + adder ) >> divisor
+ 417:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      * divisor  multiplier  adder  min (0)  max (63)
+ 418:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *       0           4      3        3       255
+ 419:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *       1           8      6        3       255
+ 420:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *       2          16     12        3       255
+ 421:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *       3          32     24        3       255
+ 422:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *       4          64     48        3       255
+ 423:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *       5         129     33        1       255
+ 424:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      *       6         259      3        0       255
+ 425:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****      */
+ 426:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 427:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     lv_color32_t ret;
+ 428:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_R32(ret, (LV_COLOR_GET_R(color) * 263 + 7) >> 5);
+ 429:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_G32(ret, (LV_COLOR_GET_G(color) * 259 + 3) >> 6);
+ 430:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_B32(ret, (LV_COLOR_GET_B(color) * 263 + 7) >> 5);
+ 431:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_A32(ret, 0xFF);
+ 432:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     return ret.full;
+ 433:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 32
+ 434:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     return color.full;
+ 435:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #endif
+ 436:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** }
+ 437:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 438:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** //! @cond Doxygen_Suppress
+ 439:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 440:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** /**
+ 441:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * Mix two colors with a given ratio.
+ 442:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * @param c1 the first color to mix (usually the foreground)
+ 443:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * @param c2 the second color to mix (usually the background)
+ 444:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * @param mix The ratio of the colors. 0: full `c2`, 255: full `c1`, 127: half `c1` and half`c2`
+ 445:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  * @return the mixed color
+ 446:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****  */
+ 447:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** LV_ATTRIBUTE_FAST_MEM static inline lv_color_t lv_color_mix(lv_color_t c1, lv_color_t c2, uint8_t m
+ 188              		.loc 2 447 48 is_stmt 1 view .LVU40
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 17
+
+
+ 189              	.LBB14:
+ 448:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** {
+ 449:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     lv_color_t ret;
+ 190              		.loc 2 449 5 view .LVU41
+ 450:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_DEPTH != 1
+ 451:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     /*LV_COLOR_DEPTH == 8, 16 or 32*/
+ 452:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_R(ret, LV_MATH_UDIV255((uint16_t) LV_COLOR_GET_R(c1) * mix + LV_COLOR_GET_R(c2) *
+ 191              		.loc 2 452 5 view .LVU42
+ 192              		.loc 2 452 5 is_stmt 0 view .LVU43
+ 193 0038 DA0A     		lsrs	r2, r3, #11
+ 194 003a 00FB02F2 		mul	r2, r0, r2
+ 195 003e 8032     		adds	r2, r2, #128
+ 196 0040 02EB0221 		add	r1, r2, r2, lsl #8
+ 197 0044 02EBC112 		add	r2, r2, r1, lsl #7
+ 198 0048 C2F3C452 		ubfx	r2, r2, #23, #5
+ 199 004c 4FF00001 		mov	r1, #0	@ movhi
+ 200              	.LVL17:
+ 201              		.loc 2 452 5 view .LVU44
+ 202 0050 62F3CF21 		bfi	r1, r2, #11, #5
+ 203              	.LVL18:
+ 453:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 454:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_G(ret, LV_MATH_UDIV255((uint16_t) LV_COLOR_GET_G(c1) * mix + LV_COLOR_GET_G(c2) *
+ 204              		.loc 2 454 5 is_stmt 1 view .LVU45
+ 205 0054 C3F34512 		ubfx	r2, r3, #5, #6
+ 206 0058 02FB00F2 		mul	r2, r2, r0
+ 207 005c 8032     		adds	r2, r2, #128
+ 208 005e 02EB0227 		add	r7, r2, r2, lsl #8
+ 209 0062 02EBC712 		add	r2, r2, r7, lsl #7
+ 210 0066 C2F3C552 		ubfx	r2, r2, #23, #6
+ 211 006a 62F34A11 		bfi	r1, r2, #5, #6
+ 455:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 456:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_B(ret, LV_MATH_UDIV255((uint16_t) LV_COLOR_GET_B(c1) * mix + LV_COLOR_GET_B(c2) *
+ 212              		.loc 2 456 5 view .LVU46
+ 213 006e 03F01F03 		and	r3, r3, #31
+ 214              	.LVL19:
+ 215              		.loc 2 456 5 is_stmt 0 view .LVU47
+ 216 0072 03FB00F3 		mul	r3, r3, r0
+ 217 0076 8033     		adds	r3, r3, #128
+ 218 0078 03EB0322 		add	r2, r3, r3, lsl #8
+ 219 007c 03EBC213 		add	r3, r3, r2, lsl #7
+ 220 0080 C3F3C453 		ubfx	r3, r3, #23, #5
+ 221 0084 63F30401 		bfi	r1, r3, #0, #5
+ 457:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 458:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     LV_COLOR_SET_A(ret, 0xFF);
+ 222              		.loc 2 458 5 is_stmt 1 view .LVU48
+ 223              		.loc 2 458 5 view .LVU49
+ 459:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #else
+ 460:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     /*LV_COLOR_DEPTH == 1*/
+ 461:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     ret.full = mix > LV_OPA_50 ? c1.full : c2.full;
+ 462:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #endif
+ 463:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** 
+ 464:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****     return ret;
+ 224              		.loc 2 464 5 view .LVU50
+ 225              	.LVL20:
+ 226              		.loc 2 464 5 is_stmt 0 view .LVU51
+ 227              	.LBE14:
+ 228              	.LBE13:
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 18
+
+
+ 208:lvgl/src/lv_widgets/lv_led.c ****         rect_dsc.bg_grad_color   = lv_color_mix(rect_dsc.bg_grad_color, LV_COLOR_BLACK, ext->bright
+ 229              		.loc 1 208 31 view .LVU52
+ 230 0088 ADF80610 		strh	r1, [sp, #6]	@ movhi
+ 209:lvgl/src/lv_widgets/lv_led.c ****         rect_dsc.border_color = lv_color_mix(rect_dsc.border_color, LV_COLOR_BLACK, ext->bright);
+ 231              		.loc 1 209 9 is_stmt 1 view .LVU53
+ 209:lvgl/src/lv_widgets/lv_led.c ****         rect_dsc.border_color = lv_color_mix(rect_dsc.border_color, LV_COLOR_BLACK, ext->bright);
+ 232              		.loc 1 209 36 is_stmt 0 view .LVU54
+ 233 008c 2878     		ldrb	r0, [r5]	@ zero_extendqisi2
+ 234 008e BDF80830 		ldrh	r3, [sp, #8]
+ 235              	.LVL21:
+ 236              	.LBB15:
+ 237              	.LBI15:
+ 447:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** {
+ 238              		.loc 2 447 48 is_stmt 1 view .LVU55
+ 239              	.LBB16:
+ 449:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_DEPTH != 1
+ 240              		.loc 2 449 5 view .LVU56
+ 452:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 241              		.loc 2 452 5 view .LVU57
+ 452:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 242              		.loc 2 452 5 is_stmt 0 view .LVU58
+ 243 0092 DA0A     		lsrs	r2, r3, #11
+ 244 0094 00FB02F2 		mul	r2, r0, r2
+ 245 0098 8032     		adds	r2, r2, #128
+ 246 009a 02EB0221 		add	r1, r2, r2, lsl #8
+ 247              	.LVL22:
+ 452:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 248              		.loc 2 452 5 view .LVU59
+ 249 009e 02EBC112 		add	r2, r2, r1, lsl #7
+ 250 00a2 C2F3C452 		ubfx	r2, r2, #23, #5
+ 251 00a6 4FF00001 		mov	r1, #0	@ movhi
+ 252              	.LVL23:
+ 452:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 253              		.loc 2 452 5 view .LVU60
+ 254 00aa 62F3CF21 		bfi	r1, r2, #11, #5
+ 255              	.LVL24:
+ 454:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 256              		.loc 2 454 5 is_stmt 1 view .LVU61
+ 257 00ae C3F34512 		ubfx	r2, r3, #5, #6
+ 258 00b2 02FB00F2 		mul	r2, r2, r0
+ 259 00b6 8032     		adds	r2, r2, #128
+ 260 00b8 02EB0227 		add	r7, r2, r2, lsl #8
+ 261 00bc 02EBC712 		add	r2, r2, r7, lsl #7
+ 262 00c0 C2F3C552 		ubfx	r2, r2, #23, #6
+ 263 00c4 62F34A11 		bfi	r1, r2, #5, #6
+ 456:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 264              		.loc 2 456 5 view .LVU62
+ 265 00c8 03F01F03 		and	r3, r3, #31
+ 266              	.LVL25:
+ 456:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 267              		.loc 2 456 5 is_stmt 0 view .LVU63
+ 268 00cc 03FB00F3 		mul	r3, r3, r0
+ 269 00d0 8033     		adds	r3, r3, #128
+ 270 00d2 03EB0322 		add	r2, r3, r3, lsl #8
+ 271 00d6 03EBC213 		add	r3, r3, r2, lsl #7
+ 272 00da C3F3C453 		ubfx	r3, r3, #23, #5
+ 273 00de 63F30401 		bfi	r1, r3, #0, #5
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 19
+
+
+ 458:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #else
+ 274              		.loc 2 458 5 is_stmt 1 view .LVU64
+ 458:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #else
+ 275              		.loc 2 458 5 view .LVU65
+ 276              		.loc 2 464 5 view .LVU66
+ 277              	.LVL26:
+ 278              		.loc 2 464 5 is_stmt 0 view .LVU67
+ 279              	.LBE16:
+ 280              	.LBE15:
+ 209:lvgl/src/lv_widgets/lv_led.c ****         rect_dsc.border_color = lv_color_mix(rect_dsc.border_color, LV_COLOR_BLACK, ext->bright);
+ 281              		.loc 1 209 36 view .LVU68
+ 282 00e2 ADF80810 		strh	r1, [sp, #8]	@ movhi
+ 210:lvgl/src/lv_widgets/lv_led.c ****         rect_dsc.shadow_color = lv_color_mix(rect_dsc.shadow_color, LV_COLOR_BLACK, ext->bright);
+ 283              		.loc 1 210 9 is_stmt 1 view .LVU69
+ 210:lvgl/src/lv_widgets/lv_led.c ****         rect_dsc.shadow_color = lv_color_mix(rect_dsc.shadow_color, LV_COLOR_BLACK, ext->bright);
+ 284              		.loc 1 210 33 is_stmt 0 view .LVU70
+ 285 00e6 2878     		ldrb	r0, [r5]	@ zero_extendqisi2
+ 286 00e8 BDF81230 		ldrh	r3, [sp, #18]
+ 287              	.LVL27:
+ 288              	.LBB17:
+ 289              	.LBI17:
+ 447:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** {
+ 290              		.loc 2 447 48 is_stmt 1 view .LVU71
+ 291              	.LBB18:
+ 449:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_DEPTH != 1
+ 292              		.loc 2 449 5 view .LVU72
+ 452:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 293              		.loc 2 452 5 view .LVU73
+ 452:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 294              		.loc 2 452 5 is_stmt 0 view .LVU74
+ 295 00ec DA0A     		lsrs	r2, r3, #11
+ 296 00ee 00FB02F2 		mul	r2, r0, r2
+ 297 00f2 8032     		adds	r2, r2, #128
+ 298 00f4 02EB0221 		add	r1, r2, r2, lsl #8
+ 299              	.LVL28:
+ 452:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 300              		.loc 2 452 5 view .LVU75
+ 301 00f8 02EBC112 		add	r2, r2, r1, lsl #7
+ 302 00fc C2F3C452 		ubfx	r2, r2, #23, #5
+ 303 0100 4FF00001 		mov	r1, #0	@ movhi
+ 304              	.LVL29:
+ 452:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 305              		.loc 2 452 5 view .LVU76
+ 306 0104 62F3CF21 		bfi	r1, r2, #11, #5
+ 307              	.LVL30:
+ 454:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 308              		.loc 2 454 5 is_stmt 1 view .LVU77
+ 309 0108 C3F34512 		ubfx	r2, r3, #5, #6
+ 310 010c 02FB00F2 		mul	r2, r2, r0
+ 311 0110 8032     		adds	r2, r2, #128
+ 312 0112 02EB0227 		add	r7, r2, r2, lsl #8
+ 313 0116 02EBC712 		add	r2, r2, r7, lsl #7
+ 314 011a C2F3C552 		ubfx	r2, r2, #23, #6
+ 315 011e 62F34A11 		bfi	r1, r2, #5, #6
+ 456:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 316              		.loc 2 456 5 view .LVU78
+ 317 0122 03F01F03 		and	r3, r3, #31
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 20
+
+
+ 318              	.LVL31:
+ 456:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 319              		.loc 2 456 5 is_stmt 0 view .LVU79
+ 320 0126 03FB00F3 		mul	r3, r3, r0
+ 321 012a 8033     		adds	r3, r3, #128
+ 322 012c 03EB0322 		add	r2, r3, r3, lsl #8
+ 323 0130 03EBC213 		add	r3, r3, r2, lsl #7
+ 324 0134 C3F3C453 		ubfx	r3, r3, #23, #5
+ 325 0138 63F30401 		bfi	r1, r3, #0, #5
+ 458:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #else
+ 326              		.loc 2 458 5 is_stmt 1 view .LVU80
+ 458:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #else
+ 327              		.loc 2 458 5 view .LVU81
+ 328              		.loc 2 464 5 view .LVU82
+ 329              	.LVL32:
+ 330              		.loc 2 464 5 is_stmt 0 view .LVU83
+ 331              	.LBE18:
+ 332              	.LBE17:
+ 210:lvgl/src/lv_widgets/lv_led.c ****         rect_dsc.shadow_color = lv_color_mix(rect_dsc.shadow_color, LV_COLOR_BLACK, ext->bright);
+ 333              		.loc 1 210 33 view .LVU84
+ 334 013c ADF81210 		strh	r1, [sp, #18]	@ movhi
+ 211:lvgl/src/lv_widgets/lv_led.c **** 
+ 335              		.loc 1 211 9 is_stmt 1 view .LVU85
+ 211:lvgl/src/lv_widgets/lv_led.c **** 
+ 336              		.loc 1 211 33 is_stmt 0 view .LVU86
+ 337 0140 2878     		ldrb	r0, [r5]	@ zero_extendqisi2
+ 338 0142 BDF82430 		ldrh	r3, [sp, #36]
+ 339              	.LVL33:
+ 340              	.LBB19:
+ 341              	.LBI19:
+ 447:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** {
+ 342              		.loc 2 447 48 is_stmt 1 view .LVU87
+ 343              	.LBB20:
+ 449:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #if LV_COLOR_DEPTH != 1
+ 344              		.loc 2 449 5 view .LVU88
+ 452:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 345              		.loc 2 452 5 view .LVU89
+ 452:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 346              		.loc 2 452 5 is_stmt 0 view .LVU90
+ 347 0146 DA0A     		lsrs	r2, r3, #11
+ 348 0148 00FB02F2 		mul	r2, r0, r2
+ 349 014c 8032     		adds	r2, r2, #128
+ 350 014e 02EB0221 		add	r1, r2, r2, lsl #8
+ 351              	.LVL34:
+ 452:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 352              		.loc 2 452 5 view .LVU91
+ 353 0152 02EBC112 		add	r2, r2, r1, lsl #7
+ 354 0156 C2F3C452 		ubfx	r2, r2, #23, #5
+ 355 015a 4FF00001 		mov	r1, #0	@ movhi
+ 356              	.LVL35:
+ 452:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 357              		.loc 2 452 5 view .LVU92
+ 358 015e 62F3CF21 		bfi	r1, r2, #11, #5
+ 359              	.LVL36:
+ 454:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 360              		.loc 2 454 5 is_stmt 1 view .LVU93
+ 361 0162 C3F34512 		ubfx	r2, r3, #5, #6
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 21
+
+
+ 362 0166 02FB00F2 		mul	r2, r2, r0
+ 363 016a 8032     		adds	r2, r2, #128
+ 364 016c 02EB0227 		add	r7, r2, r2, lsl #8
+ 365 0170 02EBC712 		add	r2, r2, r7, lsl #7
+ 366 0174 C2F3C552 		ubfx	r2, r2, #23, #6
+ 367 0178 62F34A11 		bfi	r1, r2, #5, #6
+ 456:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 368              		.loc 2 456 5 view .LVU94
+ 369 017c 03F01F03 		and	r3, r3, #31
+ 370              	.LVL37:
+ 456:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 371              		.loc 2 456 5 is_stmt 0 view .LVU95
+ 372 0180 03FB00F3 		mul	r3, r3, r0
+ 373 0184 8033     		adds	r3, r3, #128
+ 374 0186 03EB0322 		add	r2, r3, r3, lsl #8
+ 375 018a 03EBC213 		add	r3, r3, r2, lsl #7
+ 376 018e C3F3C453 		ubfx	r3, r3, #23, #5
+ 377 0192 63F30401 		bfi	r1, r3, #0, #5
+ 458:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #else
+ 378              		.loc 2 458 5 is_stmt 1 view .LVU96
+ 458:lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_color.h **** #else
+ 379              		.loc 2 458 5 view .LVU97
+ 380              		.loc 2 464 5 view .LVU98
+ 381              	.LVL38:
+ 382              		.loc 2 464 5 is_stmt 0 view .LVU99
+ 383              	.LBE20:
+ 384              	.LBE19:
+ 211:lvgl/src/lv_widgets/lv_led.c **** 
+ 385              		.loc 1 211 33 view .LVU100
+ 386 0196 ADF82410 		strh	r1, [sp, #36]	@ movhi
+ 215:lvgl/src/lv_widgets/lv_led.c ****                                 (LV_LED_BRIGHT_MAX - LV_LED_BRIGHT_MIN);
+ 387              		.loc 1 215 9 is_stmt 1 view .LVU101
+ 215:lvgl/src/lv_widgets/lv_led.c ****                                 (LV_LED_BRIGHT_MAX - LV_LED_BRIGHT_MIN);
+ 388              		.loc 1 215 38 is_stmt 0 view .LVU102
+ 389 019a 2A78     		ldrb	r2, [r5]	@ zero_extendqisi2
+ 215:lvgl/src/lv_widgets/lv_led.c ****                                 (LV_LED_BRIGHT_MAX - LV_LED_BRIGHT_MIN);
+ 390              		.loc 1 215 47 view .LVU103
+ 391 019c A2F17803 		sub	r3, r2, #120
+ 215:lvgl/src/lv_widgets/lv_led.c ****                                 (LV_LED_BRIGHT_MAX - LV_LED_BRIGHT_MIN);
+ 392              		.loc 1 215 78 view .LVU104
+ 393 01a0 BDF92620 		ldrsh	r2, [sp, #38]
+ 215:lvgl/src/lv_widgets/lv_led.c ****                                 (LV_LED_BRIGHT_MAX - LV_LED_BRIGHT_MIN);
+ 394              		.loc 1 215 68 view .LVU105
+ 395 01a4 02FB03F2 		mul	r2, r2, r3
+ 215:lvgl/src/lv_widgets/lv_led.c ****                                 (LV_LED_BRIGHT_MAX - LV_LED_BRIGHT_MIN);
+ 396              		.loc 1 215 93 view .LVU106
+ 397 01a8 1049     		ldr	r1, .L18+4
+ 398              	.LVL39:
+ 215:lvgl/src/lv_widgets/lv_led.c ****                                 (LV_LED_BRIGHT_MAX - LV_LED_BRIGHT_MIN);
+ 399              		.loc 1 215 93 view .LVU107
+ 400 01aa 81FB0203 		smull	r0, r3, r1, r2
+ 401 01ae 1344     		add	r3, r3, r2
+ 402 01b0 D217     		asrs	r2, r2, #31
+ 403 01b2 C2EBE312 		rsb	r2, r2, r3, asr #7
+ 215:lvgl/src/lv_widgets/lv_led.c ****                                 (LV_LED_BRIGHT_MAX - LV_LED_BRIGHT_MIN);
+ 404              		.loc 1 215 31 view .LVU108
+ 405 01b6 ADF82620 		strh	r2, [sp, #38]	@ movhi
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 22
+
+
+ 217:lvgl/src/lv_widgets/lv_led.c ****                                  (LV_LED_BRIGHT_MAX - LV_LED_BRIGHT_MIN);
+ 406              		.loc 1 217 9 is_stmt 1 view .LVU109
+ 217:lvgl/src/lv_widgets/lv_led.c ****                                  (LV_LED_BRIGHT_MAX - LV_LED_BRIGHT_MIN);
+ 407              		.loc 1 217 39 is_stmt 0 view .LVU110
+ 408 01ba 2B78     		ldrb	r3, [r5]	@ zero_extendqisi2
+ 217:lvgl/src/lv_widgets/lv_led.c ****                                  (LV_LED_BRIGHT_MAX - LV_LED_BRIGHT_MIN);
+ 409              		.loc 1 217 48 view .LVU111
+ 410 01bc A3F17802 		sub	r2, r3, #120
+ 217:lvgl/src/lv_widgets/lv_led.c ****                                  (LV_LED_BRIGHT_MAX - LV_LED_BRIGHT_MIN);
+ 411              		.loc 1 217 79 view .LVU112
+ 412 01c0 BDF92C30 		ldrsh	r3, [sp, #44]
+ 217:lvgl/src/lv_widgets/lv_led.c ****                                  (LV_LED_BRIGHT_MAX - LV_LED_BRIGHT_MIN);
+ 413              		.loc 1 217 69 view .LVU113
+ 414 01c4 03FB02F3 		mul	r3, r3, r2
+ 217:lvgl/src/lv_widgets/lv_led.c ****                                  (LV_LED_BRIGHT_MAX - LV_LED_BRIGHT_MIN);
+ 415              		.loc 1 217 95 view .LVU114
+ 416 01c8 81FB0321 		smull	r2, r1, r1, r3
+ 417 01cc 1944     		add	r1, r1, r3
+ 418 01ce DB17     		asrs	r3, r3, #31
+ 419 01d0 C3EBE113 		rsb	r3, r3, r1, asr #7
+ 217:lvgl/src/lv_widgets/lv_led.c ****                                  (LV_LED_BRIGHT_MAX - LV_LED_BRIGHT_MIN);
+ 420              		.loc 1 217 32 view .LVU115
+ 421 01d4 ADF82C30 		strh	r3, [sp, #44]	@ movhi
+ 220:lvgl/src/lv_widgets/lv_led.c ****     }
+ 422              		.loc 1 220 9 is_stmt 1 view .LVU116
+ 423 01d8 01AA     		add	r2, sp, #4
+ 424 01da 3146     		mov	r1, r6
+ 425 01dc 04F11000 		add	r0, r4, #16
+ 426 01e0 FFF7FEFF 		bl	lv_draw_rect
+ 427              	.LVL40:
+ 428              	.LBE12:
+ 222:lvgl/src/lv_widgets/lv_led.c **** }
+ 429              		.loc 1 222 12 is_stmt 0 view .LVU117
+ 430 01e4 0020     		movs	r0, #0
+ 431 01e6 13E7     		b	.L13
+ 432              	.L19:
+ 433              		.align	2
+ 434              	.L18:
+ 435 01e8 00000000 		.word	.LANCHOR1
+ 436 01ec 49D6B9F2 		.word	-222702007
+ 437              		.cfi_endproc
+ 438              	.LFE464:
+ 440              		.section	.text.lv_led_create,"ax",%progbits
+ 441              		.align	1
+ 442              		.global	lv_led_create
+ 443              		.syntax unified
+ 444              		.thumb
+ 445              		.thumb_func
+ 446              		.fpu fpv4-sp-d16
+ 448              	lv_led_create:
+ 449              	.LVL41:
+ 450              	.LFB458:
+  55:lvgl/src/lv_widgets/lv_led.c ****     LV_LOG_TRACE("led create started");
+ 451              		.loc 1 55 1 is_stmt 1 view -0
+ 452              		.cfi_startproc
+ 453              		@ args = 0, pretend = 0, frame = 0
+ 454              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 23
+
+
+  55:lvgl/src/lv_widgets/lv_led.c ****     LV_LOG_TRACE("led create started");
+ 455              		.loc 1 55 1 is_stmt 0 view .LVU119
+ 456 0000 70B5     		push	{r4, r5, r6, lr}
+ 457              	.LCFI5:
+ 458              		.cfi_def_cfa_offset 16
+ 459              		.cfi_offset 4, -16
+ 460              		.cfi_offset 5, -12
+ 461              		.cfi_offset 6, -8
+ 462              		.cfi_offset 14, -4
+ 463 0002 0E46     		mov	r6, r1
+  56:lvgl/src/lv_widgets/lv_led.c **** 
+ 464              		.loc 1 56 39 is_stmt 1 view .LVU120
+  59:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_MEM(led);
+ 465              		.loc 1 59 5 view .LVU121
+  59:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_MEM(led);
+ 466              		.loc 1 59 22 is_stmt 0 view .LVU122
+ 467 0004 FFF7FEFF 		bl	lv_obj_create
+ 468              	.LVL42:
+  59:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_MEM(led);
+ 469              		.loc 1 59 22 view .LVU123
+ 470 0008 0446     		mov	r4, r0
+ 471              	.LVL43:
+  60:lvgl/src/lv_widgets/lv_led.c ****     if(led == NULL) return NULL;
+ 472              		.loc 1 60 5 is_stmt 1 view .LVU124
+  60:lvgl/src/lv_widgets/lv_led.c ****     if(led == NULL) return NULL;
+ 473              		.loc 1 60 5 view .LVU125
+ 474 000a FFF7FEFF 		bl	lv_debug_check_null
+ 475              	.LVL44:
+  60:lvgl/src/lv_widgets/lv_led.c ****     if(led == NULL) return NULL;
+ 476              		.loc 1 60 5 is_stmt 0 view .LVU126
+ 477 000e 30B3     		cbz	r0, .L31
+  60:lvgl/src/lv_widgets/lv_led.c ****     if(led == NULL) return NULL;
+ 478              		.loc 1 60 23 is_stmt 1 discriminator 2 view .LVU127
+  61:lvgl/src/lv_widgets/lv_led.c **** 
+ 479              		.loc 1 61 5 discriminator 2 view .LVU128
+  61:lvgl/src/lv_widgets/lv_led.c **** 
+ 480              		.loc 1 61 7 is_stmt 0 discriminator 2 view .LVU129
+ 481 0010 1CB3     		cbz	r4, .L20
+  63:lvgl/src/lv_widgets/lv_led.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(led);
+ 482              		.loc 1 63 5 is_stmt 1 view .LVU130
+  63:lvgl/src/lv_widgets/lv_led.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(led);
+ 483              		.loc 1 63 24 is_stmt 0 view .LVU131
+ 484 0012 264B     		ldr	r3, .L37
+ 485 0014 1B68     		ldr	r3, [r3]
+  63:lvgl/src/lv_widgets/lv_led.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(led);
+ 486              		.loc 1 63 7 view .LVU132
+ 487 0016 43B3     		cbz	r3, .L32
+ 488              	.L24:
+  64:lvgl/src/lv_widgets/lv_led.c **** 
+ 489              		.loc 1 64 5 is_stmt 1 view .LVU133
+  64:lvgl/src/lv_widgets/lv_led.c **** 
+ 490              		.loc 1 64 24 is_stmt 0 view .LVU134
+ 491 0018 254B     		ldr	r3, .L37+4
+ 492 001a 1B68     		ldr	r3, [r3]
+  64:lvgl/src/lv_widgets/lv_led.c **** 
+ 493              		.loc 1 64 7 view .LVU135
+ 494 001c 5BB3     		cbz	r3, .L33
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 24
+
+
+ 495              	.L25:
+  67:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_MEM(ext);
+ 496              		.loc 1 67 5 is_stmt 1 view .LVU136
+  67:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_MEM(ext);
+ 497              		.loc 1 67 26 is_stmt 0 view .LVU137
+ 498 001e 0121     		movs	r1, #1
+ 499 0020 2046     		mov	r0, r4
+ 500 0022 FFF7FEFF 		bl	lv_obj_allocate_ext_attr
+ 501              	.LVL45:
+ 502 0026 0546     		mov	r5, r0
+ 503              	.LVL46:
+  68:lvgl/src/lv_widgets/lv_led.c ****     if(ext == NULL) {
+ 504              		.loc 1 68 5 is_stmt 1 view .LVU138
+  68:lvgl/src/lv_widgets/lv_led.c ****     if(ext == NULL) {
+ 505              		.loc 1 68 5 view .LVU139
+ 506 0028 FFF7FEFF 		bl	lv_debug_check_null
+ 507              	.LVL47:
+  68:lvgl/src/lv_widgets/lv_led.c ****     if(ext == NULL) {
+ 508              		.loc 1 68 5 is_stmt 0 view .LVU140
+ 509 002c 48B3     		cbz	r0, .L34
+  68:lvgl/src/lv_widgets/lv_led.c ****     if(ext == NULL) {
+ 510              		.loc 1 68 23 is_stmt 1 discriminator 2 view .LVU141
+  69:lvgl/src/lv_widgets/lv_led.c ****         lv_obj_del(led);
+ 511              		.loc 1 69 5 discriminator 2 view .LVU142
+  69:lvgl/src/lv_widgets/lv_led.c ****         lv_obj_del(led);
+ 512              		.loc 1 69 7 is_stmt 0 discriminator 2 view .LVU143
+ 513 002e 75B3     		cbz	r5, .L35
+  74:lvgl/src/lv_widgets/lv_led.c **** 
+ 514              		.loc 1 74 5 is_stmt 1 view .LVU144
+  74:lvgl/src/lv_widgets/lv_led.c **** 
+ 515              		.loc 1 74 17 is_stmt 0 view .LVU145
+ 516 0030 FF23     		movs	r3, #255
+ 517 0032 2B70     		strb	r3, [r5]
+  76:lvgl/src/lv_widgets/lv_led.c ****     lv_obj_set_design_cb(led, lv_led_design);
+ 518              		.loc 1 76 5 is_stmt 1 view .LVU146
+ 519 0034 1F49     		ldr	r1, .L37+8
+ 520 0036 2046     		mov	r0, r4
+ 521 0038 FFF7FEFF 		bl	lv_obj_set_signal_cb
+ 522              	.LVL48:
+  77:lvgl/src/lv_widgets/lv_led.c **** 
+ 523              		.loc 1 77 5 view .LVU147
+ 524 003c 1E49     		ldr	r1, .L37+12
+ 525 003e 2046     		mov	r0, r4
+ 526 0040 FFF7FEFF 		bl	lv_obj_set_design_cb
+ 527              	.LVL49:
+  80:lvgl/src/lv_widgets/lv_led.c ****         lv_obj_set_size(led, LV_LED_WIDTH_DEF, LV_LED_HEIGHT_DEF);
+ 528              		.loc 1 80 5 view .LVU148
+  80:lvgl/src/lv_widgets/lv_led.c ****         lv_obj_set_size(led, LV_LED_WIDTH_DEF, LV_LED_HEIGHT_DEF);
+ 529              		.loc 1 80 7 is_stmt 0 view .LVU149
+ 530 0044 46B3     		cbz	r6, .L36
+ 531              	.LBB21:
+  87:lvgl/src/lv_widgets/lv_led.c ****         ext->bright             = copy_ext->bright;
+ 532              		.loc 1 87 9 is_stmt 1 view .LVU150
+  87:lvgl/src/lv_widgets/lv_led.c ****         ext->bright             = copy_ext->bright;
+ 533              		.loc 1 87 35 is_stmt 0 view .LVU151
+ 534 0046 3046     		mov	r0, r6
+ 535 0048 FFF7FEFF 		bl	lv_obj_get_ext_attr
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 25
+
+
+ 536              	.LVL50:
+  88:lvgl/src/lv_widgets/lv_led.c **** 
+ 537              		.loc 1 88 9 is_stmt 1 view .LVU152
+  88:lvgl/src/lv_widgets/lv_led.c **** 
+ 538              		.loc 1 88 43 is_stmt 0 view .LVU153
+ 539 004c 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+  88:lvgl/src/lv_widgets/lv_led.c **** 
+ 540              		.loc 1 88 33 view .LVU154
+ 541 004e 2B70     		strb	r3, [r5]
+  91:lvgl/src/lv_widgets/lv_led.c ****     }
+ 542              		.loc 1 91 9 is_stmt 1 view .LVU155
+ 543 0050 FF22     		movs	r2, #255
+ 544 0052 1146     		mov	r1, r2
+ 545 0054 2046     		mov	r0, r4
+ 546              	.LVL51:
+  91:lvgl/src/lv_widgets/lv_led.c ****     }
+ 547              		.loc 1 91 9 is_stmt 0 view .LVU156
+ 548 0056 FFF7FEFF 		bl	lv_obj_refresh_style
+ 549              	.LVL52:
+ 550              	.L20:
+  91:lvgl/src/lv_widgets/lv_led.c ****     }
+ 551              		.loc 1 91 9 view .LVU157
+ 552              	.LBE21:
+  97:lvgl/src/lv_widgets/lv_led.c **** 
+ 553              		.loc 1 97 1 view .LVU158
+ 554 005a 2046     		mov	r0, r4
+ 555 005c 70BD     		pop	{r4, r5, r6, pc}
+ 556              	.LVL53:
+ 557              	.L31:
+  60:lvgl/src/lv_widgets/lv_led.c ****     if(led == NULL) return NULL;
+ 558              		.loc 1 60 5 is_stmt 1 discriminator 1 view .LVU159
+  60:lvgl/src/lv_widgets/lv_led.c ****     if(led == NULL) return NULL;
+ 559              		.loc 1 60 5 discriminator 1 view .LVU160
+ 560 005e 2246     		mov	r2, r4
+ 561 0060 0023     		movs	r3, #0
+ 562 0062 1648     		ldr	r0, .L37+16
+ 563 0064 FFF7FEFF 		bl	lv_debug_log_error
+ 564              	.LVL54:
+ 565              	.L22:
+  60:lvgl/src/lv_widgets/lv_led.c ****     if(led == NULL) return NULL;
+ 566              		.loc 1 60 5 discriminator 1 view .LVU161
+  60:lvgl/src/lv_widgets/lv_led.c ****     if(led == NULL) return NULL;
+ 567              		.loc 1 60 5 discriminator 1 view .LVU162
+ 568 0068 FEE7     		b	.L22
+ 569              	.L32:
+  63:lvgl/src/lv_widgets/lv_led.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(led);
+ 570              		.loc 1 63 33 discriminator 1 view .LVU163
+  63:lvgl/src/lv_widgets/lv_led.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(led);
+ 571              		.loc 1 63 51 is_stmt 0 discriminator 1 view .LVU164
+ 572 006a 2046     		mov	r0, r4
+ 573 006c FFF7FEFF 		bl	lv_obj_get_signal_cb
+ 574              	.LVL55:
+  63:lvgl/src/lv_widgets/lv_led.c ****     if(ancestor_design == NULL) ancestor_design = lv_obj_get_design_cb(led);
+ 575              		.loc 1 63 49 discriminator 1 view .LVU165
+ 576 0070 0E4B     		ldr	r3, .L37
+ 577 0072 1860     		str	r0, [r3]
+ 578 0074 D0E7     		b	.L24
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 26
+
+
+ 579              	.L33:
+  64:lvgl/src/lv_widgets/lv_led.c **** 
+ 580              		.loc 1 64 33 is_stmt 1 discriminator 1 view .LVU166
+  64:lvgl/src/lv_widgets/lv_led.c **** 
+ 581              		.loc 1 64 51 is_stmt 0 discriminator 1 view .LVU167
+ 582 0076 2046     		mov	r0, r4
+ 583 0078 FFF7FEFF 		bl	lv_obj_get_design_cb
+ 584              	.LVL56:
+  64:lvgl/src/lv_widgets/lv_led.c **** 
+ 585              		.loc 1 64 49 discriminator 1 view .LVU168
+ 586 007c 0C4B     		ldr	r3, .L37+4
+ 587 007e 1860     		str	r0, [r3]
+ 588 0080 CDE7     		b	.L25
+ 589              	.LVL57:
+ 590              	.L34:
+  68:lvgl/src/lv_widgets/lv_led.c ****     if(ext == NULL) {
+ 591              		.loc 1 68 5 is_stmt 1 discriminator 1 view .LVU169
+  68:lvgl/src/lv_widgets/lv_led.c ****     if(ext == NULL) {
+ 592              		.loc 1 68 5 discriminator 1 view .LVU170
+ 593 0082 2A46     		mov	r2, r5
+ 594 0084 0023     		movs	r3, #0
+ 595 0086 0D48     		ldr	r0, .L37+16
+ 596 0088 FFF7FEFF 		bl	lv_debug_log_error
+ 597              	.LVL58:
+ 598              	.L27:
+  68:lvgl/src/lv_widgets/lv_led.c ****     if(ext == NULL) {
+ 599              		.loc 1 68 5 discriminator 2 view .LVU171
+  68:lvgl/src/lv_widgets/lv_led.c ****     if(ext == NULL) {
+ 600              		.loc 1 68 5 discriminator 2 view .LVU172
+ 601 008c FEE7     		b	.L27
+ 602              	.L35:
+  70:lvgl/src/lv_widgets/lv_led.c ****         return NULL;
+ 603              		.loc 1 70 9 view .LVU173
+ 604 008e 2046     		mov	r0, r4
+ 605 0090 FFF7FEFF 		bl	lv_obj_del
+ 606              	.LVL59:
+  71:lvgl/src/lv_widgets/lv_led.c ****     }
+ 607              		.loc 1 71 9 view .LVU174
+  71:lvgl/src/lv_widgets/lv_led.c ****     }
+ 608              		.loc 1 71 16 is_stmt 0 view .LVU175
+ 609 0094 0024     		movs	r4, #0
+ 610              	.LVL60:
+  71:lvgl/src/lv_widgets/lv_led.c ****     }
+ 611              		.loc 1 71 16 view .LVU176
+ 612 0096 E0E7     		b	.L20
+ 613              	.LVL61:
+ 614              	.L36:
+  81:lvgl/src/lv_widgets/lv_led.c **** 
+ 615              		.loc 1 81 9 is_stmt 1 view .LVU177
+ 616 0098 1A22     		movs	r2, #26
+ 617 009a 1146     		mov	r1, r2
+ 618 009c 2046     		mov	r0, r4
+ 619 009e FFF7FEFF 		bl	lv_obj_set_size
+ 620              	.LVL62:
+  83:lvgl/src/lv_widgets/lv_led.c ****     }
+ 621              		.loc 1 83 9 view .LVU178
+ 622 00a2 1321     		movs	r1, #19
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 27
+
+
+ 623 00a4 2046     		mov	r0, r4
+ 624 00a6 FFF7FEFF 		bl	lv_theme_apply
+ 625              	.LVL63:
+ 626 00aa D6E7     		b	.L20
+ 627              	.L38:
+ 628              		.align	2
+ 629              	.L37:
+ 630 00ac 00000000 		.word	.LANCHOR0
+ 631 00b0 00000000 		.word	.LANCHOR1
+ 632 00b4 00000000 		.word	lv_led_signal
+ 633 00b8 00000000 		.word	lv_led_design
+ 634 00bc 00000000 		.word	.LC1
+ 635              		.cfi_endproc
+ 636              	.LFE458:
+ 638              		.section	.text.lv_led_set_bright,"ax",%progbits
+ 639              		.align	1
+ 640              		.global	lv_led_set_bright
+ 641              		.syntax unified
+ 642              		.thumb
+ 643              		.thumb_func
+ 644              		.fpu fpv4-sp-d16
+ 646              	lv_led_set_bright:
+ 647              	.LVL64:
+ 648              	.LFB459:
+ 109:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_OBJ(led, LV_OBJX_NAME);
+ 649              		.loc 1 109 1 view -0
+ 650              		.cfi_startproc
+ 651              		@ args = 0, pretend = 0, frame = 0
+ 652              		@ frame_needed = 0, uses_anonymous_args = 0
+ 109:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_OBJ(led, LV_OBJX_NAME);
+ 653              		.loc 1 109 1 is_stmt 0 view .LVU180
+ 654 0000 38B5     		push	{r3, r4, r5, lr}
+ 655              	.LCFI6:
+ 656              		.cfi_def_cfa_offset 16
+ 657              		.cfi_offset 3, -16
+ 658              		.cfi_offset 4, -12
+ 659              		.cfi_offset 5, -8
+ 660              		.cfi_offset 14, -4
+ 661 0002 0546     		mov	r5, r0
+ 662 0004 0C46     		mov	r4, r1
+ 110:lvgl/src/lv_widgets/lv_led.c **** 
+ 663              		.loc 1 110 5 is_stmt 1 view .LVU181
+ 110:lvgl/src/lv_widgets/lv_led.c **** 
+ 664              		.loc 1 110 5 view .LVU182
+ 665 0006 FFF7FEFF 		bl	lv_debug_check_null
+ 666              	.LVL65:
+ 110:lvgl/src/lv_widgets/lv_led.c **** 
+ 667              		.loc 1 110 5 is_stmt 0 view .LVU183
+ 668 000a 28B9     		cbnz	r0, .L40
+ 110:lvgl/src/lv_widgets/lv_led.c **** 
+ 669              		.loc 1 110 5 is_stmt 1 discriminator 1 view .LVU184
+ 110:lvgl/src/lv_widgets/lv_led.c **** 
+ 670              		.loc 1 110 5 discriminator 1 view .LVU185
+ 671 000c 2A46     		mov	r2, r5
+ 672 000e 0023     		movs	r3, #0
+ 673 0010 0848     		ldr	r0, .L46
+ 674 0012 FFF7FEFF 		bl	lv_debug_log_error
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 28
+
+
+ 675              	.LVL66:
+ 676              	.L41:
+ 110:lvgl/src/lv_widgets/lv_led.c **** 
+ 677              		.loc 1 110 5 discriminator 1 view .LVU186
+ 110:lvgl/src/lv_widgets/lv_led.c **** 
+ 678              		.loc 1 110 5 discriminator 1 view .LVU187
+ 679 0016 FEE7     		b	.L41
+ 680              	.L40:
+ 110:lvgl/src/lv_widgets/lv_led.c **** 
+ 681              		.loc 1 110 37 discriminator 2 view .LVU188
+ 113:lvgl/src/lv_widgets/lv_led.c ****     if(ext->bright == bright) return;
+ 682              		.loc 1 113 5 discriminator 2 view .LVU189
+ 113:lvgl/src/lv_widgets/lv_led.c ****     if(ext->bright == bright) return;
+ 683              		.loc 1 113 26 is_stmt 0 discriminator 2 view .LVU190
+ 684 0018 2846     		mov	r0, r5
+ 685 001a FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 686              	.LVL67:
+ 114:lvgl/src/lv_widgets/lv_led.c **** 
+ 687              		.loc 1 114 5 is_stmt 1 discriminator 2 view .LVU191
+ 114:lvgl/src/lv_widgets/lv_led.c **** 
+ 688              		.loc 1 114 11 is_stmt 0 discriminator 2 view .LVU192
+ 689 001e 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 114:lvgl/src/lv_widgets/lv_led.c **** 
+ 690              		.loc 1 114 7 discriminator 2 view .LVU193
+ 691 0020 A342     		cmp	r3, r4
+ 692 0022 06D0     		beq	.L39
+ 116:lvgl/src/lv_widgets/lv_led.c ****     if(bright >= LV_LED_BRIGHT_MAX) bright = LV_LED_BRIGHT_MAX;
+ 693              		.loc 1 116 5 is_stmt 1 view .LVU194
+ 116:lvgl/src/lv_widgets/lv_led.c ****     if(bright >= LV_LED_BRIGHT_MAX) bright = LV_LED_BRIGHT_MAX;
+ 694              		.loc 1 116 7 is_stmt 0 view .LVU195
+ 695 0024 782C     		cmp	r4, #120
+ 696 0026 00D8     		bhi	.L43
+ 116:lvgl/src/lv_widgets/lv_led.c ****     if(bright >= LV_LED_BRIGHT_MAX) bright = LV_LED_BRIGHT_MAX;
+ 697              		.loc 1 116 44 view .LVU196
+ 698 0028 7824     		movs	r4, #120
+ 699              	.L43:
+ 700              	.LVL68:
+ 119:lvgl/src/lv_widgets/lv_led.c **** 
+ 701              		.loc 1 119 5 is_stmt 1 view .LVU197
+ 119:lvgl/src/lv_widgets/lv_led.c **** 
+ 702              		.loc 1 119 17 is_stmt 0 view .LVU198
+ 703 002a 0470     		strb	r4, [r0]
+ 122:lvgl/src/lv_widgets/lv_led.c **** }
+ 704              		.loc 1 122 5 is_stmt 1 view .LVU199
+ 705 002c 2846     		mov	r0, r5
+ 706              	.LVL69:
+ 122:lvgl/src/lv_widgets/lv_led.c **** }
+ 707              		.loc 1 122 5 is_stmt 0 view .LVU200
+ 708 002e FFF7FEFF 		bl	lv_obj_invalidate
+ 709              	.LVL70:
+ 710              	.L39:
+ 123:lvgl/src/lv_widgets/lv_led.c **** 
+ 711              		.loc 1 123 1 view .LVU201
+ 712 0032 38BD     		pop	{r3, r4, r5, pc}
+ 713              	.LVL71:
+ 714              	.L47:
+ 123:lvgl/src/lv_widgets/lv_led.c **** 
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 29
+
+
+ 715              		.loc 1 123 1 view .LVU202
+ 716              		.align	2
+ 717              	.L46:
+ 718 0034 00000000 		.word	.LC2
+ 719              		.cfi_endproc
+ 720              	.LFE459:
+ 722              		.section	.text.lv_led_on,"ax",%progbits
+ 723              		.align	1
+ 724              		.global	lv_led_on
+ 725              		.syntax unified
+ 726              		.thumb
+ 727              		.thumb_func
+ 728              		.fpu fpv4-sp-d16
+ 730              	lv_led_on:
+ 731              	.LVL72:
+ 732              	.LFB460:
+ 130:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_OBJ(led, LV_OBJX_NAME);
+ 733              		.loc 1 130 1 is_stmt 1 view -0
+ 734              		.cfi_startproc
+ 735              		@ args = 0, pretend = 0, frame = 0
+ 736              		@ frame_needed = 0, uses_anonymous_args = 0
+ 130:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_OBJ(led, LV_OBJX_NAME);
+ 737              		.loc 1 130 1 is_stmt 0 view .LVU204
+ 738 0000 10B5     		push	{r4, lr}
+ 739              	.LCFI7:
+ 740              		.cfi_def_cfa_offset 8
+ 741              		.cfi_offset 4, -8
+ 742              		.cfi_offset 14, -4
+ 743 0002 0446     		mov	r4, r0
+ 131:lvgl/src/lv_widgets/lv_led.c **** 
+ 744              		.loc 1 131 5 is_stmt 1 view .LVU205
+ 131:lvgl/src/lv_widgets/lv_led.c **** 
+ 745              		.loc 1 131 5 view .LVU206
+ 746 0004 FFF7FEFF 		bl	lv_debug_check_null
+ 747              	.LVL73:
+ 131:lvgl/src/lv_widgets/lv_led.c **** 
+ 748              		.loc 1 131 5 is_stmt 0 view .LVU207
+ 749 0008 28B9     		cbnz	r0, .L49
+ 131:lvgl/src/lv_widgets/lv_led.c **** 
+ 750              		.loc 1 131 5 is_stmt 1 discriminator 1 view .LVU208
+ 131:lvgl/src/lv_widgets/lv_led.c **** 
+ 751              		.loc 1 131 5 discriminator 1 view .LVU209
+ 752 000a 2246     		mov	r2, r4
+ 753 000c 0023     		movs	r3, #0
+ 754 000e 0448     		ldr	r0, .L52
+ 755 0010 FFF7FEFF 		bl	lv_debug_log_error
+ 756              	.LVL74:
+ 757              	.L50:
+ 131:lvgl/src/lv_widgets/lv_led.c **** 
+ 758              		.loc 1 131 5 discriminator 1 view .LVU210
+ 131:lvgl/src/lv_widgets/lv_led.c **** 
+ 759              		.loc 1 131 5 discriminator 1 view .LVU211
+ 760 0014 FEE7     		b	.L50
+ 761              	.L49:
+ 131:lvgl/src/lv_widgets/lv_led.c **** 
+ 762              		.loc 1 131 37 discriminator 2 view .LVU212
+ 133:lvgl/src/lv_widgets/lv_led.c **** }
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 30
+
+
+ 763              		.loc 1 133 5 discriminator 2 view .LVU213
+ 764 0016 FF21     		movs	r1, #255
+ 765 0018 2046     		mov	r0, r4
+ 766 001a FFF7FEFF 		bl	lv_led_set_bright
+ 767              	.LVL75:
+ 134:lvgl/src/lv_widgets/lv_led.c **** 
+ 768              		.loc 1 134 1 is_stmt 0 discriminator 2 view .LVU214
+ 769 001e 10BD     		pop	{r4, pc}
+ 770              	.LVL76:
+ 771              	.L53:
+ 134:lvgl/src/lv_widgets/lv_led.c **** 
+ 772              		.loc 1 134 1 discriminator 2 view .LVU215
+ 773              		.align	2
+ 774              	.L52:
+ 775 0020 00000000 		.word	.LC2
+ 776              		.cfi_endproc
+ 777              	.LFE460:
+ 779              		.section	.text.lv_led_off,"ax",%progbits
+ 780              		.align	1
+ 781              		.global	lv_led_off
+ 782              		.syntax unified
+ 783              		.thumb
+ 784              		.thumb_func
+ 785              		.fpu fpv4-sp-d16
+ 787              	lv_led_off:
+ 788              	.LVL77:
+ 789              	.LFB461:
+ 141:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_OBJ(led, LV_OBJX_NAME);
+ 790              		.loc 1 141 1 is_stmt 1 view -0
+ 791              		.cfi_startproc
+ 792              		@ args = 0, pretend = 0, frame = 0
+ 793              		@ frame_needed = 0, uses_anonymous_args = 0
+ 141:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_OBJ(led, LV_OBJX_NAME);
+ 794              		.loc 1 141 1 is_stmt 0 view .LVU217
+ 795 0000 10B5     		push	{r4, lr}
+ 796              	.LCFI8:
+ 797              		.cfi_def_cfa_offset 8
+ 798              		.cfi_offset 4, -8
+ 799              		.cfi_offset 14, -4
+ 800 0002 0446     		mov	r4, r0
+ 142:lvgl/src/lv_widgets/lv_led.c **** 
+ 801              		.loc 1 142 5 is_stmt 1 view .LVU218
+ 142:lvgl/src/lv_widgets/lv_led.c **** 
+ 802              		.loc 1 142 5 view .LVU219
+ 803 0004 FFF7FEFF 		bl	lv_debug_check_null
+ 804              	.LVL78:
+ 142:lvgl/src/lv_widgets/lv_led.c **** 
+ 805              		.loc 1 142 5 is_stmt 0 view .LVU220
+ 806 0008 28B9     		cbnz	r0, .L55
+ 142:lvgl/src/lv_widgets/lv_led.c **** 
+ 807              		.loc 1 142 5 is_stmt 1 discriminator 1 view .LVU221
+ 142:lvgl/src/lv_widgets/lv_led.c **** 
+ 808              		.loc 1 142 5 discriminator 1 view .LVU222
+ 809 000a 2246     		mov	r2, r4
+ 810 000c 0023     		movs	r3, #0
+ 811 000e 0448     		ldr	r0, .L58
+ 812 0010 FFF7FEFF 		bl	lv_debug_log_error
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 31
+
+
+ 813              	.LVL79:
+ 814              	.L56:
+ 142:lvgl/src/lv_widgets/lv_led.c **** 
+ 815              		.loc 1 142 5 discriminator 1 view .LVU223
+ 142:lvgl/src/lv_widgets/lv_led.c **** 
+ 816              		.loc 1 142 5 discriminator 1 view .LVU224
+ 817 0014 FEE7     		b	.L56
+ 818              	.L55:
+ 142:lvgl/src/lv_widgets/lv_led.c **** 
+ 819              		.loc 1 142 37 discriminator 2 view .LVU225
+ 144:lvgl/src/lv_widgets/lv_led.c **** }
+ 820              		.loc 1 144 5 discriminator 2 view .LVU226
+ 821 0016 7821     		movs	r1, #120
+ 822 0018 2046     		mov	r0, r4
+ 823 001a FFF7FEFF 		bl	lv_led_set_bright
+ 824              	.LVL80:
+ 145:lvgl/src/lv_widgets/lv_led.c **** 
+ 825              		.loc 1 145 1 is_stmt 0 discriminator 2 view .LVU227
+ 826 001e 10BD     		pop	{r4, pc}
+ 827              	.LVL81:
+ 828              	.L59:
+ 145:lvgl/src/lv_widgets/lv_led.c **** 
+ 829              		.loc 1 145 1 discriminator 2 view .LVU228
+ 830              		.align	2
+ 831              	.L58:
+ 832 0020 00000000 		.word	.LC2
+ 833              		.cfi_endproc
+ 834              	.LFE461:
+ 836              		.section	.text.lv_led_get_bright,"ax",%progbits
+ 837              		.align	1
+ 838              		.global	lv_led_get_bright
+ 839              		.syntax unified
+ 840              		.thumb
+ 841              		.thumb_func
+ 842              		.fpu fpv4-sp-d16
+ 844              	lv_led_get_bright:
+ 845              	.LVL82:
+ 846              	.LFB463:
+ 172:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_OBJ(led, LV_OBJX_NAME);
+ 847              		.loc 1 172 1 is_stmt 1 view -0
+ 848              		.cfi_startproc
+ 849              		@ args = 0, pretend = 0, frame = 0
+ 850              		@ frame_needed = 0, uses_anonymous_args = 0
+ 172:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_OBJ(led, LV_OBJX_NAME);
+ 851              		.loc 1 172 1 is_stmt 0 view .LVU230
+ 852 0000 10B5     		push	{r4, lr}
+ 853              	.LCFI9:
+ 854              		.cfi_def_cfa_offset 8
+ 855              		.cfi_offset 4, -8
+ 856              		.cfi_offset 14, -4
+ 857 0002 0446     		mov	r4, r0
+ 173:lvgl/src/lv_widgets/lv_led.c **** 
+ 858              		.loc 1 173 5 is_stmt 1 view .LVU231
+ 173:lvgl/src/lv_widgets/lv_led.c **** 
+ 859              		.loc 1 173 5 view .LVU232
+ 860 0004 FFF7FEFF 		bl	lv_debug_check_null
+ 861              	.LVL83:
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 32
+
+
+ 173:lvgl/src/lv_widgets/lv_led.c **** 
+ 862              		.loc 1 173 5 is_stmt 0 view .LVU233
+ 863 0008 28B9     		cbnz	r0, .L61
+ 173:lvgl/src/lv_widgets/lv_led.c **** 
+ 864              		.loc 1 173 5 is_stmt 1 discriminator 1 view .LVU234
+ 173:lvgl/src/lv_widgets/lv_led.c **** 
+ 865              		.loc 1 173 5 discriminator 1 view .LVU235
+ 866 000a 2246     		mov	r2, r4
+ 867 000c 0023     		movs	r3, #0
+ 868 000e 0448     		ldr	r0, .L64
+ 869 0010 FFF7FEFF 		bl	lv_debug_log_error
+ 870              	.LVL84:
+ 871              	.L62:
+ 173:lvgl/src/lv_widgets/lv_led.c **** 
+ 872              		.loc 1 173 5 discriminator 1 view .LVU236
+ 173:lvgl/src/lv_widgets/lv_led.c **** 
+ 873              		.loc 1 173 5 discriminator 1 view .LVU237
+ 874 0014 FEE7     		b	.L62
+ 875              	.L61:
+ 173:lvgl/src/lv_widgets/lv_led.c **** 
+ 876              		.loc 1 173 37 discriminator 2 view .LVU238
+ 175:lvgl/src/lv_widgets/lv_led.c ****     return ext->bright;
+ 877              		.loc 1 175 5 discriminator 2 view .LVU239
+ 175:lvgl/src/lv_widgets/lv_led.c ****     return ext->bright;
+ 878              		.loc 1 175 26 is_stmt 0 discriminator 2 view .LVU240
+ 879 0016 2046     		mov	r0, r4
+ 880 0018 FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 881              	.LVL85:
+ 176:lvgl/src/lv_widgets/lv_led.c **** }
+ 882              		.loc 1 176 5 is_stmt 1 discriminator 2 view .LVU241
+ 177:lvgl/src/lv_widgets/lv_led.c **** 
+ 883              		.loc 1 177 1 is_stmt 0 discriminator 2 view .LVU242
+ 884 001c 0078     		ldrb	r0, [r0]	@ zero_extendqisi2
+ 885              	.LVL86:
+ 177:lvgl/src/lv_widgets/lv_led.c **** 
+ 886              		.loc 1 177 1 discriminator 2 view .LVU243
+ 887 001e 10BD     		pop	{r4, pc}
+ 888              	.LVL87:
+ 889              	.L65:
+ 177:lvgl/src/lv_widgets/lv_led.c **** 
+ 890              		.loc 1 177 1 discriminator 2 view .LVU244
+ 891              		.align	2
+ 892              	.L64:
+ 893 0020 00000000 		.word	.LC2
+ 894              		.cfi_endproc
+ 895              	.LFE463:
+ 897              		.section	.text.lv_led_toggle,"ax",%progbits
+ 898              		.align	1
+ 899              		.global	lv_led_toggle
+ 900              		.syntax unified
+ 901              		.thumb
+ 902              		.thumb_func
+ 903              		.fpu fpv4-sp-d16
+ 905              	lv_led_toggle:
+ 906              	.LVL88:
+ 907              	.LFB462:
+ 152:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_OBJ(led, LV_OBJX_NAME);
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 33
+
+
+ 908              		.loc 1 152 1 is_stmt 1 view -0
+ 909              		.cfi_startproc
+ 910              		@ args = 0, pretend = 0, frame = 0
+ 911              		@ frame_needed = 0, uses_anonymous_args = 0
+ 152:lvgl/src/lv_widgets/lv_led.c ****     LV_ASSERT_OBJ(led, LV_OBJX_NAME);
+ 912              		.loc 1 152 1 is_stmt 0 view .LVU246
+ 913 0000 10B5     		push	{r4, lr}
+ 914              	.LCFI10:
+ 915              		.cfi_def_cfa_offset 8
+ 916              		.cfi_offset 4, -8
+ 917              		.cfi_offset 14, -4
+ 918 0002 0446     		mov	r4, r0
+ 153:lvgl/src/lv_widgets/lv_led.c **** 
+ 919              		.loc 1 153 5 is_stmt 1 view .LVU247
+ 153:lvgl/src/lv_widgets/lv_led.c **** 
+ 920              		.loc 1 153 5 view .LVU248
+ 921 0004 FFF7FEFF 		bl	lv_debug_check_null
+ 922              	.LVL89:
+ 153:lvgl/src/lv_widgets/lv_led.c **** 
+ 923              		.loc 1 153 5 is_stmt 0 view .LVU249
+ 924 0008 28B9     		cbnz	r0, .L67
+ 153:lvgl/src/lv_widgets/lv_led.c **** 
+ 925              		.loc 1 153 5 is_stmt 1 discriminator 1 view .LVU250
+ 153:lvgl/src/lv_widgets/lv_led.c **** 
+ 926              		.loc 1 153 5 discriminator 1 view .LVU251
+ 927 000a 2246     		mov	r2, r4
+ 928 000c 0023     		movs	r3, #0
+ 929 000e 0848     		ldr	r0, .L72
+ 930 0010 FFF7FEFF 		bl	lv_debug_log_error
+ 931              	.LVL90:
+ 932              	.L68:
+ 153:lvgl/src/lv_widgets/lv_led.c **** 
+ 933              		.loc 1 153 5 discriminator 1 view .LVU252
+ 153:lvgl/src/lv_widgets/lv_led.c **** 
+ 934              		.loc 1 153 5 discriminator 1 view .LVU253
+ 935 0014 FEE7     		b	.L68
+ 936              	.L67:
+ 153:lvgl/src/lv_widgets/lv_led.c **** 
+ 937              		.loc 1 153 37 discriminator 2 view .LVU254
+ 155:lvgl/src/lv_widgets/lv_led.c ****     if(bright > (LV_LED_BRIGHT_MIN + LV_LED_BRIGHT_MAX) >> 1)
+ 938              		.loc 1 155 5 discriminator 2 view .LVU255
+ 155:lvgl/src/lv_widgets/lv_led.c ****     if(bright > (LV_LED_BRIGHT_MIN + LV_LED_BRIGHT_MAX) >> 1)
+ 939              		.loc 1 155 22 is_stmt 0 discriminator 2 view .LVU256
+ 940 0016 2046     		mov	r0, r4
+ 941 0018 FFF7FEFF 		bl	lv_led_get_bright
+ 942              	.LVL91:
+ 156:lvgl/src/lv_widgets/lv_led.c ****         lv_led_off(led);
+ 943              		.loc 1 156 5 is_stmt 1 discriminator 2 view .LVU257
+ 156:lvgl/src/lv_widgets/lv_led.c ****         lv_led_off(led);
+ 944              		.loc 1 156 7 is_stmt 0 discriminator 2 view .LVU258
+ 945 001c BB28     		cmp	r0, #187
+ 946 001e 03D9     		bls	.L69
+ 157:lvgl/src/lv_widgets/lv_led.c ****     else
+ 947              		.loc 1 157 9 is_stmt 1 view .LVU259
+ 948 0020 2046     		mov	r0, r4
+ 949              	.LVL92:
+ 157:lvgl/src/lv_widgets/lv_led.c ****     else
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 34
+
+
+ 950              		.loc 1 157 9 is_stmt 0 view .LVU260
+ 951 0022 FFF7FEFF 		bl	lv_led_off
+ 952              	.LVL93:
+ 953              	.L66:
+ 160:lvgl/src/lv_widgets/lv_led.c **** 
+ 954              		.loc 1 160 1 view .LVU261
+ 955 0026 10BD     		pop	{r4, pc}
+ 956              	.LVL94:
+ 957              	.L69:
+ 159:lvgl/src/lv_widgets/lv_led.c **** }
+ 958              		.loc 1 159 9 is_stmt 1 view .LVU262
+ 959 0028 2046     		mov	r0, r4
+ 960              	.LVL95:
+ 159:lvgl/src/lv_widgets/lv_led.c **** }
+ 961              		.loc 1 159 9 is_stmt 0 view .LVU263
+ 962 002a FFF7FEFF 		bl	lv_led_on
+ 963              	.LVL96:
+ 160:lvgl/src/lv_widgets/lv_led.c **** 
+ 964              		.loc 1 160 1 view .LVU264
+ 965 002e FAE7     		b	.L66
+ 966              	.L73:
+ 967              		.align	2
+ 968              	.L72:
+ 969 0030 00000000 		.word	.LC2
+ 970              		.cfi_endproc
+ 971              	.LFE462:
+ 973              		.section	.bss.ancestor_design,"aw",%nobits
+ 974              		.align	2
+ 975              		.set	.LANCHOR1,. + 0
+ 978              	ancestor_design:
+ 979 0000 00000000 		.space	4
+ 980              		.section	.bss.ancestor_signal,"aw",%nobits
+ 981              		.align	2
+ 982              		.set	.LANCHOR0,. + 0
+ 985              	ancestor_signal:
+ 986 0000 00000000 		.space	4
+ 987              		.section	.rodata.lv_led_create.str1.4,"aMS",%progbits,1
+ 988              		.align	2
+ 989              	.LC1:
+ 990 0000 4F757420 		.ascii	"Out of memory\000"
+ 990      6F66206D 
+ 990      656D6F72 
+ 990      7900
+ 991              		.section	.rodata.lv_led_set_bright.str1.4,"aMS",%progbits,1
+ 992              		.align	2
+ 993              	.LC2:
+ 994 0000 4E554C4C 		.ascii	"NULL pointer\000"
+ 994      20706F69 
+ 994      6E746572 
+ 994      00
+ 995              		.section	.rodata.lv_led_signal.str1.4,"aMS",%progbits,1
+ 996              		.align	2
+ 997              	.LC0:
+ 998 0000 6C765F6C 		.ascii	"lv_led\000"
+ 998      656400
+ 999              		.text
+ 1000              	.Letext0:
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 35
+
+
+ 1001              		.file 3 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1002              		.file 4 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1003              		.file 5 "Drivers/CMSIS/Include/core_cm4.h"
+ 1004              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 1005              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 1006              		.file 8 "lvgl/lv_conf.h"
+ 1007              		.file 9 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1008              		.file 10 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1009              		.file 11 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-non
+ 1010              		.file 12 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1011              		.file 13 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_types.h"
+ 1012              		.file 14 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_mem.h"
+ 1013              		.file 15 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_area.h"
+ 1014              		.file 16 "lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h"
+ 1015              		.file 17 "lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h"
+ 1016              		.file 18 "lvgl/src/lv_widgets/../lv_core/../lv_draw/lv_draw_blend.h"
+ 1017              		.file 19 "lvgl/src/lv_widgets/../lv_core/lv_style.h"
+ 1018              		.file 20 "lvgl/src/lv_widgets/../lv_core/../lv_hal/../lv_misc/lv_ll.h"
+ 1019              		.file 21 "lvgl/src/lv_widgets/../lv_core/lv_obj.h"
+ 1020              		.file 22 "lvgl/src/lv_widgets/../lv_core/../lv_hal/lv_hal_indev.h"
+ 1021              		.file 23 "lvgl/src/lv_widgets/../lv_core/../lv_draw/lv_draw_rect.h"
+ 1022              		.file 24 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_bidi.h"
+ 1023              		.file 25 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_txt.h"
+ 1024              		.file 26 "lvgl/src/lv_widgets/../lv_core/../lv_draw/lv_draw_label.h"
+ 1025              		.file 27 "lvgl/src/lv_widgets/lv_led.h"
+ 1026              		.file 28 "lvgl/src/lv_widgets/../lv_themes/lv_theme.h"
+ 1027              		.file 29 "lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_debug.h"
+ARM GAS  D:\Temp\ccIKcxpw.s 			page 36
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_led.c
+  D:\Temp\ccIKcxpw.s:18     .text.lv_led_signal:0000000000000000 $t
+  D:\Temp\ccIKcxpw.s:25     .text.lv_led_signal:0000000000000000 lv_led_signal
+  D:\Temp\ccIKcxpw.s:93     .text.lv_led_signal:0000000000000030 $d
+  D:\Temp\ccIKcxpw.s:100    .text.lv_led_design:0000000000000000 $t
+  D:\Temp\ccIKcxpw.s:106    .text.lv_led_design:0000000000000000 lv_led_design
+  D:\Temp\ccIKcxpw.s:435    .text.lv_led_design:00000000000001e8 $d
+  D:\Temp\ccIKcxpw.s:441    .text.lv_led_create:0000000000000000 $t
+  D:\Temp\ccIKcxpw.s:448    .text.lv_led_create:0000000000000000 lv_led_create
+  D:\Temp\ccIKcxpw.s:630    .text.lv_led_create:00000000000000ac $d
+  D:\Temp\ccIKcxpw.s:639    .text.lv_led_set_bright:0000000000000000 $t
+  D:\Temp\ccIKcxpw.s:646    .text.lv_led_set_bright:0000000000000000 lv_led_set_bright
+  D:\Temp\ccIKcxpw.s:718    .text.lv_led_set_bright:0000000000000034 $d
+  D:\Temp\ccIKcxpw.s:723    .text.lv_led_on:0000000000000000 $t
+  D:\Temp\ccIKcxpw.s:730    .text.lv_led_on:0000000000000000 lv_led_on
+  D:\Temp\ccIKcxpw.s:775    .text.lv_led_on:0000000000000020 $d
+  D:\Temp\ccIKcxpw.s:780    .text.lv_led_off:0000000000000000 $t
+  D:\Temp\ccIKcxpw.s:787    .text.lv_led_off:0000000000000000 lv_led_off
+  D:\Temp\ccIKcxpw.s:832    .text.lv_led_off:0000000000000020 $d
+  D:\Temp\ccIKcxpw.s:837    .text.lv_led_get_bright:0000000000000000 $t
+  D:\Temp\ccIKcxpw.s:844    .text.lv_led_get_bright:0000000000000000 lv_led_get_bright
+  D:\Temp\ccIKcxpw.s:893    .text.lv_led_get_bright:0000000000000020 $d
+  D:\Temp\ccIKcxpw.s:898    .text.lv_led_toggle:0000000000000000 $t
+  D:\Temp\ccIKcxpw.s:905    .text.lv_led_toggle:0000000000000000 lv_led_toggle
+  D:\Temp\ccIKcxpw.s:969    .text.lv_led_toggle:0000000000000030 $d
+  D:\Temp\ccIKcxpw.s:974    .bss.ancestor_design:0000000000000000 $d
+  D:\Temp\ccIKcxpw.s:978    .bss.ancestor_design:0000000000000000 ancestor_design
+  D:\Temp\ccIKcxpw.s:981    .bss.ancestor_signal:0000000000000000 $d
+  D:\Temp\ccIKcxpw.s:985    .bss.ancestor_signal:0000000000000000 ancestor_signal
+  D:\Temp\ccIKcxpw.s:988    .rodata.lv_led_create.str1.4:0000000000000000 $d
+  D:\Temp\ccIKcxpw.s:992    .rodata.lv_led_set_bright.str1.4:0000000000000000 $d
+  D:\Temp\ccIKcxpw.s:996    .rodata.lv_led_signal.str1.4:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+lv_obj_get_ext_attr
+lv_draw_rect_dsc_init
+lv_obj_init_draw_rect_dsc
+lv_draw_rect
+lv_obj_create
+lv_debug_check_null
+lv_obj_allocate_ext_attr
+lv_obj_set_signal_cb
+lv_obj_set_design_cb
+lv_obj_refresh_style
+lv_debug_log_error
+lv_obj_get_signal_cb
+lv_obj_get_design_cb
+lv_obj_del
+lv_obj_set_size
+lv_theme_apply
+lv_obj_invalidate

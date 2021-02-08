@@ -1,0 +1,2061 @@
+ARM GAS  D:\Temp\ccjNLov8.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_color.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.lv_color_fill,"ax",%progbits
+  18              		.align	1
+  19              		.global	lv_color_fill
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	lv_color_fill:
+  27              	.LVL0:
+  28              	.LFB142:
+  29              		.file 1 "lvgl/src/lv_misc/lv_color.c"
+   1:lvgl/src/lv_misc/lv_color.c **** /**
+   2:lvgl/src/lv_misc/lv_color.c ****  * @file lv_color.c
+   3:lvgl/src/lv_misc/lv_color.c ****  *
+   4:lvgl/src/lv_misc/lv_color.c ****  */
+   5:lvgl/src/lv_misc/lv_color.c **** 
+   6:lvgl/src/lv_misc/lv_color.c **** /*********************
+   7:lvgl/src/lv_misc/lv_color.c ****  *      INCLUDES
+   8:lvgl/src/lv_misc/lv_color.c ****  *********************/
+   9:lvgl/src/lv_misc/lv_color.c **** #include "lv_color.h"
+  10:lvgl/src/lv_misc/lv_color.c **** 
+  11:lvgl/src/lv_misc/lv_color.c **** /*********************
+  12:lvgl/src/lv_misc/lv_color.c ****  *      DEFINES
+  13:lvgl/src/lv_misc/lv_color.c ****  *********************/
+  14:lvgl/src/lv_misc/lv_color.c **** 
+  15:lvgl/src/lv_misc/lv_color.c **** /**********************
+  16:lvgl/src/lv_misc/lv_color.c ****  *      TYPEDEFS
+  17:lvgl/src/lv_misc/lv_color.c ****  **********************/
+  18:lvgl/src/lv_misc/lv_color.c **** 
+  19:lvgl/src/lv_misc/lv_color.c **** /**********************
+  20:lvgl/src/lv_misc/lv_color.c ****  *  STATIC PROTOTYPES
+  21:lvgl/src/lv_misc/lv_color.c ****  **********************/
+  22:lvgl/src/lv_misc/lv_color.c **** 
+  23:lvgl/src/lv_misc/lv_color.c **** /**********************
+  24:lvgl/src/lv_misc/lv_color.c ****  *  STATIC VARIABLES
+  25:lvgl/src/lv_misc/lv_color.c ****  **********************/
+  26:lvgl/src/lv_misc/lv_color.c **** 
+  27:lvgl/src/lv_misc/lv_color.c **** /**********************
+  28:lvgl/src/lv_misc/lv_color.c ****  *      MACROS
+  29:lvgl/src/lv_misc/lv_color.c ****  **********************/
+ARM GAS  D:\Temp\ccjNLov8.s 			page 2
+
+
+  30:lvgl/src/lv_misc/lv_color.c **** 
+  31:lvgl/src/lv_misc/lv_color.c **** /**********************
+  32:lvgl/src/lv_misc/lv_color.c ****  *   GLOBAL FUNCTIONS
+  33:lvgl/src/lv_misc/lv_color.c ****  **********************/
+  34:lvgl/src/lv_misc/lv_color.c **** 
+  35:lvgl/src/lv_misc/lv_color.c **** LV_ATTRIBUTE_FAST_MEM void lv_color_fill(lv_color_t * buf, lv_color_t color, uint32_t px_num)
+  36:lvgl/src/lv_misc/lv_color.c **** {
+  30              		.loc 1 36 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  37:lvgl/src/lv_misc/lv_color.c **** #if LV_COLOR_DEPTH == 16
+  38:lvgl/src/lv_misc/lv_color.c ****     uintptr_t buf_int = (uintptr_t) buf;
+  35              		.loc 1 38 5 view .LVU1
+  39:lvgl/src/lv_misc/lv_color.c ****     if(buf_int & 0x3) {
+  36              		.loc 1 39 5 view .LVU2
+  37              		.loc 1 39 7 is_stmt 0 view .LVU3
+  38 0000 10F0030F 		tst	r0, #3
+  39 0004 02D0     		beq	.L2
+  40:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+  40              		.loc 1 40 9 is_stmt 1 view .LVU4
+  41              		.loc 1 40 14 is_stmt 0 view .LVU5
+  42 0006 20F8021B 		strh	r1, [r0], #2	@ movhi
+  43              	.LVL1:
+  41:lvgl/src/lv_misc/lv_color.c ****         buf++;
+  44              		.loc 1 41 9 is_stmt 1 view .LVU6
+  42:lvgl/src/lv_misc/lv_color.c ****         px_num--;
+  45              		.loc 1 42 9 view .LVU7
+  46              		.loc 1 42 15 is_stmt 0 view .LVU8
+  47 000a 013A     		subs	r2, r2, #1
+  48              	.LVL2:
+  49              	.L2:
+  43:lvgl/src/lv_misc/lv_color.c ****     }
+  44:lvgl/src/lv_misc/lv_color.c **** 
+  45:lvgl/src/lv_misc/lv_color.c ****     uint32_t c32 = color.full + (color.full << 16);
+  50              		.loc 1 45 5 is_stmt 1 view .LVU9
+  51              		.loc 1 45 25 is_stmt 0 view .LVU10
+  52 000c 8BB2     		uxth	r3, r1
+  53              		.loc 1 45 31 view .LVU11
+  54 000e 03EB0343 		add	r3, r3, r3, lsl #16
+  55              	.LVL3:
+  46:lvgl/src/lv_misc/lv_color.c ****     uint32_t * buf32 = (uint32_t *)buf;
+  56              		.loc 1 46 5 is_stmt 1 view .LVU12
+  47:lvgl/src/lv_misc/lv_color.c **** 
+  48:lvgl/src/lv_misc/lv_color.c ****     while(px_num > 16) {
+  57              		.loc 1 48 5 view .LVU13
+  58              	.L3:
+  59              		.loc 1 48 10 is_stmt 0 view .LVU14
+  60 0012 102A     		cmp	r2, #16
+  61 0014 0DD9     		bls	.L5
+  49:lvgl/src/lv_misc/lv_color.c ****         *buf32 = c32;
+  62              		.loc 1 49 9 is_stmt 1 view .LVU15
+  63              		.loc 1 49 16 is_stmt 0 view .LVU16
+  64 0016 0360     		str	r3, [r0]
+  50:lvgl/src/lv_misc/lv_color.c ****         buf32++;
+  65              		.loc 1 50 9 is_stmt 1 view .LVU17
+ARM GAS  D:\Temp\ccjNLov8.s 			page 3
+
+
+  66              	.LVL4:
+  51:lvgl/src/lv_misc/lv_color.c ****         *buf32 = c32;
+  67              		.loc 1 51 9 view .LVU18
+  68              		.loc 1 51 16 is_stmt 0 view .LVU19
+  69 0018 4360     		str	r3, [r0, #4]
+  52:lvgl/src/lv_misc/lv_color.c ****         buf32++;
+  70              		.loc 1 52 9 is_stmt 1 view .LVU20
+  71              	.LVL5:
+  53:lvgl/src/lv_misc/lv_color.c ****         *buf32 = c32;
+  72              		.loc 1 53 9 view .LVU21
+  73              		.loc 1 53 16 is_stmt 0 view .LVU22
+  74 001a 8360     		str	r3, [r0, #8]
+  54:lvgl/src/lv_misc/lv_color.c ****         buf32++;
+  75              		.loc 1 54 9 is_stmt 1 view .LVU23
+  76              	.LVL6:
+  55:lvgl/src/lv_misc/lv_color.c ****         *buf32 = c32;
+  77              		.loc 1 55 9 view .LVU24
+  78              		.loc 1 55 16 is_stmt 0 view .LVU25
+  79 001c C360     		str	r3, [r0, #12]
+  56:lvgl/src/lv_misc/lv_color.c ****         buf32++;
+  80              		.loc 1 56 9 is_stmt 1 view .LVU26
+  81              	.LVL7:
+  57:lvgl/src/lv_misc/lv_color.c **** 
+  58:lvgl/src/lv_misc/lv_color.c ****         *buf32 = c32;
+  82              		.loc 1 58 9 view .LVU27
+  83              		.loc 1 58 16 is_stmt 0 view .LVU28
+  84 001e 0361     		str	r3, [r0, #16]
+  59:lvgl/src/lv_misc/lv_color.c ****         buf32++;
+  85              		.loc 1 59 9 is_stmt 1 view .LVU29
+  86              	.LVL8:
+  60:lvgl/src/lv_misc/lv_color.c ****         *buf32 = c32;
+  87              		.loc 1 60 9 view .LVU30
+  88              		.loc 1 60 16 is_stmt 0 view .LVU31
+  89 0020 4361     		str	r3, [r0, #20]
+  61:lvgl/src/lv_misc/lv_color.c ****         buf32++;
+  90              		.loc 1 61 9 is_stmt 1 view .LVU32
+  91              	.LVL9:
+  62:lvgl/src/lv_misc/lv_color.c ****         *buf32 = c32;
+  92              		.loc 1 62 9 view .LVU33
+  93              		.loc 1 62 16 is_stmt 0 view .LVU34
+  94 0022 8361     		str	r3, [r0, #24]
+  63:lvgl/src/lv_misc/lv_color.c ****         buf32++;
+  95              		.loc 1 63 9 is_stmt 1 view .LVU35
+  96              	.LVL10:
+  64:lvgl/src/lv_misc/lv_color.c ****         *buf32 = c32;
+  97              		.loc 1 64 9 view .LVU36
+  98              		.loc 1 64 16 is_stmt 0 view .LVU37
+  99 0024 C361     		str	r3, [r0, #28]
+  65:lvgl/src/lv_misc/lv_color.c ****         buf32++;
+ 100              		.loc 1 65 9 is_stmt 1 view .LVU38
+ 101              		.loc 1 65 14 is_stmt 0 view .LVU39
+ 102 0026 2030     		adds	r0, r0, #32
+ 103              	.LVL11:
+  66:lvgl/src/lv_misc/lv_color.c **** 
+  67:lvgl/src/lv_misc/lv_color.c ****         px_num -= 16;
+ 104              		.loc 1 67 9 is_stmt 1 view .LVU40
+ 105              		.loc 1 67 16 is_stmt 0 view .LVU41
+ARM GAS  D:\Temp\ccjNLov8.s 			page 4
+
+
+ 106 0028 103A     		subs	r2, r2, #16
+ 107              	.LVL12:
+ 108              		.loc 1 67 16 view .LVU42
+ 109 002a F2E7     		b	.L3
+ 110              	.LVL13:
+ 111              	.L6:
+  68:lvgl/src/lv_misc/lv_color.c ****     }
+  69:lvgl/src/lv_misc/lv_color.c **** 
+  70:lvgl/src/lv_misc/lv_color.c ****     buf = (lv_color_t *)buf32;
+  71:lvgl/src/lv_misc/lv_color.c **** 
+  72:lvgl/src/lv_misc/lv_color.c ****     while(px_num) {
+  73:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+ 112              		.loc 1 73 9 is_stmt 1 view .LVU43
+ 113              		.loc 1 73 14 is_stmt 0 view .LVU44
+ 114 002c 20F8021B 		strh	r1, [r0], #2	@ movhi
+ 115              	.LVL14:
+  74:lvgl/src/lv_misc/lv_color.c ****         buf++;
+ 116              		.loc 1 74 9 is_stmt 1 view .LVU45
+  75:lvgl/src/lv_misc/lv_color.c ****         px_num --;
+ 117              		.loc 1 75 9 view .LVU46
+ 118              		.loc 1 75 16 is_stmt 0 view .LVU47
+ 119 0030 013A     		subs	r2, r2, #1
+ 120              	.LVL15:
+ 121              	.L5:
+  72:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+ 122              		.loc 1 72 10 view .LVU48
+ 123 0032 002A     		cmp	r2, #0
+ 124 0034 FAD1     		bne	.L6
+  76:lvgl/src/lv_misc/lv_color.c ****     }
+  77:lvgl/src/lv_misc/lv_color.c **** #else
+  78:lvgl/src/lv_misc/lv_color.c ****     while(px_num > 16) {
+  79:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+  80:lvgl/src/lv_misc/lv_color.c ****         buf++;
+  81:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+  82:lvgl/src/lv_misc/lv_color.c ****         buf++;
+  83:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+  84:lvgl/src/lv_misc/lv_color.c ****         buf++;
+  85:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+  86:lvgl/src/lv_misc/lv_color.c ****         buf++;
+  87:lvgl/src/lv_misc/lv_color.c **** 
+  88:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+  89:lvgl/src/lv_misc/lv_color.c ****         buf++;
+  90:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+  91:lvgl/src/lv_misc/lv_color.c ****         buf++;
+  92:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+  93:lvgl/src/lv_misc/lv_color.c ****         buf++;
+  94:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+  95:lvgl/src/lv_misc/lv_color.c ****         buf++;
+  96:lvgl/src/lv_misc/lv_color.c **** 
+  97:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+  98:lvgl/src/lv_misc/lv_color.c ****         buf++;
+  99:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+ 100:lvgl/src/lv_misc/lv_color.c ****         buf++;
+ 101:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+ 102:lvgl/src/lv_misc/lv_color.c ****         buf++;
+ 103:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+ 104:lvgl/src/lv_misc/lv_color.c ****         buf++;
+ARM GAS  D:\Temp\ccjNLov8.s 			page 5
+
+
+ 105:lvgl/src/lv_misc/lv_color.c **** 
+ 106:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+ 107:lvgl/src/lv_misc/lv_color.c ****         buf++;
+ 108:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+ 109:lvgl/src/lv_misc/lv_color.c ****         buf++;
+ 110:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+ 111:lvgl/src/lv_misc/lv_color.c ****         buf++;
+ 112:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+ 113:lvgl/src/lv_misc/lv_color.c ****         buf++;
+ 114:lvgl/src/lv_misc/lv_color.c **** 
+ 115:lvgl/src/lv_misc/lv_color.c ****         px_num -= 16;
+ 116:lvgl/src/lv_misc/lv_color.c ****     }
+ 117:lvgl/src/lv_misc/lv_color.c ****     while(px_num) {
+ 118:lvgl/src/lv_misc/lv_color.c ****         *buf = color;
+ 119:lvgl/src/lv_misc/lv_color.c ****         buf++;
+ 120:lvgl/src/lv_misc/lv_color.c ****         px_num --;
+ 121:lvgl/src/lv_misc/lv_color.c ****     }
+ 122:lvgl/src/lv_misc/lv_color.c **** #endif
+ 123:lvgl/src/lv_misc/lv_color.c **** }
+ 125              		.loc 1 123 1 view .LVU49
+ 126 0036 7047     		bx	lr
+ 127              		.cfi_endproc
+ 128              	.LFE142:
+ 130              		.section	.text.lv_color_lighten,"ax",%progbits
+ 131              		.align	1
+ 132              		.global	lv_color_lighten
+ 133              		.syntax unified
+ 134              		.thumb
+ 135              		.thumb_func
+ 136              		.fpu fpv4-sp-d16
+ 138              	lv_color_lighten:
+ 139              	.LVL16:
+ 140              	.LFB143:
+ 124:lvgl/src/lv_misc/lv_color.c **** 
+ 125:lvgl/src/lv_misc/lv_color.c **** lv_color_t lv_color_lighten(lv_color_t c, lv_opa_t lvl)
+ 126:lvgl/src/lv_misc/lv_color.c **** {
+ 141              		.loc 1 126 1 is_stmt 1 view -0
+ 142              		.cfi_startproc
+ 143              		@ args = 0, pretend = 0, frame = 0
+ 144              		@ frame_needed = 0, uses_anonymous_args = 0
+ 145              		@ link register save eliminated.
+ 146              		.loc 1 126 1 is_stmt 0 view .LVU51
+ 147 0000 70B4     		push	{r4, r5, r6}
+ 148              	.LCFI0:
+ 149              		.cfi_def_cfa_offset 12
+ 150              		.cfi_offset 4, -12
+ 151              		.cfi_offset 5, -8
+ 152              		.cfi_offset 6, -4
+ 153 0002 0246     		mov	r2, r0	@ movhi
+ 127:lvgl/src/lv_misc/lv_color.c ****     return lv_color_mix(LV_COLOR_WHITE, c, lvl);
+ 154              		.loc 1 127 5 is_stmt 1 view .LVU52
+ 155              		.loc 1 127 25 is_stmt 0 view .LVU53
+ 156 0004 1C4B     		ldr	r3, .L9
+ 157 0006 1C88     		ldrh	r4, [r3]
+ 158              	.LVL17:
+ 159              	.LBB10:
+ 160              	.LBI10:
+ARM GAS  D:\Temp\ccjNLov8.s 			page 6
+
+
+ 161              		.file 2 "lvgl/src/lv_misc/lv_color.h"
+   1:lvgl/src/lv_misc/lv_color.h **** /**
+   2:lvgl/src/lv_misc/lv_color.h ****  * @file lv_color.h
+   3:lvgl/src/lv_misc/lv_color.h ****  *
+   4:lvgl/src/lv_misc/lv_color.h ****  */
+   5:lvgl/src/lv_misc/lv_color.h **** 
+   6:lvgl/src/lv_misc/lv_color.h **** #ifndef LV_COLOR_H
+   7:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_H
+   8:lvgl/src/lv_misc/lv_color.h **** 
+   9:lvgl/src/lv_misc/lv_color.h **** #ifdef __cplusplus
+  10:lvgl/src/lv_misc/lv_color.h **** extern "C" {
+  11:lvgl/src/lv_misc/lv_color.h **** #endif
+  12:lvgl/src/lv_misc/lv_color.h **** 
+  13:lvgl/src/lv_misc/lv_color.h **** /*********************
+  14:lvgl/src/lv_misc/lv_color.h ****  *      INCLUDES
+  15:lvgl/src/lv_misc/lv_color.h ****  *********************/
+  16:lvgl/src/lv_misc/lv_color.h **** #include "../lv_conf_internal.h"
+  17:lvgl/src/lv_misc/lv_color.h **** #include "lv_math.h"
+  18:lvgl/src/lv_misc/lv_color.h **** 
+  19:lvgl/src/lv_misc/lv_color.h **** /*Error checking*/
+  20:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 24
+  21:lvgl/src/lv_misc/lv_color.h **** #error "LV_COLOR_DEPTH 24 is deprecated. Use LV_COLOR_DEPTH 32 instead (lv_conf.h)"
+  22:lvgl/src/lv_misc/lv_color.h **** #endif
+  23:lvgl/src/lv_misc/lv_color.h **** 
+  24:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_DEPTH != 32 && LV_COLOR_SCREEN_TRANSP != 0
+  25:lvgl/src/lv_misc/lv_color.h **** #error "LV_COLOR_SCREEN_TRANSP requires LV_COLOR_DEPTH == 32. Set it in lv_conf.h"
+  26:lvgl/src/lv_misc/lv_color.h **** #endif
+  27:lvgl/src/lv_misc/lv_color.h **** 
+  28:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_DEPTH != 16 && LV_COLOR_16_SWAP != 0
+  29:lvgl/src/lv_misc/lv_color.h **** #error "LV_COLOR_16_SWAP requires LV_COLOR_DEPTH == 16. Set it in lv_conf.h"
+  30:lvgl/src/lv_misc/lv_color.h **** #endif
+  31:lvgl/src/lv_misc/lv_color.h **** 
+  32:lvgl/src/lv_misc/lv_color.h **** #include <stdint.h>
+  33:lvgl/src/lv_misc/lv_color.h **** 
+  34:lvgl/src/lv_misc/lv_color.h **** /*********************
+  35:lvgl/src/lv_misc/lv_color.h ****  *      DEFINES
+  36:lvgl/src/lv_misc/lv_color.h ****  *********************/
+  37:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_WHITE   LV_COLOR_MAKE(0xFF, 0xFF, 0xFF)
+  38:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_SILVER  LV_COLOR_MAKE(0xC0, 0xC0, 0xC0)
+  39:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_GRAY    LV_COLOR_MAKE(0x80, 0x80, 0x80)
+  40:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_BLACK   LV_COLOR_MAKE(0x00, 0x00, 0x00)
+  41:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_RED     LV_COLOR_MAKE(0xFF, 0x00, 0x00)
+  42:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_MAROON  LV_COLOR_MAKE(0x80, 0x00, 0x00)
+  43:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_YELLOW  LV_COLOR_MAKE(0xFF, 0xFF, 0x00)
+  44:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_OLIVE   LV_COLOR_MAKE(0x80, 0x80, 0x00)
+  45:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_LIME    LV_COLOR_MAKE(0x00, 0xFF, 0x00)
+  46:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_GREEN   LV_COLOR_MAKE(0x00, 0x80, 0x00)
+  47:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_CYAN    LV_COLOR_MAKE(0x00, 0xFF, 0xFF)
+  48:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_AQUA    LV_COLOR_CYAN
+  49:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_TEAL    LV_COLOR_MAKE(0x00, 0x80, 0x80)
+  50:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_BLUE    LV_COLOR_MAKE(0x00, 0x00, 0xFF)
+  51:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_NAVY    LV_COLOR_MAKE(0x00, 0x00, 0x80)
+  52:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_MAGENTA LV_COLOR_MAKE(0xFF, 0x00, 0xFF)
+  53:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_PURPLE  LV_COLOR_MAKE(0x80, 0x00, 0x80)
+  54:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_ORANGE  LV_COLOR_MAKE(0xFF, 0xA5, 0x00)
+  55:lvgl/src/lv_misc/lv_color.h **** 
+  56:lvgl/src/lv_misc/lv_color.h **** /**
+ARM GAS  D:\Temp\ccjNLov8.s 			page 7
+
+
+  57:lvgl/src/lv_misc/lv_color.h ****  * Opacity percentages.
+  58:lvgl/src/lv_misc/lv_color.h ****  */
+  59:lvgl/src/lv_misc/lv_color.h **** enum {
+  60:lvgl/src/lv_misc/lv_color.h ****     LV_OPA_TRANSP = 0,
+  61:lvgl/src/lv_misc/lv_color.h ****     LV_OPA_0      = 0,
+  62:lvgl/src/lv_misc/lv_color.h ****     LV_OPA_10     = 25,
+  63:lvgl/src/lv_misc/lv_color.h ****     LV_OPA_20     = 51,
+  64:lvgl/src/lv_misc/lv_color.h ****     LV_OPA_30     = 76,
+  65:lvgl/src/lv_misc/lv_color.h ****     LV_OPA_40     = 102,
+  66:lvgl/src/lv_misc/lv_color.h ****     LV_OPA_50     = 127,
+  67:lvgl/src/lv_misc/lv_color.h ****     LV_OPA_60     = 153,
+  68:lvgl/src/lv_misc/lv_color.h ****     LV_OPA_70     = 178,
+  69:lvgl/src/lv_misc/lv_color.h ****     LV_OPA_80     = 204,
+  70:lvgl/src/lv_misc/lv_color.h ****     LV_OPA_90     = 229,
+  71:lvgl/src/lv_misc/lv_color.h ****     LV_OPA_100    = 255,
+  72:lvgl/src/lv_misc/lv_color.h ****     LV_OPA_COVER  = 255,
+  73:lvgl/src/lv_misc/lv_color.h **** };
+  74:lvgl/src/lv_misc/lv_color.h **** 
+  75:lvgl/src/lv_misc/lv_color.h **** #define LV_OPA_MIN 2    /*Opacities below this will be transparent*/
+  76:lvgl/src/lv_misc/lv_color.h **** #define LV_OPA_MAX 253  /*Opacities above this will fully cover*/
+  77:lvgl/src/lv_misc/lv_color.h **** 
+  78:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 1
+  79:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_SIZE 8
+  80:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 8
+  81:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_SIZE 8
+  82:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 16
+  83:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_SIZE 16
+  84:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 32
+  85:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_SIZE 32
+  86:lvgl/src/lv_misc/lv_color.h **** #else
+  87:lvgl/src/lv_misc/lv_color.h **** #error "Invalid LV_COLOR_DEPTH in lv_conf.h! Set it to 1, 8, 16 or 32!"
+  88:lvgl/src/lv_misc/lv_color.h **** #endif
+  89:lvgl/src/lv_misc/lv_color.h **** 
+  90:lvgl/src/lv_misc/lv_color.h **** /* Adjust color mix functions rounding.
+  91:lvgl/src/lv_misc/lv_color.h ****  * GPUs might calculate color mix (blending) differently.
+  92:lvgl/src/lv_misc/lv_color.h ****  * Should be in range of 0..254
+  93:lvgl/src/lv_misc/lv_color.h ****  * 0: no adjustment, get the integer part of the result (round down)
+  94:lvgl/src/lv_misc/lv_color.h ****  * 64: round up from x.75
+  95:lvgl/src/lv_misc/lv_color.h ****  * 128: round up from half
+  96:lvgl/src/lv_misc/lv_color.h ****  * 192: round up from x.25
+  97:lvgl/src/lv_misc/lv_color.h ****  * 254: round up */
+  98:lvgl/src/lv_misc/lv_color.h **** #ifndef LV_COLOR_MIX_ROUND_OFS
+  99:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 32
+ 100:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_MIX_ROUND_OFS 0
+ 101:lvgl/src/lv_misc/lv_color.h **** #else
+ 102:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_MIX_ROUND_OFS 128
+ 103:lvgl/src/lv_misc/lv_color.h **** #endif
+ 104:lvgl/src/lv_misc/lv_color.h **** #endif
+ 105:lvgl/src/lv_misc/lv_color.h **** 
+ 106:lvgl/src/lv_misc/lv_color.h **** /*---------------------------------------
+ 107:lvgl/src/lv_misc/lv_color.h ****  * Macros for all existing color depths
+ 108:lvgl/src/lv_misc/lv_color.h ****  * to set/get values of the color channels
+ 109:lvgl/src/lv_misc/lv_color.h ****  *------------------------------------------*/
+ 110:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_R1(c, v) (c).ch.red = (uint8_t)((v) & 0x1)
+ 111:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_G1(c, v) (c).ch.green = (uint8_t)((v) & 0x1)
+ 112:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_B1(c, v) (c).ch.blue = (uint8_t)((v) & 0x1)
+ 113:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_A1(c, v) do {} while(0)
+ARM GAS  D:\Temp\ccjNLov8.s 			page 8
+
+
+ 114:lvgl/src/lv_misc/lv_color.h **** 
+ 115:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_R1(c) (c).ch.red
+ 116:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_G1(c) (c).ch.green
+ 117:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_B1(c) (c).ch.blue
+ 118:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_A1(c) 0xFF
+ 119:lvgl/src/lv_misc/lv_color.h **** 
+ 120:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_R8(c, v) (c).ch.red = (uint8_t)((v) & 0x7U)
+ 121:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_G8(c, v) (c).ch.green = (uint8_t)((v) & 0x7U)
+ 122:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_B8(c, v) (c).ch.blue = (uint8_t)((v) & 0x3U)
+ 123:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_A8(c, v) do {} while(0)
+ 124:lvgl/src/lv_misc/lv_color.h **** 
+ 125:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_R8(c) (c).ch.red
+ 126:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_G8(c) (c).ch.green
+ 127:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_B8(c) (c).ch.blue
+ 128:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_A8(c) 0xFF
+ 129:lvgl/src/lv_misc/lv_color.h **** 
+ 130:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_R16(c, v) (c).ch.red = (uint8_t)((v) & 0x1FU)
+ 131:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_16_SWAP == 0
+ 132:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_G16(c, v) (c).ch.green = (uint8_t)((v) & 0x3FU)
+ 133:lvgl/src/lv_misc/lv_color.h **** #else
+ 134:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_G16(c, v) {(c).ch.green_h = (uint8_t)(((v) >> 3) & 0x7); (c).ch.green_l = (ui
+ 135:lvgl/src/lv_misc/lv_color.h **** #endif
+ 136:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_B16(c, v) (c).ch.blue = (uint8_t)((v) & 0x1FU)
+ 137:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_A16(c, v) do {} while(0)
+ 138:lvgl/src/lv_misc/lv_color.h **** 
+ 139:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_R16(c) (c).ch.red
+ 140:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_16_SWAP == 0
+ 141:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_G16(c) (c).ch.green
+ 142:lvgl/src/lv_misc/lv_color.h **** #else
+ 143:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_G16(c) (((c).ch.green_h << 3) + (c).ch.green_l)
+ 144:lvgl/src/lv_misc/lv_color.h **** #endif
+ 145:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_B16(c) (c).ch.blue
+ 146:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_A16(c) 0xFF
+ 147:lvgl/src/lv_misc/lv_color.h **** 
+ 148:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_R32(c, v) (c).ch.red = (uint8_t)((v) & 0xFF)
+ 149:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_G32(c, v) (c).ch.green = (uint8_t)((v) & 0xFF)
+ 150:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_B32(c, v) (c).ch.blue = (uint8_t)((v) & 0xFF)
+ 151:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_A32(c, v) (c).ch.alpha = (uint8_t)((v) & 0xFF)
+ 152:lvgl/src/lv_misc/lv_color.h **** 
+ 153:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_R32(c) (c).ch.red
+ 154:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_G32(c) (c).ch.green
+ 155:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_B32(c) (c).ch.blue
+ 156:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_A32(c) (c).ch.alpha
+ 157:lvgl/src/lv_misc/lv_color.h **** 
+ 158:lvgl/src/lv_misc/lv_color.h **** /*---------------------------------------
+ 159:lvgl/src/lv_misc/lv_color.h ****  * Macros for the current color depth
+ 160:lvgl/src/lv_misc/lv_color.h ****  * to set/get values of the color channels
+ 161:lvgl/src/lv_misc/lv_color.h ****  *------------------------------------------*/
+ 162:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 1
+ 163:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_R(c, v) LV_COLOR_SET_R1(c,v)
+ 164:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_G(c, v) LV_COLOR_SET_G1(c,v)
+ 165:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_B(c, v) LV_COLOR_SET_B1(c,v)
+ 166:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_A(c, v) LV_COLOR_SET_A1(c,v)
+ 167:lvgl/src/lv_misc/lv_color.h **** 
+ 168:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_R(c) LV_COLOR_GET_R1(c)
+ 169:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_G(c) LV_COLOR_GET_G1(c)
+ 170:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_B(c) LV_COLOR_GET_B1(c)
+ARM GAS  D:\Temp\ccjNLov8.s 			page 9
+
+
+ 171:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_A(c) LV_COLOR_GET_A1(c)
+ 172:lvgl/src/lv_misc/lv_color.h **** 
+ 173:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 8
+ 174:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_R(c, v) LV_COLOR_SET_R8(c,v)
+ 175:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_G(c, v) LV_COLOR_SET_G8(c,v)
+ 176:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_B(c, v) LV_COLOR_SET_B8(c,v)
+ 177:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_A(c, v) LV_COLOR_SET_A8(c,v)
+ 178:lvgl/src/lv_misc/lv_color.h **** 
+ 179:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_R(c) LV_COLOR_GET_R8(c)
+ 180:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_G(c) LV_COLOR_GET_G8(c)
+ 181:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_B(c) LV_COLOR_GET_B8(c)
+ 182:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_A(c) LV_COLOR_GET_A8(c)
+ 183:lvgl/src/lv_misc/lv_color.h **** 
+ 184:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 16
+ 185:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_R(c, v) LV_COLOR_SET_R16(c,v)
+ 186:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_G(c, v) LV_COLOR_SET_G16(c,v)
+ 187:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_B(c, v) LV_COLOR_SET_B16(c,v)
+ 188:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_A(c, v) LV_COLOR_SET_A16(c,v)
+ 189:lvgl/src/lv_misc/lv_color.h **** 
+ 190:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_R(c) LV_COLOR_GET_R16(c)
+ 191:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_G(c) LV_COLOR_GET_G16(c)
+ 192:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_B(c) LV_COLOR_GET_B16(c)
+ 193:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_A(c) LV_COLOR_GET_A16(c)
+ 194:lvgl/src/lv_misc/lv_color.h **** 
+ 195:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 32
+ 196:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_R(c, v) LV_COLOR_SET_R32(c,v)
+ 197:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_G(c, v) LV_COLOR_SET_G32(c,v)
+ 198:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_B(c, v) LV_COLOR_SET_B32(c,v)
+ 199:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_SET_A(c, v) LV_COLOR_SET_A32(c,v)
+ 200:lvgl/src/lv_misc/lv_color.h **** 
+ 201:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_R(c) LV_COLOR_GET_R32(c)
+ 202:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_G(c) LV_COLOR_GET_G32(c)
+ 203:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_B(c) LV_COLOR_GET_B32(c)
+ 204:lvgl/src/lv_misc/lv_color.h **** # define LV_COLOR_GET_A(c) LV_COLOR_GET_A32(c)
+ 205:lvgl/src/lv_misc/lv_color.h **** #endif
+ 206:lvgl/src/lv_misc/lv_color.h **** 
+ 207:lvgl/src/lv_misc/lv_color.h **** /**********************
+ 208:lvgl/src/lv_misc/lv_color.h ****  *      TYPEDEFS
+ 209:lvgl/src/lv_misc/lv_color.h ****  **********************/
+ 210:lvgl/src/lv_misc/lv_color.h **** 
+ 211:lvgl/src/lv_misc/lv_color.h **** typedef union {
+ 212:lvgl/src/lv_misc/lv_color.h ****     uint8_t full; /*must be declared first to set all bits of byte via initializer list */
+ 213:lvgl/src/lv_misc/lv_color.h ****     union {
+ 214:lvgl/src/lv_misc/lv_color.h ****         uint8_t blue : 1;
+ 215:lvgl/src/lv_misc/lv_color.h ****         uint8_t green : 1;
+ 216:lvgl/src/lv_misc/lv_color.h ****         uint8_t red : 1;
+ 217:lvgl/src/lv_misc/lv_color.h ****     } ch;
+ 218:lvgl/src/lv_misc/lv_color.h **** } lv_color1_t;
+ 219:lvgl/src/lv_misc/lv_color.h **** 
+ 220:lvgl/src/lv_misc/lv_color.h **** typedef union {
+ 221:lvgl/src/lv_misc/lv_color.h ****     struct {
+ 222:lvgl/src/lv_misc/lv_color.h ****         uint8_t blue : 2;
+ 223:lvgl/src/lv_misc/lv_color.h ****         uint8_t green : 3;
+ 224:lvgl/src/lv_misc/lv_color.h ****         uint8_t red : 3;
+ 225:lvgl/src/lv_misc/lv_color.h ****     } ch;
+ 226:lvgl/src/lv_misc/lv_color.h ****     uint8_t full;
+ 227:lvgl/src/lv_misc/lv_color.h **** } lv_color8_t;
+ARM GAS  D:\Temp\ccjNLov8.s 			page 10
+
+
+ 228:lvgl/src/lv_misc/lv_color.h **** 
+ 229:lvgl/src/lv_misc/lv_color.h **** typedef union {
+ 230:lvgl/src/lv_misc/lv_color.h ****     struct {
+ 231:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_16_SWAP == 0
+ 232:lvgl/src/lv_misc/lv_color.h ****         uint16_t blue : 5;
+ 233:lvgl/src/lv_misc/lv_color.h ****         uint16_t green : 6;
+ 234:lvgl/src/lv_misc/lv_color.h ****         uint16_t red : 5;
+ 235:lvgl/src/lv_misc/lv_color.h **** #else
+ 236:lvgl/src/lv_misc/lv_color.h ****         uint16_t green_h : 3;
+ 237:lvgl/src/lv_misc/lv_color.h ****         uint16_t red : 5;
+ 238:lvgl/src/lv_misc/lv_color.h ****         uint16_t blue : 5;
+ 239:lvgl/src/lv_misc/lv_color.h ****         uint16_t green_l : 3;
+ 240:lvgl/src/lv_misc/lv_color.h **** #endif
+ 241:lvgl/src/lv_misc/lv_color.h ****     } ch;
+ 242:lvgl/src/lv_misc/lv_color.h ****     uint16_t full;
+ 243:lvgl/src/lv_misc/lv_color.h **** } lv_color16_t;
+ 244:lvgl/src/lv_misc/lv_color.h **** 
+ 245:lvgl/src/lv_misc/lv_color.h **** typedef union {
+ 246:lvgl/src/lv_misc/lv_color.h ****     struct {
+ 247:lvgl/src/lv_misc/lv_color.h ****         uint8_t blue;
+ 248:lvgl/src/lv_misc/lv_color.h ****         uint8_t green;
+ 249:lvgl/src/lv_misc/lv_color.h ****         uint8_t red;
+ 250:lvgl/src/lv_misc/lv_color.h ****         uint8_t alpha;
+ 251:lvgl/src/lv_misc/lv_color.h ****     } ch;
+ 252:lvgl/src/lv_misc/lv_color.h ****     uint32_t full;
+ 253:lvgl/src/lv_misc/lv_color.h **** } lv_color32_t;
+ 254:lvgl/src/lv_misc/lv_color.h **** 
+ 255:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 1
+ 256:lvgl/src/lv_misc/lv_color.h **** typedef uint8_t lv_color_int_t;
+ 257:lvgl/src/lv_misc/lv_color.h **** typedef lv_color1_t lv_color_t;
+ 258:lvgl/src/lv_misc/lv_color.h **** #define _LV_COLOR_ZERO_INITIALIZER {0x00}
+ 259:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 8
+ 260:lvgl/src/lv_misc/lv_color.h **** typedef uint8_t lv_color_int_t;
+ 261:lvgl/src/lv_misc/lv_color.h **** typedef lv_color8_t lv_color_t;
+ 262:lvgl/src/lv_misc/lv_color.h **** #define _LV_COLOR_ZERO_INITIALIZER {{0x00, 0x00, 0x00}}
+ 263:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 16
+ 264:lvgl/src/lv_misc/lv_color.h **** typedef uint16_t lv_color_int_t;
+ 265:lvgl/src/lv_misc/lv_color.h **** typedef lv_color16_t lv_color_t;
+ 266:lvgl/src/lv_misc/lv_color.h **** # if LV_COLOR_16_SWAP == 0
+ 267:lvgl/src/lv_misc/lv_color.h **** #  define _LV_COLOR_ZERO_INITIALIZER {{0x00, 0x00, 0x00}}
+ 268:lvgl/src/lv_misc/lv_color.h **** # else
+ 269:lvgl/src/lv_misc/lv_color.h **** #  define _LV_COLOR_ZERO_INITIALIZER {{0x00, 0x00, 0x00, 0x00}}
+ 270:lvgl/src/lv_misc/lv_color.h **** # endif
+ 271:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 32
+ 272:lvgl/src/lv_misc/lv_color.h **** typedef uint32_t lv_color_int_t;
+ 273:lvgl/src/lv_misc/lv_color.h **** typedef lv_color32_t lv_color_t;
+ 274:lvgl/src/lv_misc/lv_color.h **** #define _LV_COLOR_ZERO_INITIALIZER {{0x00, 0x00, 0x00, 0x00}}
+ 275:lvgl/src/lv_misc/lv_color.h **** #else
+ 276:lvgl/src/lv_misc/lv_color.h **** #error "Invalid LV_COLOR_DEPTH in lv_conf.h! Set it to 1, 8, 16 or 32!"
+ 277:lvgl/src/lv_misc/lv_color.h **** #endif
+ 278:lvgl/src/lv_misc/lv_color.h **** 
+ 279:lvgl/src/lv_misc/lv_color.h **** typedef struct {
+ 280:lvgl/src/lv_misc/lv_color.h ****     uint16_t h;
+ 281:lvgl/src/lv_misc/lv_color.h ****     uint8_t s;
+ 282:lvgl/src/lv_misc/lv_color.h ****     uint8_t v;
+ 283:lvgl/src/lv_misc/lv_color.h **** } lv_color_hsv_t;
+ 284:lvgl/src/lv_misc/lv_color.h **** 
+ARM GAS  D:\Temp\ccjNLov8.s 			page 11
+
+
+ 285:lvgl/src/lv_misc/lv_color.h **** //! @cond Doxygen_Suppress
+ 286:lvgl/src/lv_misc/lv_color.h **** /*No idea where the guard is required but else throws warnings in the docs*/
+ 287:lvgl/src/lv_misc/lv_color.h **** typedef uint8_t lv_opa_t;
+ 288:lvgl/src/lv_misc/lv_color.h **** //! @endcond
+ 289:lvgl/src/lv_misc/lv_color.h **** 
+ 290:lvgl/src/lv_misc/lv_color.h **** /**********************
+ 291:lvgl/src/lv_misc/lv_color.h ****  * GLOBAL PROTOTYPES
+ 292:lvgl/src/lv_misc/lv_color.h ****  **********************/
+ 293:lvgl/src/lv_misc/lv_color.h **** 
+ 294:lvgl/src/lv_misc/lv_color.h **** /*In color conversations:
+ 295:lvgl/src/lv_misc/lv_color.h ****  * - When converting to bigger color type the LSB weight of 1 LSB is calculated
+ 296:lvgl/src/lv_misc/lv_color.h ****  *   E.g. 16 bit Red has 5 bits
+ 297:lvgl/src/lv_misc/lv_color.h ****  *         8 bit Red has 3 bits
+ 298:lvgl/src/lv_misc/lv_color.h ****  *        ----------------------
+ 299:lvgl/src/lv_misc/lv_color.h ****  *        8 bit red LSB = (2^5 - 1) / (2^3 - 1) = 31 / 7 = 4
+ 300:lvgl/src/lv_misc/lv_color.h ****  *
+ 301:lvgl/src/lv_misc/lv_color.h ****  * - When calculating to smaller color type simply shift out the LSBs
+ 302:lvgl/src/lv_misc/lv_color.h ****  *   E.g.  8 bit Red has 3 bits
+ 303:lvgl/src/lv_misc/lv_color.h ****  *        16 bit Red has 5 bits
+ 304:lvgl/src/lv_misc/lv_color.h ****  *        ----------------------
+ 305:lvgl/src/lv_misc/lv_color.h ****  *         Shift right with 5 - 3 = 2
+ 306:lvgl/src/lv_misc/lv_color.h ****  */
+ 307:lvgl/src/lv_misc/lv_color.h **** static inline uint8_t lv_color_to1(lv_color_t color)
+ 308:lvgl/src/lv_misc/lv_color.h **** {
+ 309:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 1
+ 310:lvgl/src/lv_misc/lv_color.h ****     return color.full;
+ 311:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 8
+ 312:lvgl/src/lv_misc/lv_color.h ****     if((LV_COLOR_GET_R(color) & 0x4) || (LV_COLOR_GET_G(color) & 0x4) || (LV_COLOR_GET_B(color) & 0
+ 313:lvgl/src/lv_misc/lv_color.h ****         return 1;
+ 314:lvgl/src/lv_misc/lv_color.h ****     }
+ 315:lvgl/src/lv_misc/lv_color.h ****     else {
+ 316:lvgl/src/lv_misc/lv_color.h ****         return 0;
+ 317:lvgl/src/lv_misc/lv_color.h ****     }
+ 318:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 16
+ 319:lvgl/src/lv_misc/lv_color.h ****     if((LV_COLOR_GET_R(color) & 0x10) || (LV_COLOR_GET_G(color) & 0x20) || (LV_COLOR_GET_B(color) &
+ 320:lvgl/src/lv_misc/lv_color.h ****         return 1;
+ 321:lvgl/src/lv_misc/lv_color.h ****     }
+ 322:lvgl/src/lv_misc/lv_color.h ****     else {
+ 323:lvgl/src/lv_misc/lv_color.h ****         return 0;
+ 324:lvgl/src/lv_misc/lv_color.h ****     }
+ 325:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 32
+ 326:lvgl/src/lv_misc/lv_color.h ****     if((LV_COLOR_GET_R(color) & 0x80) || (LV_COLOR_GET_G(color) & 0x80) || (LV_COLOR_GET_B(color) &
+ 327:lvgl/src/lv_misc/lv_color.h ****         return 1;
+ 328:lvgl/src/lv_misc/lv_color.h ****     }
+ 329:lvgl/src/lv_misc/lv_color.h ****     else {
+ 330:lvgl/src/lv_misc/lv_color.h ****         return 0;
+ 331:lvgl/src/lv_misc/lv_color.h ****     }
+ 332:lvgl/src/lv_misc/lv_color.h **** #endif
+ 333:lvgl/src/lv_misc/lv_color.h **** }
+ 334:lvgl/src/lv_misc/lv_color.h **** 
+ 335:lvgl/src/lv_misc/lv_color.h **** static inline uint8_t lv_color_to8(lv_color_t color)
+ 336:lvgl/src/lv_misc/lv_color.h **** {
+ 337:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 1
+ 338:lvgl/src/lv_misc/lv_color.h ****     if(color.full == 0)
+ 339:lvgl/src/lv_misc/lv_color.h ****         return 0;
+ 340:lvgl/src/lv_misc/lv_color.h ****     else
+ 341:lvgl/src/lv_misc/lv_color.h ****         return 0xFF;
+ARM GAS  D:\Temp\ccjNLov8.s 			page 12
+
+
+ 342:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 8
+ 343:lvgl/src/lv_misc/lv_color.h ****     return color.full;
+ 344:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 16
+ 345:lvgl/src/lv_misc/lv_color.h ****     lv_color8_t ret;
+ 346:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_R8(ret, LV_COLOR_GET_R(color) >> 2); /* 5 - 3  = 2*/
+ 347:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_G8(ret, LV_COLOR_GET_G(color) >> 3); /* 6 - 3  = 3*/
+ 348:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_B8(ret, LV_COLOR_GET_B(color) >> 3); /* 5 - 2  = 3*/
+ 349:lvgl/src/lv_misc/lv_color.h ****     return ret.full;
+ 350:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 32
+ 351:lvgl/src/lv_misc/lv_color.h ****     lv_color8_t ret;
+ 352:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_R8(ret, LV_COLOR_GET_R(color) >> 5); /* 8 - 3  = 5*/
+ 353:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_G8(ret, LV_COLOR_GET_G(color) >> 5); /* 8 - 3  = 5*/
+ 354:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_B8(ret, LV_COLOR_GET_B(color) >> 6); /* 8 - 2  = 6*/
+ 355:lvgl/src/lv_misc/lv_color.h ****     return ret.full;
+ 356:lvgl/src/lv_misc/lv_color.h **** #endif
+ 357:lvgl/src/lv_misc/lv_color.h **** }
+ 358:lvgl/src/lv_misc/lv_color.h **** 
+ 359:lvgl/src/lv_misc/lv_color.h **** static inline uint16_t lv_color_to16(lv_color_t color)
+ 360:lvgl/src/lv_misc/lv_color.h **** {
+ 361:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 1
+ 362:lvgl/src/lv_misc/lv_color.h ****     if(color.full == 0)
+ 363:lvgl/src/lv_misc/lv_color.h ****         return 0;
+ 364:lvgl/src/lv_misc/lv_color.h ****     else
+ 365:lvgl/src/lv_misc/lv_color.h ****         return 0xFFFF;
+ 366:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 8
+ 367:lvgl/src/lv_misc/lv_color.h ****     lv_color16_t ret;
+ 368:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_R16(ret, LV_COLOR_GET_R(color) * 4);  /*(2^5 - 1)/(2^3 - 1) = 31/7 = 4*/
+ 369:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_G16(ret, LV_COLOR_GET_G(color) * 9);  /*(2^6 - 1)/(2^3 - 1) = 63/7 = 9*/
+ 370:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_B16(ret, LV_COLOR_GET_B(color) * 10); /*(2^5 - 1)/(2^2 - 1) = 31/3 = 10*/
+ 371:lvgl/src/lv_misc/lv_color.h ****     return ret.full;
+ 372:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 16
+ 373:lvgl/src/lv_misc/lv_color.h ****     return color.full;
+ 374:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 32
+ 375:lvgl/src/lv_misc/lv_color.h ****     lv_color16_t ret;
+ 376:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_R16(ret, LV_COLOR_GET_R(color) >> 3); /* 8 - 5  = 3*/
+ 377:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_G16(ret, LV_COLOR_GET_G(color) >> 2); /* 8 - 6  = 2*/
+ 378:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_B16(ret, LV_COLOR_GET_B(color) >> 3); /* 8 - 5  = 3*/
+ 379:lvgl/src/lv_misc/lv_color.h ****     return ret.full;
+ 380:lvgl/src/lv_misc/lv_color.h **** #endif
+ 381:lvgl/src/lv_misc/lv_color.h **** }
+ 382:lvgl/src/lv_misc/lv_color.h **** 
+ 383:lvgl/src/lv_misc/lv_color.h **** static inline uint32_t lv_color_to32(lv_color_t color)
+ 384:lvgl/src/lv_misc/lv_color.h **** {
+ 385:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 1
+ 386:lvgl/src/lv_misc/lv_color.h ****     if(color.full == 0)
+ 387:lvgl/src/lv_misc/lv_color.h ****         return 0xFF000000;
+ 388:lvgl/src/lv_misc/lv_color.h ****     else
+ 389:lvgl/src/lv_misc/lv_color.h ****         return 0xFFFFFFFF;
+ 390:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 8
+ 391:lvgl/src/lv_misc/lv_color.h ****     lv_color32_t ret;
+ 392:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_R32(ret, LV_COLOR_GET_R(color) * 36); /*(2^8 - 1)/(2^3 - 1) = 255/7 = 36*/
+ 393:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_G32(ret, LV_COLOR_GET_G(color) * 36); /*(2^8 - 1)/(2^3 - 1) = 255/7 = 36*/
+ 394:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_B32(ret, LV_COLOR_GET_B(color) * 85); /*(2^8 - 1)/(2^2 - 1) = 255/3 = 85*/
+ 395:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_A32(ret, 0xFF);
+ 396:lvgl/src/lv_misc/lv_color.h ****     return ret.full;
+ 397:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 16
+ 398:lvgl/src/lv_misc/lv_color.h ****     /**
+ARM GAS  D:\Temp\ccjNLov8.s 			page 13
+
+
+ 399:lvgl/src/lv_misc/lv_color.h ****      * The floating point math for conversion is:
+ 400:lvgl/src/lv_misc/lv_color.h ****      *  valueto = valuefrom * ( (2^bitsto - 1) / (float)(2^bitsfrom - 1) )
+ 401:lvgl/src/lv_misc/lv_color.h ****      * The faster integer math for conversion is:
+ 402:lvgl/src/lv_misc/lv_color.h ****      *  valueto = ( valuefrom * multiplier + adder ) >> divisor
+ 403:lvgl/src/lv_misc/lv_color.h ****      *   multiplier = FLOOR( ( (2^bitsto - 1) << divisor ) / (float)(2^bitsfrom - 1) )
+ 404:lvgl/src/lv_misc/lv_color.h ****      *
+ 405:lvgl/src/lv_misc/lv_color.h ****      * Find the first divisor where ( adder >> divisor ) <= 0
+ 406:lvgl/src/lv_misc/lv_color.h ****      *
+ 407:lvgl/src/lv_misc/lv_color.h ****      * 5-bit to 8-bit: ( 31 * multiplier + adder ) >> divisor = 255
+ 408:lvgl/src/lv_misc/lv_color.h ****      * divisor  multiplier  adder  min (0)  max (31)
+ 409:lvgl/src/lv_misc/lv_color.h ****      *       0           8      7        7       255
+ 410:lvgl/src/lv_misc/lv_color.h ****      *       1          16     14        7       255
+ 411:lvgl/src/lv_misc/lv_color.h ****      *       2          32     28        7       255
+ 412:lvgl/src/lv_misc/lv_color.h ****      *       3          65     25        3       255
+ 413:lvgl/src/lv_misc/lv_color.h ****      *       4         131     19        1       255
+ 414:lvgl/src/lv_misc/lv_color.h ****      *       5         263      7        0       255
+ 415:lvgl/src/lv_misc/lv_color.h ****      *
+ 416:lvgl/src/lv_misc/lv_color.h ****      * 6-bit to 8-bit: 255 = ( 63 * multiplier + adder ) >> divisor
+ 417:lvgl/src/lv_misc/lv_color.h ****      * divisor  multiplier  adder  min (0)  max (63)
+ 418:lvgl/src/lv_misc/lv_color.h ****      *       0           4      3        3       255
+ 419:lvgl/src/lv_misc/lv_color.h ****      *       1           8      6        3       255
+ 420:lvgl/src/lv_misc/lv_color.h ****      *       2          16     12        3       255
+ 421:lvgl/src/lv_misc/lv_color.h ****      *       3          32     24        3       255
+ 422:lvgl/src/lv_misc/lv_color.h ****      *       4          64     48        3       255
+ 423:lvgl/src/lv_misc/lv_color.h ****      *       5         129     33        1       255
+ 424:lvgl/src/lv_misc/lv_color.h ****      *       6         259      3        0       255
+ 425:lvgl/src/lv_misc/lv_color.h ****      */
+ 426:lvgl/src/lv_misc/lv_color.h **** 
+ 427:lvgl/src/lv_misc/lv_color.h ****     lv_color32_t ret;
+ 428:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_R32(ret, (LV_COLOR_GET_R(color) * 263 + 7) >> 5);
+ 429:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_G32(ret, (LV_COLOR_GET_G(color) * 259 + 3) >> 6);
+ 430:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_B32(ret, (LV_COLOR_GET_B(color) * 263 + 7) >> 5);
+ 431:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_A32(ret, 0xFF);
+ 432:lvgl/src/lv_misc/lv_color.h ****     return ret.full;
+ 433:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 32
+ 434:lvgl/src/lv_misc/lv_color.h ****     return color.full;
+ 435:lvgl/src/lv_misc/lv_color.h **** #endif
+ 436:lvgl/src/lv_misc/lv_color.h **** }
+ 437:lvgl/src/lv_misc/lv_color.h **** 
+ 438:lvgl/src/lv_misc/lv_color.h **** //! @cond Doxygen_Suppress
+ 439:lvgl/src/lv_misc/lv_color.h **** 
+ 440:lvgl/src/lv_misc/lv_color.h **** /**
+ 441:lvgl/src/lv_misc/lv_color.h ****  * Mix two colors with a given ratio.
+ 442:lvgl/src/lv_misc/lv_color.h ****  * @param c1 the first color to mix (usually the foreground)
+ 443:lvgl/src/lv_misc/lv_color.h ****  * @param c2 the second color to mix (usually the background)
+ 444:lvgl/src/lv_misc/lv_color.h ****  * @param mix The ratio of the colors. 0: full `c2`, 255: full `c1`, 127: half `c1` and half`c2`
+ 445:lvgl/src/lv_misc/lv_color.h ****  * @return the mixed color
+ 446:lvgl/src/lv_misc/lv_color.h ****  */
+ 447:lvgl/src/lv_misc/lv_color.h **** LV_ATTRIBUTE_FAST_MEM static inline lv_color_t lv_color_mix(lv_color_t c1, lv_color_t c2, uint8_t m
+ 162              		.loc 2 447 48 is_stmt 1 view .LVU54
+ 163              	.LBB11:
+ 448:lvgl/src/lv_misc/lv_color.h **** {
+ 449:lvgl/src/lv_misc/lv_color.h ****     lv_color_t ret;
+ 164              		.loc 2 449 5 view .LVU55
+ 450:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_DEPTH != 1
+ 451:lvgl/src/lv_misc/lv_color.h ****     /*LV_COLOR_DEPTH == 8, 16 or 32*/
+ 452:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_R(ret, LV_MATH_UDIV255((uint16_t) LV_COLOR_GET_R(c1) * mix + LV_COLOR_GET_R(c2) *
+ARM GAS  D:\Temp\ccjNLov8.s 			page 14
+
+
+ 165              		.loc 2 452 5 view .LVU56
+ 166 0008 E30A     		lsrs	r3, r4, #11
+ 167 000a C2F3C420 		ubfx	r0, r2, #11, #5
+ 168              	.LVL18:
+ 169              		.loc 2 452 5 is_stmt 0 view .LVU57
+ 170 000e C1F1FF05 		rsb	r5, r1, #255
+ 171 0012 05FB00F0 		mul	r0, r5, r0
+ 172 0016 01FB0303 		mla	r3, r1, r3, r0
+ 173 001a 8033     		adds	r3, r3, #128
+ 174 001c 03EB0320 		add	r0, r3, r3, lsl #8
+ 175 0020 03EBC013 		add	r3, r3, r0, lsl #7
+ 176 0024 C3F3C453 		ubfx	r3, r3, #23, #5
+ 177 0028 4FF00000 		mov	r0, #0	@ movhi
+ 178              	.LVL19:
+ 179              		.loc 2 452 5 view .LVU58
+ 180 002c 63F3CF20 		bfi	r0, r3, #11, #5
+ 181              	.LVL20:
+ 453:lvgl/src/lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 454:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_G(ret, LV_MATH_UDIV255((uint16_t) LV_COLOR_GET_G(c1) * mix + LV_COLOR_GET_G(c2) *
+ 182              		.loc 2 454 5 is_stmt 1 view .LVU59
+ 183 0030 C4F34513 		ubfx	r3, r4, #5, #6
+ 184 0034 C2F34516 		ubfx	r6, r2, #5, #6
+ 185 0038 06FB05F6 		mul	r6, r6, r5
+ 186 003c 03FB0163 		mla	r3, r3, r1, r6
+ 187 0040 8033     		adds	r3, r3, #128
+ 188 0042 03EB0326 		add	r6, r3, r3, lsl #8
+ 189 0046 03EBC613 		add	r3, r3, r6, lsl #7
+ 190 004a C3F3C553 		ubfx	r3, r3, #23, #6
+ 191 004e 63F34A10 		bfi	r0, r3, #5, #6
+ 455:lvgl/src/lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 456:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_B(ret, LV_MATH_UDIV255((uint16_t) LV_COLOR_GET_B(c1) * mix + LV_COLOR_GET_B(c2) *
+ 192              		.loc 2 456 5 view .LVU60
+ 193 0052 04F01F04 		and	r4, r4, #31
+ 194 0056 02F01F02 		and	r2, r2, #31
+ 195              	.LVL21:
+ 196              		.loc 2 456 5 is_stmt 0 view .LVU61
+ 197 005a 02FB05F5 		mul	r5, r2, r5
+ 198 005e 04FB0151 		mla	r1, r4, r1, r5
+ 199              	.LVL22:
+ 200              		.loc 2 456 5 view .LVU62
+ 201 0062 8031     		adds	r1, r1, #128
+ 202 0064 01EB0123 		add	r3, r1, r1, lsl #8
+ 203 0068 01EBC311 		add	r1, r1, r3, lsl #7
+ 204 006c C1F3C451 		ubfx	r1, r1, #23, #5
+ 205 0070 61F30400 		bfi	r0, r1, #0, #5
+ 457:lvgl/src/lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 458:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_A(ret, 0xFF);
+ 206              		.loc 2 458 5 is_stmt 1 view .LVU63
+ 207              		.loc 2 458 5 view .LVU64
+ 459:lvgl/src/lv_misc/lv_color.h **** #else
+ 460:lvgl/src/lv_misc/lv_color.h ****     /*LV_COLOR_DEPTH == 1*/
+ 461:lvgl/src/lv_misc/lv_color.h ****     ret.full = mix > LV_OPA_50 ? c1.full : c2.full;
+ 462:lvgl/src/lv_misc/lv_color.h **** #endif
+ 463:lvgl/src/lv_misc/lv_color.h **** 
+ 464:lvgl/src/lv_misc/lv_color.h ****     return ret;
+ 208              		.loc 2 464 5 view .LVU65
+ 209              	.LVL23:
+ARM GAS  D:\Temp\ccjNLov8.s 			page 15
+
+
+ 210              	.LVL24:
+ 211              		.loc 2 464 5 is_stmt 0 view .LVU66
+ 212              	.LBE11:
+ 213              	.LBE10:
+ 128:lvgl/src/lv_misc/lv_color.c **** }
+ 214              		.loc 1 128 1 view .LVU67
+ 215 0074 70BC     		pop	{r4, r5, r6}
+ 216              	.LCFI1:
+ 217              		.cfi_restore 6
+ 218              		.cfi_restore 5
+ 219              		.cfi_restore 4
+ 220              		.cfi_def_cfa_offset 0
+ 221 0076 7047     		bx	lr
+ 222              	.L10:
+ 223              		.align	2
+ 224              	.L9:
+ 225 0078 00000000 		.word	.LANCHOR0
+ 226              		.cfi_endproc
+ 227              	.LFE143:
+ 229              		.section	.text.lv_color_darken,"ax",%progbits
+ 230              		.align	1
+ 231              		.global	lv_color_darken
+ 232              		.syntax unified
+ 233              		.thumb
+ 234              		.thumb_func
+ 235              		.fpu fpv4-sp-d16
+ 237              	lv_color_darken:
+ 238              	.LVL25:
+ 239              	.LFB144:
+ 129:lvgl/src/lv_misc/lv_color.c **** 
+ 130:lvgl/src/lv_misc/lv_color.c **** lv_color_t lv_color_darken(lv_color_t c, lv_opa_t lvl)
+ 131:lvgl/src/lv_misc/lv_color.c **** {
+ 240              		.loc 1 131 1 is_stmt 1 view -0
+ 241              		.cfi_startproc
+ 242              		@ args = 0, pretend = 0, frame = 0
+ 243              		@ frame_needed = 0, uses_anonymous_args = 0
+ 244              		@ link register save eliminated.
+ 245              		.loc 1 131 1 is_stmt 0 view .LVU69
+ 246 0000 10B4     		push	{r4}
+ 247              	.LCFI2:
+ 248              		.cfi_def_cfa_offset 4
+ 249              		.cfi_offset 4, -4
+ 250 0002 0346     		mov	r3, r0	@ movhi
+ 132:lvgl/src/lv_misc/lv_color.c ****     return lv_color_mix(LV_COLOR_BLACK, c, lvl);
+ 251              		.loc 1 132 5 is_stmt 1 view .LVU70
+ 252              	.LVL26:
+ 253              	.LBB14:
+ 254              	.LBI14:
+ 447:lvgl/src/lv_misc/lv_color.h **** {
+ 255              		.loc 2 447 48 view .LVU71
+ 256              	.LBB15:
+ 449:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_DEPTH != 1
+ 257              		.loc 2 449 5 view .LVU72
+ 452:lvgl/src/lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 258              		.loc 2 452 5 view .LVU73
+ 259 0004 C3F3C422 		ubfx	r2, r3, #11, #5
+ 260 0008 C1F1FF01 		rsb	r1, r1, #255
+ARM GAS  D:\Temp\ccjNLov8.s 			page 16
+
+
+ 261              	.LVL27:
+ 452:lvgl/src/lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 262              		.loc 2 452 5 is_stmt 0 view .LVU74
+ 263 000c 01FB02F2 		mul	r2, r1, r2
+ 264 0010 8032     		adds	r2, r2, #128
+ 265 0012 02EB0220 		add	r0, r2, r2, lsl #8
+ 266              	.LVL28:
+ 452:lvgl/src/lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 267              		.loc 2 452 5 view .LVU75
+ 268 0016 02EBC012 		add	r2, r2, r0, lsl #7
+ 269 001a C2F3C452 		ubfx	r2, r2, #23, #5
+ 270 001e 4FF00000 		mov	r0, #0	@ movhi
+ 271              	.LVL29:
+ 452:lvgl/src/lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 272              		.loc 2 452 5 view .LVU76
+ 273 0022 62F3CF20 		bfi	r0, r2, #11, #5
+ 274              	.LVL30:
+ 454:lvgl/src/lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 275              		.loc 2 454 5 is_stmt 1 view .LVU77
+ 276 0026 C3F34512 		ubfx	r2, r3, #5, #6
+ 277 002a 02FB01F2 		mul	r2, r2, r1
+ 278 002e 8032     		adds	r2, r2, #128
+ 279 0030 02EB0224 		add	r4, r2, r2, lsl #8
+ 280 0034 02EBC412 		add	r2, r2, r4, lsl #7
+ 281 0038 C2F3C552 		ubfx	r2, r2, #23, #6
+ 282 003c 62F34A10 		bfi	r0, r2, #5, #6
+ 456:lvgl/src/lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 283              		.loc 2 456 5 view .LVU78
+ 284 0040 03F01F03 		and	r3, r3, #31
+ 285              	.LVL31:
+ 456:lvgl/src/lv_misc/lv_color.h ****                                         (255 - mix) + LV_COLOR_MIX_ROUND_OFS));
+ 286              		.loc 2 456 5 is_stmt 0 view .LVU79
+ 287 0044 03FB01F3 		mul	r3, r3, r1
+ 288 0048 8033     		adds	r3, r3, #128
+ 289 004a 03EB0321 		add	r1, r3, r3, lsl #8
+ 290 004e 03EBC113 		add	r3, r3, r1, lsl #7
+ 291 0052 C3F3C453 		ubfx	r3, r3, #23, #5
+ 292 0056 63F30400 		bfi	r0, r3, #0, #5
+ 458:lvgl/src/lv_misc/lv_color.h **** #else
+ 293              		.loc 2 458 5 is_stmt 1 view .LVU80
+ 458:lvgl/src/lv_misc/lv_color.h **** #else
+ 294              		.loc 2 458 5 view .LVU81
+ 295              		.loc 2 464 5 view .LVU82
+ 296              	.LVL32:
+ 297              	.LVL33:
+ 298              		.loc 2 464 5 is_stmt 0 view .LVU83
+ 299              	.LBE15:
+ 300              	.LBE14:
+ 133:lvgl/src/lv_misc/lv_color.c **** }
+ 301              		.loc 1 133 1 view .LVU84
+ 302 005a 5DF8044B 		ldr	r4, [sp], #4
+ 303              	.LCFI3:
+ 304              		.cfi_restore 4
+ 305              		.cfi_def_cfa_offset 0
+ 306 005e 7047     		bx	lr
+ 307              		.cfi_endproc
+ 308              	.LFE144:
+ARM GAS  D:\Temp\ccjNLov8.s 			page 17
+
+
+ 310              		.section	.text.lv_color_hsv_to_rgb,"ax",%progbits
+ 311              		.align	1
+ 312              		.global	lv_color_hsv_to_rgb
+ 313              		.syntax unified
+ 314              		.thumb
+ 315              		.thumb_func
+ 316              		.fpu fpv4-sp-d16
+ 318              	lv_color_hsv_to_rgb:
+ 319              	.LVL34:
+ 320              	.LFB145:
+ 134:lvgl/src/lv_misc/lv_color.c **** 
+ 135:lvgl/src/lv_misc/lv_color.c **** /**
+ 136:lvgl/src/lv_misc/lv_color.c ****  * Convert a HSV color to RGB
+ 137:lvgl/src/lv_misc/lv_color.c ****  * @param h hue [0..359]
+ 138:lvgl/src/lv_misc/lv_color.c ****  * @param s saturation [0..100]
+ 139:lvgl/src/lv_misc/lv_color.c ****  * @param v value [0..100]
+ 140:lvgl/src/lv_misc/lv_color.c ****  * @return the given RGB color in RGB (with LV_COLOR_DEPTH depth)
+ 141:lvgl/src/lv_misc/lv_color.c ****  */
+ 142:lvgl/src/lv_misc/lv_color.c **** lv_color_t lv_color_hsv_to_rgb(uint16_t h, uint8_t s, uint8_t v)
+ 143:lvgl/src/lv_misc/lv_color.c **** {
+ 321              		.loc 1 143 1 is_stmt 1 view -0
+ 322              		.cfi_startproc
+ 323              		@ args = 0, pretend = 0, frame = 0
+ 324              		@ frame_needed = 0, uses_anonymous_args = 0
+ 325              		@ link register save eliminated.
+ 326              		.loc 1 143 1 is_stmt 0 view .LVU86
+ 327 0000 30B4     		push	{r4, r5}
+ 328              	.LCFI4:
+ 329              		.cfi_def_cfa_offset 8
+ 330              		.cfi_offset 4, -8
+ 331              		.cfi_offset 5, -4
+ 144:lvgl/src/lv_misc/lv_color.c ****     h = (uint32_t)((uint32_t)h * 255) / 360;
+ 332              		.loc 1 144 5 is_stmt 1 view .LVU87
+ 333              		.loc 1 144 9 is_stmt 0 view .LVU88
+ 334 0002 C0EB0020 		rsb	r0, r0, r0, lsl #8
+ 335              	.LVL35:
+ 336              		.loc 1 144 39 view .LVU89
+ 337 0006 C408     		lsrs	r4, r0, #3
+ 338 0008 394B     		ldr	r3, .L25
+ 339 000a A3FB0434 		umull	r3, r4, r3, r4
+ 340              	.LVL36:
+ 145:lvgl/src/lv_misc/lv_color.c ****     s = (uint16_t)((uint16_t)s * 255) / 100;
+ 341              		.loc 1 145 5 is_stmt 1 view .LVU90
+ 342              		.loc 1 145 9 is_stmt 0 view .LVU91
+ 343 000e C1EB0121 		rsb	r1, r1, r1, lsl #8
+ 344              	.LVL37:
+ 345              		.loc 1 145 9 view .LVU92
+ 346 0012 8BB2     		uxth	r3, r1
+ 347              		.loc 1 145 7 view .LVU93
+ 348 0014 374D     		ldr	r5, .L25+4
+ 349 0016 A5FB0313 		umull	r1, r3, r5, r3
+ 350 001a C3F34711 		ubfx	r1, r3, #5, #8
+ 351              	.LVL38:
+ 146:lvgl/src/lv_misc/lv_color.c ****     v = (uint16_t)((uint16_t)v * 255) / 100;
+ 352              		.loc 1 146 5 is_stmt 1 view .LVU94
+ 353              		.loc 1 146 9 is_stmt 0 view .LVU95
+ 354 001e C2EB0222 		rsb	r2, r2, r2, lsl #8
+ARM GAS  D:\Temp\ccjNLov8.s 			page 18
+
+
+ 355              	.LVL39:
+ 356              		.loc 1 146 9 view .LVU96
+ 357 0022 92B2     		uxth	r2, r2
+ 358              		.loc 1 146 7 view .LVU97
+ 359 0024 A5FB0232 		umull	r3, r2, r5, r2
+ 360 0028 C2F34712 		ubfx	r2, r2, #5, #8
+ 361              	.LVL40:
+ 147:lvgl/src/lv_misc/lv_color.c **** 
+ 148:lvgl/src/lv_misc/lv_color.c ****     uint8_t r, g, b;
+ 362              		.loc 1 148 5 is_stmt 1 view .LVU98
+ 149:lvgl/src/lv_misc/lv_color.c **** 
+ 150:lvgl/src/lv_misc/lv_color.c ****     uint8_t region, remainder, p, q, t;
+ 363              		.loc 1 150 5 view .LVU99
+ 151:lvgl/src/lv_misc/lv_color.c **** 
+ 152:lvgl/src/lv_misc/lv_color.c ****     if(s == 0) {
+ 364              		.loc 1 152 5 view .LVU100
+ 365              		.loc 1 152 7 is_stmt 0 view .LVU101
+ 366 002c 81B3     		cbz	r1, .L24
+ 367 002e A408     		lsrs	r4, r4, #2
+ 368              	.LVL41:
+ 369              		.loc 1 152 7 view .LVU102
+ 370 0030 A0B2     		uxth	r0, r4
+ 371              	.LVL42:
+ 153:lvgl/src/lv_misc/lv_color.c ****         return lv_color_make(v, v, v);
+ 154:lvgl/src/lv_misc/lv_color.c ****     }
+ 155:lvgl/src/lv_misc/lv_color.c **** 
+ 156:lvgl/src/lv_misc/lv_color.c ****     region    = h / 43;
+ 372              		.loc 1 156 5 is_stmt 1 view .LVU103
+ 373              		.loc 1 156 15 is_stmt 0 view .LVU104
+ 374 0032 314B     		ldr	r3, .L25+8
+ 375 0034 A3FB0030 		umull	r3, r0, r3, r0
+ 376 0038 C0F3C700 		ubfx	r0, r0, #3, #8
+ 377              	.LVL43:
+ 157:lvgl/src/lv_misc/lv_color.c ****     remainder = (h - (region * 43)) * 6;
+ 378              		.loc 1 157 5 is_stmt 1 view .LVU105
+ 379              		.loc 1 157 20 is_stmt 0 view .LVU106
+ 380 003c A4B2     		uxth	r4, r4
+ 381 003e 6FF02A03 		mvn	r3, #42
+ 382 0042 03FB0043 		mla	r3, r3, r0, r4
+ 383              		.loc 1 157 15 view .LVU107
+ 384 0046 03EB4303 		add	r3, r3, r3, lsl #1
+ 385 004a 5B00     		lsls	r3, r3, #1
+ 386 004c DBB2     		uxtb	r3, r3
+ 387              	.LVL44:
+ 158:lvgl/src/lv_misc/lv_color.c **** 
+ 159:lvgl/src/lv_misc/lv_color.c ****     p = (v * (255 - s)) >> 8;
+ 388              		.loc 1 159 5 is_stmt 1 view .LVU108
+ 389              		.loc 1 159 19 is_stmt 0 view .LVU109
+ 390 004e C1F1FF05 		rsb	r5, r1, #255
+ 391              		.loc 1 159 12 view .LVU110
+ 392 0052 05FB02F5 		mul	r5, r5, r2
+ 393              		.loc 1 159 7 view .LVU111
+ 394 0056 C5F30725 		ubfx	r5, r5, #8, #8
+ 395              	.LVL45:
+ 160:lvgl/src/lv_misc/lv_color.c ****     q = (v * (255 - ((s * remainder) >> 8))) >> 8;
+ 396              		.loc 1 160 5 is_stmt 1 view .LVU112
+ 397              		.loc 1 160 25 is_stmt 0 view .LVU113
+ARM GAS  D:\Temp\ccjNLov8.s 			page 19
+
+
+ 398 005a 03FB01F4 		mul	r4, r3, r1
+ 399              		.loc 1 160 38 view .LVU114
+ 400 005e 2412     		asrs	r4, r4, #8
+ 401              		.loc 1 160 19 view .LVU115
+ 402 0060 C4F1FF04 		rsb	r4, r4, #255
+ 403              		.loc 1 160 12 view .LVU116
+ 404 0064 04FB02F4 		mul	r4, r4, r2
+ 405              		.loc 1 160 7 view .LVU117
+ 406 0068 C4F30724 		ubfx	r4, r4, #8, #8
+ 407              	.LVL46:
+ 161:lvgl/src/lv_misc/lv_color.c ****     t = (v * (255 - ((s * (255 - remainder)) >> 8))) >> 8;
+ 408              		.loc 1 161 5 is_stmt 1 view .LVU118
+ 409              		.loc 1 161 32 is_stmt 0 view .LVU119
+ 410 006c C3F1FF03 		rsb	r3, r3, #255
+ 411              	.LVL47:
+ 412              		.loc 1 161 25 view .LVU120
+ 413 0070 03FB01F3 		mul	r3, r3, r1
+ 414              		.loc 1 161 46 view .LVU121
+ 415 0074 1B12     		asrs	r3, r3, #8
+ 416              		.loc 1 161 19 view .LVU122
+ 417 0076 C3F1FF03 		rsb	r3, r3, #255
+ 418              		.loc 1 161 12 view .LVU123
+ 419 007a 03FB02F3 		mul	r3, r3, r2
+ 420              		.loc 1 161 7 view .LVU124
+ 421 007e C3F30723 		ubfx	r3, r3, #8, #8
+ 422              	.LVL48:
+ 162:lvgl/src/lv_misc/lv_color.c **** 
+ 163:lvgl/src/lv_misc/lv_color.c ****     switch(region) {
+ 423              		.loc 1 163 5 is_stmt 1 view .LVU125
+ 424 0082 0428     		cmp	r0, #4
+ 425 0084 2ED8     		bhi	.L16
+ 426 0086 DFE800F0 		tbb	[pc, r0]
+ 427              	.LVL49:
+ 428              	.L18:
+ 429 008a 0E       		.byte	(.L22-.L18)/2
+ 430 008b 13       		.byte	(.L21-.L18)/2
+ 431 008c 11       		.byte	(.L20-.L18)/2
+ 432 008d 23       		.byte	(.L19-.L18)/2
+ 433 008e 28       		.byte	(.L17-.L18)/2
+ 434 008f 00       		.p2align 1
+ 435              	.L24:
+ 153:lvgl/src/lv_misc/lv_color.c ****     }
+ 436              		.loc 1 153 9 view .LVU126
+ 437              	.LBB16:
+ 438              	.LBI16:
+ 465:lvgl/src/lv_misc/lv_color.h **** }
+ 466:lvgl/src/lv_misc/lv_color.h **** 
+ 467:lvgl/src/lv_misc/lv_color.h **** LV_ATTRIBUTE_FAST_MEM static inline void lv_color_premult(lv_color_t c, uint8_t mix, uint16_t * out
+ 468:lvgl/src/lv_misc/lv_color.h **** {
+ 469:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_DEPTH != 1
+ 470:lvgl/src/lv_misc/lv_color.h ****     out[0] = (uint16_t) LV_COLOR_GET_R(c) * mix;
+ 471:lvgl/src/lv_misc/lv_color.h ****     out[1] = (uint16_t) LV_COLOR_GET_G(c) * mix;
+ 472:lvgl/src/lv_misc/lv_color.h ****     out[2] = (uint16_t) LV_COLOR_GET_B(c) * mix;
+ 473:lvgl/src/lv_misc/lv_color.h **** #else
+ 474:lvgl/src/lv_misc/lv_color.h ****     (void) mix;
+ 475:lvgl/src/lv_misc/lv_color.h ****     /*Pre-multiplication can't be used with 1 bpp*/
+ 476:lvgl/src/lv_misc/lv_color.h ****     out[0] = LV_COLOR_GET_R(c);
+ARM GAS  D:\Temp\ccjNLov8.s 			page 20
+
+
+ 477:lvgl/src/lv_misc/lv_color.h ****     out[1] = LV_COLOR_GET_G(c);
+ 478:lvgl/src/lv_misc/lv_color.h ****     out[2] = LV_COLOR_GET_B(c);
+ 479:lvgl/src/lv_misc/lv_color.h **** #endif
+ 480:lvgl/src/lv_misc/lv_color.h **** 
+ 481:lvgl/src/lv_misc/lv_color.h **** }
+ 482:lvgl/src/lv_misc/lv_color.h **** 
+ 483:lvgl/src/lv_misc/lv_color.h **** /**
+ 484:lvgl/src/lv_misc/lv_color.h ****  * Mix two colors with a given ratio. It runs faster then `lv_color_mix` but requires some pre comp
+ 485:lvgl/src/lv_misc/lv_color.h ****  * @param premult_c1 The first color. Should be preprocessed with `lv_color_premult(c1)`
+ 486:lvgl/src/lv_misc/lv_color.h ****  * @param c2 The second color. As it is no pre computation required on it
+ 487:lvgl/src/lv_misc/lv_color.h ****  * @param mix The ratio of the colors. 0: full `c1`, 255: full `c2`, 127: half `c1` and half `c2`.
+ 488:lvgl/src/lv_misc/lv_color.h ****  *            Should be modified like mix = `255 - mix`
+ 489:lvgl/src/lv_misc/lv_color.h ****  * @return the mixed color
+ 490:lvgl/src/lv_misc/lv_color.h ****  * @note 255 won't give clearly `c1`.
+ 491:lvgl/src/lv_misc/lv_color.h ****  */
+ 492:lvgl/src/lv_misc/lv_color.h **** LV_ATTRIBUTE_FAST_MEM static inline lv_color_t lv_color_mix_premult(uint16_t * premult_c1, lv_color
+ 493:lvgl/src/lv_misc/lv_color.h **** {
+ 494:lvgl/src/lv_misc/lv_color.h ****     lv_color_t ret;
+ 495:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_DEPTH != 1
+ 496:lvgl/src/lv_misc/lv_color.h ****     /*LV_COLOR_DEPTH == 8, 16 or 32*/
+ 497:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_R(ret, LV_MATH_UDIV255(premult_c1[0] + LV_COLOR_GET_R(c2) * mix + LV_COLOR_MIX_ROU
+ 498:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_G(ret, LV_MATH_UDIV255(premult_c1[1] + LV_COLOR_GET_G(c2) * mix + LV_COLOR_MIX_ROU
+ 499:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_B(ret, LV_MATH_UDIV255(premult_c1[2] + LV_COLOR_GET_B(c2) * mix + LV_COLOR_MIX_ROU
+ 500:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_A(ret, 0xFF);
+ 501:lvgl/src/lv_misc/lv_color.h **** #else
+ 502:lvgl/src/lv_misc/lv_color.h ****     /*LV_COLOR_DEPTH == 1*/
+ 503:lvgl/src/lv_misc/lv_color.h ****     /*Restore color1*/
+ 504:lvgl/src/lv_misc/lv_color.h ****     lv_color_t c1;
+ 505:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_R(c1, premult_c1[0]);
+ 506:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_G(c1, premult_c1[1]);
+ 507:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_B(c1, premult_c1[2]);
+ 508:lvgl/src/lv_misc/lv_color.h ****     ret.full = mix > LV_OPA_50 ? c2.full : c1.full;
+ 509:lvgl/src/lv_misc/lv_color.h **** #endif
+ 510:lvgl/src/lv_misc/lv_color.h **** 
+ 511:lvgl/src/lv_misc/lv_color.h ****     return ret;
+ 512:lvgl/src/lv_misc/lv_color.h **** }
+ 513:lvgl/src/lv_misc/lv_color.h **** 
+ 514:lvgl/src/lv_misc/lv_color.h **** /**
+ 515:lvgl/src/lv_misc/lv_color.h ****  * Mix two colors. Both color can have alpha value.
+ 516:lvgl/src/lv_misc/lv_color.h ****  * @param bg_color background color
+ 517:lvgl/src/lv_misc/lv_color.h ****  * @param bg_opa alpha of the background color
+ 518:lvgl/src/lv_misc/lv_color.h ****  * @param fg_color foreground color
+ 519:lvgl/src/lv_misc/lv_color.h ****  * @param fg_opa alpha of the foreground color
+ 520:lvgl/src/lv_misc/lv_color.h ****  * @param res_color the result color
+ 521:lvgl/src/lv_misc/lv_color.h ****  * @param res_opa the result opacity
+ 522:lvgl/src/lv_misc/lv_color.h ****  */
+ 523:lvgl/src/lv_misc/lv_color.h **** LV_ATTRIBUTE_FAST_MEM static inline void lv_color_mix_with_alpha(lv_color_t bg_color, lv_opa_t bg_o
+ 524:lvgl/src/lv_misc/lv_color.h ****                                                                  lv_color_t fg_color, lv_opa_t fg_o
+ 525:lvgl/src/lv_misc/lv_color.h ****                                                                  lv_color_t * res_color, lv_opa_t *
+ 526:lvgl/src/lv_misc/lv_color.h **** {
+ 527:lvgl/src/lv_misc/lv_color.h ****     /* Pick the foreground if it's fully opaque or the Background is fully transparent*/
+ 528:lvgl/src/lv_misc/lv_color.h ****     if(fg_opa >= LV_OPA_MAX || bg_opa <= LV_OPA_MIN) {
+ 529:lvgl/src/lv_misc/lv_color.h ****         res_color->full = fg_color.full;
+ 530:lvgl/src/lv_misc/lv_color.h ****         *res_opa = fg_opa;
+ 531:lvgl/src/lv_misc/lv_color.h ****     }
+ 532:lvgl/src/lv_misc/lv_color.h ****     /*Transparent foreground: use the Background*/
+ 533:lvgl/src/lv_misc/lv_color.h ****     else if(fg_opa <= LV_OPA_MIN) {
+ARM GAS  D:\Temp\ccjNLov8.s 			page 21
+
+
+ 534:lvgl/src/lv_misc/lv_color.h ****         res_color->full = bg_color.full;
+ 535:lvgl/src/lv_misc/lv_color.h ****         *res_opa = bg_opa;
+ 536:lvgl/src/lv_misc/lv_color.h ****     }
+ 537:lvgl/src/lv_misc/lv_color.h ****     /*Opaque background: use simple mix*/
+ 538:lvgl/src/lv_misc/lv_color.h ****     else if(bg_opa >= LV_OPA_MAX) {
+ 539:lvgl/src/lv_misc/lv_color.h ****         *res_color = lv_color_mix(fg_color, bg_color, fg_opa);
+ 540:lvgl/src/lv_misc/lv_color.h ****         *res_opa = LV_OPA_COVER;
+ 541:lvgl/src/lv_misc/lv_color.h ****     }
+ 542:lvgl/src/lv_misc/lv_color.h ****     /*Both colors have alpha. Expensive calculation need to be applied*/
+ 543:lvgl/src/lv_misc/lv_color.h ****     else {
+ 544:lvgl/src/lv_misc/lv_color.h ****         /*Save the parameters and the result. If they will be asked again don't compute again*/
+ 545:lvgl/src/lv_misc/lv_color.h ****         static lv_opa_t fg_opa_save     = 0;
+ 546:lvgl/src/lv_misc/lv_color.h ****         static lv_opa_t bg_opa_save     = 0;
+ 547:lvgl/src/lv_misc/lv_color.h ****         static lv_color_t fg_color_save = _LV_COLOR_ZERO_INITIALIZER;
+ 548:lvgl/src/lv_misc/lv_color.h ****         static lv_color_t bg_color_save = _LV_COLOR_ZERO_INITIALIZER;
+ 549:lvgl/src/lv_misc/lv_color.h ****         static lv_color_t res_color_saved = _LV_COLOR_ZERO_INITIALIZER;
+ 550:lvgl/src/lv_misc/lv_color.h ****         static lv_opa_t res_opa_saved = 0;
+ 551:lvgl/src/lv_misc/lv_color.h **** 
+ 552:lvgl/src/lv_misc/lv_color.h ****         if(fg_opa != fg_opa_save || bg_opa != bg_opa_save || fg_color.full != fg_color_save.full ||
+ 553:lvgl/src/lv_misc/lv_color.h ****            bg_color.full != bg_color_save.full) {
+ 554:lvgl/src/lv_misc/lv_color.h ****             fg_opa_save        = fg_opa;
+ 555:lvgl/src/lv_misc/lv_color.h ****             bg_opa_save        = bg_opa;
+ 556:lvgl/src/lv_misc/lv_color.h ****             fg_color_save.full = fg_color.full;
+ 557:lvgl/src/lv_misc/lv_color.h ****             bg_color_save.full = bg_color.full;
+ 558:lvgl/src/lv_misc/lv_color.h ****             /*Info:
+ 559:lvgl/src/lv_misc/lv_color.h ****              * https://en.wikipedia.org/wiki/Alpha_compositing#Analytical_derivation_of_the_over_op
+ 560:lvgl/src/lv_misc/lv_color.h ****             res_opa_saved = 255 - ((uint16_t)((uint16_t)(255 - fg_opa) * (255 - bg_opa)) >> 8);
+ 561:lvgl/src/lv_misc/lv_color.h ****             if(res_opa_saved == 0) {
+ 562:lvgl/src/lv_misc/lv_color.h ****                 while(1)
+ 563:lvgl/src/lv_misc/lv_color.h ****                     ;
+ 564:lvgl/src/lv_misc/lv_color.h ****             }
+ 565:lvgl/src/lv_misc/lv_color.h ****             lv_opa_t ratio = (uint16_t)((uint16_t)fg_opa * 255) / res_opa_saved;
+ 566:lvgl/src/lv_misc/lv_color.h ****             res_color_saved = lv_color_mix(fg_color, bg_color, ratio);
+ 567:lvgl/src/lv_misc/lv_color.h **** 
+ 568:lvgl/src/lv_misc/lv_color.h ****         }
+ 569:lvgl/src/lv_misc/lv_color.h **** 
+ 570:lvgl/src/lv_misc/lv_color.h ****         res_color->full = res_color_saved.full;
+ 571:lvgl/src/lv_misc/lv_color.h ****         *res_opa = res_opa_saved;
+ 572:lvgl/src/lv_misc/lv_color.h ****     }
+ 573:lvgl/src/lv_misc/lv_color.h **** }
+ 574:lvgl/src/lv_misc/lv_color.h **** 
+ 575:lvgl/src/lv_misc/lv_color.h **** //! @endcond
+ 576:lvgl/src/lv_misc/lv_color.h **** 
+ 577:lvgl/src/lv_misc/lv_color.h **** /**
+ 578:lvgl/src/lv_misc/lv_color.h ****  * Get the brightness of a color
+ 579:lvgl/src/lv_misc/lv_color.h ****  * @param color a color
+ 580:lvgl/src/lv_misc/lv_color.h ****  * @return the brightness [0..255]
+ 581:lvgl/src/lv_misc/lv_color.h ****  */
+ 582:lvgl/src/lv_misc/lv_color.h **** static inline uint8_t lv_color_brightness(lv_color_t color)
+ 583:lvgl/src/lv_misc/lv_color.h **** {
+ 584:lvgl/src/lv_misc/lv_color.h ****     lv_color32_t c32;
+ 585:lvgl/src/lv_misc/lv_color.h ****     c32.full        = lv_color_to32(color);
+ 586:lvgl/src/lv_misc/lv_color.h ****     uint16_t bright = (uint16_t)(3u * LV_COLOR_GET_R32(c32) + LV_COLOR_GET_B32(c32) + 4u * LV_COLOR
+ 587:lvgl/src/lv_misc/lv_color.h ****     return (uint8_t)(bright >> 3);
+ 588:lvgl/src/lv_misc/lv_color.h **** }
+ 589:lvgl/src/lv_misc/lv_color.h **** 
+ 590:lvgl/src/lv_misc/lv_color.h **** #if defined(__cplusplus) && !defined(_LV_COLOR_HAS_MODERN_CPP)
+ARM GAS  D:\Temp\ccjNLov8.s 			page 22
+
+
+ 591:lvgl/src/lv_misc/lv_color.h **** /**
+ 592:lvgl/src/lv_misc/lv_color.h **** * MSVC compiler's definition of the __cplusplus indicating 199711L regardless to C++ standard versi
+ 593:lvgl/src/lv_misc/lv_color.h **** * see https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-cplusplus
+ 594:lvgl/src/lv_misc/lv_color.h **** * so we use _MSC_VER macro instead of __cplusplus
+ 595:lvgl/src/lv_misc/lv_color.h **** */
+ 596:lvgl/src/lv_misc/lv_color.h **** #ifdef _MSC_VER
+ 597:lvgl/src/lv_misc/lv_color.h **** #if _MSC_VER >= 1900 /* Visual Studio 2015 */
+ 598:lvgl/src/lv_misc/lv_color.h **** #define _LV_COLOR_HAS_MODERN_CPP 1
+ 599:lvgl/src/lv_misc/lv_color.h **** #endif
+ 600:lvgl/src/lv_misc/lv_color.h **** #else
+ 601:lvgl/src/lv_misc/lv_color.h **** #if __cplusplus >= 201103L
+ 602:lvgl/src/lv_misc/lv_color.h **** #define _LV_COLOR_HAS_MODERN_CPP 1
+ 603:lvgl/src/lv_misc/lv_color.h **** #endif
+ 604:lvgl/src/lv_misc/lv_color.h **** #endif
+ 605:lvgl/src/lv_misc/lv_color.h **** #endif /* __cplusplus */
+ 606:lvgl/src/lv_misc/lv_color.h **** 
+ 607:lvgl/src/lv_misc/lv_color.h **** #ifndef _LV_COLOR_HAS_MODERN_CPP
+ 608:lvgl/src/lv_misc/lv_color.h **** #define _LV_COLOR_HAS_MODERN_CPP 0
+ 609:lvgl/src/lv_misc/lv_color.h **** #endif
+ 610:lvgl/src/lv_misc/lv_color.h **** 
+ 611:lvgl/src/lv_misc/lv_color.h **** #if _LV_COLOR_HAS_MODERN_CPP
+ 612:lvgl/src/lv_misc/lv_color.h **** /* Fix msvc compiler error C4576 inside C++ code */
+ 613:lvgl/src/lv_misc/lv_color.h **** #define _LV_COLOR_MAKE_TYPE_HELPER lv_color_t
+ 614:lvgl/src/lv_misc/lv_color.h **** #else
+ 615:lvgl/src/lv_misc/lv_color.h **** #define _LV_COLOR_MAKE_TYPE_HELPER (lv_color_t)
+ 616:lvgl/src/lv_misc/lv_color.h **** #endif
+ 617:lvgl/src/lv_misc/lv_color.h **** 
+ 618:lvgl/src/lv_misc/lv_color.h **** /* The most simple macro to create a color from R,G and B values */
+ 619:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_DEPTH == 1
+ 620:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_MAKE(r8, g8, b8) (_LV_COLOR_MAKE_TYPE_HELPER{(uint8_t)((b8 >> 7) | (g8 >> 7) | (r8
+ 621:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 8
+ 622:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_MAKE(r8, g8, b8) (_LV_COLOR_MAKE_TYPE_HELPER{{(uint8_t)((b8 >> 6) & 0x3U), (uint8_
+ 623:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 16
+ 624:lvgl/src/lv_misc/lv_color.h **** #if LV_COLOR_16_SWAP == 0
+ 625:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_MAKE(r8, g8, b8) (_LV_COLOR_MAKE_TYPE_HELPER{{(uint8_t)((b8 >> 3) & 0x1FU), (uint8
+ 626:lvgl/src/lv_misc/lv_color.h **** #else
+ 627:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_MAKE(r8, g8, b8) (_LV_COLOR_MAKE_TYPE_HELPER{{(uint8_t)((g8 >> 5) & 0x7U), (uint8_
+ 628:lvgl/src/lv_misc/lv_color.h **** #endif
+ 629:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 32
+ 630:lvgl/src/lv_misc/lv_color.h **** #define LV_COLOR_MAKE(r8, g8, b8) (_LV_COLOR_MAKE_TYPE_HELPER{{b8, g8, r8, 0xff}}) /*Fix 0xff alpha
+ 631:lvgl/src/lv_misc/lv_color.h **** #endif
+ 632:lvgl/src/lv_misc/lv_color.h **** 
+ 633:lvgl/src/lv_misc/lv_color.h **** static inline lv_color_t lv_color_make(uint8_t r, uint8_t g, uint8_t b)
+ 439              		.loc 2 633 26 view .LVU127
+ 440              	.LBB17:
+ 634:lvgl/src/lv_misc/lv_color.h **** {
+ 635:lvgl/src/lv_misc/lv_color.h ****     return LV_COLOR_MAKE(r, g, b);
+ 441              		.loc 2 635 5 view .LVU128
+ 442              		.loc 2 635 12 is_stmt 0 view .LVU129
+ 443 0090 D308     		lsrs	r3, r2, #3
+ 444 0092 9208     		lsrs	r2, r2, #2
+ 445              	.LVL50:
+ 446              		.loc 2 635 12 view .LVU130
+ 447 0094 4FF00000 		mov	r0, #0	@ movhi
+ 448 0098 63F30400 		bfi	r0, r3, #0, #5
+ 449 009c 62F34A10 		bfi	r0, r2, #5, #6
+ 450 00a0 63F3CF20 		bfi	r0, r3, #11, #5
+ARM GAS  D:\Temp\ccjNLov8.s 			page 23
+
+
+ 451              		.loc 2 635 12 view .LVU131
+ 452              	.LBE17:
+ 453              	.LBE16:
+ 153:lvgl/src/lv_misc/lv_color.c ****     }
+ 454              		.loc 1 153 16 view .LVU132
+ 455 00a4 12E0     		b	.L15
+ 456              	.LVL51:
+ 457              	.L22:
+ 164:lvgl/src/lv_misc/lv_color.c ****         case 0:
+ 165:lvgl/src/lv_misc/lv_color.c ****             r = v;
+ 458              		.loc 1 165 15 view .LVU133
+ 459 00a6 1446     		mov	r4, r2
+ 460              	.LVL52:
+ 166:lvgl/src/lv_misc/lv_color.c ****             g = t;
+ 461              		.loc 1 166 15 view .LVU134
+ 462 00a8 1A46     		mov	r2, r3
+ 463              	.LVL53:
+ 464              		.loc 1 166 15 view .LVU135
+ 465 00aa 01E0     		b	.L21
+ 466              	.LVL54:
+ 467              	.L20:
+ 167:lvgl/src/lv_misc/lv_color.c ****             b = p;
+ 168:lvgl/src/lv_misc/lv_color.c ****             break;
+ 169:lvgl/src/lv_misc/lv_color.c ****         case 1:
+ 170:lvgl/src/lv_misc/lv_color.c ****             r = q;
+ 171:lvgl/src/lv_misc/lv_color.c ****             g = v;
+ 172:lvgl/src/lv_misc/lv_color.c ****             b = p;
+ 173:lvgl/src/lv_misc/lv_color.c ****             break;
+ 174:lvgl/src/lv_misc/lv_color.c ****         case 2:
+ 175:lvgl/src/lv_misc/lv_color.c ****             r = p;
+ 468              		.loc 1 175 13 is_stmt 1 view .LVU136
+ 176:lvgl/src/lv_misc/lv_color.c ****             g = v;
+ 469              		.loc 1 176 13 view .LVU137
+ 177:lvgl/src/lv_misc/lv_color.c ****             b = t;
+ 470              		.loc 1 177 13 view .LVU138
+ 178:lvgl/src/lv_misc/lv_color.c ****             break;
+ 471              		.loc 1 178 13 view .LVU139
+ 175:lvgl/src/lv_misc/lv_color.c ****             g = v;
+ 472              		.loc 1 175 15 is_stmt 0 view .LVU140
+ 473 00ac 2C46     		mov	r4, r5
+ 474              	.LVL55:
+ 177:lvgl/src/lv_misc/lv_color.c ****             b = t;
+ 475              		.loc 1 177 15 view .LVU141
+ 476 00ae 1D46     		mov	r5, r3
+ 477              	.LVL56:
+ 478              	.L21:
+ 179:lvgl/src/lv_misc/lv_color.c ****         case 3:
+ 180:lvgl/src/lv_misc/lv_color.c ****             r = p;
+ 181:lvgl/src/lv_misc/lv_color.c ****             g = q;
+ 182:lvgl/src/lv_misc/lv_color.c ****             b = v;
+ 183:lvgl/src/lv_misc/lv_color.c ****             break;
+ 184:lvgl/src/lv_misc/lv_color.c ****         case 4:
+ 185:lvgl/src/lv_misc/lv_color.c ****             r = t;
+ 186:lvgl/src/lv_misc/lv_color.c ****             g = p;
+ 187:lvgl/src/lv_misc/lv_color.c ****             b = v;
+ 188:lvgl/src/lv_misc/lv_color.c ****             break;
+ 189:lvgl/src/lv_misc/lv_color.c ****         default:
+ARM GAS  D:\Temp\ccjNLov8.s 			page 24
+
+
+ 190:lvgl/src/lv_misc/lv_color.c ****             r = v;
+ 191:lvgl/src/lv_misc/lv_color.c ****             g = p;
+ 192:lvgl/src/lv_misc/lv_color.c ****             b = q;
+ 193:lvgl/src/lv_misc/lv_color.c ****             break;
+ 194:lvgl/src/lv_misc/lv_color.c ****     }
+ 195:lvgl/src/lv_misc/lv_color.c **** 
+ 196:lvgl/src/lv_misc/lv_color.c ****     lv_color_t result = lv_color_make(r, g, b);
+ 479              		.loc 1 196 5 is_stmt 1 view .LVU142
+ 480              	.LBB18:
+ 481              	.LBI18:
+ 633:lvgl/src/lv_misc/lv_color.h **** {
+ 482              		.loc 2 633 26 view .LVU143
+ 483              	.LBB19:
+ 484              		.loc 2 635 5 view .LVU144
+ 485              		.loc 2 635 12 is_stmt 0 view .LVU145
+ 486 00b0 C5F3C405 		ubfx	r5, r5, #3, #5
+ 487              	.LVL57:
+ 488              		.loc 2 635 12 view .LVU146
+ 489 00b4 C2F38502 		ubfx	r2, r2, #2, #6
+ 490              	.LVL58:
+ 491              		.loc 2 635 12 view .LVU147
+ 492 00b8 C4F3C404 		ubfx	r4, r4, #3, #5
+ 493              	.LVL59:
+ 494              		.loc 2 635 12 view .LVU148
+ 495 00bc 4FF00000 		mov	r0, #0	@ movhi
+ 496              	.LVL60:
+ 497              		.loc 2 635 12 view .LVU149
+ 498 00c0 65F30400 		bfi	r0, r5, #0, #5
+ 499 00c4 62F34A10 		bfi	r0, r2, #5, #6
+ 500 00c8 64F3CF20 		bfi	r0, r4, #11, #5
+ 501              		.loc 2 635 12 view .LVU150
+ 502              	.LBE19:
+ 503              	.LBE18:
+ 197:lvgl/src/lv_misc/lv_color.c ****     return result;
+ 504              		.loc 1 197 5 is_stmt 1 view .LVU151
+ 505              	.L15:
+ 198:lvgl/src/lv_misc/lv_color.c **** }
+ 506              		.loc 1 198 1 is_stmt 0 view .LVU152
+ 507 00cc 30BC     		pop	{r4, r5}
+ 508              	.LCFI5:
+ 509              		.cfi_remember_state
+ 510              		.cfi_restore 5
+ 511              		.cfi_restore 4
+ 512              		.cfi_def_cfa_offset 0
+ 513 00ce 7047     		bx	lr
+ 514              	.LVL61:
+ 515              	.L19:
+ 516              	.LCFI6:
+ 517              		.cfi_restore_state
+ 180:lvgl/src/lv_misc/lv_color.c ****             g = q;
+ 518              		.loc 1 180 13 is_stmt 1 view .LVU153
+ 181:lvgl/src/lv_misc/lv_color.c ****             b = v;
+ 519              		.loc 1 181 13 view .LVU154
+ 182:lvgl/src/lv_misc/lv_color.c ****             break;
+ 520              		.loc 1 182 13 view .LVU155
+ 183:lvgl/src/lv_misc/lv_color.c ****         case 4:
+ 521              		.loc 1 183 13 view .LVU156
+ARM GAS  D:\Temp\ccjNLov8.s 			page 25
+
+
+ 522 00d0 2346     		mov	r3, r4
+ 523              	.LVL62:
+ 180:lvgl/src/lv_misc/lv_color.c ****             g = q;
+ 524              		.loc 1 180 15 is_stmt 0 view .LVU157
+ 525 00d2 2C46     		mov	r4, r5
+ 526              	.LVL63:
+ 182:lvgl/src/lv_misc/lv_color.c ****             break;
+ 527              		.loc 1 182 15 view .LVU158
+ 528 00d4 1546     		mov	r5, r2
+ 529              	.LVL64:
+ 181:lvgl/src/lv_misc/lv_color.c ****             b = v;
+ 530              		.loc 1 181 15 view .LVU159
+ 531 00d6 1A46     		mov	r2, r3
+ 532              	.LVL65:
+ 183:lvgl/src/lv_misc/lv_color.c ****         case 4:
+ 533              		.loc 1 183 13 view .LVU160
+ 534 00d8 EAE7     		b	.L21
+ 535              	.LVL66:
+ 536              	.L17:
+ 185:lvgl/src/lv_misc/lv_color.c ****             g = p;
+ 537              		.loc 1 185 13 is_stmt 1 view .LVU161
+ 186:lvgl/src/lv_misc/lv_color.c ****             b = v;
+ 538              		.loc 1 186 13 view .LVU162
+ 187:lvgl/src/lv_misc/lv_color.c ****             break;
+ 539              		.loc 1 187 13 view .LVU163
+ 188:lvgl/src/lv_misc/lv_color.c ****         default:
+ 540              		.loc 1 188 13 view .LVU164
+ 541 00da 1146     		mov	r1, r2
+ 186:lvgl/src/lv_misc/lv_color.c ****             b = v;
+ 542              		.loc 1 186 15 is_stmt 0 view .LVU165
+ 543 00dc 2A46     		mov	r2, r5
+ 544              	.LVL67:
+ 187:lvgl/src/lv_misc/lv_color.c ****             break;
+ 545              		.loc 1 187 15 view .LVU166
+ 546 00de 0D46     		mov	r5, r1
+ 547              	.LVL68:
+ 185:lvgl/src/lv_misc/lv_color.c ****             g = p;
+ 548              		.loc 1 185 15 view .LVU167
+ 549 00e0 1C46     		mov	r4, r3
+ 550              	.LVL69:
+ 188:lvgl/src/lv_misc/lv_color.c ****         default:
+ 551              		.loc 1 188 13 view .LVU168
+ 552 00e2 E5E7     		b	.L21
+ 553              	.LVL70:
+ 554              	.L16:
+ 190:lvgl/src/lv_misc/lv_color.c ****             g = p;
+ 555              		.loc 1 190 13 is_stmt 1 view .LVU169
+ 191:lvgl/src/lv_misc/lv_color.c ****             b = q;
+ 556              		.loc 1 191 13 view .LVU170
+ 192:lvgl/src/lv_misc/lv_color.c ****             break;
+ 557              		.loc 1 192 13 view .LVU171
+ 193:lvgl/src/lv_misc/lv_color.c ****     }
+ 558              		.loc 1 193 13 view .LVU172
+ 559 00e4 2346     		mov	r3, r4
+ 560              	.LVL71:
+ 190:lvgl/src/lv_misc/lv_color.c ****             g = p;
+ 561              		.loc 1 190 15 is_stmt 0 view .LVU173
+ARM GAS  D:\Temp\ccjNLov8.s 			page 26
+
+
+ 562 00e6 1446     		mov	r4, r2
+ 563              	.LVL72:
+ 191:lvgl/src/lv_misc/lv_color.c ****             b = q;
+ 564              		.loc 1 191 15 view .LVU174
+ 565 00e8 2A46     		mov	r2, r5
+ 566              	.LVL73:
+ 192:lvgl/src/lv_misc/lv_color.c ****             break;
+ 567              		.loc 1 192 15 view .LVU175
+ 568 00ea 1D46     		mov	r5, r3
+ 569              	.LVL74:
+ 193:lvgl/src/lv_misc/lv_color.c ****     }
+ 570              		.loc 1 193 13 view .LVU176
+ 571 00ec E0E7     		b	.L21
+ 572              	.L26:
+ 573 00ee 00BF     		.align	2
+ 574              	.L25:
+ 575 00f0 176CC116 		.word	381774871
+ 576 00f4 1F85EB51 		.word	1374389535
+ 577 00f8 83BEA02F 		.word	799063683
+ 578              		.cfi_endproc
+ 579              	.LFE145:
+ 581              		.section	.text.lv_color_rgb_to_hsv,"ax",%progbits
+ 582              		.align	1
+ 583              		.global	lv_color_rgb_to_hsv
+ 584              		.syntax unified
+ 585              		.thumb
+ 586              		.thumb_func
+ 587              		.fpu fpv4-sp-d16
+ 589              	lv_color_rgb_to_hsv:
+ 590              	.LVL75:
+ 591              	.LFB146:
+ 199:lvgl/src/lv_misc/lv_color.c **** 
+ 200:lvgl/src/lv_misc/lv_color.c **** /**
+ 201:lvgl/src/lv_misc/lv_color.c ****  * Convert a 32-bit RGB color to HSV
+ 202:lvgl/src/lv_misc/lv_color.c ****  * @param r8 8-bit red
+ 203:lvgl/src/lv_misc/lv_color.c ****  * @param g8 8-bit green
+ 204:lvgl/src/lv_misc/lv_color.c ****  * @param b8 8-bit blue
+ 205:lvgl/src/lv_misc/lv_color.c ****  * @return the given RGB color in HSV
+ 206:lvgl/src/lv_misc/lv_color.c ****  */
+ 207:lvgl/src/lv_misc/lv_color.c **** lv_color_hsv_t lv_color_rgb_to_hsv(uint8_t r8, uint8_t g8, uint8_t b8)
+ 208:lvgl/src/lv_misc/lv_color.c **** {
+ 592              		.loc 1 208 1 is_stmt 1 view -0
+ 593              		.cfi_startproc
+ 594              		@ args = 0, pretend = 0, frame = 8
+ 595              		@ frame_needed = 0, uses_anonymous_args = 0
+ 596              		.loc 1 208 1 is_stmt 0 view .LVU178
+ 597 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 598              	.LCFI7:
+ 599              		.cfi_def_cfa_offset 20
+ 600              		.cfi_offset 4, -20
+ 601              		.cfi_offset 5, -16
+ 602              		.cfi_offset 6, -12
+ 603              		.cfi_offset 7, -8
+ 604              		.cfi_offset 14, -4
+ 605 0002 83B0     		sub	sp, sp, #12
+ 606              	.LCFI8:
+ 607              		.cfi_def_cfa_offset 32
+ARM GAS  D:\Temp\ccjNLov8.s 			page 27
+
+
+ 209:lvgl/src/lv_misc/lv_color.c ****     uint16_t r = ((uint32_t)r8 << 10) / 255;
+ 608              		.loc 1 209 5 is_stmt 1 view .LVU179
+ 609              		.loc 1 209 32 is_stmt 0 view .LVU180
+ 610 0004 8002     		lsls	r0, r0, #10
+ 611              	.LVL76:
+ 612              		.loc 1 209 39 view .LVU181
+ 613 0006 404C     		ldr	r4, .L49
+ 614 0008 A4FB0030 		umull	r3, r0, r4, r0
+ 615 000c C009     		lsrs	r0, r0, #7
+ 616              		.loc 1 209 14 view .LVU182
+ 617 000e 87B2     		uxth	r7, r0
+ 618              	.LVL77:
+ 210:lvgl/src/lv_misc/lv_color.c ****     uint16_t g = ((uint32_t)g8 << 10) / 255;
+ 619              		.loc 1 210 5 is_stmt 1 view .LVU183
+ 620              		.loc 1 210 32 is_stmt 0 view .LVU184
+ 621 0010 8902     		lsls	r1, r1, #10
+ 622              	.LVL78:
+ 623              		.loc 1 210 39 view .LVU185
+ 624 0012 A4FB0113 		umull	r1, r3, r4, r1
+ 625 0016 D909     		lsrs	r1, r3, #7
+ 626              		.loc 1 210 14 view .LVU186
+ 627 0018 8DB2     		uxth	r5, r1
+ 628              	.LVL79:
+ 211:lvgl/src/lv_misc/lv_color.c ****     uint16_t b = ((uint32_t)b8 << 10) / 255;
+ 629              		.loc 1 211 5 is_stmt 1 view .LVU187
+ 630              		.loc 1 211 32 is_stmt 0 view .LVU188
+ 631 001a 9202     		lsls	r2, r2, #10
+ 632              	.LVL80:
+ 633              		.loc 1 211 39 view .LVU189
+ 634 001c A4FB0232 		umull	r3, r2, r4, r2
+ 635 0020 D209     		lsrs	r2, r2, #7
+ 636              		.loc 1 211 14 view .LVU190
+ 637 0022 96B2     		uxth	r6, r2
+ 638              	.LVL81:
+ 212:lvgl/src/lv_misc/lv_color.c **** 
+ 213:lvgl/src/lv_misc/lv_color.c ****     uint16_t rgbMin = r < g ? (r < b ? r : b) : (g < b ? g : b);
+ 639              		.loc 1 213 5 is_stmt 1 view .LVU191
+ 640              		.loc 1 213 14 is_stmt 0 view .LVU192
+ 641 0024 AF42     		cmp	r7, r5
+ 642 0026 26D2     		bcs	.L28
+ 643              		.loc 1 213 14 discriminator 1 view .LVU193
+ 644 0028 3B46     		mov	r3, r7
+ 645 002a B742     		cmp	r7, r6
+ 646 002c 28BF     		it	cs
+ 647 002e 3346     		movcs	r3, r6
+ 648              	.L29:
+ 649              	.LVL82:
+ 214:lvgl/src/lv_misc/lv_color.c ****     uint16_t rgbMax = r > g ? (r > b ? r : b) : (g > b ? g : b);
+ 650              		.loc 1 214 5 is_stmt 1 discriminator 4 view .LVU194
+ 651              		.loc 1 214 14 is_stmt 0 discriminator 4 view .LVU195
+ 652 0030 AF42     		cmp	r7, r5
+ 653 0032 25D9     		bls	.L30
+ 654              		.loc 1 214 14 discriminator 1 view .LVU196
+ 655 0034 BE46     		mov	lr, r7
+ 656 0036 B742     		cmp	r7, r6
+ 657 0038 38BF     		it	cc
+ 658 003a B646     		movcc	lr, r6
+ARM GAS  D:\Temp\ccjNLov8.s 			page 28
+
+
+ 659              	.L31:
+ 660              	.LVL83:
+ 215:lvgl/src/lv_misc/lv_color.c **** 
+ 216:lvgl/src/lv_misc/lv_color.c ****     lv_color_hsv_t hsv;
+ 661              		.loc 1 216 5 is_stmt 1 discriminator 4 view .LVU197
+ 217:lvgl/src/lv_misc/lv_color.c **** 
+ 218:lvgl/src/lv_misc/lv_color.c ****     // https://en.wikipedia.org/wiki/HSL_and_HSV#Lightness
+ 219:lvgl/src/lv_misc/lv_color.c ****     hsv.v = (100 * rgbMax) >> 10;
+ 662              		.loc 1 219 5 discriminator 4 view .LVU198
+ 663              		.loc 1 219 18 is_stmt 0 discriminator 4 view .LVU199
+ 664 003c 6424     		movs	r4, #100
+ 665 003e 04FB0EF4 		mul	r4, r4, lr
+ 666              		.loc 1 219 28 discriminator 4 view .LVU200
+ 667 0042 A412     		asrs	r4, r4, #10
+ 668              		.loc 1 219 11 discriminator 4 view .LVU201
+ 669 0044 8DF80340 		strb	r4, [sp, #3]
+ 220:lvgl/src/lv_misc/lv_color.c **** 
+ 221:lvgl/src/lv_misc/lv_color.c ****     int32_t delta = rgbMax - rgbMin;
+ 670              		.loc 1 221 5 is_stmt 1 discriminator 4 view .LVU202
+ 671              		.loc 1 221 13 is_stmt 0 discriminator 4 view .LVU203
+ 672 0048 AEEB030C 		sub	ip, lr, r3
+ 673              	.LVL84:
+ 222:lvgl/src/lv_misc/lv_color.c ****     if(delta < 3) {
+ 674              		.loc 1 222 5 is_stmt 1 discriminator 4 view .LVU204
+ 675              		.loc 1 222 7 is_stmt 0 discriminator 4 view .LVU205
+ 676 004c BCF1020F 		cmp	ip, #2
+ 677 0050 1BDD     		ble	.L43
+ 223:lvgl/src/lv_misc/lv_color.c ****         hsv.h = 0;
+ 224:lvgl/src/lv_misc/lv_color.c ****         hsv.s = 0;
+ 225:lvgl/src/lv_misc/lv_color.c ****         return hsv;
+ 226:lvgl/src/lv_misc/lv_color.c ****     }
+ 227:lvgl/src/lv_misc/lv_color.c **** 
+ 228:lvgl/src/lv_misc/lv_color.c ****     // https://en.wikipedia.org/wiki/HSL_and_HSV#Saturation
+ 229:lvgl/src/lv_misc/lv_color.c ****     hsv.s = 100 * delta / rgbMax;
+ 678              		.loc 1 229 5 is_stmt 1 view .LVU206
+ 679              		.loc 1 229 17 is_stmt 0 view .LVU207
+ 680 0052 6424     		movs	r4, #100
+ 681 0054 04FB0CF4 		mul	r4, r4, ip
+ 682              		.loc 1 229 25 view .LVU208
+ 683 0058 94FBFEF4 		sdiv	r4, r4, lr
+ 684              		.loc 1 229 11 view .LVU209
+ 685 005c E4B2     		uxtb	r4, r4
+ 686 005e 8DF80240 		strb	r4, [sp, #2]
+ 230:lvgl/src/lv_misc/lv_color.c ****     if(hsv.s < 3) {
+ 687              		.loc 1 230 5 is_stmt 1 view .LVU210
+ 688              		.loc 1 230 7 is_stmt 0 view .LVU211
+ 689 0062 022C     		cmp	r4, #2
+ 690 0064 19D9     		bls	.L44
+ 231:lvgl/src/lv_misc/lv_color.c ****         hsv.h = 0;
+ 232:lvgl/src/lv_misc/lv_color.c ****         return hsv;
+ 233:lvgl/src/lv_misc/lv_color.c ****     }
+ 234:lvgl/src/lv_misc/lv_color.c **** 
+ 235:lvgl/src/lv_misc/lv_color.c ****     // https://en.wikipedia.org/wiki/HSL_and_HSV#Hue_and_chroma
+ 236:lvgl/src/lv_misc/lv_color.c ****     int32_t h;
+ 691              		.loc 1 236 5 is_stmt 1 view .LVU212
+ 237:lvgl/src/lv_misc/lv_color.c ****     if(rgbMax == r)
+ 692              		.loc 1 237 5 view .LVU213
+ARM GAS  D:\Temp\ccjNLov8.s 			page 29
+
+
+ 693              		.loc 1 237 7 is_stmt 0 view .LVU214
+ 694 0066 BE45     		cmp	lr, r7
+ 695 0068 1DD0     		beq	.L45
+ 238:lvgl/src/lv_misc/lv_color.c ****         h = (((g - b) << 10) / delta) + (g < b ? (6 << 10) : 0); // between yellow & magenta
+ 239:lvgl/src/lv_misc/lv_color.c ****     else if(rgbMax == g)
+ 696              		.loc 1 239 10 is_stmt 1 view .LVU215
+ 697              		.loc 1 239 12 is_stmt 0 view .LVU216
+ 698 006a AE45     		cmp	lr, r5
+ 699 006c 3AD0     		beq	.L46
+ 240:lvgl/src/lv_misc/lv_color.c ****         h = (((b - r) << 10) / delta) + (2 << 10); // between cyan & yellow
+ 241:lvgl/src/lv_misc/lv_color.c ****     else if(rgbMax == b)
+ 700              		.loc 1 241 10 is_stmt 1 view .LVU217
+ 701              		.loc 1 241 12 is_stmt 0 view .LVU218
+ 702 006e B645     		cmp	lr, r6
+ 703 0070 3FD0     		beq	.L47
+ 242:lvgl/src/lv_misc/lv_color.c ****         h = (((r - g) << 10) / delta) + (4 << 10); // between magenta & cyan
+ 243:lvgl/src/lv_misc/lv_color.c ****     else
+ 244:lvgl/src/lv_misc/lv_color.c ****         h = 0;
+ 704              		.loc 1 244 11 view .LVU219
+ 705 0072 0023     		movs	r3, #0
+ 706              	.LVL85:
+ 707              		.loc 1 244 11 view .LVU220
+ 708 0074 20E0     		b	.L37
+ 709              	.LVL86:
+ 710              	.L28:
+ 213:lvgl/src/lv_misc/lv_color.c ****     uint16_t rgbMax = r > g ? (r > b ? r : b) : (g > b ? g : b);
+ 711              		.loc 1 213 14 discriminator 2 view .LVU221
+ 712 0076 2B46     		mov	r3, r5
+ 713 0078 B542     		cmp	r5, r6
+ 714 007a 28BF     		it	cs
+ 715 007c 3346     		movcs	r3, r6
+ 716 007e D7E7     		b	.L29
+ 717              	.LVL87:
+ 718              	.L30:
+ 214:lvgl/src/lv_misc/lv_color.c **** 
+ 719              		.loc 1 214 14 discriminator 2 view .LVU222
+ 720 0080 AE46     		mov	lr, r5
+ 721 0082 B542     		cmp	r5, r6
+ 722 0084 38BF     		it	cc
+ 723 0086 B646     		movcc	lr, r6
+ 724 0088 D8E7     		b	.L31
+ 725              	.LVL88:
+ 726              	.L43:
+ 223:lvgl/src/lv_misc/lv_color.c ****         hsv.s = 0;
+ 727              		.loc 1 223 9 is_stmt 1 view .LVU223
+ 223:lvgl/src/lv_misc/lv_color.c ****         hsv.s = 0;
+ 728              		.loc 1 223 15 is_stmt 0 view .LVU224
+ 729 008a 0023     		movs	r3, #0
+ 730              	.LVL89:
+ 223:lvgl/src/lv_misc/lv_color.c ****         hsv.s = 0;
+ 731              		.loc 1 223 15 view .LVU225
+ 732 008c ADF80030 		strh	r3, [sp]	@ movhi
+ 224:lvgl/src/lv_misc/lv_color.c ****         return hsv;
+ 733              		.loc 1 224 9 is_stmt 1 view .LVU226
+ 224:lvgl/src/lv_misc/lv_color.c ****         return hsv;
+ 734              		.loc 1 224 15 is_stmt 0 view .LVU227
+ 735 0090 8DF80230 		strb	r3, [sp, #2]
+ARM GAS  D:\Temp\ccjNLov8.s 			page 30
+
+
+ 225:lvgl/src/lv_misc/lv_color.c ****     }
+ 736              		.loc 1 225 9 is_stmt 1 view .LVU228
+ 225:lvgl/src/lv_misc/lv_color.c ****     }
+ 737              		.loc 1 225 16 is_stmt 0 view .LVU229
+ 738 0094 009B     		ldr	r3, [sp]
+ 739 0096 0193     		str	r3, [sp, #4]
+ 740 0098 17E0     		b	.L33
+ 741              	.LVL90:
+ 742              	.L44:
+ 231:lvgl/src/lv_misc/lv_color.c ****         return hsv;
+ 743              		.loc 1 231 9 is_stmt 1 view .LVU230
+ 231:lvgl/src/lv_misc/lv_color.c ****         return hsv;
+ 744              		.loc 1 231 15 is_stmt 0 view .LVU231
+ 745 009a 0023     		movs	r3, #0
+ 746              	.LVL91:
+ 231:lvgl/src/lv_misc/lv_color.c ****         return hsv;
+ 747              		.loc 1 231 15 view .LVU232
+ 748 009c ADF80030 		strh	r3, [sp]	@ movhi
+ 232:lvgl/src/lv_misc/lv_color.c ****     }
+ 749              		.loc 1 232 9 is_stmt 1 view .LVU233
+ 232:lvgl/src/lv_misc/lv_color.c ****     }
+ 750              		.loc 1 232 16 is_stmt 0 view .LVU234
+ 751 00a0 009B     		ldr	r3, [sp]
+ 752 00a2 0193     		str	r3, [sp, #4]
+ 753 00a4 11E0     		b	.L33
+ 754              	.LVL92:
+ 755              	.L45:
+ 238:lvgl/src/lv_misc/lv_color.c ****     else if(rgbMax == g)
+ 756              		.loc 1 238 9 is_stmt 1 view .LVU235
+ 238:lvgl/src/lv_misc/lv_color.c ****     else if(rgbMax == g)
+ 757              		.loc 1 238 18 is_stmt 0 view .LVU236
+ 758 00a6 8B1A     		subs	r3, r1, r2
+ 759              	.LVL93:
+ 238:lvgl/src/lv_misc/lv_color.c ****     else if(rgbMax == g)
+ 760              		.loc 1 238 23 view .LVU237
+ 761 00a8 9B02     		lsls	r3, r3, #10
+ 238:lvgl/src/lv_misc/lv_color.c ****     else if(rgbMax == g)
+ 762              		.loc 1 238 30 view .LVU238
+ 763 00aa 93FBFCF3 		sdiv	r3, r3, ip
+ 238:lvgl/src/lv_misc/lv_color.c ****     else if(rgbMax == g)
+ 764              		.loc 1 238 60 view .LVU239
+ 765 00ae B542     		cmp	r5, r6
+ 766 00b0 16D2     		bcs	.L40
+ 767 00b2 4FF4C052 		mov	r2, #6144
+ 768              	.L36:
+ 238:lvgl/src/lv_misc/lv_color.c ****     else if(rgbMax == g)
+ 769              		.loc 1 238 11 discriminator 4 view .LVU240
+ 770 00b6 1344     		add	r3, r3, r2
+ 771              	.LVL94:
+ 772              	.L37:
+ 245:lvgl/src/lv_misc/lv_color.c ****     h *= 60;
+ 773              		.loc 1 245 5 is_stmt 1 view .LVU241
+ 774              		.loc 1 245 7 is_stmt 0 view .LVU242
+ 775 00b8 C3EB0313 		rsb	r3, r3, r3, lsl #4
+ 776              	.LVL95:
+ 777              		.loc 1 245 7 view .LVU243
+ 778 00bc 9A00     		lsls	r2, r3, #2
+ARM GAS  D:\Temp\ccjNLov8.s 			page 31
+
+
+ 779              	.LVL96:
+ 246:lvgl/src/lv_misc/lv_color.c ****     h >>= 10;
+ 780              		.loc 1 246 5 is_stmt 1 view .LVU244
+ 247:lvgl/src/lv_misc/lv_color.c ****     if(h < 0) h += 360;
+ 781              		.loc 1 247 5 view .LVU245
+ 782              		.loc 1 247 7 is_stmt 0 view .LVU246
+ 783 00be 9212     		asrs	r2, r2, #10
+ 784              	.LVL97:
+ 785              		.loc 1 247 7 view .LVU247
+ 786 00c0 1ED4     		bmi	.L48
+ 787              	.L39:
+ 248:lvgl/src/lv_misc/lv_color.c **** 
+ 249:lvgl/src/lv_misc/lv_color.c ****     hsv.h = h;
+ 788              		.loc 1 249 5 is_stmt 1 view .LVU248
+ 789              		.loc 1 249 11 is_stmt 0 view .LVU249
+ 790 00c2 ADF80020 		strh	r2, [sp]	@ movhi
+ 250:lvgl/src/lv_misc/lv_color.c ****     return hsv;
+ 791              		.loc 1 250 5 is_stmt 1 view .LVU250
+ 792              		.loc 1 250 12 is_stmt 0 view .LVU251
+ 793 00c6 009B     		ldr	r3, [sp]
+ 794 00c8 0193     		str	r3, [sp, #4]
+ 795              	.LVL98:
+ 796              	.L33:
+ 797              		.loc 1 250 12 view .LVU252
+ 798 00ca 0020     		movs	r0, #0
+ 799 00cc BDF80430 		ldrh	r3, [sp, #4]
+ 800 00d0 63F30F00 		bfi	r0, r3, #0, #16
+ 801 00d4 BDF80630 		ldrh	r3, [sp, #6]
+ 802 00d8 63F31F40 		bfi	r0, r3, #16, #16
+ 251:lvgl/src/lv_misc/lv_color.c **** }
+ 803              		.loc 1 251 1 view .LVU253
+ 804 00dc 03B0     		add	sp, sp, #12
+ 805              	.LCFI9:
+ 806              		.cfi_remember_state
+ 807              		.cfi_def_cfa_offset 20
+ 808              		@ sp needed
+ 809 00de F0BD     		pop	{r4, r5, r6, r7, pc}
+ 810              	.LVL99:
+ 811              	.L40:
+ 812              	.LCFI10:
+ 813              		.cfi_restore_state
+ 238:lvgl/src/lv_misc/lv_color.c ****     else if(rgbMax == g)
+ 814              		.loc 1 238 60 view .LVU254
+ 815 00e0 0022     		movs	r2, #0
+ 816 00e2 E8E7     		b	.L36
+ 817              	.LVL100:
+ 818              	.L46:
+ 240:lvgl/src/lv_misc/lv_color.c ****     else if(rgbMax == b)
+ 819              		.loc 1 240 9 is_stmt 1 view .LVU255
+ 240:lvgl/src/lv_misc/lv_color.c ****     else if(rgbMax == b)
+ 820              		.loc 1 240 18 is_stmt 0 view .LVU256
+ 821 00e4 121A     		subs	r2, r2, r0
+ 240:lvgl/src/lv_misc/lv_color.c ****     else if(rgbMax == b)
+ 822              		.loc 1 240 23 view .LVU257
+ 823 00e6 9302     		lsls	r3, r2, #10
+ 824              	.LVL101:
+ 240:lvgl/src/lv_misc/lv_color.c ****     else if(rgbMax == b)
+ARM GAS  D:\Temp\ccjNLov8.s 			page 32
+
+
+ 825              		.loc 1 240 30 view .LVU258
+ 826 00e8 93FBFCF3 		sdiv	r3, r3, ip
+ 240:lvgl/src/lv_misc/lv_color.c ****     else if(rgbMax == b)
+ 827              		.loc 1 240 11 view .LVU259
+ 828 00ec 03F50063 		add	r3, r3, #2048
+ 829              	.LVL102:
+ 240:lvgl/src/lv_misc/lv_color.c ****     else if(rgbMax == b)
+ 830              		.loc 1 240 11 view .LVU260
+ 831 00f0 E2E7     		b	.L37
+ 832              	.LVL103:
+ 833              	.L47:
+ 242:lvgl/src/lv_misc/lv_color.c ****     else
+ 834              		.loc 1 242 9 is_stmt 1 view .LVU261
+ 242:lvgl/src/lv_misc/lv_color.c ****     else
+ 835              		.loc 1 242 18 is_stmt 0 view .LVU262
+ 836 00f2 431A     		subs	r3, r0, r1
+ 837              	.LVL104:
+ 242:lvgl/src/lv_misc/lv_color.c ****     else
+ 838              		.loc 1 242 23 view .LVU263
+ 839 00f4 9B02     		lsls	r3, r3, #10
+ 242:lvgl/src/lv_misc/lv_color.c ****     else
+ 840              		.loc 1 242 30 view .LVU264
+ 841 00f6 93FBFCF3 		sdiv	r3, r3, ip
+ 242:lvgl/src/lv_misc/lv_color.c ****     else
+ 842              		.loc 1 242 11 view .LVU265
+ 843 00fa 03F58053 		add	r3, r3, #4096
+ 844              	.LVL105:
+ 242:lvgl/src/lv_misc/lv_color.c ****     else
+ 845              		.loc 1 242 11 view .LVU266
+ 846 00fe DBE7     		b	.L37
+ 847              	.LVL106:
+ 848              	.L48:
+ 247:lvgl/src/lv_misc/lv_color.c **** 
+ 849              		.loc 1 247 15 is_stmt 1 discriminator 1 view .LVU267
+ 247:lvgl/src/lv_misc/lv_color.c **** 
+ 850              		.loc 1 247 17 is_stmt 0 discriminator 1 view .LVU268
+ 851 0100 02F5B472 		add	r2, r2, #360
+ 852              	.LVL107:
+ 247:lvgl/src/lv_misc/lv_color.c **** 
+ 853              		.loc 1 247 17 discriminator 1 view .LVU269
+ 854 0104 DDE7     		b	.L39
+ 855              	.L50:
+ 856 0106 00BF     		.align	2
+ 857              	.L49:
+ 858 0108 81808080 		.word	-2139062143
+ 859              		.cfi_endproc
+ 860              	.LFE146:
+ 862              		.section	.text.lv_color_to_hsv,"ax",%progbits
+ 863              		.align	1
+ 864              		.global	lv_color_to_hsv
+ 865              		.syntax unified
+ 866              		.thumb
+ 867              		.thumb_func
+ 868              		.fpu fpv4-sp-d16
+ 870              	lv_color_to_hsv:
+ 871              	.LVL108:
+ 872              	.LFB147:
+ARM GAS  D:\Temp\ccjNLov8.s 			page 33
+
+
+ 252:lvgl/src/lv_misc/lv_color.c **** 
+ 253:lvgl/src/lv_misc/lv_color.c **** /**
+ 254:lvgl/src/lv_misc/lv_color.c ****  * Convert a color to HSV
+ 255:lvgl/src/lv_misc/lv_color.c ****  * @param color color
+ 256:lvgl/src/lv_misc/lv_color.c ****  * @return the given color in HSV
+ 257:lvgl/src/lv_misc/lv_color.c ****  */
+ 258:lvgl/src/lv_misc/lv_color.c **** lv_color_hsv_t lv_color_to_hsv(lv_color_t color)
+ 259:lvgl/src/lv_misc/lv_color.c **** {
+ 873              		.loc 1 259 1 is_stmt 1 view -0
+ 874              		.cfi_startproc
+ 875              		@ args = 0, pretend = 0, frame = 8
+ 876              		@ frame_needed = 0, uses_anonymous_args = 0
+ 877              		.loc 1 259 1 is_stmt 0 view .LVU271
+ 878 0000 10B5     		push	{r4, lr}
+ 879              	.LCFI11:
+ 880              		.cfi_def_cfa_offset 8
+ 881              		.cfi_offset 4, -8
+ 882              		.cfi_offset 14, -4
+ 883 0002 82B0     		sub	sp, sp, #8
+ 884              	.LCFI12:
+ 885              		.cfi_def_cfa_offset 16
+ 260:lvgl/src/lv_misc/lv_color.c ****     lv_color32_t color32;
+ 886              		.loc 1 260 5 is_stmt 1 view .LVU272
+ 261:lvgl/src/lv_misc/lv_color.c ****     color32.full = lv_color_to32(color);
+ 887              		.loc 1 261 5 view .LVU273
+ 888              	.LBB20:
+ 889              	.LBI20:
+ 383:lvgl/src/lv_misc/lv_color.h **** {
+ 890              		.loc 2 383 24 view .LVU274
+ 891              	.LBB21:
+ 427:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_R32(ret, (LV_COLOR_GET_R(color) * 263 + 7) >> 5);
+ 892              		.loc 2 427 5 view .LVU275
+ 428:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_G32(ret, (LV_COLOR_GET_G(color) * 259 + 3) >> 6);
+ 893              		.loc 2 428 5 view .LVU276
+ 894 0004 C0F3C423 		ubfx	r3, r0, #11, #5
+ 895 0008 03EB4312 		add	r2, r3, r3, lsl #5
+ 896 000c C3EBC203 		rsb	r3, r3, r2, lsl #3
+ 897 0010 0733     		adds	r3, r3, #7
+ 898 0012 C3F34713 		ubfx	r3, r3, #5, #8
+ 899 0016 0024     		movs	r4, #0
+ 900              	.LVL109:
+ 428:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_G32(ret, (LV_COLOR_GET_G(color) * 259 + 3) >> 6);
+ 901              		.loc 2 428 5 is_stmt 0 view .LVU277
+ 902 0018 63F31744 		bfi	r4, r3, #16, #8
+ 903              	.LVL110:
+ 429:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_B32(ret, (LV_COLOR_GET_B(color) * 263 + 7) >> 5);
+ 904              		.loc 2 429 5 is_stmt 1 view .LVU278
+ 905 001c C0F34513 		ubfx	r3, r0, #5, #6
+ 906 0020 03EBC312 		add	r2, r3, r3, lsl #7
+ 907 0024 03EB4203 		add	r3, r3, r2, lsl #1
+ 908 0028 0333     		adds	r3, r3, #3
+ 909 002a C3F38713 		ubfx	r3, r3, #6, #8
+ 910 002e 63F30F24 		bfi	r4, r3, #8, #8
+ 430:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_A32(ret, 0xFF);
+ 911              		.loc 2 430 5 view .LVU279
+ 912 0032 00F01F03 		and	r3, r0, #31
+ 913 0036 03EB4310 		add	r0, r3, r3, lsl #5
+ARM GAS  D:\Temp\ccjNLov8.s 			page 34
+
+
+ 914              	.LVL111:
+ 430:lvgl/src/lv_misc/lv_color.h ****     LV_COLOR_SET_A32(ret, 0xFF);
+ 915              		.loc 2 430 5 is_stmt 0 view .LVU280
+ 916 003a C3EBC003 		rsb	r3, r3, r0, lsl #3
+ 917 003e 0733     		adds	r3, r3, #7
+ 918 0040 C3F34713 		ubfx	r3, r3, #5, #8
+ 919 0044 63F30704 		bfi	r4, r3, #0, #8
+ 431:lvgl/src/lv_misc/lv_color.h ****     return ret.full;
+ 920              		.loc 2 431 5 is_stmt 1 view .LVU281
+ 921 0048 44F07F44 		orr	r4, r4, #-16777216
+ 922              	.LVL112:
+ 432:lvgl/src/lv_misc/lv_color.h **** #elif LV_COLOR_DEPTH == 32
+ 923              		.loc 2 432 5 view .LVU282
+ 924              	.LBE21:
+ 925              	.LBE20:
+ 262:lvgl/src/lv_misc/lv_color.c ****     return lv_color_rgb_to_hsv(color32.ch.red, color32.ch.green, color32.ch.blue);
+ 926              		.loc 1 262 5 view .LVU283
+ 927              		.loc 1 262 12 is_stmt 0 view .LVU284
+ 928 004c E2B2     		uxtb	r2, r4
+ 929 004e C4F30721 		ubfx	r1, r4, #8, #8
+ 930 0052 C4F30740 		ubfx	r0, r4, #16, #8
+ 931 0056 FFF7FEFF 		bl	lv_color_rgb_to_hsv
+ 932              	.LVL113:
+ 933 005a 0346     		mov	r3, r0
+ 934 005c 0020     		movs	r0, #0
+ 935 005e 9AB2     		uxth	r2, r3
+ 936 0060 62F30F00 		bfi	r0, r2, #0, #16
+ 937 0064 1B0C     		lsrs	r3, r3, #16
+ 938 0066 63F31F40 		bfi	r0, r3, #16, #16
+ 263:lvgl/src/lv_misc/lv_color.c **** }
+ 939              		.loc 1 263 1 view .LVU285
+ 940 006a 02B0     		add	sp, sp, #8
+ 941              	.LCFI13:
+ 942              		.cfi_def_cfa_offset 8
+ 943              		@ sp needed
+ 944 006c 10BD     		pop	{r4, pc}
+ 945              		.loc 1 263 1 view .LVU286
+ 946              		.cfi_endproc
+ 947              	.LFE147:
+ 949              		.section	.rodata
+ 950              		.align	2
+ 951              		.set	.LANCHOR0,. + 0
+ 952              	.LC0:
+ 953 0000 FF       		.byte	255
+ 954 0001 FF       		.byte	255
+ 955              		.text
+ 956              	.Letext0:
+ 957              		.file 3 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 958              		.file 4 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 959              		.file 5 "Drivers/CMSIS/Include/core_cm4.h"
+ 960              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 961              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ARM GAS  D:\Temp\ccjNLov8.s 			page 35
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_color.c
+  D:\Temp\ccjNLov8.s:18     .text.lv_color_fill:0000000000000000 $t
+  D:\Temp\ccjNLov8.s:26     .text.lv_color_fill:0000000000000000 lv_color_fill
+  D:\Temp\ccjNLov8.s:131    .text.lv_color_lighten:0000000000000000 $t
+  D:\Temp\ccjNLov8.s:138    .text.lv_color_lighten:0000000000000000 lv_color_lighten
+  D:\Temp\ccjNLov8.s:225    .text.lv_color_lighten:0000000000000078 $d
+  D:\Temp\ccjNLov8.s:230    .text.lv_color_darken:0000000000000000 $t
+  D:\Temp\ccjNLov8.s:237    .text.lv_color_darken:0000000000000000 lv_color_darken
+  D:\Temp\ccjNLov8.s:311    .text.lv_color_hsv_to_rgb:0000000000000000 $t
+  D:\Temp\ccjNLov8.s:318    .text.lv_color_hsv_to_rgb:0000000000000000 lv_color_hsv_to_rgb
+  D:\Temp\ccjNLov8.s:429    .text.lv_color_hsv_to_rgb:000000000000008a $d
+  D:\Temp\ccjNLov8.s:575    .text.lv_color_hsv_to_rgb:00000000000000f0 $d
+  D:\Temp\ccjNLov8.s:582    .text.lv_color_rgb_to_hsv:0000000000000000 $t
+  D:\Temp\ccjNLov8.s:589    .text.lv_color_rgb_to_hsv:0000000000000000 lv_color_rgb_to_hsv
+  D:\Temp\ccjNLov8.s:858    .text.lv_color_rgb_to_hsv:0000000000000108 $d
+  D:\Temp\ccjNLov8.s:863    .text.lv_color_to_hsv:0000000000000000 $t
+  D:\Temp\ccjNLov8.s:870    .text.lv_color_to_hsv:0000000000000000 lv_color_to_hsv
+  D:\Temp\ccjNLov8.s:950    .rodata:0000000000000000 $d
+  D:\Temp\ccjNLov8.s:434    .text.lv_color_hsv_to_rgb:000000000000008f $d
+  D:\Temp\ccjNLov8.s:434    .text.lv_color_hsv_to_rgb:0000000000000090 $t
+
+NO UNDEFINED SYMBOLS

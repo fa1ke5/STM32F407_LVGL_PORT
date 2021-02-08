@@ -1,0 +1,2477 @@
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_checkbox.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.lv_checkbox_get_style,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	lv_checkbox_get_style:
+  26              	.LVL0:
+  27              	.LFB480:
+  28              		.file 1 "lvgl/src/lv_widgets/lv_checkbox.c"
+   1:lvgl/src/lv_widgets/lv_checkbox.c **** /**
+   2:lvgl/src/lv_widgets/lv_checkbox.c ****  * @file lv_cb.c
+   3:lvgl/src/lv_widgets/lv_checkbox.c ****  *
+   4:lvgl/src/lv_widgets/lv_checkbox.c ****  */
+   5:lvgl/src/lv_widgets/lv_checkbox.c **** 
+   6:lvgl/src/lv_widgets/lv_checkbox.c **** /*********************
+   7:lvgl/src/lv_widgets/lv_checkbox.c ****  *      INCLUDES
+   8:lvgl/src/lv_widgets/lv_checkbox.c ****  *********************/
+   9:lvgl/src/lv_widgets/lv_checkbox.c **** #include "lv_checkbox.h"
+  10:lvgl/src/lv_widgets/lv_checkbox.c **** #if LV_USE_CHECKBOX != 0
+  11:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  12:lvgl/src/lv_widgets/lv_checkbox.c **** #include "../lv_misc/lv_debug.h"
+  13:lvgl/src/lv_widgets/lv_checkbox.c **** #include "../lv_core/lv_group.h"
+  14:lvgl/src/lv_widgets/lv_checkbox.c **** #include "../lv_themes/lv_theme.h"
+  15:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  16:lvgl/src/lv_widgets/lv_checkbox.c **** /*********************
+  17:lvgl/src/lv_widgets/lv_checkbox.c ****  *      DEFINES
+  18:lvgl/src/lv_widgets/lv_checkbox.c ****  *********************/
+  19:lvgl/src/lv_widgets/lv_checkbox.c **** #define LV_OBJX_NAME "lv_checkbox"
+  20:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  21:lvgl/src/lv_widgets/lv_checkbox.c **** /**********************
+  22:lvgl/src/lv_widgets/lv_checkbox.c ****  *      TYPEDEFS
+  23:lvgl/src/lv_widgets/lv_checkbox.c ****  **********************/
+  24:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  25:lvgl/src/lv_widgets/lv_checkbox.c **** /**********************
+  26:lvgl/src/lv_widgets/lv_checkbox.c ****  *  STATIC PROTOTYPES
+  27:lvgl/src/lv_widgets/lv_checkbox.c ****  **********************/
+  28:lvgl/src/lv_widgets/lv_checkbox.c **** static lv_res_t lv_checkbox_signal(lv_obj_t * cb, lv_signal_t sign, void * param);
+  29:lvgl/src/lv_widgets/lv_checkbox.c **** static lv_style_list_t * lv_checkbox_get_style(lv_obj_t * cb, uint8_t type);
+  30:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 2
+
+
+  31:lvgl/src/lv_widgets/lv_checkbox.c **** /**********************
+  32:lvgl/src/lv_widgets/lv_checkbox.c ****  *  STATIC VARIABLES
+  33:lvgl/src/lv_widgets/lv_checkbox.c ****  **********************/
+  34:lvgl/src/lv_widgets/lv_checkbox.c **** static lv_signal_cb_t ancestor_signal;
+  35:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  36:lvgl/src/lv_widgets/lv_checkbox.c **** /**********************
+  37:lvgl/src/lv_widgets/lv_checkbox.c ****  *      MACROS
+  38:lvgl/src/lv_widgets/lv_checkbox.c ****  **********************/
+  39:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  40:lvgl/src/lv_widgets/lv_checkbox.c **** /**********************
+  41:lvgl/src/lv_widgets/lv_checkbox.c ****  *   GLOBAL FUNCTIONS
+  42:lvgl/src/lv_widgets/lv_checkbox.c ****  **********************/
+  43:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  44:lvgl/src/lv_widgets/lv_checkbox.c **** /**
+  45:lvgl/src/lv_widgets/lv_checkbox.c ****  * Create a check box objects
+  46:lvgl/src/lv_widgets/lv_checkbox.c ****  * @param par pointer to an object, it will be the parent of the new check box
+  47:lvgl/src/lv_widgets/lv_checkbox.c ****  * @param copy pointer to a check box object, if not NULL then the new object will be copied from i
+  48:lvgl/src/lv_widgets/lv_checkbox.c ****  * @return pointer to the created check box
+  49:lvgl/src/lv_widgets/lv_checkbox.c ****  */
+  50:lvgl/src/lv_widgets/lv_checkbox.c **** lv_obj_t * lv_checkbox_create(lv_obj_t * par, const lv_obj_t * copy)
+  51:lvgl/src/lv_widgets/lv_checkbox.c **** {
+  52:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_LOG_TRACE("check box create started");
+  53:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  54:lvgl/src/lv_widgets/lv_checkbox.c ****     /*Create the ancestor basic object*/
+  55:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_t * cb = lv_btn_create(par, copy);
+  56:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_ASSERT_MEM(cb);
+  57:lvgl/src/lv_widgets/lv_checkbox.c ****     if(cb == NULL) return NULL;
+  58:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  59:lvgl/src/lv_widgets/lv_checkbox.c ****     if(ancestor_signal == NULL) ancestor_signal = lv_obj_get_signal_cb(cb);
+  60:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  61:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_checkbox_ext_t * ext = lv_obj_allocate_ext_attr(cb, sizeof(lv_checkbox_ext_t));
+  62:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_ASSERT_MEM(ext);
+  63:lvgl/src/lv_widgets/lv_checkbox.c ****     if(ext == NULL) {
+  64:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_del(cb);
+  65:lvgl/src/lv_widgets/lv_checkbox.c ****         return NULL;
+  66:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+  67:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  68:lvgl/src/lv_widgets/lv_checkbox.c ****     ext->bullet = NULL;
+  69:lvgl/src/lv_widgets/lv_checkbox.c ****     ext->label  = NULL;
+  70:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  71:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_set_signal_cb(cb, lv_checkbox_signal);
+  72:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  73:lvgl/src/lv_widgets/lv_checkbox.c ****     /*Init the new checkbox object*/
+  74:lvgl/src/lv_widgets/lv_checkbox.c ****     if(copy == NULL) {
+  75:lvgl/src/lv_widgets/lv_checkbox.c ****         ext->bullet = lv_obj_create(cb, NULL);
+  76:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_set_click(ext->bullet, false);
+  77:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  78:lvgl/src/lv_widgets/lv_checkbox.c ****         ext->label = lv_label_create(cb, NULL);
+  79:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  80:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_checkbox_set_text(cb, "Check box");
+  81:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_btn_set_layout(cb, LV_LAYOUT_ROW_MID);
+  82:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_btn_set_fit(cb, LV_FIT_TIGHT);
+  83:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_btn_set_checkable(cb, true);
+  84:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_add_protect(cb, LV_PROTECT_PRESS_LOST);
+  85:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  86:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_theme_apply(cb, LV_THEME_CHECKBOX);
+  87:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 3
+
+
+  88:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+  89:lvgl/src/lv_widgets/lv_checkbox.c ****     else {
+  90:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_checkbox_ext_t * copy_ext = lv_obj_get_ext_attr(copy);
+  91:lvgl/src/lv_widgets/lv_checkbox.c ****         ext->bullet            = lv_obj_create(cb, copy_ext->bullet);
+  92:lvgl/src/lv_widgets/lv_checkbox.c ****         ext->label             = lv_label_create(cb, copy_ext->label);
+  93:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  94:lvgl/src/lv_widgets/lv_checkbox.c ****         /*Refresh the style with new signal function*/
+  95:lvgl/src/lv_widgets/lv_checkbox.c ****         //        lv_obj_refresh_style(cb);
+  96:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+  97:lvgl/src/lv_widgets/lv_checkbox.c **** 
+  98:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_LOG_INFO("check box created");
+  99:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 100:lvgl/src/lv_widgets/lv_checkbox.c ****     return cb;
+ 101:lvgl/src/lv_widgets/lv_checkbox.c **** }
+ 102:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 103:lvgl/src/lv_widgets/lv_checkbox.c **** /*=====================
+ 104:lvgl/src/lv_widgets/lv_checkbox.c ****  * Setter functions
+ 105:lvgl/src/lv_widgets/lv_checkbox.c ****  *====================*/
+ 106:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 107:lvgl/src/lv_widgets/lv_checkbox.c **** /**
+ 108:lvgl/src/lv_widgets/lv_checkbox.c ****  * Set the text of a check box. `txt` will be copied and may be deallocated
+ 109:lvgl/src/lv_widgets/lv_checkbox.c ****  * after this function returns.
+ 110:lvgl/src/lv_widgets/lv_checkbox.c ****  * @param cb pointer to a check box
+ 111:lvgl/src/lv_widgets/lv_checkbox.c ****  * @param txt the text of the check box. NULL to refresh with the current text.
+ 112:lvgl/src/lv_widgets/lv_checkbox.c ****  */
+ 113:lvgl/src/lv_widgets/lv_checkbox.c **** void lv_checkbox_set_text(lv_obj_t * cb, const char * txt)
+ 114:lvgl/src/lv_widgets/lv_checkbox.c **** {
+ 115:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_ASSERT_OBJ(cb, LV_OBJX_NAME);
+ 116:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 117:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_checkbox_ext_t * ext = lv_obj_get_ext_attr(cb);
+ 118:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_label_set_text(ext->label, txt);
+ 119:lvgl/src/lv_widgets/lv_checkbox.c **** }
+ 120:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 121:lvgl/src/lv_widgets/lv_checkbox.c **** /**
+ 122:lvgl/src/lv_widgets/lv_checkbox.c ****  * Set the text of a check box. `txt` must not be deallocated during the life
+ 123:lvgl/src/lv_widgets/lv_checkbox.c ****  * of this checkbox.
+ 124:lvgl/src/lv_widgets/lv_checkbox.c ****  * @param cb pointer to a check box
+ 125:lvgl/src/lv_widgets/lv_checkbox.c ****  * @param txt the text of the check box. NULL to refresh with the current text.
+ 126:lvgl/src/lv_widgets/lv_checkbox.c ****  */
+ 127:lvgl/src/lv_widgets/lv_checkbox.c **** void lv_checkbox_set_text_static(lv_obj_t * cb, const char * txt)
+ 128:lvgl/src/lv_widgets/lv_checkbox.c **** {
+ 129:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_ASSERT_OBJ(cb, LV_OBJX_NAME);
+ 130:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 131:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_checkbox_ext_t * ext = lv_obj_get_ext_attr(cb);
+ 132:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_label_set_text_static(ext->label, txt);
+ 133:lvgl/src/lv_widgets/lv_checkbox.c **** }
+ 134:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 135:lvgl/src/lv_widgets/lv_checkbox.c **** /**
+ 136:lvgl/src/lv_widgets/lv_checkbox.c ****  * Set the state of the check box
+ 137:lvgl/src/lv_widgets/lv_checkbox.c ****  * @param cb pointer to a check box object
+ 138:lvgl/src/lv_widgets/lv_checkbox.c ****  * @param checked true: make the check box checked; false: make it unchecked
+ 139:lvgl/src/lv_widgets/lv_checkbox.c ****  */
+ 140:lvgl/src/lv_widgets/lv_checkbox.c **** void lv_checkbox_set_checked(lv_obj_t * cb, bool checked)
+ 141:lvgl/src/lv_widgets/lv_checkbox.c **** {
+ 142:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_checkbox_ext_t * ext = lv_obj_get_ext_attr(cb);
+ 143:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_btn_set_state(cb, checked ? LV_BTN_STATE_CHECKED_RELEASED : LV_BTN_STATE_RELEASED);
+ 144:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 4
+
+
+ 145:lvgl/src/lv_widgets/lv_checkbox.c ****     if(checked) {
+ 146:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_add_state(ext->bullet, LV_STATE_CHECKED);
+ 147:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_add_state(ext->label, LV_STATE_CHECKED);
+ 148:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 149:lvgl/src/lv_widgets/lv_checkbox.c ****     else {
+ 150:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_clear_state(ext->bullet, LV_STATE_CHECKED);
+ 151:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_clear_state(ext->label, LV_STATE_CHECKED);
+ 152:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 153:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 154:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_clear_state(ext->bullet, LV_STATE_DISABLED);
+ 155:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_clear_state(ext->label, LV_STATE_DISABLED);
+ 156:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 157:lvgl/src/lv_widgets/lv_checkbox.c **** #if LV_USE_ANIMATION
+ 158:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_finish_transitions(cb, LV_CHECKBOX_PART_BG);
+ 159:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_finish_transitions(ext->bullet, LV_OBJ_PART_MAIN);
+ 160:lvgl/src/lv_widgets/lv_checkbox.c **** #endif
+ 161:lvgl/src/lv_widgets/lv_checkbox.c **** }
+ 162:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 163:lvgl/src/lv_widgets/lv_checkbox.c **** /**
+ 164:lvgl/src/lv_widgets/lv_checkbox.c ****  * Make the check box inactive (disabled)
+ 165:lvgl/src/lv_widgets/lv_checkbox.c ****  * @param cb pointer to a check box object
+ 166:lvgl/src/lv_widgets/lv_checkbox.c ****  */
+ 167:lvgl/src/lv_widgets/lv_checkbox.c **** void lv_checkbox_set_disabled(lv_obj_t * cb)
+ 168:lvgl/src/lv_widgets/lv_checkbox.c **** {
+ 169:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_checkbox_ext_t * ext = lv_obj_get_ext_attr(cb);
+ 170:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_btn_set_state(cb, LV_BTN_STATE_DISABLED);
+ 171:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 172:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_add_state(ext->bullet, LV_STATE_DISABLED);
+ 173:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_add_state(ext->label, LV_STATE_DISABLED);
+ 174:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 175:lvgl/src/lv_widgets/lv_checkbox.c **** #if LV_USE_ANIMATION
+ 176:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_finish_transitions(cb, LV_CHECKBOX_PART_BG);
+ 177:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_finish_transitions(ext->bullet, LV_OBJ_PART_MAIN);
+ 178:lvgl/src/lv_widgets/lv_checkbox.c **** #endif
+ 179:lvgl/src/lv_widgets/lv_checkbox.c **** }
+ 180:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 181:lvgl/src/lv_widgets/lv_checkbox.c **** /**
+ 182:lvgl/src/lv_widgets/lv_checkbox.c ****  * Set the state of a check box
+ 183:lvgl/src/lv_widgets/lv_checkbox.c ****  * @param cb pointer to a check box object
+ 184:lvgl/src/lv_widgets/lv_checkbox.c ****  * @param state the new state of the check box (from lv_btn_state_t enum)
+ 185:lvgl/src/lv_widgets/lv_checkbox.c ****  */
+ 186:lvgl/src/lv_widgets/lv_checkbox.c **** void lv_checkbox_set_state(lv_obj_t * cb, lv_btn_state_t state)
+ 187:lvgl/src/lv_widgets/lv_checkbox.c **** {
+ 188:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_checkbox_ext_t * ext = lv_obj_get_ext_attr(cb);
+ 189:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_btn_set_state(cb, state);
+ 190:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_set_state(ext->bullet, lv_obj_get_state(cb, LV_CHECKBOX_PART_BG));
+ 191:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_set_state(ext->bullet, lv_obj_get_state(cb, LV_CHECKBOX_PART_BG));
+ 192:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 193:lvgl/src/lv_widgets/lv_checkbox.c **** #if LV_USE_ANIMATION
+ 194:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_finish_transitions(cb, LV_CHECKBOX_PART_BG);
+ 195:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_finish_transitions(ext->bullet, LV_OBJ_PART_MAIN);
+ 196:lvgl/src/lv_widgets/lv_checkbox.c **** #endif
+ 197:lvgl/src/lv_widgets/lv_checkbox.c **** }
+ 198:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 199:lvgl/src/lv_widgets/lv_checkbox.c **** /*=====================
+ 200:lvgl/src/lv_widgets/lv_checkbox.c ****  * Getter functions
+ 201:lvgl/src/lv_widgets/lv_checkbox.c ****  *====================*/
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 5
+
+
+ 202:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 203:lvgl/src/lv_widgets/lv_checkbox.c **** /**
+ 204:lvgl/src/lv_widgets/lv_checkbox.c ****  * Get the text of a check box
+ 205:lvgl/src/lv_widgets/lv_checkbox.c ****  * @param cb pointer to check box object
+ 206:lvgl/src/lv_widgets/lv_checkbox.c ****  * @return pointer to the text of the check box
+ 207:lvgl/src/lv_widgets/lv_checkbox.c ****  */
+ 208:lvgl/src/lv_widgets/lv_checkbox.c **** const char * lv_checkbox_get_text(const lv_obj_t * cb)
+ 209:lvgl/src/lv_widgets/lv_checkbox.c **** {
+ 210:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_ASSERT_OBJ(cb, LV_OBJX_NAME);
+ 211:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 212:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_checkbox_ext_t * ext = lv_obj_get_ext_attr(cb);
+ 213:lvgl/src/lv_widgets/lv_checkbox.c ****     return lv_label_get_text(ext->label);
+ 214:lvgl/src/lv_widgets/lv_checkbox.c **** }
+ 215:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 216:lvgl/src/lv_widgets/lv_checkbox.c **** /**********************
+ 217:lvgl/src/lv_widgets/lv_checkbox.c ****  *   STATIC FUNCTIONS
+ 218:lvgl/src/lv_widgets/lv_checkbox.c ****  **********************/
+ 219:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 220:lvgl/src/lv_widgets/lv_checkbox.c **** /**
+ 221:lvgl/src/lv_widgets/lv_checkbox.c ****  * Signal function of the check box
+ 222:lvgl/src/lv_widgets/lv_checkbox.c ****  * @param cb pointer to a check box object
+ 223:lvgl/src/lv_widgets/lv_checkbox.c ****  * @param sign a signal type from lv_signal_t enum
+ 224:lvgl/src/lv_widgets/lv_checkbox.c ****  * @param param pointer to a signal specific variable
+ 225:lvgl/src/lv_widgets/lv_checkbox.c ****  * @return LV_RES_OK: the object is not deleted in the function; LV_RES_INV: the object is deleted
+ 226:lvgl/src/lv_widgets/lv_checkbox.c ****  */
+ 227:lvgl/src/lv_widgets/lv_checkbox.c **** static lv_res_t lv_checkbox_signal(lv_obj_t * cb, lv_signal_t sign, void * param)
+ 228:lvgl/src/lv_widgets/lv_checkbox.c **** {
+ 229:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_res_t res;
+ 230:lvgl/src/lv_widgets/lv_checkbox.c ****     if(sign == LV_SIGNAL_GET_STYLE) {
+ 231:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_get_style_info_t * info = param;
+ 232:lvgl/src/lv_widgets/lv_checkbox.c ****         info->result = lv_checkbox_get_style(cb, info->part);
+ 233:lvgl/src/lv_widgets/lv_checkbox.c ****         if(info->result != NULL) return LV_RES_OK;
+ 234:lvgl/src/lv_widgets/lv_checkbox.c ****         else return ancestor_signal(cb, sign, param);
+ 235:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 236:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 237:lvgl/src/lv_widgets/lv_checkbox.c ****     /* Include the ancient signal function */
+ 238:lvgl/src/lv_widgets/lv_checkbox.c ****     res = ancestor_signal(cb, sign, param);
+ 239:lvgl/src/lv_widgets/lv_checkbox.c ****     if(res != LV_RES_OK) return res;
+ 240:lvgl/src/lv_widgets/lv_checkbox.c ****     if(sign == LV_SIGNAL_GET_TYPE) return lv_obj_handle_get_type_signal(param, LV_OBJX_NAME);
+ 241:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 242:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_checkbox_ext_t * ext = lv_obj_get_ext_attr(cb);
+ 243:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 244:lvgl/src/lv_widgets/lv_checkbox.c ****     if(sign == LV_SIGNAL_STYLE_CHG) {
+ 245:lvgl/src/lv_widgets/lv_checkbox.c ****         const lv_font_t * font = lv_obj_get_style_text_font(ext->label, LV_LABEL_PART_MAIN);
+ 246:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_coord_t line_height = lv_font_get_line_height(font);
+ 247:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_coord_t leftp = lv_obj_get_style_pad_left(cb, LV_CHECKBOX_PART_BULLET);
+ 248:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_coord_t rightp = lv_obj_get_style_pad_right(cb, LV_CHECKBOX_PART_BULLET);
+ 249:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_coord_t topp = lv_obj_get_style_pad_top(cb, LV_CHECKBOX_PART_BULLET);
+ 250:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_coord_t bottomp = lv_obj_get_style_pad_bottom(cb, LV_CHECKBOX_PART_BULLET);
+ 251:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 252:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_set_size(ext->bullet, line_height + leftp + rightp, line_height + topp + bottomp);
+ 253:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_set_state(ext->bullet, lv_obj_get_state(cb, LV_CHECKBOX_PART_BG));
+ 254:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 255:lvgl/src/lv_widgets/lv_checkbox.c ****     else if(sign == LV_SIGNAL_PRESSED || sign == LV_SIGNAL_RELEASED || sign == LV_SIGNAL_PRESS_LOST
+ 256:lvgl/src/lv_widgets/lv_checkbox.c ****             sign == LV_SIGNAL_FOCUS || sign == LV_SIGNAL_DEFOCUS) {
+ 257:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_set_state(ext->bullet, lv_obj_get_state(cb, LV_CHECKBOX_PART_BG));
+ 258:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 6
+
+
+ 259:lvgl/src/lv_widgets/lv_checkbox.c ****     else if(sign == LV_SIGNAL_CONTROL) {
+ 260:lvgl/src/lv_widgets/lv_checkbox.c **** #if LV_USE_GROUP
+ 261:lvgl/src/lv_widgets/lv_checkbox.c ****         char c = *((char *)param);
+ 262:lvgl/src/lv_widgets/lv_checkbox.c ****         if(c == LV_KEY_RIGHT || c == LV_KEY_DOWN || c == LV_KEY_LEFT || c == LV_KEY_UP) {
+ 263:lvgl/src/lv_widgets/lv_checkbox.c ****             /*Follow the backgrounds state with the bullet*/
+ 264:lvgl/src/lv_widgets/lv_checkbox.c ****             lv_obj_set_state(ext->bullet, lv_obj_get_state(cb, LV_CHECKBOX_PART_BG));
+ 265:lvgl/src/lv_widgets/lv_checkbox.c ****         }
+ 266:lvgl/src/lv_widgets/lv_checkbox.c **** #endif
+ 267:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 268:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 269:lvgl/src/lv_widgets/lv_checkbox.c ****     return res;
+ 270:lvgl/src/lv_widgets/lv_checkbox.c **** }
+ 271:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 272:lvgl/src/lv_widgets/lv_checkbox.c **** static lv_style_list_t * lv_checkbox_get_style(lv_obj_t * cb, uint8_t type)
+ 273:lvgl/src/lv_widgets/lv_checkbox.c **** {
+  29              		.loc 1 273 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 273 1 is_stmt 0 view .LVU1
+  34 0000 38B5     		push	{r3, r4, r5, lr}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 16
+  37              		.cfi_offset 3, -16
+  38              		.cfi_offset 4, -12
+  39              		.cfi_offset 5, -8
+  40              		.cfi_offset 14, -4
+  41 0002 0446     		mov	r4, r0
+  42 0004 0D46     		mov	r5, r1
+ 274:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_style_list_t * style_dsc_p;
+  43              		.loc 1 274 5 is_stmt 1 view .LVU2
+ 275:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 276:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_checkbox_ext_t * ext = lv_obj_get_ext_attr(cb);
+  44              		.loc 1 276 5 view .LVU3
+  45              		.loc 1 276 31 is_stmt 0 view .LVU4
+  46 0006 FFF7FEFF 		bl	lv_obj_get_ext_attr
+  47              	.LVL1:
+ 277:lvgl/src/lv_widgets/lv_checkbox.c ****     switch(type) {
+  48              		.loc 1 277 5 is_stmt 1 view .LVU5
+  49 000a 1DB1     		cbz	r5, .L2
+  50 000c 402D     		cmp	r5, #64
+  51 000e 04D0     		beq	.L3
+ 278:lvgl/src/lv_widgets/lv_checkbox.c ****         case LV_CHECKBOX_PART_BG:
+ 279:lvgl/src/lv_widgets/lv_checkbox.c ****             style_dsc_p = &cb->style_list;
+ 280:lvgl/src/lv_widgets/lv_checkbox.c ****             break;
+ 281:lvgl/src/lv_widgets/lv_checkbox.c ****         case LV_CHECKBOX_PART_BULLET:
+ 282:lvgl/src/lv_widgets/lv_checkbox.c ****             style_dsc_p = lv_obj_get_style_list(ext->bullet, LV_BTN_PART_MAIN);
+ 283:lvgl/src/lv_widgets/lv_checkbox.c ****             break;
+ 284:lvgl/src/lv_widgets/lv_checkbox.c ****         default:
+ 285:lvgl/src/lv_widgets/lv_checkbox.c ****             style_dsc_p = NULL;
+  52              		.loc 1 285 25 is_stmt 0 view .LVU6
+  53 0010 0020     		movs	r0, #0
+  54              	.LVL2:
+  55              	.L1:
+ 286:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 287:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 288:lvgl/src/lv_widgets/lv_checkbox.c ****     return style_dsc_p;
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 7
+
+
+ 289:lvgl/src/lv_widgets/lv_checkbox.c **** }
+  56              		.loc 1 289 1 view .LVU7
+  57 0012 38BD     		pop	{r3, r4, r5, pc}
+  58              	.LVL3:
+  59              	.L2:
+ 279:lvgl/src/lv_widgets/lv_checkbox.c ****             break;
+  60              		.loc 1 279 13 is_stmt 1 view .LVU8
+ 279:lvgl/src/lv_widgets/lv_checkbox.c ****             break;
+  61              		.loc 1 279 25 is_stmt 0 view .LVU9
+  62 0014 04F12800 		add	r0, r4, #40
+  63              	.LVL4:
+ 280:lvgl/src/lv_widgets/lv_checkbox.c ****         case LV_CHECKBOX_PART_BULLET:
+  64              		.loc 1 280 13 is_stmt 1 view .LVU10
+  65 0018 FBE7     		b	.L1
+  66              	.LVL5:
+  67              	.L3:
+ 282:lvgl/src/lv_widgets/lv_checkbox.c ****             break;
+  68              		.loc 1 282 13 view .LVU11
+ 282:lvgl/src/lv_widgets/lv_checkbox.c ****             break;
+  69              		.loc 1 282 27 is_stmt 0 view .LVU12
+  70 001a 0021     		movs	r1, #0
+  71 001c 4068     		ldr	r0, [r0, #4]
+  72              	.LVL6:
+ 282:lvgl/src/lv_widgets/lv_checkbox.c ****             break;
+  73              		.loc 1 282 27 view .LVU13
+  74 001e FFF7FEFF 		bl	lv_obj_get_style_list
+  75              	.LVL7:
+ 283:lvgl/src/lv_widgets/lv_checkbox.c ****         default:
+  76              		.loc 1 283 13 is_stmt 1 view .LVU14
+ 288:lvgl/src/lv_widgets/lv_checkbox.c **** }
+  77              		.loc 1 288 5 view .LVU15
+ 288:lvgl/src/lv_widgets/lv_checkbox.c **** }
+  78              		.loc 1 288 12 is_stmt 0 view .LVU16
+  79 0022 F6E7     		b	.L1
+  80              		.cfi_endproc
+  81              	.LFE480:
+  83              		.section	.text.lv_checkbox_signal,"ax",%progbits
+  84              		.align	1
+  85              		.syntax unified
+  86              		.thumb
+  87              		.thumb_func
+  88              		.fpu fpv4-sp-d16
+  90              	lv_checkbox_signal:
+  91              	.LVL8:
+  92              	.LFB479:
+ 228:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_res_t res;
+  93              		.loc 1 228 1 is_stmt 1 view -0
+  94              		.cfi_startproc
+  95              		@ args = 0, pretend = 0, frame = 0
+  96              		@ frame_needed = 0, uses_anonymous_args = 0
+ 228:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_res_t res;
+  97              		.loc 1 228 1 is_stmt 0 view .LVU18
+  98 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+  99              	.LCFI1:
+ 100              		.cfi_def_cfa_offset 32
+ 101              		.cfi_offset 4, -32
+ 102              		.cfi_offset 5, -28
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 8
+
+
+ 103              		.cfi_offset 6, -24
+ 104              		.cfi_offset 7, -20
+ 105              		.cfi_offset 8, -16
+ 106              		.cfi_offset 9, -12
+ 107              		.cfi_offset 10, -8
+ 108              		.cfi_offset 14, -4
+ 109 0004 0546     		mov	r5, r0
+ 110 0006 0C46     		mov	r4, r1
+ 111 0008 1746     		mov	r7, r2
+ 229:lvgl/src/lv_widgets/lv_checkbox.c ****     if(sign == LV_SIGNAL_GET_STYLE) {
+ 112              		.loc 1 229 5 is_stmt 1 view .LVU19
+ 230:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_get_style_info_t * info = param;
+ 113              		.loc 1 230 5 view .LVU20
+ 230:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_get_style_info_t * info = param;
+ 114              		.loc 1 230 7 is_stmt 0 view .LVU21
+ 115 000a 0829     		cmp	r1, #8
+ 116 000c 28D0     		beq	.L15
+ 238:lvgl/src/lv_widgets/lv_checkbox.c ****     if(res != LV_RES_OK) return res;
+ 117              		.loc 1 238 5 is_stmt 1 view .LVU22
+ 238:lvgl/src/lv_widgets/lv_checkbox.c ****     if(res != LV_RES_OK) return res;
+ 118              		.loc 1 238 11 is_stmt 0 view .LVU23
+ 119 000e 414B     		ldr	r3, .L19
+ 120 0010 1B68     		ldr	r3, [r3]
+ 121 0012 9847     		blx	r3
+ 122              	.LVL9:
+ 238:lvgl/src/lv_widgets/lv_checkbox.c ****     if(res != LV_RES_OK) return res;
+ 123              		.loc 1 238 11 view .LVU24
+ 124 0014 0646     		mov	r6, r0
+ 125              	.LVL10:
+ 239:lvgl/src/lv_widgets/lv_checkbox.c ****     if(sign == LV_SIGNAL_GET_TYPE) return lv_obj_handle_get_type_signal(param, LV_OBJX_NAME);
+ 126              		.loc 1 239 5 is_stmt 1 view .LVU25
+ 239:lvgl/src/lv_widgets/lv_checkbox.c ****     if(sign == LV_SIGNAL_GET_TYPE) return lv_obj_handle_get_type_signal(param, LV_OBJX_NAME);
+ 127              		.loc 1 239 7 is_stmt 0 view .LVU26
+ 128 0016 0128     		cmp	r0, #1
+ 129 0018 78D1     		bne	.L8
+ 240:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 130              		.loc 1 240 5 is_stmt 1 view .LVU27
+ 240:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 131              		.loc 1 240 7 is_stmt 0 view .LVU28
+ 132 001a 072C     		cmp	r4, #7
+ 133 001c 2FD0     		beq	.L16
+ 242:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 134              		.loc 1 242 5 is_stmt 1 view .LVU29
+ 242:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 135              		.loc 1 242 31 is_stmt 0 view .LVU30
+ 136 001e 2846     		mov	r0, r5
+ 137              	.LVL11:
+ 242:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 138              		.loc 1 242 31 view .LVU31
+ 139 0020 FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 140              	.LVL12:
+ 141 0024 8046     		mov	r8, r0
+ 142              	.LVL13:
+ 244:lvgl/src/lv_widgets/lv_checkbox.c ****         const lv_font_t * font = lv_obj_get_style_text_font(ext->label, LV_LABEL_PART_MAIN);
+ 143              		.loc 1 244 5 is_stmt 1 view .LVU32
+ 244:lvgl/src/lv_widgets/lv_checkbox.c ****         const lv_font_t * font = lv_obj_get_style_text_font(ext->label, LV_LABEL_PART_MAIN);
+ 144              		.loc 1 244 7 is_stmt 0 view .LVU33
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 9
+
+
+ 145 0026 042C     		cmp	r4, #4
+ 146 0028 2FD0     		beq	.L17
+ 255:lvgl/src/lv_widgets/lv_checkbox.c ****             sign == LV_SIGNAL_FOCUS || sign == LV_SIGNAL_DEFOCUS) {
+ 147              		.loc 1 255 10 is_stmt 1 view .LVU34
+ 255:lvgl/src/lv_widgets/lv_checkbox.c ****             sign == LV_SIGNAL_FOCUS || sign == LV_SIGNAL_DEFOCUS) {
+ 148              		.loc 1 255 12 is_stmt 0 view .LVU35
+ 149 002a 0B2C     		cmp	r4, #11
+ 150 002c 64D0     		beq	.L11
+ 255:lvgl/src/lv_widgets/lv_checkbox.c ****             sign == LV_SIGNAL_FOCUS || sign == LV_SIGNAL_DEFOCUS) {
+ 151              		.loc 1 255 39 discriminator 1 view .LVU36
+ 152 002e 0E2C     		cmp	r4, #14
+ 153 0030 62D0     		beq	.L11
+ 255:lvgl/src/lv_widgets/lv_checkbox.c ****             sign == LV_SIGNAL_FOCUS || sign == LV_SIGNAL_DEFOCUS) {
+ 154              		.loc 1 255 69 discriminator 2 view .LVU37
+ 155 0032 0D2C     		cmp	r4, #13
+ 156 0034 60D0     		beq	.L11
+ 255:lvgl/src/lv_widgets/lv_checkbox.c ****             sign == LV_SIGNAL_FOCUS || sign == LV_SIGNAL_DEFOCUS) {
+ 157              		.loc 1 255 101 discriminator 3 view .LVU38
+ 158 0036 162C     		cmp	r4, #22
+ 159 0038 5ED0     		beq	.L11
+ 256:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_set_state(ext->bullet, lv_obj_get_state(cb, LV_CHECKBOX_PART_BG));
+ 160              		.loc 1 256 37 view .LVU39
+ 161 003a 172C     		cmp	r4, #23
+ 162 003c 5CD0     		beq	.L11
+ 259:lvgl/src/lv_widgets/lv_checkbox.c **** #if LV_USE_GROUP
+ 163              		.loc 1 259 10 is_stmt 1 view .LVU40
+ 259:lvgl/src/lv_widgets/lv_checkbox.c **** #if LV_USE_GROUP
+ 164              		.loc 1 259 12 is_stmt 0 view .LVU41
+ 165 003e 182C     		cmp	r4, #24
+ 166 0040 64D1     		bne	.L8
+ 167              	.LBB26:
+ 261:lvgl/src/lv_widgets/lv_checkbox.c ****         if(c == LV_KEY_RIGHT || c == LV_KEY_DOWN || c == LV_KEY_LEFT || c == LV_KEY_UP) {
+ 168              		.loc 1 261 9 is_stmt 1 view .LVU42
+ 261:lvgl/src/lv_widgets/lv_checkbox.c ****         if(c == LV_KEY_RIGHT || c == LV_KEY_DOWN || c == LV_KEY_LEFT || c == LV_KEY_UP) {
+ 169              		.loc 1 261 14 is_stmt 0 view .LVU43
+ 170 0042 3B78     		ldrb	r3, [r7]	@ zero_extendqisi2
+ 171              	.LVL14:
+ 262:lvgl/src/lv_widgets/lv_checkbox.c ****             /*Follow the backgrounds state with the bullet*/
+ 172              		.loc 1 262 9 is_stmt 1 view .LVU44
+ 262:lvgl/src/lv_widgets/lv_checkbox.c ****             /*Follow the backgrounds state with the bullet*/
+ 173              		.loc 1 262 70 is_stmt 0 view .LVU45
+ 174 0044 113B     		subs	r3, r3, #17
+ 175              	.LVL15:
+ 262:lvgl/src/lv_widgets/lv_checkbox.c ****             /*Follow the backgrounds state with the bullet*/
+ 176              		.loc 1 262 70 view .LVU46
+ 177 0046 DBB2     		uxtb	r3, r3
+ 178              	.LVL16:
+ 262:lvgl/src/lv_widgets/lv_checkbox.c ****             /*Follow the backgrounds state with the bullet*/
+ 179              		.loc 1 262 11 view .LVU47
+ 180 0048 032B     		cmp	r3, #3
+ 181 004a 5FD8     		bhi	.L8
+ 264:lvgl/src/lv_widgets/lv_checkbox.c ****         }
+ 182              		.loc 1 264 13 is_stmt 1 view .LVU48
+ 183 004c 4468     		ldr	r4, [r0, #4]
+ 184 004e 0021     		movs	r1, #0
+ 185 0050 2846     		mov	r0, r5
+ 186              	.LVL17:
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 10
+
+
+ 264:lvgl/src/lv_widgets/lv_checkbox.c ****         }
+ 187              		.loc 1 264 13 is_stmt 0 view .LVU49
+ 188 0052 FFF7FEFF 		bl	lv_obj_get_state
+ 189              	.LVL18:
+ 264:lvgl/src/lv_widgets/lv_checkbox.c ****         }
+ 190              		.loc 1 264 13 view .LVU50
+ 191 0056 0146     		mov	r1, r0
+ 192 0058 2046     		mov	r0, r4
+ 193 005a FFF7FEFF 		bl	lv_obj_set_state
+ 194              	.LVL19:
+ 195 005e 55E0     		b	.L8
+ 196              	.LVL20:
+ 197              	.L15:
+ 264:lvgl/src/lv_widgets/lv_checkbox.c ****         }
+ 198              		.loc 1 264 13 view .LVU51
+ 199              	.LBE26:
+ 200              	.LBB27:
+ 231:lvgl/src/lv_widgets/lv_checkbox.c ****         info->result = lv_checkbox_get_style(cb, info->part);
+ 201              		.loc 1 231 9 is_stmt 1 view .LVU52
+ 232:lvgl/src/lv_widgets/lv_checkbox.c ****         if(info->result != NULL) return LV_RES_OK;
+ 202              		.loc 1 232 9 view .LVU53
+ 232:lvgl/src/lv_widgets/lv_checkbox.c ****         if(info->result != NULL) return LV_RES_OK;
+ 203              		.loc 1 232 24 is_stmt 0 view .LVU54
+ 204 0060 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 205              	.LVL21:
+ 232:lvgl/src/lv_widgets/lv_checkbox.c ****         if(info->result != NULL) return LV_RES_OK;
+ 206              		.loc 1 232 24 view .LVU55
+ 207 0062 FFF7FEFF 		bl	lv_checkbox_get_style
+ 208              	.LVL22:
+ 232:lvgl/src/lv_widgets/lv_checkbox.c ****         if(info->result != NULL) return LV_RES_OK;
+ 209              		.loc 1 232 22 view .LVU56
+ 210 0066 7860     		str	r0, [r7, #4]
+ 233:lvgl/src/lv_widgets/lv_checkbox.c ****         else return ancestor_signal(cb, sign, param);
+ 211              		.loc 1 233 9 is_stmt 1 view .LVU57
+ 233:lvgl/src/lv_widgets/lv_checkbox.c ****         else return ancestor_signal(cb, sign, param);
+ 212              		.loc 1 233 11 is_stmt 0 view .LVU58
+ 213 0068 08B1     		cbz	r0, .L18
+ 233:lvgl/src/lv_widgets/lv_checkbox.c ****         else return ancestor_signal(cb, sign, param);
+ 214              		.loc 1 233 41 view .LVU59
+ 215 006a 0126     		movs	r6, #1
+ 216 006c 4EE0     		b	.L8
+ 217              	.L18:
+ 234:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 218              		.loc 1 234 14 is_stmt 1 view .LVU60
+ 234:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 219              		.loc 1 234 21 is_stmt 0 view .LVU61
+ 220 006e 294B     		ldr	r3, .L19
+ 221 0070 1B68     		ldr	r3, [r3]
+ 222 0072 3A46     		mov	r2, r7
+ 223 0074 2146     		mov	r1, r4
+ 224 0076 2846     		mov	r0, r5
+ 225 0078 9847     		blx	r3
+ 226              	.LVL23:
+ 227 007a 0646     		mov	r6, r0
+ 228 007c 46E0     		b	.L8
+ 229              	.LVL24:
+ 230              	.L16:
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 11
+
+
+ 234:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 231              		.loc 1 234 21 view .LVU62
+ 232              	.LBE27:
+ 240:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 233              		.loc 1 240 36 is_stmt 1 discriminator 1 view .LVU63
+ 240:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 234              		.loc 1 240 43 is_stmt 0 discriminator 1 view .LVU64
+ 235 007e 2649     		ldr	r1, .L19+4
+ 236 0080 3846     		mov	r0, r7
+ 237              	.LVL25:
+ 240:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 238              		.loc 1 240 43 discriminator 1 view .LVU65
+ 239 0082 FFF7FEFF 		bl	lv_obj_handle_get_type_signal
+ 240              	.LVL26:
+ 241 0086 0646     		mov	r6, r0
+ 242 0088 40E0     		b	.L8
+ 243              	.LVL27:
+ 244              	.L17:
+ 245              	.LBB28:
+ 245:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_coord_t line_height = lv_font_get_line_height(font);
+ 246              		.loc 1 245 9 is_stmt 1 view .LVU66
+ 247              	.LBB29:
+ 248              	.LBI29:
+ 249              		.file 2 "lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h"
+   1:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** 
+   2:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** /**
+   3:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  * @file lv_obj_style_dec.h
+   4:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *
+   5:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  */
+   6:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** 
+   7:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** #ifndef LV_OBJ_STYLE_DEC_H
+   8:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** #define LV_OBJ_STYLE_DEC_H
+   9:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** 
+  10:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** #ifdef __cplusplus
+  11:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** extern "C" {
+  12:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** #endif
+  13:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** 
+  14:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** /*********************
+  15:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *      DEFINES
+  16:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *********************/
+  17:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** 
+  18:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** /**
+  19:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  * Macro to declare the most important style set/get API functions.
+  20:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *
+  21:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  * Get the value of a style property from an object in the object's current state
+  22:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  * -----------------------------------------------------------------------------
+  23:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *  - Get the value of a style property from an object in the object's current state.
+  24:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *  - Transition animation is taken into account.
+  25:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *  - If the property is not set in the object's styles check the parent(s) if the property can be 
+  26:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *  - If still not found return a default value.
+  27:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *  - For example:
+  28:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *      `lv_style_int_t w = lv_obj_get_style_border_width(btn1, LV_BTN_PART_MAIN);`
+  29:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *
+  30:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  * Set a local style property for an object in a given state
+  31:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  * ---------------------------------------------------------
+  32:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *  - For example:
+  33:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *      `lv_obj_set_style_local_border_width(btn1, LV_BTN_PART_MAIN, LV_STATE_PRESSED, 2);`
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 12
+
+
+  34:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *
+  35:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  * Get a local style property's value of an object in a given state
+  36:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  * ----------------------------------------------------------------
+  37:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *  - Return the best matching property in the given state.
+  38:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *  - E.g. if `state` parameter is LV_STATE_PRESSED | LV_STATE_CHECKED` but the property defined on
+  39:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *    `LV_STATE_PRESSED` and `LV_STATE_DEFAULT` the best matching state is `LV_STATE_PRESSED`
+  40:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *    (because it has higher precedence) and it will be returned.
+  41:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *  - If the property is not found even in `LV_STATE_DEFAULT` `-1` is returned.
+  42:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *  - For example:
+  43:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *      `//Type of result should be lv_style_int_t/lv_opa_t/lv_color_t/const void * according to th
+  44:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *      `lv_style_int_t result;`
+  45:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *      `lv_obj_get_style_local_border_width(btn1, LV_BTN_PART_MAIN, LV_STATE_PRESSED, &result);`
+  46:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *      `if(weight > 0) ...the property is found and loaded into result...`
+  47:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *
+  48:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  * Get the value from a style in a given state
+  49:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  * -------------------------------------------
+  50:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  * - The same rules applies to the return value then for "lv_obj_get_style_local_...()" above
+  51:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  * - For example
+  52:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *      `int16_t weight = lv_style_get_border_width(&style1, LV_STATE_PRESSED, &result);`
+  53:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *      `if(weight > 0) ...the property is found and loaded into result...`
+  54:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** 
+  55:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  * Set a value in a style in a given state
+  56:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  * ---------------------------------------
+  57:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  * - For example
+  58:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  *      `lv_style_set_border_width(&style1, LV_STATE_PRESSED, 2);`
+  59:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****  */
+  60:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** 
+  61:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** #define _OBJ_GET_STYLE_scalar(prop_name, func_name, value_type, style_type)                        
+  62:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     static inline value_type lv_obj_get_style_##func_name (const lv_obj_t * obj, uint8_t part)     
+  63:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     {                                                                                              
+  64:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****         return (value_type) _lv_obj_get_style##style_type (obj, part, LV_STYLE_##prop_name);       
+  65:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     }
+  66:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** 
+  67:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** #define _OBJ_GET_STYLE_nonscalar(prop_name, func_name, value_type, style_type)                     
+  68:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     static inline value_type lv_obj_get_style_##func_name (const lv_obj_t * obj, uint8_t part)     
+  69:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     {                                                                                              
+  70:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****         return _lv_obj_get_style##style_type (obj, part, LV_STYLE_##prop_name);                    
+  71:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     }
+  72:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** 
+  73:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** #define _OBJ_SET_STYLE_LOCAL_scalar(prop_name, func_name, value_type, style_type)                  
+  74:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     static inline void lv_obj_set_style_local_##func_name (lv_obj_t * obj, uint8_t part, lv_state_t
+  75:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     {                                                                                              
+  76:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****         _lv_obj_set_style_local##style_type (obj, part, LV_STYLE_##prop_name | (state << LV_STYLE_S
+  77:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     }
+  78:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** 
+  79:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** #define _OBJ_SET_STYLE_LOCAL_nonscalar(prop_name, func_name, value_type, style_type)               
+  80:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     static inline void lv_obj_set_style_local_##func_name (lv_obj_t * obj, uint8_t part, lv_state_t
+  81:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     {                                                                                              
+  82:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****         _lv_obj_set_style_local##style_type (obj, part, LV_STYLE_##prop_name | (state << LV_STYLE_S
+  83:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     }
+  84:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** 
+  85:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** #define _OBJ_SET_STYLE_scalar(prop_name, func_name, value_type, style_type)                        
+  86:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     static inline void lv_style_set_##func_name (lv_style_t * style, lv_state_t state, value_type v
+  87:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     {                                                                                              
+  88:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****         _lv_style_set##style_type (style, LV_STYLE_##prop_name | (state << LV_STYLE_STATE_POS), val
+  89:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     }
+  90:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** 
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 13
+
+
+  91:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** #define _OBJ_SET_STYLE_nonscalar(prop_name, func_name, value_type, style_type)                     
+  92:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     static inline void lv_style_set_##func_name (lv_style_t * style, lv_state_t state, value_type v
+  93:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     {                                                                                              
+  94:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****         _lv_style_set##style_type (style, LV_STYLE_##prop_name | (state << LV_STYLE_STATE_POS), val
+  95:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     }
+  96:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** 
+  97:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** #define _LV_OBJ_STYLE_SET_GET_DECLARE(prop_name, func_name, value_type, style_type, scalar)        
+  98:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     _OBJ_GET_STYLE_##scalar(prop_name, func_name, value_type, style_type)                          
+  99:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     _OBJ_SET_STYLE_LOCAL_##scalar(prop_name, func_name, value_type, style_type)                    
+ 100:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h ****     _OBJ_SET_STYLE_##scalar(prop_name, func_name, value_type, style_type)
+ 101:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** 
+ 102:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(RADIUS, radius, lv_style_int_t, _int, scalar)
+ 103:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(CLIP_CORNER, clip_corner, bool, _int, scalar)
+ 104:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(SIZE, size, lv_style_int_t, _int, scalar)
+ 105:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(TRANSFORM_WIDTH, transform_width, lv_style_int_t, _int, scalar)
+ 106:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(TRANSFORM_HEIGHT, transform_height, lv_style_int_t, _int, scalar)
+ 107:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(TRANSFORM_ANGLE, transform_angle, lv_style_int_t, _int, scalar)
+ 108:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(TRANSFORM_ZOOM, transform_zoom, lv_style_int_t, _int, scalar)
+ 109:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(OPA_SCALE, opa_scale, lv_opa_t, _opa, scalar)
+ 110:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_TOP, pad_top, lv_style_int_t, _int, scalar)
+ 111:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_BOTTOM, pad_bottom, lv_style_int_t, _int, scalar)
+ 112:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_LEFT, pad_left, lv_style_int_t, _int, scalar)
+ 113:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_RIGHT, pad_right, lv_style_int_t, _int, scalar)
+ 114:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_INNER, pad_inner, lv_style_int_t, _int, scalar)
+ 115:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(MARGIN_TOP, margin_top, lv_style_int_t, _int, scalar)
+ 116:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(MARGIN_BOTTOM, margin_bottom, lv_style_int_t, _int, scalar)
+ 117:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(MARGIN_LEFT, margin_left, lv_style_int_t, _int, scalar)
+ 118:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(MARGIN_RIGHT, margin_right, lv_style_int_t, _int, scalar)
+ 119:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(BG_BLEND_MODE, bg_blend_mode, lv_blend_mode_t, _int, scalar)
+ 120:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(BG_MAIN_STOP, bg_main_stop, lv_style_int_t, _int, scalar)
+ 121:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(BG_GRAD_STOP, bg_grad_stop, lv_style_int_t, _int, scalar)
+ 122:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(BG_GRAD_DIR, bg_grad_dir, lv_grad_dir_t, _int, scalar)
+ 123:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(BG_COLOR, bg_color, lv_color_t, _color, nonscalar)
+ 124:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(BG_GRAD_COLOR, bg_grad_color, lv_color_t, _color, nonscalar)
+ 125:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(BG_OPA, bg_opa, lv_opa_t, _opa, scalar)
+ 126:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(BORDER_WIDTH, border_width, lv_style_int_t, _int, scalar)
+ 127:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(BORDER_SIDE, border_side, lv_border_side_t, _int, scalar)
+ 128:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(BORDER_BLEND_MODE, border_blend_mode, lv_blend_mode_t, _int, scalar)
+ 129:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(BORDER_POST, border_post, bool, _int, scalar)
+ 130:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(BORDER_COLOR, border_color, lv_color_t, _color, nonscalar)
+ 131:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(BORDER_OPA, border_opa, lv_opa_t, _opa, scalar)
+ 132:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(OUTLINE_WIDTH, outline_width, lv_style_int_t, _int, scalar)
+ 133:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(OUTLINE_PAD, outline_pad, lv_style_int_t, _int, scalar)
+ 134:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(OUTLINE_BLEND_MODE, outline_blend_mode, lv_blend_mode_t, _int, scalar
+ 135:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(OUTLINE_COLOR, outline_color, lv_color_t, _color, nonscalar)
+ 136:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(OUTLINE_OPA, outline_opa, lv_opa_t, _opa, scalar)
+ 137:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(SHADOW_WIDTH, shadow_width, lv_style_int_t, _int, scalar)
+ 138:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(SHADOW_OFS_X, shadow_ofs_x, lv_style_int_t, _int, scalar)
+ 139:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(SHADOW_OFS_Y, shadow_ofs_y, lv_style_int_t, _int, scalar)
+ 140:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(SHADOW_SPREAD, shadow_spread, lv_style_int_t, _int, scalar)
+ 141:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(SHADOW_BLEND_MODE, shadow_blend_mode, lv_blend_mode_t, _int, scalar)
+ 142:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(SHADOW_COLOR, shadow_color, lv_color_t, _color, nonscalar)
+ 143:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(SHADOW_OPA, shadow_opa, lv_opa_t, _opa, scalar)
+ 144:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PATTERN_REPEAT, pattern_repeat, bool, _int, scalar)
+ 145:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PATTERN_BLEND_MODE, pattern_blend_mode, lv_blend_mode_t, _int, scalar
+ 146:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PATTERN_RECOLOR, pattern_recolor, lv_color_t, _color, nonscalar)
+ 147:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PATTERN_OPA, pattern_opa, lv_opa_t, _opa, scalar)
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 14
+
+
+ 148:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PATTERN_RECOLOR_OPA, pattern_recolor_opa, lv_opa_t, _opa, scalar)
+ 149:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PATTERN_IMAGE, pattern_image, const void *, _ptr, scalar)
+ 150:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(VALUE_LETTER_SPACE, value_letter_space, lv_style_int_t, _int, scalar)
+ 151:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(VALUE_LINE_SPACE, value_line_space, lv_style_int_t, _int, scalar)
+ 152:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(VALUE_BLEND_MODE, value_blend_mode, lv_blend_mode_t, _int, scalar)
+ 153:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(VALUE_OFS_X, value_ofs_x, lv_style_int_t, _int, scalar)
+ 154:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(VALUE_OFS_Y, value_ofs_y, lv_style_int_t, _int, scalar)
+ 155:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(VALUE_ALIGN, value_align, lv_align_t, _int, scalar)
+ 156:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(VALUE_COLOR, value_color, lv_color_t, _color, nonscalar)
+ 157:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(VALUE_OPA, value_opa, lv_opa_t, _opa, scalar)
+ 158:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(VALUE_FONT, value_font, const lv_font_t *, _ptr, scalar)
+ 159:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(VALUE_STR, value_str, const char *, _ptr, scalar)
+ 160:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(TEXT_LETTER_SPACE, text_letter_space, lv_style_int_t, _int, scalar)
+ 161:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(TEXT_LINE_SPACE, text_line_space, lv_style_int_t, _int, scalar)
+ 162:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(TEXT_DECOR, text_decor, lv_text_decor_t, _int, scalar)
+ 163:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(TEXT_BLEND_MODE, text_blend_mode, lv_blend_mode_t, _int, scalar)
+ 164:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(TEXT_COLOR, text_color, lv_color_t, _color, nonscalar)
+ 165:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(TEXT_SEL_COLOR, text_sel_color, lv_color_t, _color, nonscalar)
+ 166:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(TEXT_SEL_BG_COLOR, text_sel_bg_color, lv_color_t, _color, nonscalar)
+ 167:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(TEXT_OPA, text_opa, lv_opa_t, _opa, scalar)
+ 168:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(TEXT_FONT, text_font, const lv_font_t *, _ptr, scalar)
+ 250              		.loc 2 168 1 view .LVU67
+ 251              	.LBB30:
+ 252              		.loc 2 168 1 view .LVU68
+ 253 008a 48F28E02 		movw	r2, #32910
+ 254 008e 0021     		movs	r1, #0
+ 255 0090 8068     		ldr	r0, [r0, #8]
+ 256              	.LVL28:
+ 257              		.loc 2 168 1 is_stmt 0 view .LVU69
+ 258 0092 FFF7FEFF 		bl	_lv_obj_get_style_ptr
+ 259              	.LVL29:
+ 260              		.loc 2 168 1 view .LVU70
+ 261              	.LBE30:
+ 262              	.LBE29:
+ 246:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_coord_t leftp = lv_obj_get_style_pad_left(cb, LV_CHECKBOX_PART_BULLET);
+ 263              		.loc 1 246 9 is_stmt 1 view .LVU71
+ 264              	.LBB31:
+ 265              	.LBI31:
+ 266              		.file 3 "lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h"
+   1:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** /**
+   2:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * @file lv_font.h
+   3:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  *
+   4:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  */
+   5:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+   6:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** #ifndef LV_FONT_H
+   7:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** #define LV_FONT_H
+   8:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+   9:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** #ifdef __cplusplus
+  10:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** extern "C" {
+  11:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** #endif
+  12:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+  13:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** /*********************
+  14:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  *      INCLUDES
+  15:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  *********************/
+  16:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** #include "../lv_conf_internal.h"
+  17:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** #include <stdint.h>
+  18:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** #include <stddef.h>
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 15
+
+
+  19:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** #include <stdbool.h>
+  20:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+  21:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** #include "lv_symbol_def.h"
+  22:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** #include "../lv_misc/lv_area.h"
+  23:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+  24:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** /*********************
+  25:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  *      DEFINES
+  26:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  *********************/
+  27:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+  28:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** /**********************
+  29:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  *      TYPEDEFS
+  30:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  **********************/
+  31:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+  32:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** /*------------------
+  33:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * General types
+  34:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  *-----------------*/
+  35:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+  36:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** /** Describes the properties of a glyph. */
+  37:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** typedef struct {
+  38:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     uint16_t adv_w; /**< The glyph needs this space. Draw the next glyph after this width. 8 bit in
+  39:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     uint16_t box_w;  /**< Width of the glyph's bounding box*/
+  40:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     uint16_t box_h;  /**< Height of the glyph's bounding box*/
+  41:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     int16_t ofs_x;   /**< x offset of the bounding box*/
+  42:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     int16_t ofs_y;  /**< y offset of the bounding box*/
+  43:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     uint8_t bpp;   /**< Bit-per-pixel: 1, 2, 4, 8*/
+  44:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** } lv_font_glyph_dsc_t;
+  45:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+  46:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** /** The bitmaps might be upscaled by 3 to achieve subpixel rendering. */
+  47:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** enum {
+  48:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     LV_FONT_SUBPX_NONE,
+  49:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     LV_FONT_SUBPX_HOR,
+  50:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     LV_FONT_SUBPX_VER,
+  51:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     LV_FONT_SUBPX_BOTH,
+  52:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** };
+  53:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+  54:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** typedef uint8_t lv_font_subpx_t;
+  55:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+  56:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** /** Describe the properties of a font*/
+  57:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** typedef struct _lv_font_struct {
+  58:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     /** Get a glyph's descriptor from a font*/
+  59:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     bool (*get_glyph_dsc)(const struct _lv_font_struct *, lv_font_glyph_dsc_t *, uint32_t letter, u
+  60:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+  61:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     /** Get a glyph's bitmap from a font*/
+  62:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     const uint8_t * (*get_glyph_bitmap)(const struct _lv_font_struct *, uint32_t);
+  63:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+  64:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     /*Pointer to the font in a font pack (must have the same line height)*/
+  65:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     lv_coord_t line_height;         /**< The real line height where any text fits*/
+  66:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     lv_coord_t base_line;           /**< Base line measured from the top of the line_height*/
+  67:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     uint8_t subpx  : 2;             /**< An element of `lv_font_subpx_t`*/
+  68:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+  69:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     int8_t underline_position;      /**< Distance between the top of the underline and base line (<
+  70:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     int8_t underline_thickness;     /**< Thickness of the underline*/
+  71:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+  72:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     void * dsc;                     /**< Store implementation specific or run_time data or caching 
+  73:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** #if LV_USE_USER_DATA
+  74:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     lv_font_user_data_t user_data;  /**< Custom user data for font. */
+  75:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** #endif
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 16
+
+
+  76:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+  77:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** } lv_font_t;
+  78:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+  79:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** /**********************
+  80:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * GLOBAL PROTOTYPES
+  81:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  **********************/
+  82:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+  83:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** /**
+  84:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * Return with the bitmap of a font.
+  85:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * @param font_p pointer to a font
+  86:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * @param letter an UNICODE character code
+  87:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * @return pointer to the bitmap of the letter
+  88:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  */
+  89:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** const uint8_t * lv_font_get_glyph_bitmap(const lv_font_t * font_p, uint32_t letter);
+  90:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+  91:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** /**
+  92:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * Get the descriptor of a glyph
+  93:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * @param font_p pointer to font
+  94:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * @param dsc_out store the result descriptor here
+  95:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * @param letter an UNICODE letter code
+  96:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * @return true: descriptor is successfully loaded into `dsc_out`.
+  97:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  *         false: the letter was not found, no data is loaded to `dsc_out`
+  98:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  */
+  99:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** bool lv_font_get_glyph_dsc(const lv_font_t * font_p, lv_font_glyph_dsc_t * dsc_out, uint32_t letter
+ 100:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****                            uint32_t letter_next);
+ 101:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+ 102:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** /**
+ 103:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * Get the width of a glyph with kerning
+ 104:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * @param font pointer to a font
+ 105:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * @param letter an UNICODE letter
+ 106:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * @param letter_next the next letter after `letter`. Used for kerning
+ 107:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * @return the width of the glyph
+ 108:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  */
+ 109:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** uint16_t lv_font_get_glyph_width(const lv_font_t * font, uint32_t letter, uint32_t letter_next);
+ 110:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** 
+ 111:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** /**
+ 112:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * Get the line height of a font. All characters fit into this height
+ 113:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * @param font_p pointer to a font
+ 114:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  * @return the height of a font
+ 115:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****  */
+ 116:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** static inline lv_coord_t lv_font_get_line_height(const lv_font_t * font_p)
+ 267              		.loc 3 116 26 view .LVU72
+ 268              	.LBB32:
+ 117:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h **** {
+ 118:lvgl/src/lv_widgets/../lv_core/../lv_font/lv_font.h ****     return font_p->line_height;
+ 269              		.loc 3 118 5 view .LVU73
+ 270              		.loc 3 118 18 is_stmt 0 view .LVU74
+ 271 0096 B0F90840 		ldrsh	r4, [r0, #8]
+ 272              	.LVL30:
+ 273              		.loc 3 118 18 view .LVU75
+ 274              	.LBE32:
+ 275              	.LBE31:
+ 247:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_coord_t rightp = lv_obj_get_style_pad_right(cb, LV_CHECKBOX_PART_BULLET);
+ 276              		.loc 1 247 9 is_stmt 1 view .LVU76
+ 277              	.LBB33:
+ 278              	.LBI33:
+ 112:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_RIGHT, pad_right, lv_style_int_t, _int, scalar)
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 17
+
+
+ 279              		.loc 2 112 1 view .LVU77
+ 280              	.LBB34:
+ 112:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_RIGHT, pad_right, lv_style_int_t, _int, scalar)
+ 281              		.loc 2 112 1 view .LVU78
+ 282 009a 1222     		movs	r2, #18
+ 283 009c 4021     		movs	r1, #64
+ 284 009e 2846     		mov	r0, r5
+ 285              	.LVL31:
+ 112:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_RIGHT, pad_right, lv_style_int_t, _int, scalar)
+ 286              		.loc 2 112 1 is_stmt 0 view .LVU79
+ 287 00a0 FFF7FEFF 		bl	_lv_obj_get_style_int
+ 288              	.LVL32:
+ 289 00a4 0746     		mov	r7, r0
+ 290              	.LVL33:
+ 112:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_RIGHT, pad_right, lv_style_int_t, _int, scalar)
+ 291              		.loc 2 112 1 view .LVU80
+ 292              	.LBE34:
+ 293              	.LBE33:
+ 248:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_coord_t topp = lv_obj_get_style_pad_top(cb, LV_CHECKBOX_PART_BULLET);
+ 294              		.loc 1 248 9 is_stmt 1 view .LVU81
+ 295              	.LBB35:
+ 296              	.LBI35:
+ 113:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_INNER, pad_inner, lv_style_int_t, _int, scalar)
+ 297              		.loc 2 113 1 view .LVU82
+ 298              	.LBB36:
+ 113:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_INNER, pad_inner, lv_style_int_t, _int, scalar)
+ 299              		.loc 2 113 1 view .LVU83
+ 300 00a6 1322     		movs	r2, #19
+ 301 00a8 4021     		movs	r1, #64
+ 302 00aa 2846     		mov	r0, r5
+ 303 00ac FFF7FEFF 		bl	_lv_obj_get_style_int
+ 304              	.LVL34:
+ 305 00b0 8246     		mov	r10, r0
+ 306              	.LVL35:
+ 113:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_INNER, pad_inner, lv_style_int_t, _int, scalar)
+ 307              		.loc 2 113 1 is_stmt 0 view .LVU84
+ 308              	.LBE36:
+ 309              	.LBE35:
+ 249:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_coord_t bottomp = lv_obj_get_style_pad_bottom(cb, LV_CHECKBOX_PART_BULLET);
+ 310              		.loc 1 249 9 is_stmt 1 view .LVU85
+ 311              	.LBB37:
+ 312              	.LBI37:
+ 110:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_BOTTOM, pad_bottom, lv_style_int_t, _int, scalar)
+ 313              		.loc 2 110 1 view .LVU86
+ 314              	.LBB38:
+ 110:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_BOTTOM, pad_bottom, lv_style_int_t, _int, scalar)
+ 315              		.loc 2 110 1 view .LVU87
+ 316 00b2 1022     		movs	r2, #16
+ 317 00b4 4021     		movs	r1, #64
+ 318 00b6 2846     		mov	r0, r5
+ 319 00b8 FFF7FEFF 		bl	_lv_obj_get_style_int
+ 320              	.LVL36:
+ 321 00bc 8146     		mov	r9, r0
+ 322              	.LVL37:
+ 110:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_BOTTOM, pad_bottom, lv_style_int_t, _int, scalar)
+ 323              		.loc 2 110 1 is_stmt 0 view .LVU88
+ 324              	.LBE38:
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 18
+
+
+ 325              	.LBE37:
+ 250:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 326              		.loc 1 250 9 is_stmt 1 view .LVU89
+ 327              	.LBB39:
+ 328              	.LBI39:
+ 111:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_LEFT, pad_left, lv_style_int_t, _int, scalar)
+ 329              		.loc 2 111 1 view .LVU90
+ 330              	.LBB40:
+ 111:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_LEFT, pad_left, lv_style_int_t, _int, scalar)
+ 331              		.loc 2 111 1 view .LVU91
+ 332 00be 1122     		movs	r2, #17
+ 333 00c0 4021     		movs	r1, #64
+ 334 00c2 2846     		mov	r0, r5
+ 335 00c4 FFF7FEFF 		bl	_lv_obj_get_style_int
+ 336              	.LVL38:
+ 111:lvgl/src/lv_widgets/../lv_core/lv_obj_style_dec.h **** _LV_OBJ_STYLE_SET_GET_DECLARE(PAD_LEFT, pad_left, lv_style_int_t, _int, scalar)
+ 337              		.loc 2 111 1 is_stmt 0 view .LVU92
+ 338              	.LBE40:
+ 339              	.LBE39:
+ 252:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_set_state(ext->bullet, lv_obj_get_state(cb, LV_CHECKBOX_PART_BG));
+ 340              		.loc 1 252 9 is_stmt 1 view .LVU93
+ 252:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_set_state(ext->bullet, lv_obj_get_state(cb, LV_CHECKBOX_PART_BG));
+ 341              		.loc 1 252 50 is_stmt 0 view .LVU94
+ 342 00c8 A3B2     		uxth	r3, r4
+ 343 00ca D919     		adds	r1, r3, r7
+ 252:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_set_state(ext->bullet, lv_obj_get_state(cb, LV_CHECKBOX_PART_BG));
+ 344              		.loc 1 252 58 view .LVU95
+ 345 00cc 1AFA81F1 		uxtah	r1, r10, r1
+ 252:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_set_state(ext->bullet, lv_obj_get_state(cb, LV_CHECKBOX_PART_BG));
+ 346              		.loc 1 252 80 view .LVU96
+ 347 00d0 4B44     		add	r3, r3, r9
+ 252:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_set_state(ext->bullet, lv_obj_get_state(cb, LV_CHECKBOX_PART_BG));
+ 348              		.loc 1 252 87 view .LVU97
+ 349 00d2 10FA83F3 		uxtah	r3, r0, r3
+ 252:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_set_state(ext->bullet, lv_obj_get_state(cb, LV_CHECKBOX_PART_BG));
+ 350              		.loc 1 252 9 view .LVU98
+ 351 00d6 1AB2     		sxth	r2, r3
+ 352 00d8 09B2     		sxth	r1, r1
+ 353 00da D8F80400 		ldr	r0, [r8, #4]
+ 354              	.LVL39:
+ 252:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_set_state(ext->bullet, lv_obj_get_state(cb, LV_CHECKBOX_PART_BG));
+ 355              		.loc 1 252 9 view .LVU99
+ 356 00de FFF7FEFF 		bl	lv_obj_set_size
+ 357              	.LVL40:
+ 253:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 358              		.loc 1 253 9 is_stmt 1 view .LVU100
+ 359 00e2 D8F80440 		ldr	r4, [r8, #4]
+ 360              	.LVL41:
+ 253:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 361              		.loc 1 253 9 is_stmt 0 view .LVU101
+ 362 00e6 0021     		movs	r1, #0
+ 363 00e8 2846     		mov	r0, r5
+ 364 00ea FFF7FEFF 		bl	lv_obj_get_state
+ 365              	.LVL42:
+ 366 00ee 0146     		mov	r1, r0
+ 367 00f0 2046     		mov	r0, r4
+ 368 00f2 FFF7FEFF 		bl	lv_obj_set_state
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 19
+
+
+ 369              	.LVL43:
+ 370              	.LBE28:
+ 371 00f6 09E0     		b	.L8
+ 372              	.LVL44:
+ 373              	.L11:
+ 257:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 374              		.loc 1 257 9 is_stmt 1 view .LVU102
+ 375 00f8 D8F80440 		ldr	r4, [r8, #4]
+ 376 00fc 0021     		movs	r1, #0
+ 377 00fe 2846     		mov	r0, r5
+ 378              	.LVL45:
+ 257:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 379              		.loc 1 257 9 is_stmt 0 view .LVU103
+ 380 0100 FFF7FEFF 		bl	lv_obj_get_state
+ 381              	.LVL46:
+ 382 0104 0146     		mov	r1, r0
+ 383 0106 2046     		mov	r0, r4
+ 384 0108 FFF7FEFF 		bl	lv_obj_set_state
+ 385              	.LVL47:
+ 386              	.L8:
+ 270:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 387              		.loc 1 270 1 view .LVU104
+ 388 010c 3046     		mov	r0, r6
+ 389 010e BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+ 390              	.LVL48:
+ 391              	.L20:
+ 270:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 392              		.loc 1 270 1 view .LVU105
+ 393 0112 00BF     		.align	2
+ 394              	.L19:
+ 395 0114 00000000 		.word	.LANCHOR0
+ 396 0118 00000000 		.word	.LC0
+ 397              		.cfi_endproc
+ 398              	.LFE479:
+ 400              		.section	.text.lv_checkbox_set_text,"ax",%progbits
+ 401              		.align	1
+ 402              		.global	lv_checkbox_set_text
+ 403              		.syntax unified
+ 404              		.thumb
+ 405              		.thumb_func
+ 406              		.fpu fpv4-sp-d16
+ 408              	lv_checkbox_set_text:
+ 409              	.LVL49:
+ 410              	.LFB473:
+ 114:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_ASSERT_OBJ(cb, LV_OBJX_NAME);
+ 411              		.loc 1 114 1 is_stmt 1 view -0
+ 412              		.cfi_startproc
+ 413              		@ args = 0, pretend = 0, frame = 0
+ 414              		@ frame_needed = 0, uses_anonymous_args = 0
+ 114:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_ASSERT_OBJ(cb, LV_OBJX_NAME);
+ 415              		.loc 1 114 1 is_stmt 0 view .LVU107
+ 416 0000 38B5     		push	{r3, r4, r5, lr}
+ 417              	.LCFI2:
+ 418              		.cfi_def_cfa_offset 16
+ 419              		.cfi_offset 3, -16
+ 420              		.cfi_offset 4, -12
+ 421              		.cfi_offset 5, -8
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 20
+
+
+ 422              		.cfi_offset 14, -4
+ 423 0002 0446     		mov	r4, r0
+ 424 0004 0D46     		mov	r5, r1
+ 115:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 425              		.loc 1 115 5 is_stmt 1 view .LVU108
+ 115:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 426              		.loc 1 115 5 view .LVU109
+ 427 0006 FFF7FEFF 		bl	lv_debug_check_null
+ 428              	.LVL50:
+ 115:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 429              		.loc 1 115 5 is_stmt 0 view .LVU110
+ 430 000a 28B9     		cbnz	r0, .L22
+ 115:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 431              		.loc 1 115 5 is_stmt 1 discriminator 1 view .LVU111
+ 115:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 432              		.loc 1 115 5 discriminator 1 view .LVU112
+ 433 000c 2246     		mov	r2, r4
+ 434 000e 0023     		movs	r3, #0
+ 435 0010 0548     		ldr	r0, .L25
+ 436 0012 FFF7FEFF 		bl	lv_debug_log_error
+ 437              	.LVL51:
+ 438              	.L23:
+ 115:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 439              		.loc 1 115 5 discriminator 1 view .LVU113
+ 115:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 440              		.loc 1 115 5 discriminator 1 view .LVU114
+ 441 0016 FEE7     		b	.L23
+ 442              	.L22:
+ 115:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 443              		.loc 1 115 36 discriminator 2 view .LVU115
+ 117:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_label_set_text(ext->label, txt);
+ 444              		.loc 1 117 5 discriminator 2 view .LVU116
+ 117:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_label_set_text(ext->label, txt);
+ 445              		.loc 1 117 31 is_stmt 0 discriminator 2 view .LVU117
+ 446 0018 2046     		mov	r0, r4
+ 447 001a FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 448              	.LVL52:
+ 118:lvgl/src/lv_widgets/lv_checkbox.c **** }
+ 449              		.loc 1 118 5 is_stmt 1 discriminator 2 view .LVU118
+ 450 001e 2946     		mov	r1, r5
+ 451 0020 8068     		ldr	r0, [r0, #8]
+ 452              	.LVL53:
+ 118:lvgl/src/lv_widgets/lv_checkbox.c **** }
+ 453              		.loc 1 118 5 is_stmt 0 discriminator 2 view .LVU119
+ 454 0022 FFF7FEFF 		bl	lv_label_set_text
+ 455              	.LVL54:
+ 119:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 456              		.loc 1 119 1 discriminator 2 view .LVU120
+ 457 0026 38BD     		pop	{r3, r4, r5, pc}
+ 458              	.LVL55:
+ 459              	.L26:
+ 119:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 460              		.loc 1 119 1 discriminator 2 view .LVU121
+ 461              		.align	2
+ 462              	.L25:
+ 463 0028 00000000 		.word	.LC1
+ 464              		.cfi_endproc
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 21
+
+
+ 465              	.LFE473:
+ 467              		.section	.text.lv_checkbox_create,"ax",%progbits
+ 468              		.align	1
+ 469              		.global	lv_checkbox_create
+ 470              		.syntax unified
+ 471              		.thumb
+ 472              		.thumb_func
+ 473              		.fpu fpv4-sp-d16
+ 475              	lv_checkbox_create:
+ 476              	.LVL56:
+ 477              	.LFB472:
+  51:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_LOG_TRACE("check box create started");
+ 478              		.loc 1 51 1 is_stmt 1 view -0
+ 479              		.cfi_startproc
+ 480              		@ args = 0, pretend = 0, frame = 0
+ 481              		@ frame_needed = 0, uses_anonymous_args = 0
+  51:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_LOG_TRACE("check box create started");
+ 482              		.loc 1 51 1 is_stmt 0 view .LVU123
+ 483 0000 70B5     		push	{r4, r5, r6, lr}
+ 484              	.LCFI3:
+ 485              		.cfi_def_cfa_offset 16
+ 486              		.cfi_offset 4, -16
+ 487              		.cfi_offset 5, -12
+ 488              		.cfi_offset 6, -8
+ 489              		.cfi_offset 14, -4
+ 490 0002 82B0     		sub	sp, sp, #8
+ 491              	.LCFI4:
+ 492              		.cfi_def_cfa_offset 24
+ 493 0004 0E46     		mov	r6, r1
+  52:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 494              		.loc 1 52 45 is_stmt 1 view .LVU124
+  55:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_ASSERT_MEM(cb);
+ 495              		.loc 1 55 5 view .LVU125
+  55:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_ASSERT_MEM(cb);
+ 496              		.loc 1 55 21 is_stmt 0 view .LVU126
+ 497 0006 FFF7FEFF 		bl	lv_btn_create
+ 498              	.LVL57:
+  55:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_ASSERT_MEM(cb);
+ 499              		.loc 1 55 21 view .LVU127
+ 500 000a 0446     		mov	r4, r0
+ 501              	.LVL58:
+  56:lvgl/src/lv_widgets/lv_checkbox.c ****     if(cb == NULL) return NULL;
+ 502              		.loc 1 56 5 is_stmt 1 view .LVU128
+  56:lvgl/src/lv_widgets/lv_checkbox.c ****     if(cb == NULL) return NULL;
+ 503              		.loc 1 56 5 view .LVU129
+ 504 000c FFF7FEFF 		bl	lv_debug_check_null
+ 505              	.LVL59:
+  56:lvgl/src/lv_widgets/lv_checkbox.c ****     if(cb == NULL) return NULL;
+ 506              		.loc 1 56 5 is_stmt 0 view .LVU130
+ 507 0010 28B3     		cbz	r0, .L37
+  56:lvgl/src/lv_widgets/lv_checkbox.c ****     if(cb == NULL) return NULL;
+ 508              		.loc 1 56 22 is_stmt 1 discriminator 2 view .LVU131
+  57:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 509              		.loc 1 57 5 discriminator 2 view .LVU132
+  57:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 510              		.loc 1 57 7 is_stmt 0 discriminator 2 view .LVU133
+ 511 0012 0CB3     		cbz	r4, .L27
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 22
+
+
+  59:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 512              		.loc 1 59 5 is_stmt 1 view .LVU134
+  59:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 513              		.loc 1 59 24 is_stmt 0 view .LVU135
+ 514 0014 324B     		ldr	r3, .L42
+ 515 0016 1B68     		ldr	r3, [r3]
+  59:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 516              		.loc 1 59 7 view .LVU136
+ 517 0018 3BB3     		cbz	r3, .L38
+ 518              	.L31:
+  61:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_ASSERT_MEM(ext);
+ 519              		.loc 1 61 5 is_stmt 1 view .LVU137
+  61:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_ASSERT_MEM(ext);
+ 520              		.loc 1 61 31 is_stmt 0 view .LVU138
+ 521 001a 0C21     		movs	r1, #12
+ 522 001c 2046     		mov	r0, r4
+ 523 001e FFF7FEFF 		bl	lv_obj_allocate_ext_attr
+ 524              	.LVL60:
+ 525 0022 0546     		mov	r5, r0
+ 526              	.LVL61:
+  62:lvgl/src/lv_widgets/lv_checkbox.c ****     if(ext == NULL) {
+ 527              		.loc 1 62 5 is_stmt 1 view .LVU139
+  62:lvgl/src/lv_widgets/lv_checkbox.c ****     if(ext == NULL) {
+ 528              		.loc 1 62 5 view .LVU140
+ 529 0024 FFF7FEFF 		bl	lv_debug_check_null
+ 530              	.LVL62:
+  62:lvgl/src/lv_widgets/lv_checkbox.c ****     if(ext == NULL) {
+ 531              		.loc 1 62 5 is_stmt 0 view .LVU141
+ 532 0028 28B3     		cbz	r0, .L39
+  62:lvgl/src/lv_widgets/lv_checkbox.c ****     if(ext == NULL) {
+ 533              		.loc 1 62 23 is_stmt 1 discriminator 2 view .LVU142
+  63:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_del(cb);
+ 534              		.loc 1 63 5 discriminator 2 view .LVU143
+  63:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_del(cb);
+ 535              		.loc 1 63 7 is_stmt 0 discriminator 2 view .LVU144
+ 536 002a 55B3     		cbz	r5, .L40
+  68:lvgl/src/lv_widgets/lv_checkbox.c ****     ext->label  = NULL;
+ 537              		.loc 1 68 5 is_stmt 1 view .LVU145
+  68:lvgl/src/lv_widgets/lv_checkbox.c ****     ext->label  = NULL;
+ 538              		.loc 1 68 17 is_stmt 0 view .LVU146
+ 539 002c 0023     		movs	r3, #0
+ 540 002e 6B60     		str	r3, [r5, #4]
+  69:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 541              		.loc 1 69 5 is_stmt 1 view .LVU147
+  69:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 542              		.loc 1 69 17 is_stmt 0 view .LVU148
+ 543 0030 AB60     		str	r3, [r5, #8]
+  71:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 544              		.loc 1 71 5 is_stmt 1 view .LVU149
+ 545 0032 2C49     		ldr	r1, .L42+4
+ 546 0034 2046     		mov	r0, r4
+ 547 0036 FFF7FEFF 		bl	lv_obj_set_signal_cb
+ 548              	.LVL63:
+  74:lvgl/src/lv_widgets/lv_checkbox.c ****         ext->bullet = lv_obj_create(cb, NULL);
+ 549              		.loc 1 74 5 view .LVU150
+  74:lvgl/src/lv_widgets/lv_checkbox.c ****         ext->bullet = lv_obj_create(cb, NULL);
+ 550              		.loc 1 74 7 is_stmt 0 view .LVU151
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 23
+
+
+ 551 003a 3EB3     		cbz	r6, .L41
+ 552              	.LBB41:
+  90:lvgl/src/lv_widgets/lv_checkbox.c ****         ext->bullet            = lv_obj_create(cb, copy_ext->bullet);
+ 553              		.loc 1 90 9 is_stmt 1 view .LVU152
+  90:lvgl/src/lv_widgets/lv_checkbox.c ****         ext->bullet            = lv_obj_create(cb, copy_ext->bullet);
+ 554              		.loc 1 90 40 is_stmt 0 view .LVU153
+ 555 003c 3046     		mov	r0, r6
+ 556 003e FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 557              	.LVL64:
+ 558 0042 0646     		mov	r6, r0
+ 559              	.LVL65:
+  91:lvgl/src/lv_widgets/lv_checkbox.c ****         ext->label             = lv_label_create(cb, copy_ext->label);
+ 560              		.loc 1 91 9 is_stmt 1 view .LVU154
+  91:lvgl/src/lv_widgets/lv_checkbox.c ****         ext->label             = lv_label_create(cb, copy_ext->label);
+ 561              		.loc 1 91 34 is_stmt 0 view .LVU155
+ 562 0044 4168     		ldr	r1, [r0, #4]
+ 563 0046 2046     		mov	r0, r4
+ 564              	.LVL66:
+  91:lvgl/src/lv_widgets/lv_checkbox.c ****         ext->label             = lv_label_create(cb, copy_ext->label);
+ 565              		.loc 1 91 34 view .LVU156
+ 566 0048 FFF7FEFF 		bl	lv_obj_create
+ 567              	.LVL67:
+  91:lvgl/src/lv_widgets/lv_checkbox.c ****         ext->label             = lv_label_create(cb, copy_ext->label);
+ 568              		.loc 1 91 32 view .LVU157
+ 569 004c 6860     		str	r0, [r5, #4]
+  92:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 570              		.loc 1 92 9 is_stmt 1 view .LVU158
+  92:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 571              		.loc 1 92 34 is_stmt 0 view .LVU159
+ 572 004e B168     		ldr	r1, [r6, #8]
+ 573 0050 2046     		mov	r0, r4
+ 574 0052 FFF7FEFF 		bl	lv_label_create
+ 575              	.LVL68:
+  92:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 576              		.loc 1 92 32 view .LVU160
+ 577 0056 A860     		str	r0, [r5, #8]
+ 578              	.LVL69:
+ 579              	.L27:
+  92:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 580              		.loc 1 92 32 view .LVU161
+ 581              	.LBE41:
+ 101:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 582              		.loc 1 101 1 view .LVU162
+ 583 0058 2046     		mov	r0, r4
+ 584 005a 02B0     		add	sp, sp, #8
+ 585              	.LCFI5:
+ 586              		.cfi_remember_state
+ 587              		.cfi_def_cfa_offset 16
+ 588              		@ sp needed
+ 589 005c 70BD     		pop	{r4, r5, r6, pc}
+ 590              	.LVL70:
+ 591              	.L37:
+ 592              	.LCFI6:
+ 593              		.cfi_restore_state
+  56:lvgl/src/lv_widgets/lv_checkbox.c ****     if(cb == NULL) return NULL;
+ 594              		.loc 1 56 5 is_stmt 1 discriminator 1 view .LVU163
+  56:lvgl/src/lv_widgets/lv_checkbox.c ****     if(cb == NULL) return NULL;
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 24
+
+
+ 595              		.loc 1 56 5 discriminator 1 view .LVU164
+ 596 005e 2246     		mov	r2, r4
+ 597 0060 0023     		movs	r3, #0
+ 598 0062 2148     		ldr	r0, .L42+8
+ 599 0064 FFF7FEFF 		bl	lv_debug_log_error
+ 600              	.LVL71:
+ 601              	.L29:
+  56:lvgl/src/lv_widgets/lv_checkbox.c ****     if(cb == NULL) return NULL;
+ 602              		.loc 1 56 5 discriminator 1 view .LVU165
+  56:lvgl/src/lv_widgets/lv_checkbox.c ****     if(cb == NULL) return NULL;
+ 603              		.loc 1 56 5 discriminator 1 view .LVU166
+ 604 0068 FEE7     		b	.L29
+ 605              	.L38:
+  59:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 606              		.loc 1 59 33 discriminator 1 view .LVU167
+  59:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 607              		.loc 1 59 51 is_stmt 0 discriminator 1 view .LVU168
+ 608 006a 2046     		mov	r0, r4
+ 609 006c FFF7FEFF 		bl	lv_obj_get_signal_cb
+ 610              	.LVL72:
+  59:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 611              		.loc 1 59 49 discriminator 1 view .LVU169
+ 612 0070 1B4B     		ldr	r3, .L42
+ 613 0072 1860     		str	r0, [r3]
+ 614 0074 D1E7     		b	.L31
+ 615              	.LVL73:
+ 616              	.L39:
+  62:lvgl/src/lv_widgets/lv_checkbox.c ****     if(ext == NULL) {
+ 617              		.loc 1 62 5 is_stmt 1 discriminator 1 view .LVU170
+  62:lvgl/src/lv_widgets/lv_checkbox.c ****     if(ext == NULL) {
+ 618              		.loc 1 62 5 discriminator 1 view .LVU171
+ 619 0076 2A46     		mov	r2, r5
+ 620 0078 0023     		movs	r3, #0
+ 621 007a 1B48     		ldr	r0, .L42+8
+ 622 007c FFF7FEFF 		bl	lv_debug_log_error
+ 623              	.LVL74:
+ 624              	.L33:
+  62:lvgl/src/lv_widgets/lv_checkbox.c ****     if(ext == NULL) {
+ 625              		.loc 1 62 5 discriminator 2 view .LVU172
+  62:lvgl/src/lv_widgets/lv_checkbox.c ****     if(ext == NULL) {
+ 626              		.loc 1 62 5 discriminator 2 view .LVU173
+ 627 0080 FEE7     		b	.L33
+ 628              	.L40:
+  64:lvgl/src/lv_widgets/lv_checkbox.c ****         return NULL;
+ 629              		.loc 1 64 9 view .LVU174
+ 630 0082 2046     		mov	r0, r4
+ 631 0084 FFF7FEFF 		bl	lv_obj_del
+ 632              	.LVL75:
+  65:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 633              		.loc 1 65 9 view .LVU175
+  65:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 634              		.loc 1 65 16 is_stmt 0 view .LVU176
+ 635 0088 0024     		movs	r4, #0
+ 636              	.LVL76:
+  65:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 637              		.loc 1 65 16 view .LVU177
+ 638 008a E5E7     		b	.L27
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 25
+
+
+ 639              	.LVL77:
+ 640              	.L41:
+  75:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_set_click(ext->bullet, false);
+ 641              		.loc 1 75 9 is_stmt 1 view .LVU178
+  75:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_set_click(ext->bullet, false);
+ 642              		.loc 1 75 23 is_stmt 0 view .LVU179
+ 643 008c 0021     		movs	r1, #0
+ 644 008e 2046     		mov	r0, r4
+ 645 0090 FFF7FEFF 		bl	lv_obj_create
+ 646              	.LVL78:
+  75:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_set_click(ext->bullet, false);
+ 647              		.loc 1 75 21 view .LVU180
+ 648 0094 6860     		str	r0, [r5, #4]
+  76:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 649              		.loc 1 76 9 is_stmt 1 view .LVU181
+ 650 0096 0021     		movs	r1, #0
+ 651 0098 FFF7FEFF 		bl	lv_obj_set_click
+ 652              	.LVL79:
+  78:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 653              		.loc 1 78 9 view .LVU182
+  78:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 654              		.loc 1 78 22 is_stmt 0 view .LVU183
+ 655 009c 0021     		movs	r1, #0
+ 656 009e 2046     		mov	r0, r4
+ 657 00a0 FFF7FEFF 		bl	lv_label_create
+ 658              	.LVL80:
+  78:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 659              		.loc 1 78 20 view .LVU184
+ 660 00a4 A860     		str	r0, [r5, #8]
+  80:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_btn_set_layout(cb, LV_LAYOUT_ROW_MID);
+ 661              		.loc 1 80 9 is_stmt 1 view .LVU185
+ 662 00a6 1149     		ldr	r1, .L42+12
+ 663 00a8 2046     		mov	r0, r4
+ 664 00aa FFF7FEFF 		bl	lv_checkbox_set_text
+ 665              	.LVL81:
+  81:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_btn_set_fit(cb, LV_FIT_TIGHT);
+ 666              		.loc 1 81 9 view .LVU186
+ 667              	.LBB42:
+ 668              	.LBI42:
+ 669              		.file 4 "lvgl/src/lv_widgets/lv_btn.h"
+   1:lvgl/src/lv_widgets/lv_btn.h **** /**
+   2:lvgl/src/lv_widgets/lv_btn.h ****  * @file lv_btn.h
+   3:lvgl/src/lv_widgets/lv_btn.h ****  *
+   4:lvgl/src/lv_widgets/lv_btn.h ****  */
+   5:lvgl/src/lv_widgets/lv_btn.h **** 
+   6:lvgl/src/lv_widgets/lv_btn.h **** #ifndef LV_BTN_H
+   7:lvgl/src/lv_widgets/lv_btn.h **** #define LV_BTN_H
+   8:lvgl/src/lv_widgets/lv_btn.h **** 
+   9:lvgl/src/lv_widgets/lv_btn.h **** #ifdef __cplusplus
+  10:lvgl/src/lv_widgets/lv_btn.h **** extern "C" {
+  11:lvgl/src/lv_widgets/lv_btn.h **** #endif
+  12:lvgl/src/lv_widgets/lv_btn.h **** 
+  13:lvgl/src/lv_widgets/lv_btn.h **** /*********************
+  14:lvgl/src/lv_widgets/lv_btn.h ****  *      INCLUDES
+  15:lvgl/src/lv_widgets/lv_btn.h ****  *********************/
+  16:lvgl/src/lv_widgets/lv_btn.h **** #include "../lv_conf_internal.h"
+  17:lvgl/src/lv_widgets/lv_btn.h **** 
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 26
+
+
+  18:lvgl/src/lv_widgets/lv_btn.h **** #if LV_USE_BTN != 0
+  19:lvgl/src/lv_widgets/lv_btn.h **** 
+  20:lvgl/src/lv_widgets/lv_btn.h **** /*Testing of dependencies*/
+  21:lvgl/src/lv_widgets/lv_btn.h **** #if LV_USE_CONT == 0
+  22:lvgl/src/lv_widgets/lv_btn.h **** #error "lv_btn: lv_cont is required. Enable it in lv_conf.h (LV_USE_CONT 1)"
+  23:lvgl/src/lv_widgets/lv_btn.h **** #endif
+  24:lvgl/src/lv_widgets/lv_btn.h **** 
+  25:lvgl/src/lv_widgets/lv_btn.h **** #include "lv_cont.h"
+  26:lvgl/src/lv_widgets/lv_btn.h **** #include "../lv_core/lv_indev.h"
+  27:lvgl/src/lv_widgets/lv_btn.h **** 
+  28:lvgl/src/lv_widgets/lv_btn.h **** /*********************
+  29:lvgl/src/lv_widgets/lv_btn.h ****  *      DEFINES
+  30:lvgl/src/lv_widgets/lv_btn.h ****  *********************/
+  31:lvgl/src/lv_widgets/lv_btn.h **** 
+  32:lvgl/src/lv_widgets/lv_btn.h **** /**********************
+  33:lvgl/src/lv_widgets/lv_btn.h ****  *      TYPEDEFS
+  34:lvgl/src/lv_widgets/lv_btn.h ****  **********************/
+  35:lvgl/src/lv_widgets/lv_btn.h **** 
+  36:lvgl/src/lv_widgets/lv_btn.h **** /** Possible states of a button.
+  37:lvgl/src/lv_widgets/lv_btn.h ****  * It can be used not only by buttons but other button-like objects too*/
+  38:lvgl/src/lv_widgets/lv_btn.h **** enum {
+  39:lvgl/src/lv_widgets/lv_btn.h ****     LV_BTN_STATE_RELEASED,
+  40:lvgl/src/lv_widgets/lv_btn.h ****     LV_BTN_STATE_PRESSED,
+  41:lvgl/src/lv_widgets/lv_btn.h ****     LV_BTN_STATE_DISABLED,
+  42:lvgl/src/lv_widgets/lv_btn.h ****     LV_BTN_STATE_CHECKED_RELEASED,
+  43:lvgl/src/lv_widgets/lv_btn.h ****     LV_BTN_STATE_CHECKED_PRESSED,
+  44:lvgl/src/lv_widgets/lv_btn.h ****     LV_BTN_STATE_CHECKED_DISABLED,
+  45:lvgl/src/lv_widgets/lv_btn.h ****     _LV_BTN_STATE_LAST, /* Number of states*/
+  46:lvgl/src/lv_widgets/lv_btn.h **** };
+  47:lvgl/src/lv_widgets/lv_btn.h **** typedef uint8_t lv_btn_state_t;
+  48:lvgl/src/lv_widgets/lv_btn.h **** 
+  49:lvgl/src/lv_widgets/lv_btn.h **** /** Extended data of button*/
+  50:lvgl/src/lv_widgets/lv_btn.h **** typedef struct {
+  51:lvgl/src/lv_widgets/lv_btn.h ****     /** Ext. of ancestor*/
+  52:lvgl/src/lv_widgets/lv_btn.h ****     lv_cont_ext_t cont;
+  53:lvgl/src/lv_widgets/lv_btn.h **** 
+  54:lvgl/src/lv_widgets/lv_btn.h ****     /** 1: Toggle enabled*/
+  55:lvgl/src/lv_widgets/lv_btn.h ****     uint8_t checkable : 1;
+  56:lvgl/src/lv_widgets/lv_btn.h **** } lv_btn_ext_t;
+  57:lvgl/src/lv_widgets/lv_btn.h **** 
+  58:lvgl/src/lv_widgets/lv_btn.h **** /**Styles*/
+  59:lvgl/src/lv_widgets/lv_btn.h **** enum {
+  60:lvgl/src/lv_widgets/lv_btn.h ****     LV_BTN_PART_MAIN = LV_OBJ_PART_MAIN,
+  61:lvgl/src/lv_widgets/lv_btn.h ****     _LV_BTN_PART_VIRTUAL_LAST,
+  62:lvgl/src/lv_widgets/lv_btn.h ****     _LV_BTN_PART_REAL_LAST = _LV_OBJ_PART_REAL_LAST,
+  63:lvgl/src/lv_widgets/lv_btn.h **** };
+  64:lvgl/src/lv_widgets/lv_btn.h **** typedef uint8_t lv_btn_part_t;
+  65:lvgl/src/lv_widgets/lv_btn.h **** 
+  66:lvgl/src/lv_widgets/lv_btn.h **** /**********************
+  67:lvgl/src/lv_widgets/lv_btn.h ****  * GLOBAL PROTOTYPES
+  68:lvgl/src/lv_widgets/lv_btn.h ****  **********************/
+  69:lvgl/src/lv_widgets/lv_btn.h **** 
+  70:lvgl/src/lv_widgets/lv_btn.h **** /**
+  71:lvgl/src/lv_widgets/lv_btn.h ****  * Create a button object
+  72:lvgl/src/lv_widgets/lv_btn.h ****  * @param par pointer to an object, it will be the parent of the new button
+  73:lvgl/src/lv_widgets/lv_btn.h ****  * @param copy pointer to a button object, if not NULL then the new object will be copied from it
+  74:lvgl/src/lv_widgets/lv_btn.h ****  * @return pointer to the created button
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 27
+
+
+  75:lvgl/src/lv_widgets/lv_btn.h ****  */
+  76:lvgl/src/lv_widgets/lv_btn.h **** lv_obj_t * lv_btn_create(lv_obj_t * par, const lv_obj_t * copy);
+  77:lvgl/src/lv_widgets/lv_btn.h **** 
+  78:lvgl/src/lv_widgets/lv_btn.h **** /*=====================
+  79:lvgl/src/lv_widgets/lv_btn.h ****  * Setter functions
+  80:lvgl/src/lv_widgets/lv_btn.h ****  *====================*/
+  81:lvgl/src/lv_widgets/lv_btn.h **** 
+  82:lvgl/src/lv_widgets/lv_btn.h **** /**
+  83:lvgl/src/lv_widgets/lv_btn.h ****  * Enable the toggled states. On release the button will change from/to toggled state.
+  84:lvgl/src/lv_widgets/lv_btn.h ****  * @param btn pointer to a button object
+  85:lvgl/src/lv_widgets/lv_btn.h ****  * @param tgl true: enable toggled states, false: disable
+  86:lvgl/src/lv_widgets/lv_btn.h ****  */
+  87:lvgl/src/lv_widgets/lv_btn.h **** void lv_btn_set_checkable(lv_obj_t * btn, bool tgl);
+  88:lvgl/src/lv_widgets/lv_btn.h **** 
+  89:lvgl/src/lv_widgets/lv_btn.h **** /**
+  90:lvgl/src/lv_widgets/lv_btn.h ****  * Set the state of the button
+  91:lvgl/src/lv_widgets/lv_btn.h ****  * @param btn pointer to a button object
+  92:lvgl/src/lv_widgets/lv_btn.h ****  * @param state the new state of the button (from lv_btn_state_t enum)
+  93:lvgl/src/lv_widgets/lv_btn.h ****  */
+  94:lvgl/src/lv_widgets/lv_btn.h **** void lv_btn_set_state(lv_obj_t * btn, lv_btn_state_t state);
+  95:lvgl/src/lv_widgets/lv_btn.h **** 
+  96:lvgl/src/lv_widgets/lv_btn.h **** /**
+  97:lvgl/src/lv_widgets/lv_btn.h ****  * Toggle the state of the button (ON->OFF, OFF->ON)
+  98:lvgl/src/lv_widgets/lv_btn.h ****  * @param btn pointer to a button object
+  99:lvgl/src/lv_widgets/lv_btn.h ****  */
+ 100:lvgl/src/lv_widgets/lv_btn.h **** void lv_btn_toggle(lv_obj_t * btn);
+ 101:lvgl/src/lv_widgets/lv_btn.h **** 
+ 102:lvgl/src/lv_widgets/lv_btn.h **** /**
+ 103:lvgl/src/lv_widgets/lv_btn.h ****  * Set the layout on a button
+ 104:lvgl/src/lv_widgets/lv_btn.h ****  * @param btn pointer to a button object
+ 105:lvgl/src/lv_widgets/lv_btn.h ****  * @param layout a layout from 'lv_cont_layout_t'
+ 106:lvgl/src/lv_widgets/lv_btn.h ****  */
+ 107:lvgl/src/lv_widgets/lv_btn.h **** static inline void lv_btn_set_layout(lv_obj_t * btn, lv_layout_t layout)
+ 670              		.loc 4 107 20 view .LVU187
+ 671              	.LBB43:
+ 108:lvgl/src/lv_widgets/lv_btn.h **** {
+ 109:lvgl/src/lv_widgets/lv_btn.h ****     lv_cont_set_layout(btn, layout);
+ 672              		.loc 4 109 5 view .LVU188
+ 673 00ae 0621     		movs	r1, #6
+ 674 00b0 2046     		mov	r0, r4
+ 675 00b2 FFF7FEFF 		bl	lv_cont_set_layout
+ 676              	.LVL82:
+ 677              		.loc 4 109 5 is_stmt 0 view .LVU189
+ 678              	.LBE43:
+ 679              	.LBE42:
+  82:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_btn_set_checkable(cb, true);
+ 680              		.loc 1 82 9 is_stmt 1 view .LVU190
+ 681              	.LBB44:
+ 682              	.LBI44:
+ 110:lvgl/src/lv_widgets/lv_btn.h **** }
+ 111:lvgl/src/lv_widgets/lv_btn.h **** 
+ 112:lvgl/src/lv_widgets/lv_btn.h **** /**
+ 113:lvgl/src/lv_widgets/lv_btn.h ****  * Set the fit policy in all 4 directions separately.
+ 114:lvgl/src/lv_widgets/lv_btn.h ****  * It tells how to change the button size automatically.
+ 115:lvgl/src/lv_widgets/lv_btn.h ****  * @param btn pointer to a button object
+ 116:lvgl/src/lv_widgets/lv_btn.h ****  * @param left left fit policy from `lv_fit_t`
+ 117:lvgl/src/lv_widgets/lv_btn.h ****  * @param right right fit policy from `lv_fit_t`
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 28
+
+
+ 118:lvgl/src/lv_widgets/lv_btn.h ****  * @param top top fit policy from `lv_fit_t`
+ 119:lvgl/src/lv_widgets/lv_btn.h ****  * @param bottom bottom fit policy from `lv_fit_t`
+ 120:lvgl/src/lv_widgets/lv_btn.h ****  */
+ 121:lvgl/src/lv_widgets/lv_btn.h **** static inline void lv_btn_set_fit4(lv_obj_t * btn, lv_fit_t left, lv_fit_t right, lv_fit_t top, lv_
+ 122:lvgl/src/lv_widgets/lv_btn.h **** {
+ 123:lvgl/src/lv_widgets/lv_btn.h ****     lv_cont_set_fit4(btn, left, right, top, bottom);
+ 124:lvgl/src/lv_widgets/lv_btn.h **** }
+ 125:lvgl/src/lv_widgets/lv_btn.h **** 
+ 126:lvgl/src/lv_widgets/lv_btn.h **** /**
+ 127:lvgl/src/lv_widgets/lv_btn.h ****  * Set the fit policy horizontally and vertically separately.
+ 128:lvgl/src/lv_widgets/lv_btn.h ****  * It tells how to change the button size automatically.
+ 129:lvgl/src/lv_widgets/lv_btn.h ****  * @param btn pointer to a button object
+ 130:lvgl/src/lv_widgets/lv_btn.h ****  * @param hor horizontal fit policy from `lv_fit_t`
+ 131:lvgl/src/lv_widgets/lv_btn.h ****  * @param ver vertical fit policy from `lv_fit_t`
+ 132:lvgl/src/lv_widgets/lv_btn.h ****  */
+ 133:lvgl/src/lv_widgets/lv_btn.h **** static inline void lv_btn_set_fit2(lv_obj_t * btn, lv_fit_t hor, lv_fit_t ver)
+ 134:lvgl/src/lv_widgets/lv_btn.h **** {
+ 135:lvgl/src/lv_widgets/lv_btn.h ****     lv_cont_set_fit2(btn, hor, ver);
+ 136:lvgl/src/lv_widgets/lv_btn.h **** }
+ 137:lvgl/src/lv_widgets/lv_btn.h **** 
+ 138:lvgl/src/lv_widgets/lv_btn.h **** /**
+ 139:lvgl/src/lv_widgets/lv_btn.h ****  * Set the fit policy in all 4 direction at once.
+ 140:lvgl/src/lv_widgets/lv_btn.h ****  * It tells how to change the button size automatically.
+ 141:lvgl/src/lv_widgets/lv_btn.h ****  * @param btn pointer to a button object
+ 142:lvgl/src/lv_widgets/lv_btn.h ****  * @param fit fit policy from `lv_fit_t`
+ 143:lvgl/src/lv_widgets/lv_btn.h ****  */
+ 144:lvgl/src/lv_widgets/lv_btn.h **** static inline void lv_btn_set_fit(lv_obj_t * btn, lv_fit_t fit)
+ 683              		.loc 4 144 20 view .LVU191
+ 684              	.LBE44:
+ 145:lvgl/src/lv_widgets/lv_btn.h **** {
+ 146:lvgl/src/lv_widgets/lv_btn.h ****     lv_cont_set_fit(btn, fit);
+ 685              		.loc 4 146 5 view .LVU192
+ 686              	.LBB47:
+ 687              	.LBB45:
+ 688              	.LBI45:
+ 689              		.file 5 "lvgl/src/lv_widgets/lv_cont.h"
+   1:lvgl/src/lv_widgets/lv_cont.h **** /**
+   2:lvgl/src/lv_widgets/lv_cont.h ****  * @file lv_cont.h
+   3:lvgl/src/lv_widgets/lv_cont.h ****  *
+   4:lvgl/src/lv_widgets/lv_cont.h ****  */
+   5:lvgl/src/lv_widgets/lv_cont.h **** 
+   6:lvgl/src/lv_widgets/lv_cont.h **** #ifndef LV_CONT_H
+   7:lvgl/src/lv_widgets/lv_cont.h **** #define LV_CONT_H
+   8:lvgl/src/lv_widgets/lv_cont.h **** 
+   9:lvgl/src/lv_widgets/lv_cont.h **** #ifdef __cplusplus
+  10:lvgl/src/lv_widgets/lv_cont.h **** extern "C" {
+  11:lvgl/src/lv_widgets/lv_cont.h **** #endif
+  12:lvgl/src/lv_widgets/lv_cont.h **** 
+  13:lvgl/src/lv_widgets/lv_cont.h **** /*********************
+  14:lvgl/src/lv_widgets/lv_cont.h ****  *      INCLUDES
+  15:lvgl/src/lv_widgets/lv_cont.h ****  *********************/
+  16:lvgl/src/lv_widgets/lv_cont.h **** #include "../lv_conf_internal.h"
+  17:lvgl/src/lv_widgets/lv_cont.h **** 
+  18:lvgl/src/lv_widgets/lv_cont.h **** #if LV_USE_CONT != 0
+  19:lvgl/src/lv_widgets/lv_cont.h **** 
+  20:lvgl/src/lv_widgets/lv_cont.h **** #include "../lv_core/lv_obj.h"
+  21:lvgl/src/lv_widgets/lv_cont.h **** 
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 29
+
+
+  22:lvgl/src/lv_widgets/lv_cont.h **** /*********************
+  23:lvgl/src/lv_widgets/lv_cont.h ****  *      DEFINES
+  24:lvgl/src/lv_widgets/lv_cont.h ****  *********************/
+  25:lvgl/src/lv_widgets/lv_cont.h **** 
+  26:lvgl/src/lv_widgets/lv_cont.h **** /**********************
+  27:lvgl/src/lv_widgets/lv_cont.h ****  *      TYPEDEFS
+  28:lvgl/src/lv_widgets/lv_cont.h ****  **********************/
+  29:lvgl/src/lv_widgets/lv_cont.h **** 
+  30:lvgl/src/lv_widgets/lv_cont.h **** /** Container layout options*/
+  31:lvgl/src/lv_widgets/lv_cont.h **** enum {
+  32:lvgl/src/lv_widgets/lv_cont.h ****     LV_LAYOUT_OFF = 0, /**< No layout */
+  33:lvgl/src/lv_widgets/lv_cont.h ****     LV_LAYOUT_CENTER, /**< Center objects */
+  34:lvgl/src/lv_widgets/lv_cont.h **** 
+  35:lvgl/src/lv_widgets/lv_cont.h ****     /**
+  36:lvgl/src/lv_widgets/lv_cont.h ****      * COLUMN:
+  37:lvgl/src/lv_widgets/lv_cont.h ****      * - Place the object below each other
+  38:lvgl/src/lv_widgets/lv_cont.h ****      * - Keep `pad_top` space on the top
+  39:lvgl/src/lv_widgets/lv_cont.h ****      * - Keep `pad_inner` space between the objects
+  40:lvgl/src/lv_widgets/lv_cont.h ****      */
+  41:lvgl/src/lv_widgets/lv_cont.h ****     LV_LAYOUT_COLUMN_LEFT,      /**< Column left align*/
+  42:lvgl/src/lv_widgets/lv_cont.h ****     LV_LAYOUT_COLUMN_MID,       /**< Column middle align*/
+  43:lvgl/src/lv_widgets/lv_cont.h ****     LV_LAYOUT_COLUMN_RIGHT,     /**< Column right align*/
+  44:lvgl/src/lv_widgets/lv_cont.h **** 
+  45:lvgl/src/lv_widgets/lv_cont.h ****     /**
+  46:lvgl/src/lv_widgets/lv_cont.h ****      * ROW:
+  47:lvgl/src/lv_widgets/lv_cont.h ****      * - Place the object next to each other
+  48:lvgl/src/lv_widgets/lv_cont.h ****      * - Keep `pad_left` space on the left
+  49:lvgl/src/lv_widgets/lv_cont.h ****      * - Keep `pad_inner` space between the objects
+  50:lvgl/src/lv_widgets/lv_cont.h ****      * - If the object which applies the layout has `base_dir == LV_BIDI_DIR_RTL`
+  51:lvgl/src/lv_widgets/lv_cont.h ****      *   the row will start from the right applying `pad.right` space
+  52:lvgl/src/lv_widgets/lv_cont.h ****      */
+  53:lvgl/src/lv_widgets/lv_cont.h ****     LV_LAYOUT_ROW_TOP,          /**< Row top align*/
+  54:lvgl/src/lv_widgets/lv_cont.h ****     LV_LAYOUT_ROW_MID,          /**< Row middle align*/
+  55:lvgl/src/lv_widgets/lv_cont.h ****     LV_LAYOUT_ROW_BOTTOM,       /**< Row bottom align*/
+  56:lvgl/src/lv_widgets/lv_cont.h **** 
+  57:lvgl/src/lv_widgets/lv_cont.h ****     /**
+  58:lvgl/src/lv_widgets/lv_cont.h ****      * PRETTY:
+  59:lvgl/src/lv_widgets/lv_cont.h ****      * - Place the object next to each other
+  60:lvgl/src/lv_widgets/lv_cont.h ****      * - If there is no more space start a new row
+  61:lvgl/src/lv_widgets/lv_cont.h ****      * - Respect `pad_left` and `pad_right` when determining the available space in a row
+  62:lvgl/src/lv_widgets/lv_cont.h ****      * - Keep `pad_inner` space between the objects in the same row
+  63:lvgl/src/lv_widgets/lv_cont.h ****      * - Keep `pad_inner` space between the objects in rows
+  64:lvgl/src/lv_widgets/lv_cont.h ****      * - Divide the remaining horizontal space equally
+  65:lvgl/src/lv_widgets/lv_cont.h ****      */
+  66:lvgl/src/lv_widgets/lv_cont.h ****     LV_LAYOUT_PRETTY_TOP,       /**< Row top align*/
+  67:lvgl/src/lv_widgets/lv_cont.h ****     LV_LAYOUT_PRETTY_MID,       /**< Row middle align*/
+  68:lvgl/src/lv_widgets/lv_cont.h ****     LV_LAYOUT_PRETTY_BOTTOM,    /**< Row bottom align*/
+  69:lvgl/src/lv_widgets/lv_cont.h **** 
+  70:lvgl/src/lv_widgets/lv_cont.h ****     /**
+  71:lvgl/src/lv_widgets/lv_cont.h ****      * GRID
+  72:lvgl/src/lv_widgets/lv_cont.h ****      * - Place the object next to each other
+  73:lvgl/src/lv_widgets/lv_cont.h ****      * - If there is no more space start a new row
+  74:lvgl/src/lv_widgets/lv_cont.h ****      * - Respect `pad_left` and `pad_right` when determining the available space in a row
+  75:lvgl/src/lv_widgets/lv_cont.h ****      * - Keep `pad_inner` space between the objects in the same row
+  76:lvgl/src/lv_widgets/lv_cont.h ****      * - Keep `pad_inner` space between the objects in rows
+  77:lvgl/src/lv_widgets/lv_cont.h ****      * - Unlike `PRETTY`, `GRID` always keep `pad_inner` space horizontally between objects
+  78:lvgl/src/lv_widgets/lv_cont.h ****      *   so it doesn't divide the remaining horizontal space equally
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 30
+
+
+  79:lvgl/src/lv_widgets/lv_cont.h ****      */
+  80:lvgl/src/lv_widgets/lv_cont.h ****     LV_LAYOUT_GRID,   /**< Align same-sized object into a grid*/
+  81:lvgl/src/lv_widgets/lv_cont.h **** 
+  82:lvgl/src/lv_widgets/lv_cont.h ****     _LV_LAYOUT_LAST
+  83:lvgl/src/lv_widgets/lv_cont.h **** };
+  84:lvgl/src/lv_widgets/lv_cont.h **** typedef uint8_t lv_layout_t;
+  85:lvgl/src/lv_widgets/lv_cont.h **** 
+  86:lvgl/src/lv_widgets/lv_cont.h **** /**
+  87:lvgl/src/lv_widgets/lv_cont.h ****  * How to resize the container around the children.
+  88:lvgl/src/lv_widgets/lv_cont.h ****  */
+  89:lvgl/src/lv_widgets/lv_cont.h **** enum {
+  90:lvgl/src/lv_widgets/lv_cont.h ****     LV_FIT_NONE,  /**< Do not change the size automatically*/
+  91:lvgl/src/lv_widgets/lv_cont.h ****     LV_FIT_TIGHT, /**< Shrink wrap around the children */
+  92:lvgl/src/lv_widgets/lv_cont.h ****     LV_FIT_PARENT, /**< Align the size to the parent's edge*/
+  93:lvgl/src/lv_widgets/lv_cont.h ****     LV_FIT_MAX,  /**< Align the size to the parent's edge first but if there is an object out of it
+  94:lvgl/src/lv_widgets/lv_cont.h ****                      then get larger */
+  95:lvgl/src/lv_widgets/lv_cont.h ****     _LV_FIT_LAST
+  96:lvgl/src/lv_widgets/lv_cont.h **** };
+  97:lvgl/src/lv_widgets/lv_cont.h **** typedef uint8_t lv_fit_t;
+  98:lvgl/src/lv_widgets/lv_cont.h **** 
+  99:lvgl/src/lv_widgets/lv_cont.h **** typedef struct {
+ 100:lvgl/src/lv_widgets/lv_cont.h ****     /*Inherited from 'base_obj' so no inherited ext. */ /*Ext. of ancestor*/
+ 101:lvgl/src/lv_widgets/lv_cont.h ****     /*New data for this type */
+ 102:lvgl/src/lv_widgets/lv_cont.h ****     lv_layout_t layout : 4;     /*A layout from 'lv_layout_t' enum*/
+ 103:lvgl/src/lv_widgets/lv_cont.h ****     lv_fit_t fit_left : 2;   /*A fit type from `lv_fit_t` enum */
+ 104:lvgl/src/lv_widgets/lv_cont.h ****     lv_fit_t fit_right : 2;  /*A fit type from `lv_fit_t` enum */
+ 105:lvgl/src/lv_widgets/lv_cont.h ****     lv_fit_t fit_top : 2;    /*A fit type from `lv_fit_t` enum */
+ 106:lvgl/src/lv_widgets/lv_cont.h ****     lv_fit_t fit_bottom : 2; /*A fit type from `lv_fit_t` enum */
+ 107:lvgl/src/lv_widgets/lv_cont.h **** } lv_cont_ext_t;
+ 108:lvgl/src/lv_widgets/lv_cont.h **** 
+ 109:lvgl/src/lv_widgets/lv_cont.h **** /*Part of the container*/
+ 110:lvgl/src/lv_widgets/lv_cont.h **** enum {
+ 111:lvgl/src/lv_widgets/lv_cont.h ****     LV_CONT_PART_MAIN = LV_OBJ_PART_MAIN,
+ 112:lvgl/src/lv_widgets/lv_cont.h ****     _LV_CONT_PART_VIRTUAL_LAST = _LV_OBJ_PART_VIRTUAL_LAST,
+ 113:lvgl/src/lv_widgets/lv_cont.h ****     _LV_CONT_PART_REAL_LAST = _LV_OBJ_PART_REAL_LAST,
+ 114:lvgl/src/lv_widgets/lv_cont.h **** };
+ 115:lvgl/src/lv_widgets/lv_cont.h **** 
+ 116:lvgl/src/lv_widgets/lv_cont.h **** /**********************
+ 117:lvgl/src/lv_widgets/lv_cont.h ****  * GLOBAL PROTOTYPES
+ 118:lvgl/src/lv_widgets/lv_cont.h ****  **********************/
+ 119:lvgl/src/lv_widgets/lv_cont.h **** 
+ 120:lvgl/src/lv_widgets/lv_cont.h **** /**
+ 121:lvgl/src/lv_widgets/lv_cont.h ****  * Create a container objects
+ 122:lvgl/src/lv_widgets/lv_cont.h ****  * @param par pointer to an object, it will be the parent of the new container
+ 123:lvgl/src/lv_widgets/lv_cont.h ****  * @param copy pointer to a container object, if not NULL then the new object will be copied from i
+ 124:lvgl/src/lv_widgets/lv_cont.h ****  * @return pointer to the created container
+ 125:lvgl/src/lv_widgets/lv_cont.h ****  */
+ 126:lvgl/src/lv_widgets/lv_cont.h **** lv_obj_t * lv_cont_create(lv_obj_t * par, const lv_obj_t * copy);
+ 127:lvgl/src/lv_widgets/lv_cont.h **** 
+ 128:lvgl/src/lv_widgets/lv_cont.h **** /*=====================
+ 129:lvgl/src/lv_widgets/lv_cont.h ****  * Setter functions
+ 130:lvgl/src/lv_widgets/lv_cont.h ****  *====================*/
+ 131:lvgl/src/lv_widgets/lv_cont.h **** 
+ 132:lvgl/src/lv_widgets/lv_cont.h **** /**
+ 133:lvgl/src/lv_widgets/lv_cont.h ****  * Set a layout on a container
+ 134:lvgl/src/lv_widgets/lv_cont.h ****  * @param cont pointer to a container object
+ 135:lvgl/src/lv_widgets/lv_cont.h ****  * @param layout a layout from 'lv_cont_layout_t'
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 31
+
+
+ 136:lvgl/src/lv_widgets/lv_cont.h ****  */
+ 137:lvgl/src/lv_widgets/lv_cont.h **** void lv_cont_set_layout(lv_obj_t * cont, lv_layout_t layout);
+ 138:lvgl/src/lv_widgets/lv_cont.h **** 
+ 139:lvgl/src/lv_widgets/lv_cont.h **** /**
+ 140:lvgl/src/lv_widgets/lv_cont.h ****  * Set the fit policy in all 4 directions separately.
+ 141:lvgl/src/lv_widgets/lv_cont.h ****  * It tell how to change the container's size automatically.
+ 142:lvgl/src/lv_widgets/lv_cont.h ****  * @param cont pointer to a container object
+ 143:lvgl/src/lv_widgets/lv_cont.h ****  * @param left left fit policy from `lv_fit_t`
+ 144:lvgl/src/lv_widgets/lv_cont.h ****  * @param right right fit policy from `lv_fit_t`
+ 145:lvgl/src/lv_widgets/lv_cont.h ****  * @param top top fit policy from `lv_fit_t`
+ 146:lvgl/src/lv_widgets/lv_cont.h ****  * @param bottom bottom fit policy from `lv_fit_t`
+ 147:lvgl/src/lv_widgets/lv_cont.h ****  */
+ 148:lvgl/src/lv_widgets/lv_cont.h **** void lv_cont_set_fit4(lv_obj_t * cont, lv_fit_t left, lv_fit_t right, lv_fit_t top, lv_fit_t bottom
+ 149:lvgl/src/lv_widgets/lv_cont.h **** 
+ 150:lvgl/src/lv_widgets/lv_cont.h **** /**
+ 151:lvgl/src/lv_widgets/lv_cont.h ****  * Set the fit policy horizontally and vertically separately.
+ 152:lvgl/src/lv_widgets/lv_cont.h ****  * It tells how to change the container's size automatically.
+ 153:lvgl/src/lv_widgets/lv_cont.h ****  * @param cont pointer to a container object
+ 154:lvgl/src/lv_widgets/lv_cont.h ****  * @param hor horizontal fit policy from `lv_fit_t`
+ 155:lvgl/src/lv_widgets/lv_cont.h ****  * @param ver vertical fit policy from `lv_fit_t`
+ 156:lvgl/src/lv_widgets/lv_cont.h ****  */
+ 157:lvgl/src/lv_widgets/lv_cont.h **** static inline void lv_cont_set_fit2(lv_obj_t * cont, lv_fit_t hor, lv_fit_t ver)
+ 158:lvgl/src/lv_widgets/lv_cont.h **** {
+ 159:lvgl/src/lv_widgets/lv_cont.h ****     lv_cont_set_fit4(cont, hor, hor, ver, ver);
+ 160:lvgl/src/lv_widgets/lv_cont.h **** }
+ 161:lvgl/src/lv_widgets/lv_cont.h **** 
+ 162:lvgl/src/lv_widgets/lv_cont.h **** /**
+ 163:lvgl/src/lv_widgets/lv_cont.h ****  * Set the fit policy in all 4 direction at once.
+ 164:lvgl/src/lv_widgets/lv_cont.h ****  * It tells how to change the container's size automatically.
+ 165:lvgl/src/lv_widgets/lv_cont.h ****  * @param cont pointer to a container object
+ 166:lvgl/src/lv_widgets/lv_cont.h ****  * @param fit fit policy from `lv_fit_t`
+ 167:lvgl/src/lv_widgets/lv_cont.h ****  */
+ 168:lvgl/src/lv_widgets/lv_cont.h **** static inline void lv_cont_set_fit(lv_obj_t * cont, lv_fit_t fit)
+ 690              		.loc 5 168 20 view .LVU193
+ 691              	.LBB46:
+ 169:lvgl/src/lv_widgets/lv_cont.h **** {
+ 170:lvgl/src/lv_widgets/lv_cont.h ****     lv_cont_set_fit4(cont, fit, fit, fit, fit);
+ 692              		.loc 5 170 5 view .LVU194
+ 693 00b6 0125     		movs	r5, #1
+ 694              	.LVL83:
+ 695              		.loc 5 170 5 is_stmt 0 view .LVU195
+ 696 00b8 0095     		str	r5, [sp]
+ 697 00ba 2B46     		mov	r3, r5
+ 698 00bc 2A46     		mov	r2, r5
+ 699 00be 2946     		mov	r1, r5
+ 700 00c0 2046     		mov	r0, r4
+ 701 00c2 FFF7FEFF 		bl	lv_cont_set_fit4
+ 702              	.LVL84:
+ 703              		.loc 5 170 5 view .LVU196
+ 704              	.LBE46:
+ 705              	.LBE45:
+ 706              	.LBE47:
+  83:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_add_protect(cb, LV_PROTECT_PRESS_LOST);
+ 707              		.loc 1 83 9 is_stmt 1 view .LVU197
+ 708 00c6 2946     		mov	r1, r5
+ 709 00c8 2046     		mov	r0, r4
+ 710 00ca FFF7FEFF 		bl	lv_btn_set_checkable
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 32
+
+
+ 711              	.LVL85:
+  84:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 712              		.loc 1 84 9 view .LVU198
+ 713 00ce 1021     		movs	r1, #16
+ 714 00d0 2046     		mov	r0, r4
+ 715 00d2 FFF7FEFF 		bl	lv_obj_add_protect
+ 716              	.LVL86:
+  86:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 717              		.loc 1 86 9 view .LVU199
+ 718 00d6 0921     		movs	r1, #9
+ 719 00d8 2046     		mov	r0, r4
+ 720 00da FFF7FEFF 		bl	lv_theme_apply
+ 721              	.LVL87:
+ 722 00de BBE7     		b	.L27
+ 723              	.L43:
+ 724              		.align	2
+ 725              	.L42:
+ 726 00e0 00000000 		.word	.LANCHOR0
+ 727 00e4 00000000 		.word	lv_checkbox_signal
+ 728 00e8 00000000 		.word	.LC2
+ 729 00ec 10000000 		.word	.LC3
+ 730              		.cfi_endproc
+ 731              	.LFE472:
+ 733              		.section	.text.lv_checkbox_set_text_static,"ax",%progbits
+ 734              		.align	1
+ 735              		.global	lv_checkbox_set_text_static
+ 736              		.syntax unified
+ 737              		.thumb
+ 738              		.thumb_func
+ 739              		.fpu fpv4-sp-d16
+ 741              	lv_checkbox_set_text_static:
+ 742              	.LVL88:
+ 743              	.LFB474:
+ 128:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_ASSERT_OBJ(cb, LV_OBJX_NAME);
+ 744              		.loc 1 128 1 view -0
+ 745              		.cfi_startproc
+ 746              		@ args = 0, pretend = 0, frame = 0
+ 747              		@ frame_needed = 0, uses_anonymous_args = 0
+ 128:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_ASSERT_OBJ(cb, LV_OBJX_NAME);
+ 748              		.loc 1 128 1 is_stmt 0 view .LVU201
+ 749 0000 38B5     		push	{r3, r4, r5, lr}
+ 750              	.LCFI7:
+ 751              		.cfi_def_cfa_offset 16
+ 752              		.cfi_offset 3, -16
+ 753              		.cfi_offset 4, -12
+ 754              		.cfi_offset 5, -8
+ 755              		.cfi_offset 14, -4
+ 756 0002 0446     		mov	r4, r0
+ 757 0004 0D46     		mov	r5, r1
+ 129:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 758              		.loc 1 129 5 is_stmt 1 view .LVU202
+ 129:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 759              		.loc 1 129 5 view .LVU203
+ 760 0006 FFF7FEFF 		bl	lv_debug_check_null
+ 761              	.LVL89:
+ 129:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 762              		.loc 1 129 5 is_stmt 0 view .LVU204
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 33
+
+
+ 763 000a 28B9     		cbnz	r0, .L45
+ 129:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 764              		.loc 1 129 5 is_stmt 1 discriminator 1 view .LVU205
+ 129:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 765              		.loc 1 129 5 discriminator 1 view .LVU206
+ 766 000c 2246     		mov	r2, r4
+ 767 000e 0023     		movs	r3, #0
+ 768 0010 0548     		ldr	r0, .L48
+ 769 0012 FFF7FEFF 		bl	lv_debug_log_error
+ 770              	.LVL90:
+ 771              	.L46:
+ 129:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 772              		.loc 1 129 5 discriminator 1 view .LVU207
+ 129:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 773              		.loc 1 129 5 discriminator 1 view .LVU208
+ 774 0016 FEE7     		b	.L46
+ 775              	.L45:
+ 129:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 776              		.loc 1 129 36 discriminator 2 view .LVU209
+ 131:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_label_set_text_static(ext->label, txt);
+ 777              		.loc 1 131 5 discriminator 2 view .LVU210
+ 131:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_label_set_text_static(ext->label, txt);
+ 778              		.loc 1 131 31 is_stmt 0 discriminator 2 view .LVU211
+ 779 0018 2046     		mov	r0, r4
+ 780 001a FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 781              	.LVL91:
+ 132:lvgl/src/lv_widgets/lv_checkbox.c **** }
+ 782              		.loc 1 132 5 is_stmt 1 discriminator 2 view .LVU212
+ 783 001e 2946     		mov	r1, r5
+ 784 0020 8068     		ldr	r0, [r0, #8]
+ 785              	.LVL92:
+ 132:lvgl/src/lv_widgets/lv_checkbox.c **** }
+ 786              		.loc 1 132 5 is_stmt 0 discriminator 2 view .LVU213
+ 787 0022 FFF7FEFF 		bl	lv_label_set_text_static
+ 788              	.LVL93:
+ 133:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 789              		.loc 1 133 1 discriminator 2 view .LVU214
+ 790 0026 38BD     		pop	{r3, r4, r5, pc}
+ 791              	.LVL94:
+ 792              	.L49:
+ 133:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 793              		.loc 1 133 1 discriminator 2 view .LVU215
+ 794              		.align	2
+ 795              	.L48:
+ 796 0028 00000000 		.word	.LC1
+ 797              		.cfi_endproc
+ 798              	.LFE474:
+ 800              		.section	.text.lv_checkbox_set_checked,"ax",%progbits
+ 801              		.align	1
+ 802              		.global	lv_checkbox_set_checked
+ 803              		.syntax unified
+ 804              		.thumb
+ 805              		.thumb_func
+ 806              		.fpu fpv4-sp-d16
+ 808              	lv_checkbox_set_checked:
+ 809              	.LVL95:
+ 810              	.LFB475:
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 34
+
+
+ 141:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_checkbox_ext_t * ext = lv_obj_get_ext_attr(cb);
+ 811              		.loc 1 141 1 is_stmt 1 view -0
+ 812              		.cfi_startproc
+ 813              		@ args = 0, pretend = 0, frame = 0
+ 814              		@ frame_needed = 0, uses_anonymous_args = 0
+ 141:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_checkbox_ext_t * ext = lv_obj_get_ext_attr(cb);
+ 815              		.loc 1 141 1 is_stmt 0 view .LVU217
+ 816 0000 70B5     		push	{r4, r5, r6, lr}
+ 817              	.LCFI8:
+ 818              		.cfi_def_cfa_offset 16
+ 819              		.cfi_offset 4, -16
+ 820              		.cfi_offset 5, -12
+ 821              		.cfi_offset 6, -8
+ 822              		.cfi_offset 14, -4
+ 823 0002 0546     		mov	r5, r0
+ 824 0004 0E46     		mov	r6, r1
+ 142:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_btn_set_state(cb, checked ? LV_BTN_STATE_CHECKED_RELEASED : LV_BTN_STATE_RELEASED);
+ 825              		.loc 1 142 5 is_stmt 1 view .LVU218
+ 142:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_btn_set_state(cb, checked ? LV_BTN_STATE_CHECKED_RELEASED : LV_BTN_STATE_RELEASED);
+ 826              		.loc 1 142 31 is_stmt 0 view .LVU219
+ 827 0006 FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 828              	.LVL96:
+ 142:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_btn_set_state(cb, checked ? LV_BTN_STATE_CHECKED_RELEASED : LV_BTN_STATE_RELEASED);
+ 829              		.loc 1 142 31 view .LVU220
+ 830 000a 0446     		mov	r4, r0
+ 831              	.LVL97:
+ 143:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 832              		.loc 1 143 5 is_stmt 1 view .LVU221
+ 833 000c EEB1     		cbz	r6, .L54
+ 834 000e 0321     		movs	r1, #3
+ 835              	.L51:
+ 143:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 836              		.loc 1 143 5 is_stmt 0 discriminator 4 view .LVU222
+ 837 0010 2846     		mov	r0, r5
+ 838              	.LVL98:
+ 143:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 839              		.loc 1 143 5 discriminator 4 view .LVU223
+ 840 0012 FFF7FEFF 		bl	lv_btn_set_state
+ 841              	.LVL99:
+ 145:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_add_state(ext->bullet, LV_STATE_CHECKED);
+ 842              		.loc 1 145 5 is_stmt 1 discriminator 4 view .LVU224
+ 145:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_add_state(ext->bullet, LV_STATE_CHECKED);
+ 843              		.loc 1 145 7 is_stmt 0 discriminator 4 view .LVU225
+ 844 0016 D6B1     		cbz	r6, .L52
+ 146:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_add_state(ext->label, LV_STATE_CHECKED);
+ 845              		.loc 1 146 9 is_stmt 1 view .LVU226
+ 846 0018 0121     		movs	r1, #1
+ 847 001a 6068     		ldr	r0, [r4, #4]
+ 848 001c FFF7FEFF 		bl	lv_obj_add_state
+ 849              	.LVL100:
+ 147:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 850              		.loc 1 147 9 view .LVU227
+ 851 0020 0121     		movs	r1, #1
+ 852 0022 A068     		ldr	r0, [r4, #8]
+ 853 0024 FFF7FEFF 		bl	lv_obj_add_state
+ 854              	.LVL101:
+ 855              	.L53:
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 35
+
+
+ 154:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_clear_state(ext->label, LV_STATE_DISABLED);
+ 856              		.loc 1 154 5 view .LVU228
+ 857 0028 2021     		movs	r1, #32
+ 858 002a 6068     		ldr	r0, [r4, #4]
+ 859 002c FFF7FEFF 		bl	lv_obj_clear_state
+ 860              	.LVL102:
+ 155:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 861              		.loc 1 155 5 view .LVU229
+ 862 0030 2021     		movs	r1, #32
+ 863 0032 A068     		ldr	r0, [r4, #8]
+ 864 0034 FFF7FEFF 		bl	lv_obj_clear_state
+ 865              	.LVL103:
+ 158:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_finish_transitions(ext->bullet, LV_OBJ_PART_MAIN);
+ 866              		.loc 1 158 5 view .LVU230
+ 867 0038 0021     		movs	r1, #0
+ 868 003a 2846     		mov	r0, r5
+ 869 003c FFF7FEFF 		bl	lv_obj_finish_transitions
+ 870              	.LVL104:
+ 159:lvgl/src/lv_widgets/lv_checkbox.c **** #endif
+ 871              		.loc 1 159 5 view .LVU231
+ 872 0040 0021     		movs	r1, #0
+ 873 0042 6068     		ldr	r0, [r4, #4]
+ 874 0044 FFF7FEFF 		bl	lv_obj_finish_transitions
+ 875              	.LVL105:
+ 161:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 876              		.loc 1 161 1 is_stmt 0 view .LVU232
+ 877 0048 70BD     		pop	{r4, r5, r6, pc}
+ 878              	.LVL106:
+ 879              	.L54:
+ 143:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 880              		.loc 1 143 5 view .LVU233
+ 881 004a 0021     		movs	r1, #0
+ 882 004c E0E7     		b	.L51
+ 883              	.LVL107:
+ 884              	.L52:
+ 150:lvgl/src/lv_widgets/lv_checkbox.c ****         lv_obj_clear_state(ext->label, LV_STATE_CHECKED);
+ 885              		.loc 1 150 9 is_stmt 1 view .LVU234
+ 886 004e 0121     		movs	r1, #1
+ 887 0050 6068     		ldr	r0, [r4, #4]
+ 888 0052 FFF7FEFF 		bl	lv_obj_clear_state
+ 889              	.LVL108:
+ 151:lvgl/src/lv_widgets/lv_checkbox.c ****     }
+ 890              		.loc 1 151 9 view .LVU235
+ 891 0056 0121     		movs	r1, #1
+ 892 0058 A068     		ldr	r0, [r4, #8]
+ 893 005a FFF7FEFF 		bl	lv_obj_clear_state
+ 894              	.LVL109:
+ 895 005e E3E7     		b	.L53
+ 896              		.cfi_endproc
+ 897              	.LFE475:
+ 899              		.section	.text.lv_checkbox_set_disabled,"ax",%progbits
+ 900              		.align	1
+ 901              		.global	lv_checkbox_set_disabled
+ 902              		.syntax unified
+ 903              		.thumb
+ 904              		.thumb_func
+ 905              		.fpu fpv4-sp-d16
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 36
+
+
+ 907              	lv_checkbox_set_disabled:
+ 908              	.LVL110:
+ 909              	.LFB476:
+ 168:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_checkbox_ext_t * ext = lv_obj_get_ext_attr(cb);
+ 910              		.loc 1 168 1 view -0
+ 911              		.cfi_startproc
+ 912              		@ args = 0, pretend = 0, frame = 0
+ 913              		@ frame_needed = 0, uses_anonymous_args = 0
+ 168:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_checkbox_ext_t * ext = lv_obj_get_ext_attr(cb);
+ 914              		.loc 1 168 1 is_stmt 0 view .LVU237
+ 915 0000 38B5     		push	{r3, r4, r5, lr}
+ 916              	.LCFI9:
+ 917              		.cfi_def_cfa_offset 16
+ 918              		.cfi_offset 3, -16
+ 919              		.cfi_offset 4, -12
+ 920              		.cfi_offset 5, -8
+ 921              		.cfi_offset 14, -4
+ 922 0002 0546     		mov	r5, r0
+ 169:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_btn_set_state(cb, LV_BTN_STATE_DISABLED);
+ 923              		.loc 1 169 5 is_stmt 1 view .LVU238
+ 169:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_btn_set_state(cb, LV_BTN_STATE_DISABLED);
+ 924              		.loc 1 169 31 is_stmt 0 view .LVU239
+ 925 0004 FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 926              	.LVL111:
+ 169:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_btn_set_state(cb, LV_BTN_STATE_DISABLED);
+ 927              		.loc 1 169 31 view .LVU240
+ 928 0008 0446     		mov	r4, r0
+ 929              	.LVL112:
+ 170:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 930              		.loc 1 170 5 is_stmt 1 view .LVU241
+ 931 000a 0221     		movs	r1, #2
+ 932 000c 2846     		mov	r0, r5
+ 933              	.LVL113:
+ 170:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 934              		.loc 1 170 5 is_stmt 0 view .LVU242
+ 935 000e FFF7FEFF 		bl	lv_btn_set_state
+ 936              	.LVL114:
+ 172:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_add_state(ext->label, LV_STATE_DISABLED);
+ 937              		.loc 1 172 5 is_stmt 1 view .LVU243
+ 938 0012 2021     		movs	r1, #32
+ 939 0014 6068     		ldr	r0, [r4, #4]
+ 940 0016 FFF7FEFF 		bl	lv_obj_add_state
+ 941              	.LVL115:
+ 173:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 942              		.loc 1 173 5 view .LVU244
+ 943 001a 2021     		movs	r1, #32
+ 944 001c A068     		ldr	r0, [r4, #8]
+ 945 001e FFF7FEFF 		bl	lv_obj_add_state
+ 946              	.LVL116:
+ 176:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_finish_transitions(ext->bullet, LV_OBJ_PART_MAIN);
+ 947              		.loc 1 176 5 view .LVU245
+ 948 0022 0021     		movs	r1, #0
+ 949 0024 2846     		mov	r0, r5
+ 950 0026 FFF7FEFF 		bl	lv_obj_finish_transitions
+ 951              	.LVL117:
+ 177:lvgl/src/lv_widgets/lv_checkbox.c **** #endif
+ 952              		.loc 1 177 5 view .LVU246
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 37
+
+
+ 953 002a 0021     		movs	r1, #0
+ 954 002c 6068     		ldr	r0, [r4, #4]
+ 955 002e FFF7FEFF 		bl	lv_obj_finish_transitions
+ 956              	.LVL118:
+ 179:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 957              		.loc 1 179 1 is_stmt 0 view .LVU247
+ 958 0032 38BD     		pop	{r3, r4, r5, pc}
+ 179:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 959              		.loc 1 179 1 view .LVU248
+ 960              		.cfi_endproc
+ 961              	.LFE476:
+ 963              		.section	.text.lv_checkbox_set_state,"ax",%progbits
+ 964              		.align	1
+ 965              		.global	lv_checkbox_set_state
+ 966              		.syntax unified
+ 967              		.thumb
+ 968              		.thumb_func
+ 969              		.fpu fpv4-sp-d16
+ 971              	lv_checkbox_set_state:
+ 972              	.LVL119:
+ 973              	.LFB477:
+ 187:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_checkbox_ext_t * ext = lv_obj_get_ext_attr(cb);
+ 974              		.loc 1 187 1 is_stmt 1 view -0
+ 975              		.cfi_startproc
+ 976              		@ args = 0, pretend = 0, frame = 0
+ 977              		@ frame_needed = 0, uses_anonymous_args = 0
+ 187:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_checkbox_ext_t * ext = lv_obj_get_ext_attr(cb);
+ 978              		.loc 1 187 1 is_stmt 0 view .LVU250
+ 979 0000 70B5     		push	{r4, r5, r6, lr}
+ 980              	.LCFI10:
+ 981              		.cfi_def_cfa_offset 16
+ 982              		.cfi_offset 4, -16
+ 983              		.cfi_offset 5, -12
+ 984              		.cfi_offset 6, -8
+ 985              		.cfi_offset 14, -4
+ 986 0002 0446     		mov	r4, r0
+ 987 0004 0E46     		mov	r6, r1
+ 188:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_btn_set_state(cb, state);
+ 988              		.loc 1 188 5 is_stmt 1 view .LVU251
+ 188:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_btn_set_state(cb, state);
+ 989              		.loc 1 188 31 is_stmt 0 view .LVU252
+ 990 0006 FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 991              	.LVL120:
+ 188:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_btn_set_state(cb, state);
+ 992              		.loc 1 188 31 view .LVU253
+ 993 000a 0546     		mov	r5, r0
+ 994              	.LVL121:
+ 189:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_set_state(ext->bullet, lv_obj_get_state(cb, LV_CHECKBOX_PART_BG));
+ 995              		.loc 1 189 5 is_stmt 1 view .LVU254
+ 996 000c 3146     		mov	r1, r6
+ 997 000e 2046     		mov	r0, r4
+ 998              	.LVL122:
+ 189:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_set_state(ext->bullet, lv_obj_get_state(cb, LV_CHECKBOX_PART_BG));
+ 999              		.loc 1 189 5 is_stmt 0 view .LVU255
+ 1000 0010 FFF7FEFF 		bl	lv_btn_set_state
+ 1001              	.LVL123:
+ 190:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_set_state(ext->bullet, lv_obj_get_state(cb, LV_CHECKBOX_PART_BG));
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 38
+
+
+ 1002              		.loc 1 190 5 is_stmt 1 view .LVU256
+ 1003 0014 6E68     		ldr	r6, [r5, #4]
+ 1004 0016 0021     		movs	r1, #0
+ 1005 0018 2046     		mov	r0, r4
+ 1006 001a FFF7FEFF 		bl	lv_obj_get_state
+ 1007              	.LVL124:
+ 1008 001e 0146     		mov	r1, r0
+ 1009 0020 3046     		mov	r0, r6
+ 1010 0022 FFF7FEFF 		bl	lv_obj_set_state
+ 1011              	.LVL125:
+ 191:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 1012              		.loc 1 191 5 view .LVU257
+ 1013 0026 6E68     		ldr	r6, [r5, #4]
+ 1014 0028 0021     		movs	r1, #0
+ 1015 002a 2046     		mov	r0, r4
+ 1016 002c FFF7FEFF 		bl	lv_obj_get_state
+ 1017              	.LVL126:
+ 1018 0030 0146     		mov	r1, r0
+ 1019 0032 3046     		mov	r0, r6
+ 1020 0034 FFF7FEFF 		bl	lv_obj_set_state
+ 1021              	.LVL127:
+ 194:lvgl/src/lv_widgets/lv_checkbox.c ****     lv_obj_finish_transitions(ext->bullet, LV_OBJ_PART_MAIN);
+ 1022              		.loc 1 194 5 view .LVU258
+ 1023 0038 0021     		movs	r1, #0
+ 1024 003a 2046     		mov	r0, r4
+ 1025 003c FFF7FEFF 		bl	lv_obj_finish_transitions
+ 1026              	.LVL128:
+ 195:lvgl/src/lv_widgets/lv_checkbox.c **** #endif
+ 1027              		.loc 1 195 5 view .LVU259
+ 1028 0040 0021     		movs	r1, #0
+ 1029 0042 6868     		ldr	r0, [r5, #4]
+ 1030 0044 FFF7FEFF 		bl	lv_obj_finish_transitions
+ 1031              	.LVL129:
+ 197:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 1032              		.loc 1 197 1 is_stmt 0 view .LVU260
+ 1033 0048 70BD     		pop	{r4, r5, r6, pc}
+ 197:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 1034              		.loc 1 197 1 view .LVU261
+ 1035              		.cfi_endproc
+ 1036              	.LFE477:
+ 1038              		.section	.text.lv_checkbox_get_text,"ax",%progbits
+ 1039              		.align	1
+ 1040              		.global	lv_checkbox_get_text
+ 1041              		.syntax unified
+ 1042              		.thumb
+ 1043              		.thumb_func
+ 1044              		.fpu fpv4-sp-d16
+ 1046              	lv_checkbox_get_text:
+ 1047              	.LVL130:
+ 1048              	.LFB478:
+ 209:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_ASSERT_OBJ(cb, LV_OBJX_NAME);
+ 1049              		.loc 1 209 1 is_stmt 1 view -0
+ 1050              		.cfi_startproc
+ 1051              		@ args = 0, pretend = 0, frame = 0
+ 1052              		@ frame_needed = 0, uses_anonymous_args = 0
+ 209:lvgl/src/lv_widgets/lv_checkbox.c ****     LV_ASSERT_OBJ(cb, LV_OBJX_NAME);
+ 1053              		.loc 1 209 1 is_stmt 0 view .LVU263
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 39
+
+
+ 1054 0000 10B5     		push	{r4, lr}
+ 1055              	.LCFI11:
+ 1056              		.cfi_def_cfa_offset 8
+ 1057              		.cfi_offset 4, -8
+ 1058              		.cfi_offset 14, -4
+ 1059 0002 0446     		mov	r4, r0
+ 210:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 1060              		.loc 1 210 5 is_stmt 1 view .LVU264
+ 210:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 1061              		.loc 1 210 5 view .LVU265
+ 1062 0004 FFF7FEFF 		bl	lv_debug_check_null
+ 1063              	.LVL131:
+ 210:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 1064              		.loc 1 210 5 is_stmt 0 view .LVU266
+ 1065 0008 28B9     		cbnz	r0, .L61
+ 210:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 1066              		.loc 1 210 5 is_stmt 1 discriminator 1 view .LVU267
+ 210:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 1067              		.loc 1 210 5 discriminator 1 view .LVU268
+ 1068 000a 2246     		mov	r2, r4
+ 1069 000c 0023     		movs	r3, #0
+ 1070 000e 0548     		ldr	r0, .L64
+ 1071 0010 FFF7FEFF 		bl	lv_debug_log_error
+ 1072              	.LVL132:
+ 1073              	.L62:
+ 210:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 1074              		.loc 1 210 5 discriminator 1 view .LVU269
+ 210:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 1075              		.loc 1 210 5 discriminator 1 view .LVU270
+ 1076 0014 FEE7     		b	.L62
+ 1077              	.L61:
+ 210:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 1078              		.loc 1 210 36 discriminator 2 view .LVU271
+ 212:lvgl/src/lv_widgets/lv_checkbox.c ****     return lv_label_get_text(ext->label);
+ 1079              		.loc 1 212 5 discriminator 2 view .LVU272
+ 212:lvgl/src/lv_widgets/lv_checkbox.c ****     return lv_label_get_text(ext->label);
+ 1080              		.loc 1 212 31 is_stmt 0 discriminator 2 view .LVU273
+ 1081 0016 2046     		mov	r0, r4
+ 1082 0018 FFF7FEFF 		bl	lv_obj_get_ext_attr
+ 1083              	.LVL133:
+ 213:lvgl/src/lv_widgets/lv_checkbox.c **** }
+ 1084              		.loc 1 213 5 is_stmt 1 discriminator 2 view .LVU274
+ 213:lvgl/src/lv_widgets/lv_checkbox.c **** }
+ 1085              		.loc 1 213 12 is_stmt 0 discriminator 2 view .LVU275
+ 1086 001c 8068     		ldr	r0, [r0, #8]
+ 1087              	.LVL134:
+ 213:lvgl/src/lv_widgets/lv_checkbox.c **** }
+ 1088              		.loc 1 213 12 discriminator 2 view .LVU276
+ 1089 001e FFF7FEFF 		bl	lv_label_get_text
+ 1090              	.LVL135:
+ 214:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 1091              		.loc 1 214 1 discriminator 2 view .LVU277
+ 1092 0022 10BD     		pop	{r4, pc}
+ 1093              	.LVL136:
+ 1094              	.L65:
+ 214:lvgl/src/lv_widgets/lv_checkbox.c **** 
+ 1095              		.loc 1 214 1 discriminator 2 view .LVU278
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 40
+
+
+ 1096              		.align	2
+ 1097              	.L64:
+ 1098 0024 00000000 		.word	.LC1
+ 1099              		.cfi_endproc
+ 1100              	.LFE478:
+ 1102              		.section	.bss.ancestor_signal,"aw",%nobits
+ 1103              		.align	2
+ 1104              		.set	.LANCHOR0,. + 0
+ 1107              	ancestor_signal:
+ 1108 0000 00000000 		.space	4
+ 1109              		.section	.rodata.lv_checkbox_create.str1.4,"aMS",%progbits,1
+ 1110              		.align	2
+ 1111              	.LC2:
+ 1112 0000 4F757420 		.ascii	"Out of memory\000"
+ 1112      6F66206D 
+ 1112      656D6F72 
+ 1112      7900
+ 1113 000e 0000     		.space	2
+ 1114              	.LC3:
+ 1115 0010 43686563 		.ascii	"Check box\000"
+ 1115      6B20626F 
+ 1115      7800
+ 1116              		.section	.rodata.lv_checkbox_set_text.str1.4,"aMS",%progbits,1
+ 1117              		.align	2
+ 1118              	.LC1:
+ 1119 0000 4E554C4C 		.ascii	"NULL pointer\000"
+ 1119      20706F69 
+ 1119      6E746572 
+ 1119      00
+ 1120              		.section	.rodata.lv_checkbox_signal.str1.4,"aMS",%progbits,1
+ 1121              		.align	2
+ 1122              	.LC0:
+ 1123 0000 6C765F63 		.ascii	"lv_checkbox\000"
+ 1123      6865636B 
+ 1123      626F7800 
+ 1124              		.text
+ 1125              	.Letext0:
+ 1126              		.file 6 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1127              		.file 7 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1128              		.file 8 "Drivers/CMSIS/Include/core_cm4.h"
+ 1129              		.file 9 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 1130              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 1131              		.file 11 "lvgl/lv_conf.h"
+ 1132              		.file 12 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1133              		.file 13 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1134              		.file 14 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-non
+ 1135              		.file 15 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1136              		.file 16 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_types.h"
+ 1137              		.file 17 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_mem.h"
+ 1138              		.file 18 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_area.h"
+ 1139              		.file 19 "lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_anim.h"
+ 1140              		.file 20 "lvgl/src/lv_widgets/../lv_core/lv_style.h"
+ 1141              		.file 21 "lvgl/src/lv_widgets/../lv_core/../lv_hal/../lv_misc/lv_ll.h"
+ 1142              		.file 22 "lvgl/src/lv_widgets/../lv_core/lv_obj.h"
+ 1143              		.file 23 "lvgl/src/lv_widgets/../lv_core/../lv_hal/lv_hal_indev.h"
+ 1144              		.file 24 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_bidi.h"
+ 1145              		.file 25 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_txt.h"
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 41
+
+
+ 1146              		.file 26 "lvgl/src/lv_widgets/../lv_core/../lv_draw/lv_draw_label.h"
+ 1147              		.file 27 "lvgl/src/lv_widgets/../lv_core/../lv_core/lv_group.h"
+ 1148              		.file 28 "lvgl/src/lv_widgets/lv_label.h"
+ 1149              		.file 29 "lvgl/src/lv_widgets/lv_checkbox.h"
+ 1150              		.file 30 "lvgl/src/lv_widgets/../lv_themes/lv_theme.h"
+ 1151              		.file 31 "lvgl/src/lv_widgets/../lv_core/../lv_misc/lv_debug.h"
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 42
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_checkbox.c
+  D:\Temp\ccLdO2rA.s:18     .text.lv_checkbox_get_style:0000000000000000 $t
+  D:\Temp\ccLdO2rA.s:25     .text.lv_checkbox_get_style:0000000000000000 lv_checkbox_get_style
+  D:\Temp\ccLdO2rA.s:84     .text.lv_checkbox_signal:0000000000000000 $t
+  D:\Temp\ccLdO2rA.s:90     .text.lv_checkbox_signal:0000000000000000 lv_checkbox_signal
+  D:\Temp\ccLdO2rA.s:395    .text.lv_checkbox_signal:0000000000000114 $d
+  D:\Temp\ccLdO2rA.s:401    .text.lv_checkbox_set_text:0000000000000000 $t
+  D:\Temp\ccLdO2rA.s:408    .text.lv_checkbox_set_text:0000000000000000 lv_checkbox_set_text
+  D:\Temp\ccLdO2rA.s:463    .text.lv_checkbox_set_text:0000000000000028 $d
+  D:\Temp\ccLdO2rA.s:468    .text.lv_checkbox_create:0000000000000000 $t
+  D:\Temp\ccLdO2rA.s:475    .text.lv_checkbox_create:0000000000000000 lv_checkbox_create
+  D:\Temp\ccLdO2rA.s:726    .text.lv_checkbox_create:00000000000000e0 $d
+  D:\Temp\ccLdO2rA.s:734    .text.lv_checkbox_set_text_static:0000000000000000 $t
+  D:\Temp\ccLdO2rA.s:741    .text.lv_checkbox_set_text_static:0000000000000000 lv_checkbox_set_text_static
+  D:\Temp\ccLdO2rA.s:796    .text.lv_checkbox_set_text_static:0000000000000028 $d
+  D:\Temp\ccLdO2rA.s:801    .text.lv_checkbox_set_checked:0000000000000000 $t
+  D:\Temp\ccLdO2rA.s:808    .text.lv_checkbox_set_checked:0000000000000000 lv_checkbox_set_checked
+  D:\Temp\ccLdO2rA.s:900    .text.lv_checkbox_set_disabled:0000000000000000 $t
+  D:\Temp\ccLdO2rA.s:907    .text.lv_checkbox_set_disabled:0000000000000000 lv_checkbox_set_disabled
+  D:\Temp\ccLdO2rA.s:964    .text.lv_checkbox_set_state:0000000000000000 $t
+  D:\Temp\ccLdO2rA.s:971    .text.lv_checkbox_set_state:0000000000000000 lv_checkbox_set_state
+  D:\Temp\ccLdO2rA.s:1039   .text.lv_checkbox_get_text:0000000000000000 $t
+  D:\Temp\ccLdO2rA.s:1046   .text.lv_checkbox_get_text:0000000000000000 lv_checkbox_get_text
+  D:\Temp\ccLdO2rA.s:1098   .text.lv_checkbox_get_text:0000000000000024 $d
+  D:\Temp\ccLdO2rA.s:1103   .bss.ancestor_signal:0000000000000000 $d
+  D:\Temp\ccLdO2rA.s:1107   .bss.ancestor_signal:0000000000000000 ancestor_signal
+  D:\Temp\ccLdO2rA.s:1110   .rodata.lv_checkbox_create.str1.4:0000000000000000 $d
+  D:\Temp\ccLdO2rA.s:1117   .rodata.lv_checkbox_set_text.str1.4:0000000000000000 $d
+  D:\Temp\ccLdO2rA.s:1121   .rodata.lv_checkbox_signal.str1.4:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+lv_obj_get_ext_attr
+lv_obj_get_style_list
+lv_obj_get_state
+lv_obj_set_state
+lv_obj_handle_get_type_signal
+_lv_obj_get_style_ptr
+_lv_obj_get_style_int
+lv_obj_set_size
+lv_debug_check_null
+lv_debug_log_error
+lv_label_set_text
+lv_btn_create
+lv_obj_allocate_ext_attr
+lv_obj_set_signal_cb
+lv_obj_create
+lv_label_create
+lv_obj_get_signal_cb
+lv_obj_del
+lv_obj_set_click
+lv_cont_set_layout
+lv_cont_set_fit4
+lv_btn_set_checkable
+lv_obj_add_protect
+lv_theme_apply
+lv_label_set_text_static
+ARM GAS  D:\Temp\ccLdO2rA.s 			page 43
+
+
+lv_btn_set_state
+lv_obj_add_state
+lv_obj_clear_state
+lv_obj_finish_transitions
+lv_label_get_text

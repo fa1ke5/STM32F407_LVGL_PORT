@@ -1,0 +1,2024 @@
+ARM GAS  D:\Temp\ccwRKatG.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"lv_theme.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.apply_theme,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	apply_theme:
+  26              	.LVL0:
+  27              	.LFB573:
+  28              		.file 1 "lvgl/src/lv_themes/lv_theme.c"
+   1:lvgl/src/lv_themes/lv_theme.c **** /**
+   2:lvgl/src/lv_themes/lv_theme.c ****  * @file lv_theme.c
+   3:lvgl/src/lv_themes/lv_theme.c ****  *
+   4:lvgl/src/lv_themes/lv_theme.c ****  */
+   5:lvgl/src/lv_themes/lv_theme.c **** 
+   6:lvgl/src/lv_themes/lv_theme.c **** /*********************
+   7:lvgl/src/lv_themes/lv_theme.c ****  *      INCLUDES
+   8:lvgl/src/lv_themes/lv_theme.c ****  *********************/
+   9:lvgl/src/lv_themes/lv_theme.c **** #include "../../lvgl.h"
+  10:lvgl/src/lv_themes/lv_theme.c **** 
+  11:lvgl/src/lv_themes/lv_theme.c **** /*********************
+  12:lvgl/src/lv_themes/lv_theme.c ****  *      DEFINES
+  13:lvgl/src/lv_themes/lv_theme.c ****  *********************/
+  14:lvgl/src/lv_themes/lv_theme.c **** 
+  15:lvgl/src/lv_themes/lv_theme.c **** /**********************
+  16:lvgl/src/lv_themes/lv_theme.c ****  *      TYPEDEFS
+  17:lvgl/src/lv_themes/lv_theme.c ****  **********************/
+  18:lvgl/src/lv_themes/lv_theme.c **** 
+  19:lvgl/src/lv_themes/lv_theme.c **** /**********************
+  20:lvgl/src/lv_themes/lv_theme.c ****  *  STATIC PROTOTYPES
+  21:lvgl/src/lv_themes/lv_theme.c ****  **********************/
+  22:lvgl/src/lv_themes/lv_theme.c **** static void apply_theme(lv_theme_t * th, lv_obj_t * obj, lv_theme_style_t name);
+  23:lvgl/src/lv_themes/lv_theme.c **** static void clear_styles(lv_obj_t * obj, lv_theme_style_t name);
+  24:lvgl/src/lv_themes/lv_theme.c **** 
+  25:lvgl/src/lv_themes/lv_theme.c **** /**********************
+  26:lvgl/src/lv_themes/lv_theme.c ****  *  STATIC VARIABLES
+  27:lvgl/src/lv_themes/lv_theme.c ****  **********************/
+  28:lvgl/src/lv_themes/lv_theme.c **** static lv_theme_t * act_theme;
+  29:lvgl/src/lv_themes/lv_theme.c **** 
+  30:lvgl/src/lv_themes/lv_theme.c **** /**********************
+ARM GAS  D:\Temp\ccwRKatG.s 			page 2
+
+
+  31:lvgl/src/lv_themes/lv_theme.c ****  *      MACROS
+  32:lvgl/src/lv_themes/lv_theme.c ****  **********************/
+  33:lvgl/src/lv_themes/lv_theme.c **** 
+  34:lvgl/src/lv_themes/lv_theme.c **** /**********************
+  35:lvgl/src/lv_themes/lv_theme.c ****  *   GLOBAL FUNCTIONS
+  36:lvgl/src/lv_themes/lv_theme.c ****  **********************/
+  37:lvgl/src/lv_themes/lv_theme.c **** 
+  38:lvgl/src/lv_themes/lv_theme.c **** /**
+  39:lvgl/src/lv_themes/lv_theme.c ****  * Set a theme for the system.
+  40:lvgl/src/lv_themes/lv_theme.c ****  * From now, all the created objects will use styles from this theme by default
+  41:lvgl/src/lv_themes/lv_theme.c ****  * @param th pointer to theme (return value of: 'lv_theme_init_xxx()')
+  42:lvgl/src/lv_themes/lv_theme.c ****  */
+  43:lvgl/src/lv_themes/lv_theme.c **** void lv_theme_set_act(lv_theme_t * th)
+  44:lvgl/src/lv_themes/lv_theme.c **** {
+  45:lvgl/src/lv_themes/lv_theme.c ****     act_theme = th;
+  46:lvgl/src/lv_themes/lv_theme.c **** }
+  47:lvgl/src/lv_themes/lv_theme.c **** 
+  48:lvgl/src/lv_themes/lv_theme.c **** /**
+  49:lvgl/src/lv_themes/lv_theme.c ****  * Get the current system theme.
+  50:lvgl/src/lv_themes/lv_theme.c ****  * @return pointer to the current system theme. NULL if not set.
+  51:lvgl/src/lv_themes/lv_theme.c ****  */
+  52:lvgl/src/lv_themes/lv_theme.c **** lv_theme_t * lv_theme_get_act(void)
+  53:lvgl/src/lv_themes/lv_theme.c **** {
+  54:lvgl/src/lv_themes/lv_theme.c ****     return act_theme;
+  55:lvgl/src/lv_themes/lv_theme.c **** }
+  56:lvgl/src/lv_themes/lv_theme.c **** 
+  57:lvgl/src/lv_themes/lv_theme.c **** /**
+  58:lvgl/src/lv_themes/lv_theme.c ****  * Apply the active theme on an object
+  59:lvgl/src/lv_themes/lv_theme.c ****  * @param obj pointer to an object
+  60:lvgl/src/lv_themes/lv_theme.c ****  * @param name the name of the theme element to apply. E.g. `LV_THEME_BTN`
+  61:lvgl/src/lv_themes/lv_theme.c ****  */
+  62:lvgl/src/lv_themes/lv_theme.c **** void lv_theme_apply(lv_obj_t * obj, lv_theme_style_t name)
+  63:lvgl/src/lv_themes/lv_theme.c **** {
+  64:lvgl/src/lv_themes/lv_theme.c ****     /* Remove the existing styles from all part of the object. */
+  65:lvgl/src/lv_themes/lv_theme.c ****     clear_styles(obj, name);
+  66:lvgl/src/lv_themes/lv_theme.c **** 
+  67:lvgl/src/lv_themes/lv_theme.c ****     /*Apply the theme including the base theme(s)*/
+  68:lvgl/src/lv_themes/lv_theme.c **** 
+  69:lvgl/src/lv_themes/lv_theme.c ****     apply_theme(act_theme, obj, name);
+  70:lvgl/src/lv_themes/lv_theme.c **** }
+  71:lvgl/src/lv_themes/lv_theme.c **** 
+  72:lvgl/src/lv_themes/lv_theme.c **** /**
+  73:lvgl/src/lv_themes/lv_theme.c ****  * Copy a theme to an other or initialize a theme
+  74:lvgl/src/lv_themes/lv_theme.c ****  * @param theme pointer to a theme to initialize
+  75:lvgl/src/lv_themes/lv_theme.c ****  * @param copy pointer to a theme to copy
+  76:lvgl/src/lv_themes/lv_theme.c ****  *             or `NULL` to initialize `theme` to empty
+  77:lvgl/src/lv_themes/lv_theme.c ****  */
+  78:lvgl/src/lv_themes/lv_theme.c **** void lv_theme_copy(lv_theme_t * theme, const lv_theme_t * copy)
+  79:lvgl/src/lv_themes/lv_theme.c **** {
+  80:lvgl/src/lv_themes/lv_theme.c ****     _lv_memset_00(theme, sizeof(lv_theme_t));
+  81:lvgl/src/lv_themes/lv_theme.c **** 
+  82:lvgl/src/lv_themes/lv_theme.c ****     if(copy) {
+  83:lvgl/src/lv_themes/lv_theme.c ****         theme->font_small = copy->font_small;
+  84:lvgl/src/lv_themes/lv_theme.c ****         theme->font_normal = copy->font_normal;
+  85:lvgl/src/lv_themes/lv_theme.c ****         theme->font_subtitle = copy->font_subtitle;
+  86:lvgl/src/lv_themes/lv_theme.c ****         theme->font_title = copy->font_title;
+  87:lvgl/src/lv_themes/lv_theme.c ****         theme->color_primary = copy->color_primary;
+ARM GAS  D:\Temp\ccwRKatG.s 			page 3
+
+
+  88:lvgl/src/lv_themes/lv_theme.c ****         theme->color_secondary = copy->color_secondary;
+  89:lvgl/src/lv_themes/lv_theme.c ****         theme->flags = copy->flags;
+  90:lvgl/src/lv_themes/lv_theme.c ****         theme->base = copy->base;
+  91:lvgl/src/lv_themes/lv_theme.c ****         theme->apply_cb = copy->apply_cb;
+  92:lvgl/src/lv_themes/lv_theme.c ****         theme->apply_xcb = copy->apply_xcb;
+  93:lvgl/src/lv_themes/lv_theme.c ****     }
+  94:lvgl/src/lv_themes/lv_theme.c **** 
+  95:lvgl/src/lv_themes/lv_theme.c **** }
+  96:lvgl/src/lv_themes/lv_theme.c **** 
+  97:lvgl/src/lv_themes/lv_theme.c **** /**
+  98:lvgl/src/lv_themes/lv_theme.c ****  * Set a base theme for a theme.
+  99:lvgl/src/lv_themes/lv_theme.c ****  * The styles from the base them will be added before the styles of the current theme.
+ 100:lvgl/src/lv_themes/lv_theme.c ****  * Arbitrary long chain of themes can be created by setting base themes.
+ 101:lvgl/src/lv_themes/lv_theme.c ****  * @param new_theme pointer to theme which base should be set
+ 102:lvgl/src/lv_themes/lv_theme.c ****  * @param base pointer to the base theme
+ 103:lvgl/src/lv_themes/lv_theme.c ****  */
+ 104:lvgl/src/lv_themes/lv_theme.c **** void lv_theme_set_base(lv_theme_t * new_theme, lv_theme_t * base)
+ 105:lvgl/src/lv_themes/lv_theme.c **** {
+ 106:lvgl/src/lv_themes/lv_theme.c ****     new_theme->base = base;
+ 107:lvgl/src/lv_themes/lv_theme.c **** }
+ 108:lvgl/src/lv_themes/lv_theme.c **** 
+ 109:lvgl/src/lv_themes/lv_theme.c **** /**
+ 110:lvgl/src/lv_themes/lv_theme.c ****  * Set a callback for a theme.
+ 111:lvgl/src/lv_themes/lv_theme.c ****  * The callback is used to add styles to different objects
+ 112:lvgl/src/lv_themes/lv_theme.c ****  * @param theme pointer to theme which callback should be set
+ 113:lvgl/src/lv_themes/lv_theme.c ****  * @param cb pointer to the callback
+ 114:lvgl/src/lv_themes/lv_theme.c ****  */
+ 115:lvgl/src/lv_themes/lv_theme.c **** void lv_theme_set_apply_cb(lv_theme_t * theme, lv_theme_apply_cb_t apply_cb)
+ 116:lvgl/src/lv_themes/lv_theme.c **** {
+ 117:lvgl/src/lv_themes/lv_theme.c ****     theme->apply_cb = apply_cb;
+ 118:lvgl/src/lv_themes/lv_theme.c **** }
+ 119:lvgl/src/lv_themes/lv_theme.c **** 
+ 120:lvgl/src/lv_themes/lv_theme.c **** /**
+ 121:lvgl/src/lv_themes/lv_theme.c ****  * Get the small font of the theme
+ 122:lvgl/src/lv_themes/lv_theme.c ****  * @return pointer to the font
+ 123:lvgl/src/lv_themes/lv_theme.c ****  */
+ 124:lvgl/src/lv_themes/lv_theme.c **** const lv_font_t * lv_theme_get_font_small(void)
+ 125:lvgl/src/lv_themes/lv_theme.c **** {
+ 126:lvgl/src/lv_themes/lv_theme.c ****     return act_theme->font_small;
+ 127:lvgl/src/lv_themes/lv_theme.c **** }
+ 128:lvgl/src/lv_themes/lv_theme.c **** 
+ 129:lvgl/src/lv_themes/lv_theme.c **** /**
+ 130:lvgl/src/lv_themes/lv_theme.c ****  * Get the normal font of the theme
+ 131:lvgl/src/lv_themes/lv_theme.c ****  * @return pointer to the font
+ 132:lvgl/src/lv_themes/lv_theme.c ****  */
+ 133:lvgl/src/lv_themes/lv_theme.c **** const lv_font_t * lv_theme_get_font_normal(void)
+ 134:lvgl/src/lv_themes/lv_theme.c **** {
+ 135:lvgl/src/lv_themes/lv_theme.c ****     return act_theme->font_normal;
+ 136:lvgl/src/lv_themes/lv_theme.c **** }
+ 137:lvgl/src/lv_themes/lv_theme.c **** 
+ 138:lvgl/src/lv_themes/lv_theme.c **** /**
+ 139:lvgl/src/lv_themes/lv_theme.c ****  * Get the subtitle font of the theme
+ 140:lvgl/src/lv_themes/lv_theme.c ****  * @return pointer to the font
+ 141:lvgl/src/lv_themes/lv_theme.c ****  */
+ 142:lvgl/src/lv_themes/lv_theme.c **** const lv_font_t * lv_theme_get_font_subtitle(void)
+ 143:lvgl/src/lv_themes/lv_theme.c **** {
+ 144:lvgl/src/lv_themes/lv_theme.c ****     return act_theme->font_subtitle;
+ARM GAS  D:\Temp\ccwRKatG.s 			page 4
+
+
+ 145:lvgl/src/lv_themes/lv_theme.c **** }
+ 146:lvgl/src/lv_themes/lv_theme.c **** 
+ 147:lvgl/src/lv_themes/lv_theme.c **** /**
+ 148:lvgl/src/lv_themes/lv_theme.c ****  * Get the title font of the theme
+ 149:lvgl/src/lv_themes/lv_theme.c ****  * @return pointer to the font
+ 150:lvgl/src/lv_themes/lv_theme.c ****  */
+ 151:lvgl/src/lv_themes/lv_theme.c **** const lv_font_t * lv_theme_get_font_title(void)
+ 152:lvgl/src/lv_themes/lv_theme.c **** {
+ 153:lvgl/src/lv_themes/lv_theme.c ****     return act_theme->font_title;
+ 154:lvgl/src/lv_themes/lv_theme.c **** }
+ 155:lvgl/src/lv_themes/lv_theme.c **** 
+ 156:lvgl/src/lv_themes/lv_theme.c **** /**
+ 157:lvgl/src/lv_themes/lv_theme.c ****  * Get the primary color of the theme
+ 158:lvgl/src/lv_themes/lv_theme.c ****  * @return the color
+ 159:lvgl/src/lv_themes/lv_theme.c ****  */
+ 160:lvgl/src/lv_themes/lv_theme.c **** lv_color_t lv_theme_get_color_primary(void)
+ 161:lvgl/src/lv_themes/lv_theme.c **** {
+ 162:lvgl/src/lv_themes/lv_theme.c ****     return act_theme->color_primary;
+ 163:lvgl/src/lv_themes/lv_theme.c **** }
+ 164:lvgl/src/lv_themes/lv_theme.c **** 
+ 165:lvgl/src/lv_themes/lv_theme.c **** /**
+ 166:lvgl/src/lv_themes/lv_theme.c ****  * Get the secondary color of the theme
+ 167:lvgl/src/lv_themes/lv_theme.c ****  * @return the color
+ 168:lvgl/src/lv_themes/lv_theme.c ****  */
+ 169:lvgl/src/lv_themes/lv_theme.c **** lv_color_t lv_theme_get_color_secondary(void)
+ 170:lvgl/src/lv_themes/lv_theme.c **** {
+ 171:lvgl/src/lv_themes/lv_theme.c ****     return act_theme->color_secondary;
+ 172:lvgl/src/lv_themes/lv_theme.c **** }
+ 173:lvgl/src/lv_themes/lv_theme.c **** 
+ 174:lvgl/src/lv_themes/lv_theme.c **** /**
+ 175:lvgl/src/lv_themes/lv_theme.c ****  * Get the flags of the theme
+ 176:lvgl/src/lv_themes/lv_theme.c ****  * @return the flags
+ 177:lvgl/src/lv_themes/lv_theme.c ****  */
+ 178:lvgl/src/lv_themes/lv_theme.c **** uint32_t lv_theme_get_flags(void)
+ 179:lvgl/src/lv_themes/lv_theme.c **** {
+ 180:lvgl/src/lv_themes/lv_theme.c ****     return act_theme->flags;
+ 181:lvgl/src/lv_themes/lv_theme.c **** }
+ 182:lvgl/src/lv_themes/lv_theme.c **** 
+ 183:lvgl/src/lv_themes/lv_theme.c **** /**********************
+ 184:lvgl/src/lv_themes/lv_theme.c ****  *   STATIC FUNCTIONS
+ 185:lvgl/src/lv_themes/lv_theme.c ****  **********************/
+ 186:lvgl/src/lv_themes/lv_theme.c **** 
+ 187:lvgl/src/lv_themes/lv_theme.c **** static void apply_theme(lv_theme_t * th, lv_obj_t * obj, lv_theme_style_t name)
+ 188:lvgl/src/lv_themes/lv_theme.c **** {
+  29              		.loc 1 188 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 188 1 is_stmt 0 view .LVU1
+  34 0000 70B5     		push	{r4, r5, r6, lr}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 16
+  37              		.cfi_offset 4, -16
+  38              		.cfi_offset 5, -12
+  39              		.cfi_offset 6, -8
+  40              		.cfi_offset 14, -4
+  41 0002 0446     		mov	r4, r0
+ARM GAS  D:\Temp\ccwRKatG.s 			page 5
+
+
+  42 0004 0D46     		mov	r5, r1
+  43 0006 1646     		mov	r6, r2
+ 189:lvgl/src/lv_themes/lv_theme.c ****     if(th->base) {
+  44              		.loc 1 189 5 is_stmt 1 view .LVU2
+  45              		.loc 1 189 10 is_stmt 0 view .LVU3
+  46 0008 8068     		ldr	r0, [r0, #8]
+  47              	.LVL1:
+  48              		.loc 1 189 7 view .LVU4
+  49 000a 08B1     		cbz	r0, .L2
+ 190:lvgl/src/lv_themes/lv_theme.c ****         apply_theme(th->base, obj, name);
+  50              		.loc 1 190 9 is_stmt 1 view .LVU5
+  51 000c FFF7F8FF 		bl	apply_theme
+  52              	.LVL2:
+  53              	.L2:
+ 191:lvgl/src/lv_themes/lv_theme.c ****     }
+ 192:lvgl/src/lv_themes/lv_theme.c **** 
+ 193:lvgl/src/lv_themes/lv_theme.c ****     /*apply_xcb is deprecated, use apply_cb instead*/
+ 194:lvgl/src/lv_themes/lv_theme.c ****     if(th->apply_xcb) {
+  54              		.loc 1 194 5 view .LVU6
+  55              		.loc 1 194 10 is_stmt 0 view .LVU7
+  56 0010 6368     		ldr	r3, [r4, #4]
+  57              		.loc 1 194 7 view .LVU8
+  58 0012 1BB1     		cbz	r3, .L3
+ 195:lvgl/src/lv_themes/lv_theme.c ****         th->apply_xcb(obj, name);
+  59              		.loc 1 195 9 is_stmt 1 view .LVU9
+  60 0014 3146     		mov	r1, r6
+  61 0016 2846     		mov	r0, r5
+  62 0018 9847     		blx	r3
+  63              	.LVL3:
+  64              	.L1:
+ 196:lvgl/src/lv_themes/lv_theme.c ****     }
+ 197:lvgl/src/lv_themes/lv_theme.c ****     else if(th->apply_cb) {
+ 198:lvgl/src/lv_themes/lv_theme.c ****         th->apply_cb(act_theme, obj, name);
+ 199:lvgl/src/lv_themes/lv_theme.c ****     }
+ 200:lvgl/src/lv_themes/lv_theme.c **** }
+  65              		.loc 1 200 1 is_stmt 0 view .LVU10
+  66 001a 70BD     		pop	{r4, r5, r6, pc}
+  67              	.LVL4:
+  68              	.L3:
+ 197:lvgl/src/lv_themes/lv_theme.c ****         th->apply_cb(act_theme, obj, name);
+  69              		.loc 1 197 10 is_stmt 1 view .LVU11
+ 197:lvgl/src/lv_themes/lv_theme.c ****         th->apply_cb(act_theme, obj, name);
+  70              		.loc 1 197 15 is_stmt 0 view .LVU12
+  71 001c 2368     		ldr	r3, [r4]
+ 197:lvgl/src/lv_themes/lv_theme.c ****         th->apply_cb(act_theme, obj, name);
+  72              		.loc 1 197 12 view .LVU13
+  73 001e 002B     		cmp	r3, #0
+  74 0020 FBD0     		beq	.L1
+ 198:lvgl/src/lv_themes/lv_theme.c ****     }
+  75              		.loc 1 198 9 is_stmt 1 view .LVU14
+  76 0022 3246     		mov	r2, r6
+  77 0024 2946     		mov	r1, r5
+  78 0026 0248     		ldr	r0, .L6
+  79 0028 0068     		ldr	r0, [r0]
+  80 002a 9847     		blx	r3
+  81              	.LVL5:
+  82              		.loc 1 200 1 is_stmt 0 view .LVU15
+ARM GAS  D:\Temp\ccwRKatG.s 			page 6
+
+
+  83 002c F5E7     		b	.L1
+  84              	.L7:
+  85 002e 00BF     		.align	2
+  86              	.L6:
+  87 0030 00000000 		.word	.LANCHOR0
+  88              		.cfi_endproc
+  89              	.LFE573:
+  91              		.section	.text.clear_styles,"ax",%progbits
+  92              		.align	1
+  93              		.syntax unified
+  94              		.thumb
+  95              		.thumb_func
+  96              		.fpu fpv4-sp-d16
+  98              	clear_styles:
+  99              	.LVL6:
+ 100              	.LFB574:
+ 201:lvgl/src/lv_themes/lv_theme.c **** 
+ 202:lvgl/src/lv_themes/lv_theme.c **** static void clear_styles(lv_obj_t * obj, lv_theme_style_t name)
+ 203:lvgl/src/lv_themes/lv_theme.c **** {
+ 101              		.loc 1 203 1 is_stmt 1 view -0
+ 102              		.cfi_startproc
+ 103              		@ args = 0, pretend = 0, frame = 0
+ 104              		@ frame_needed = 0, uses_anonymous_args = 0
+ 105              		.loc 1 203 1 is_stmt 0 view .LVU17
+ 106 0000 10B5     		push	{r4, lr}
+ 107              	.LCFI1:
+ 108              		.cfi_def_cfa_offset 8
+ 109              		.cfi_offset 4, -8
+ 110              		.cfi_offset 14, -4
+ 111 0002 0446     		mov	r4, r0
+ 204:lvgl/src/lv_themes/lv_theme.c ****     switch(name) {
+ 112              		.loc 1 204 5 is_stmt 1 view .LVU18
+ 113 0004 0139     		subs	r1, r1, #1
+ 114              	.LVL7:
+ 115              		.loc 1 204 5 is_stmt 0 view .LVU19
+ 116 0006 2729     		cmp	r1, #39
+ 117 0008 2CD8     		bhi	.L8
+ 118 000a DFE811F0 		tbh	[pc, r1, lsl #1]
+ 119              	.L11:
+ 120 000e 2800     		.2byte	(.L50-.L11)/2
+ 121 0010 2C00     		.2byte	(.L49-.L11)/2
+ 122 0012 7000     		.2byte	(.L48-.L11)/2
+ 123 0014 4800     		.2byte	(.L47-.L11)/2
+ 124 0016 3400     		.2byte	(.L46-.L11)/2
+ 125 0018 3800     		.2byte	(.L45-.L11)/2
+ 126 001a 5401     		.2byte	(.L44-.L11)/2
+ 127 001c 5C00     		.2byte	(.L43-.L11)/2
+ 128 001e 8C00     		.2byte	(.L42-.L11)/2
+ 129 0020 0401     		.2byte	(.L41-.L11)/2
+ 130 0022 3000     		.2byte	(.L40-.L11)/2
+ 131 0024 6401     		.2byte	(.L39-.L11)/2
+ 132 0026 F400     		.2byte	(.L38-.L11)/2
+ 133 0028 7001     		.2byte	(.L37-.L11)/2
+ 134 002a 6000     		.2byte	(.L36-.L11)/2
+ 135 002c 6400     		.2byte	(.L35-.L11)/2
+ 136 002e 4000     		.2byte	(.L34-.L11)/2
+ 137 0030 6800     		.2byte	(.L33-.L11)/2
+ARM GAS  D:\Temp\ccwRKatG.s 			page 7
+
+
+ 138 0032 A000     		.2byte	(.L32-.L11)/2
+ 139 0034 6C00     		.2byte	(.L31-.L11)/2
+ 140 0036 E400     		.2byte	(.L30-.L11)/2
+ 141 0038 F000     		.2byte	(.L29-.L11)/2
+ 142 003a 6C01     		.2byte	(.L28-.L11)/2
+ 143 003c 9400     		.2byte	(.L27-.L11)/2
+ 144 003e 9800     		.2byte	(.L26-.L11)/2
+ 145 0040 E000     		.2byte	(.L25-.L11)/2
+ 146 0042 A400     		.2byte	(.L24-.L11)/2
+ 147 0044 D800     		.2byte	(.L23-.L11)/2
+ 148 0046 8000     		.2byte	(.L22-.L11)/2
+ 149 0048 4801     		.2byte	(.L21-.L11)/2
+ 150 004a 5001     		.2byte	(.L20-.L11)/2
+ 151 004c 7800     		.2byte	(.L19-.L11)/2
+ 152 004e 5000     		.2byte	(.L18-.L11)/2
+ 153 0050 1001     		.2byte	(.L17-.L11)/2
+ 154 0052 B000     		.2byte	(.L16-.L11)/2
+ 155 0054 C400     		.2byte	(.L15-.L11)/2
+ 156 0056 3801     		.2byte	(.L14-.L11)/2
+ 157 0058 CC00     		.2byte	(.L13-.L11)/2
+ 158 005a 2401     		.2byte	(.L12-.L11)/2
+ 159 005c 3401     		.2byte	(.L10-.L11)/2
+ 160              		.p2align 1
+ 161              	.L50:
+ 205:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_NONE:
+ 206:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 207:lvgl/src/lv_themes/lv_theme.c **** 
+ 208:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_SCR:
+ 209:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_OBJ_PART_MAIN);
+ 162              		.loc 1 209 13 is_stmt 1 view .LVU20
+ 163 005e 0021     		movs	r1, #0
+ 164 0060 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 165              	.LVL8:
+ 210:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 166              		.loc 1 210 13 view .LVU21
+ 167              	.L8:
+ 211:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_OBJ:
+ 212:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_OBJ_PART_MAIN);
+ 213:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 214:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_CONT
+ 215:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_CONT:
+ 216:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_OBJ_PART_MAIN);
+ 217:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 218:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 219:lvgl/src/lv_themes/lv_theme.c **** 
+ 220:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_BTN
+ 221:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_BTN:
+ 222:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_BTN_PART_MAIN);
+ 223:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 224:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 225:lvgl/src/lv_themes/lv_theme.c **** 
+ 226:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_BTNMATRIX
+ 227:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_BTNMATRIX:
+ 228:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_BTNMATRIX_PART_BG);
+ 229:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_BTNMATRIX_PART_BTN);
+ 230:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 231:lvgl/src/lv_themes/lv_theme.c **** #endif
+ARM GAS  D:\Temp\ccwRKatG.s 			page 8
+
+
+ 232:lvgl/src/lv_themes/lv_theme.c **** 
+ 233:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_KEYBOARD
+ 234:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_KEYBOARD:
+ 235:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_KEYBOARD_PART_BG);
+ 236:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_KEYBOARD_PART_BTN);
+ 237:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 238:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 239:lvgl/src/lv_themes/lv_theme.c **** 
+ 240:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_BAR
+ 241:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_BAR:
+ 242:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_BAR_PART_BG);
+ 243:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_BAR_PART_INDIC);
+ 244:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 245:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 246:lvgl/src/lv_themes/lv_theme.c **** 
+ 247:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_SWITCH
+ 248:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_SWITCH:
+ 249:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_SWITCH_PART_BG);
+ 250:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_SWITCH_PART_INDIC);
+ 251:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_SWITCH_PART_KNOB);
+ 252:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 253:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 254:lvgl/src/lv_themes/lv_theme.c **** 
+ 255:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_CANVAS
+ 256:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_CANVAS:
+ 257:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CANVAS_PART_MAIN);
+ 258:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 259:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 260:lvgl/src/lv_themes/lv_theme.c **** 
+ 261:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_IMG
+ 262:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_IMAGE:
+ 263:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_IMG_PART_MAIN);
+ 264:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 265:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 266:lvgl/src/lv_themes/lv_theme.c **** 
+ 267:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_IMGBTN
+ 268:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_IMGBTN:
+ 269:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_IMG_PART_MAIN);
+ 270:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 271:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 272:lvgl/src/lv_themes/lv_theme.c **** 
+ 273:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_LABEL
+ 274:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_LABEL:
+ 275:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_LABEL_PART_MAIN);
+ 276:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 277:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 278:lvgl/src/lv_themes/lv_theme.c **** 
+ 279:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_LINE
+ 280:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_LINE:
+ 281:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_LABEL_PART_MAIN);
+ 282:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 283:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 284:lvgl/src/lv_themes/lv_theme.c **** 
+ 285:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_ARC
+ 286:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_ARC:
+ 287:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_ARC_PART_BG);
+ 288:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_ARC_PART_INDIC);
+ARM GAS  D:\Temp\ccwRKatG.s 			page 9
+
+
+ 289:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 290:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 291:lvgl/src/lv_themes/lv_theme.c **** 
+ 292:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_SPINNER
+ 293:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_SPINNER:
+ 294:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_SPINNER_PART_BG);
+ 295:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_SPINNER_PART_INDIC);
+ 296:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 297:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 298:lvgl/src/lv_themes/lv_theme.c **** 
+ 299:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_SLIDER
+ 300:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_SLIDER:
+ 301:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_SLIDER_PART_BG);
+ 302:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_SLIDER_PART_INDIC);
+ 303:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_SLIDER_PART_KNOB);
+ 304:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 305:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 306:lvgl/src/lv_themes/lv_theme.c **** 
+ 307:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_CHECKBOX
+ 308:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_CHECKBOX:
+ 309:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CHECKBOX_PART_BG);
+ 310:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CHECKBOX_PART_BULLET);
+ 311:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 312:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 313:lvgl/src/lv_themes/lv_theme.c **** 
+ 314:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_MSGBOX
+ 315:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_MSGBOX:
+ 316:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_MSGBOX_PART_BG);
+ 317:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 318:lvgl/src/lv_themes/lv_theme.c **** 
+ 319:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_MSGBOX_BTNS:
+ 320:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_MSGBOX_PART_BTN_BG);
+ 321:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_MSGBOX_PART_BTN);
+ 322:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 323:lvgl/src/lv_themes/lv_theme.c **** 
+ 324:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 325:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_LED
+ 326:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_LED:
+ 327:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_LED_PART_MAIN);
+ 328:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 329:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 330:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_PAGE
+ 331:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_PAGE:
+ 332:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_PAGE_PART_BG);
+ 333:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_PAGE_PART_SCROLLABLE);
+ 334:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_PAGE_PART_SCROLLBAR);
+ 335:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 336:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 337:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_TABVIEW
+ 338:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_TABVIEW:
+ 339:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABVIEW_PART_BG);
+ 340:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABVIEW_PART_BG_SCROLLABLE);
+ 341:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABVIEW_PART_TAB_BG);
+ 342:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABVIEW_PART_INDIC);
+ 343:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABVIEW_PART_TAB_BTN);
+ 344:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 345:lvgl/src/lv_themes/lv_theme.c **** 
+ARM GAS  D:\Temp\ccwRKatG.s 			page 10
+
+
+ 346:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_TABVIEW_PAGE:
+ 347:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_PAGE_PART_BG);
+ 348:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_PAGE_PART_SCROLLABLE);
+ 349:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 350:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 351:lvgl/src/lv_themes/lv_theme.c **** 
+ 352:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_TILEVIEW
+ 353:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_TILEVIEW:
+ 354:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TILEVIEW_PART_BG);
+ 355:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TILEVIEW_PART_SCROLLBAR);
+ 356:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TILEVIEW_PART_EDGE_FLASH);
+ 357:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 358:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 359:lvgl/src/lv_themes/lv_theme.c **** 
+ 360:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_ROLLER
+ 361:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_ROLLER:
+ 362:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_ROLLER_PART_BG);
+ 363:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_ROLLER_PART_SELECTED);
+ 364:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 365:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 366:lvgl/src/lv_themes/lv_theme.c **** 
+ 367:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_OBJMASK
+ 368:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_OBJMASK:
+ 369:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_OBJMASK_PART_MAIN);
+ 370:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 371:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 372:lvgl/src/lv_themes/lv_theme.c **** 
+ 373:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_LIST
+ 374:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_LIST:
+ 375:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_LIST_PART_BG);
+ 376:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_LIST_PART_SCROLLABLE);
+ 377:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_LIST_PART_SCROLLBAR);
+ 378:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 379:lvgl/src/lv_themes/lv_theme.c **** 
+ 380:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_LIST_BTN:
+ 381:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_BTN_PART_MAIN);
+ 382:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 383:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 384:lvgl/src/lv_themes/lv_theme.c **** 
+ 385:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_DROPDOWN
+ 386:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_DROPDOWN:
+ 387:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_DROPDOWN_PART_MAIN);
+ 388:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_DROPDOWN_PART_LIST);
+ 389:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_DROPDOWN_PART_SCROLLBAR);
+ 390:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_DROPDOWN_PART_SELECTED);
+ 391:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 392:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 393:lvgl/src/lv_themes/lv_theme.c **** 
+ 394:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_CHART
+ 395:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_CHART:
+ 396:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CHART_PART_BG);
+ 397:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CHART_PART_SERIES_BG);
+ 398:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CHART_PART_SERIES);
+ 399:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 400:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 401:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_TABLE
+ 402:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_TABLE:
+ARM GAS  D:\Temp\ccwRKatG.s 			page 11
+
+
+ 403:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABLE_PART_BG);
+ 404:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABLE_PART_CELL1);
+ 405:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABLE_PART_CELL2);
+ 406:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABLE_PART_CELL3);
+ 407:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABLE_PART_CELL4);
+ 408:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 409:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 410:lvgl/src/lv_themes/lv_theme.c **** 
+ 411:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_WIN
+ 412:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_WIN:
+ 413:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_WIN_PART_BG);
+ 414:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_WIN_PART_SCROLLBAR);
+ 415:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_WIN_PART_CONTENT_SCROLLABLE);
+ 416:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_WIN_PART_HEADER);
+ 417:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 418:lvgl/src/lv_themes/lv_theme.c **** 
+ 419:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_WIN_BTN:
+ 420:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_BTN_PART_MAIN);
+ 421:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 422:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 423:lvgl/src/lv_themes/lv_theme.c **** 
+ 424:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_TEXTAREA
+ 425:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_TEXTAREA:
+ 426:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TEXTAREA_PART_BG);
+ 427:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TEXTAREA_PART_PLACEHOLDER);
+ 428:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TEXTAREA_PART_CURSOR);
+ 429:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TEXTAREA_PART_SCROLLBAR);
+ 430:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 431:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 432:lvgl/src/lv_themes/lv_theme.c **** 
+ 433:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_SPINBOX
+ 434:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_SPINBOX:
+ 435:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_SPINBOX_PART_BG);
+ 436:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_SPINBOX_PART_CURSOR);
+ 437:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 438:lvgl/src/lv_themes/lv_theme.c **** 
+ 439:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_SPINBOX_BTN:
+ 440:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_BTN_PART_MAIN);
+ 441:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 442:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 443:lvgl/src/lv_themes/lv_theme.c **** 
+ 444:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_CALENDAR
+ 445:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_CALENDAR:
+ 446:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CALENDAR_PART_BG);
+ 447:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CALENDAR_PART_DATE);
+ 448:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CALENDAR_PART_HEADER);
+ 449:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CALENDAR_PART_DAY_NAMES);
+ 450:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 451:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 452:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_CPICKER
+ 453:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_CPICKER:
+ 454:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CPICKER_PART_MAIN);
+ 455:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CPICKER_PART_KNOB);
+ 456:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 457:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 458:lvgl/src/lv_themes/lv_theme.c **** 
+ 459:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_LINEMETER
+ARM GAS  D:\Temp\ccwRKatG.s 			page 12
+
+
+ 460:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_LINEMETER:
+ 461:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_LINEMETER_PART_MAIN);
+ 462:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 463:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 464:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_GAUGE
+ 465:lvgl/src/lv_themes/lv_theme.c ****         case LV_THEME_GAUGE:
+ 466:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_GAUGE_PART_MAIN);
+ 467:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_GAUGE_PART_MAJOR);
+ 468:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_GAUGE_PART_NEEDLE);
+ 469:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 470:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 471:lvgl/src/lv_themes/lv_theme.c ****         default:
+ 472:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 473:lvgl/src/lv_themes/lv_theme.c ****     }
+ 474:lvgl/src/lv_themes/lv_theme.c **** 
+ 475:lvgl/src/lv_themes/lv_theme.c **** }
+ 168              		.loc 1 475 1 is_stmt 0 view .LVU22
+ 169 0064 10BD     		pop	{r4, pc}
+ 170              	.LVL9:
+ 171              	.L49:
+ 212:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 172              		.loc 1 212 13 is_stmt 1 view .LVU23
+ 173 0066 0021     		movs	r1, #0
+ 174 0068 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 175              	.LVL10:
+ 213:lvgl/src/lv_themes/lv_theme.c **** #if LV_USE_CONT
+ 176              		.loc 1 213 13 view .LVU24
+ 177 006c FAE7     		b	.L8
+ 178              	.LVL11:
+ 179              	.L40:
+ 216:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 180              		.loc 1 216 13 view .LVU25
+ 181 006e 0021     		movs	r1, #0
+ 182 0070 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 183              	.LVL12:
+ 217:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 184              		.loc 1 217 13 view .LVU26
+ 185 0074 F6E7     		b	.L8
+ 186              	.LVL13:
+ 187              	.L46:
+ 222:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 188              		.loc 1 222 13 view .LVU27
+ 189 0076 0021     		movs	r1, #0
+ 190 0078 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 191              	.LVL14:
+ 223:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 192              		.loc 1 223 13 view .LVU28
+ 193 007c F2E7     		b	.L8
+ 194              	.LVL15:
+ 195              	.L45:
+ 228:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_BTNMATRIX_PART_BTN);
+ 196              		.loc 1 228 13 view .LVU29
+ 197 007e 0021     		movs	r1, #0
+ 198 0080 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 199              	.LVL16:
+ 229:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 200              		.loc 1 229 13 view .LVU30
+ARM GAS  D:\Temp\ccwRKatG.s 			page 13
+
+
+ 201 0084 0121     		movs	r1, #1
+ 202 0086 2046     		mov	r0, r4
+ 203 0088 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 204              	.LVL17:
+ 230:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 205              		.loc 1 230 13 view .LVU31
+ 206 008c EAE7     		b	.L8
+ 207              	.LVL18:
+ 208              	.L34:
+ 235:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_KEYBOARD_PART_BTN);
+ 209              		.loc 1 235 13 view .LVU32
+ 210 008e 0021     		movs	r1, #0
+ 211 0090 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 212              	.LVL19:
+ 236:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 213              		.loc 1 236 13 view .LVU33
+ 214 0094 0121     		movs	r1, #1
+ 215 0096 2046     		mov	r0, r4
+ 216 0098 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 217              	.LVL20:
+ 237:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 218              		.loc 1 237 13 view .LVU34
+ 219 009c E2E7     		b	.L8
+ 220              	.LVL21:
+ 221              	.L47:
+ 242:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_BAR_PART_INDIC);
+ 222              		.loc 1 242 13 view .LVU35
+ 223 009e 0021     		movs	r1, #0
+ 224 00a0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 225              	.LVL22:
+ 243:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 226              		.loc 1 243 13 view .LVU36
+ 227 00a4 0121     		movs	r1, #1
+ 228 00a6 2046     		mov	r0, r4
+ 229 00a8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 230              	.LVL23:
+ 244:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 231              		.loc 1 244 13 view .LVU37
+ 232 00ac DAE7     		b	.L8
+ 233              	.LVL24:
+ 234              	.L18:
+ 249:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_SWITCH_PART_INDIC);
+ 235              		.loc 1 249 13 view .LVU38
+ 236 00ae 0021     		movs	r1, #0
+ 237 00b0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 238              	.LVL25:
+ 250:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_SWITCH_PART_KNOB);
+ 239              		.loc 1 250 13 view .LVU39
+ 240 00b4 0121     		movs	r1, #1
+ 241 00b6 2046     		mov	r0, r4
+ 242 00b8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 243              	.LVL26:
+ 251:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 244              		.loc 1 251 13 view .LVU40
+ 245 00bc 0221     		movs	r1, #2
+ 246 00be 2046     		mov	r0, r4
+ 247 00c0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ARM GAS  D:\Temp\ccwRKatG.s 			page 14
+
+
+ 248              	.LVL27:
+ 252:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 249              		.loc 1 252 13 view .LVU41
+ 250 00c4 CEE7     		b	.L8
+ 251              	.LVL28:
+ 252              	.L43:
+ 257:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 253              		.loc 1 257 13 view .LVU42
+ 254 00c6 0021     		movs	r1, #0
+ 255 00c8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 256              	.LVL29:
+ 258:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 257              		.loc 1 258 13 view .LVU43
+ 258 00cc CAE7     		b	.L8
+ 259              	.LVL30:
+ 260              	.L36:
+ 263:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 261              		.loc 1 263 13 view .LVU44
+ 262 00ce 0021     		movs	r1, #0
+ 263 00d0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 264              	.LVL31:
+ 264:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 265              		.loc 1 264 13 view .LVU45
+ 266 00d4 C6E7     		b	.L8
+ 267              	.LVL32:
+ 268              	.L35:
+ 269:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 269              		.loc 1 269 13 view .LVU46
+ 270 00d6 0021     		movs	r1, #0
+ 271 00d8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 272              	.LVL33:
+ 270:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 273              		.loc 1 270 13 view .LVU47
+ 274 00dc C2E7     		b	.L8
+ 275              	.LVL34:
+ 276              	.L33:
+ 275:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 277              		.loc 1 275 13 view .LVU48
+ 278 00de 0021     		movs	r1, #0
+ 279 00e0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 280              	.LVL35:
+ 276:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 281              		.loc 1 276 13 view .LVU49
+ 282 00e4 BEE7     		b	.L8
+ 283              	.LVL36:
+ 284              	.L31:
+ 281:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 285              		.loc 1 281 13 view .LVU50
+ 286 00e6 0021     		movs	r1, #0
+ 287 00e8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 288              	.LVL37:
+ 282:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 289              		.loc 1 282 13 view .LVU51
+ 290 00ec BAE7     		b	.L8
+ 291              	.LVL38:
+ 292              	.L48:
+ 287:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_ARC_PART_INDIC);
+ARM GAS  D:\Temp\ccwRKatG.s 			page 15
+
+
+ 293              		.loc 1 287 13 view .LVU52
+ 294 00ee 0021     		movs	r1, #0
+ 295 00f0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 296              	.LVL39:
+ 288:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 297              		.loc 1 288 13 view .LVU53
+ 298 00f4 0121     		movs	r1, #1
+ 299 00f6 2046     		mov	r0, r4
+ 300 00f8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 301              	.LVL40:
+ 289:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 302              		.loc 1 289 13 view .LVU54
+ 303 00fc B2E7     		b	.L8
+ 304              	.LVL41:
+ 305              	.L19:
+ 294:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_SPINNER_PART_INDIC);
+ 306              		.loc 1 294 13 view .LVU55
+ 307 00fe 0021     		movs	r1, #0
+ 308 0100 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 309              	.LVL42:
+ 295:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 310              		.loc 1 295 13 view .LVU56
+ 311 0104 0121     		movs	r1, #1
+ 312 0106 2046     		mov	r0, r4
+ 313 0108 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 314              	.LVL43:
+ 296:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 315              		.loc 1 296 13 view .LVU57
+ 316 010c AAE7     		b	.L8
+ 317              	.LVL44:
+ 318              	.L22:
+ 301:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_SLIDER_PART_INDIC);
+ 319              		.loc 1 301 13 view .LVU58
+ 320 010e 0021     		movs	r1, #0
+ 321 0110 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 322              	.LVL45:
+ 302:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_SLIDER_PART_KNOB);
+ 323              		.loc 1 302 13 view .LVU59
+ 324 0114 0121     		movs	r1, #1
+ 325 0116 2046     		mov	r0, r4
+ 326 0118 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 327              	.LVL46:
+ 303:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 328              		.loc 1 303 13 view .LVU60
+ 329 011c 0221     		movs	r1, #2
+ 330 011e 2046     		mov	r0, r4
+ 331 0120 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 332              	.LVL47:
+ 304:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 333              		.loc 1 304 13 view .LVU61
+ 334 0124 9EE7     		b	.L8
+ 335              	.LVL48:
+ 336              	.L42:
+ 309:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CHECKBOX_PART_BULLET);
+ 337              		.loc 1 309 13 view .LVU62
+ 338 0126 0021     		movs	r1, #0
+ 339 0128 FFF7FEFF 		bl	lv_obj_clean_style_list
+ARM GAS  D:\Temp\ccwRKatG.s 			page 16
+
+
+ 340              	.LVL49:
+ 310:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 341              		.loc 1 310 13 view .LVU63
+ 342 012c 4021     		movs	r1, #64
+ 343 012e 2046     		mov	r0, r4
+ 344 0130 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 345              	.LVL50:
+ 311:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 346              		.loc 1 311 13 view .LVU64
+ 347 0134 96E7     		b	.L8
+ 348              	.LVL51:
+ 349              	.L27:
+ 316:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 350              		.loc 1 316 13 view .LVU65
+ 351 0136 0021     		movs	r1, #0
+ 352 0138 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 353              	.LVL52:
+ 317:lvgl/src/lv_themes/lv_theme.c **** 
+ 354              		.loc 1 317 13 view .LVU66
+ 355 013c 92E7     		b	.L8
+ 356              	.LVL53:
+ 357              	.L26:
+ 320:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_MSGBOX_PART_BTN);
+ 358              		.loc 1 320 13 view .LVU67
+ 359 013e 4021     		movs	r1, #64
+ 360 0140 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 361              	.LVL54:
+ 321:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 362              		.loc 1 321 13 view .LVU68
+ 363 0144 4121     		movs	r1, #65
+ 364 0146 2046     		mov	r0, r4
+ 365 0148 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 366              	.LVL55:
+ 322:lvgl/src/lv_themes/lv_theme.c **** 
+ 367              		.loc 1 322 13 view .LVU69
+ 368 014c 8AE7     		b	.L8
+ 369              	.LVL56:
+ 370              	.L32:
+ 327:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 371              		.loc 1 327 13 view .LVU70
+ 372 014e 0021     		movs	r1, #0
+ 373 0150 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 374              	.LVL57:
+ 328:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 375              		.loc 1 328 13 view .LVU71
+ 376 0154 86E7     		b	.L8
+ 377              	.LVL58:
+ 378              	.L24:
+ 332:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_PAGE_PART_SCROLLABLE);
+ 379              		.loc 1 332 13 view .LVU72
+ 380 0156 0021     		movs	r1, #0
+ 381 0158 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 382              	.LVL59:
+ 333:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_PAGE_PART_SCROLLBAR);
+ 383              		.loc 1 333 13 view .LVU73
+ 384 015c 4021     		movs	r1, #64
+ 385 015e 2046     		mov	r0, r4
+ARM GAS  D:\Temp\ccwRKatG.s 			page 17
+
+
+ 386 0160 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 387              	.LVL60:
+ 334:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 388              		.loc 1 334 13 view .LVU74
+ 389 0164 0121     		movs	r1, #1
+ 390 0166 2046     		mov	r0, r4
+ 391 0168 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 392              	.LVL61:
+ 335:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 393              		.loc 1 335 13 view .LVU75
+ 394 016c 7AE7     		b	.L8
+ 395              	.LVL62:
+ 396              	.L16:
+ 339:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABVIEW_PART_BG_SCROLLABLE);
+ 397              		.loc 1 339 13 view .LVU76
+ 398 016e 0021     		movs	r1, #0
+ 399 0170 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 400              	.LVL63:
+ 340:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABVIEW_PART_TAB_BG);
+ 401              		.loc 1 340 13 view .LVU77
+ 402 0174 4021     		movs	r1, #64
+ 403 0176 2046     		mov	r0, r4
+ 404 0178 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 405              	.LVL64:
+ 341:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABVIEW_PART_INDIC);
+ 406              		.loc 1 341 13 view .LVU78
+ 407 017c 4121     		movs	r1, #65
+ 408 017e 2046     		mov	r0, r4
+ 409 0180 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 410              	.LVL65:
+ 342:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABVIEW_PART_TAB_BTN);
+ 411              		.loc 1 342 13 view .LVU79
+ 412 0184 4321     		movs	r1, #67
+ 413 0186 2046     		mov	r0, r4
+ 414 0188 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 415              	.LVL66:
+ 343:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 416              		.loc 1 343 13 view .LVU80
+ 417 018c 4221     		movs	r1, #66
+ 418 018e 2046     		mov	r0, r4
+ 419 0190 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 420              	.LVL67:
+ 344:lvgl/src/lv_themes/lv_theme.c **** 
+ 421              		.loc 1 344 13 view .LVU81
+ 422 0194 66E7     		b	.L8
+ 423              	.LVL68:
+ 424              	.L15:
+ 347:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_PAGE_PART_SCROLLABLE);
+ 425              		.loc 1 347 13 view .LVU82
+ 426 0196 0021     		movs	r1, #0
+ 427 0198 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 428              	.LVL69:
+ 348:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 429              		.loc 1 348 13 view .LVU83
+ 430 019c 4021     		movs	r1, #64
+ 431 019e 2046     		mov	r0, r4
+ 432 01a0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ARM GAS  D:\Temp\ccwRKatG.s 			page 18
+
+
+ 433              	.LVL70:
+ 349:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 434              		.loc 1 349 13 view .LVU84
+ 435 01a4 5EE7     		b	.L8
+ 436              	.LVL71:
+ 437              	.L13:
+ 354:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TILEVIEW_PART_SCROLLBAR);
+ 438              		.loc 1 354 13 view .LVU85
+ 439 01a6 0021     		movs	r1, #0
+ 440 01a8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 441              	.LVL72:
+ 355:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TILEVIEW_PART_EDGE_FLASH);
+ 442              		.loc 1 355 13 view .LVU86
+ 443 01ac 0121     		movs	r1, #1
+ 444 01ae 2046     		mov	r0, r4
+ 445 01b0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 446              	.LVL73:
+ 356:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 447              		.loc 1 356 13 view .LVU87
+ 448 01b4 0221     		movs	r1, #2
+ 449 01b6 2046     		mov	r0, r4
+ 450 01b8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 451              	.LVL74:
+ 357:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 452              		.loc 1 357 13 view .LVU88
+ 453 01bc 52E7     		b	.L8
+ 454              	.LVL75:
+ 455              	.L23:
+ 362:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_ROLLER_PART_SELECTED);
+ 456              		.loc 1 362 13 view .LVU89
+ 457 01be 0021     		movs	r1, #0
+ 458 01c0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 459              	.LVL76:
+ 363:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 460              		.loc 1 363 13 view .LVU90
+ 461 01c4 0321     		movs	r1, #3
+ 462 01c6 2046     		mov	r0, r4
+ 463 01c8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 464              	.LVL77:
+ 364:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 465              		.loc 1 364 13 view .LVU91
+ 466 01cc 4AE7     		b	.L8
+ 467              	.LVL78:
+ 468              	.L25:
+ 369:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 469              		.loc 1 369 13 view .LVU92
+ 470 01ce 0021     		movs	r1, #0
+ 471 01d0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 472              	.LVL79:
+ 370:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 473              		.loc 1 370 13 view .LVU93
+ 474 01d4 46E7     		b	.L8
+ 475              	.LVL80:
+ 476              	.L30:
+ 375:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_LIST_PART_SCROLLABLE);
+ 477              		.loc 1 375 13 view .LVU94
+ 478 01d6 0021     		movs	r1, #0
+ARM GAS  D:\Temp\ccwRKatG.s 			page 19
+
+
+ 479 01d8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 480              	.LVL81:
+ 376:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_LIST_PART_SCROLLBAR);
+ 481              		.loc 1 376 13 view .LVU95
+ 482 01dc 4021     		movs	r1, #64
+ 483 01de 2046     		mov	r0, r4
+ 484 01e0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 485              	.LVL82:
+ 377:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 486              		.loc 1 377 13 view .LVU96
+ 487 01e4 0121     		movs	r1, #1
+ 488 01e6 2046     		mov	r0, r4
+ 489 01e8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 490              	.LVL83:
+ 378:lvgl/src/lv_themes/lv_theme.c **** 
+ 491              		.loc 1 378 13 view .LVU97
+ 492 01ec 3AE7     		b	.L8
+ 493              	.LVL84:
+ 494              	.L29:
+ 381:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 495              		.loc 1 381 13 view .LVU98
+ 496 01ee 0021     		movs	r1, #0
+ 497 01f0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 498              	.LVL85:
+ 382:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 499              		.loc 1 382 13 view .LVU99
+ 500 01f4 36E7     		b	.L8
+ 501              	.LVL86:
+ 502              	.L38:
+ 387:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_DROPDOWN_PART_LIST);
+ 503              		.loc 1 387 13 view .LVU100
+ 504 01f6 0021     		movs	r1, #0
+ 505 01f8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 506              	.LVL87:
+ 388:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_DROPDOWN_PART_SCROLLBAR);
+ 507              		.loc 1 388 13 view .LVU101
+ 508 01fc 4021     		movs	r1, #64
+ 509 01fe 2046     		mov	r0, r4
+ 510 0200 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 511              	.LVL88:
+ 389:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_DROPDOWN_PART_SELECTED);
+ 512              		.loc 1 389 13 view .LVU102
+ 513 0204 4121     		movs	r1, #65
+ 514 0206 2046     		mov	r0, r4
+ 515 0208 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 516              	.LVL89:
+ 390:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 517              		.loc 1 390 13 view .LVU103
+ 518 020c 4221     		movs	r1, #66
+ 519 020e 2046     		mov	r0, r4
+ 520 0210 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 521              	.LVL90:
+ 391:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 522              		.loc 1 391 13 view .LVU104
+ 523 0214 26E7     		b	.L8
+ 524              	.LVL91:
+ 525              	.L41:
+ARM GAS  D:\Temp\ccwRKatG.s 			page 20
+
+
+ 396:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CHART_PART_SERIES_BG);
+ 526              		.loc 1 396 13 view .LVU105
+ 527 0216 0021     		movs	r1, #0
+ 528 0218 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 529              	.LVL92:
+ 397:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CHART_PART_SERIES);
+ 530              		.loc 1 397 13 view .LVU106
+ 531 021c 0121     		movs	r1, #1
+ 532 021e 2046     		mov	r0, r4
+ 533 0220 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 534              	.LVL93:
+ 398:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 535              		.loc 1 398 13 view .LVU107
+ 536 0224 0221     		movs	r1, #2
+ 537 0226 2046     		mov	r0, r4
+ 538 0228 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 539              	.LVL94:
+ 399:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 540              		.loc 1 399 13 view .LVU108
+ 541 022c 1AE7     		b	.L8
+ 542              	.LVL95:
+ 543              	.L17:
+ 403:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABLE_PART_CELL1);
+ 544              		.loc 1 403 13 view .LVU109
+ 545 022e 0021     		movs	r1, #0
+ 546 0230 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 547              	.LVL96:
+ 404:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABLE_PART_CELL2);
+ 548              		.loc 1 404 13 view .LVU110
+ 549 0234 0121     		movs	r1, #1
+ 550 0236 2046     		mov	r0, r4
+ 551 0238 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 552              	.LVL97:
+ 405:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABLE_PART_CELL3);
+ 553              		.loc 1 405 13 view .LVU111
+ 554 023c 0221     		movs	r1, #2
+ 555 023e 2046     		mov	r0, r4
+ 556 0240 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 557              	.LVL98:
+ 406:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TABLE_PART_CELL4);
+ 558              		.loc 1 406 13 view .LVU112
+ 559 0244 0321     		movs	r1, #3
+ 560 0246 2046     		mov	r0, r4
+ 561 0248 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 562              	.LVL99:
+ 407:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 563              		.loc 1 407 13 view .LVU113
+ 564 024c 0421     		movs	r1, #4
+ 565 024e 2046     		mov	r0, r4
+ 566 0250 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 567              	.LVL100:
+ 408:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 568              		.loc 1 408 13 view .LVU114
+ 569 0254 06E7     		b	.L8
+ 570              	.LVL101:
+ 571              	.L12:
+ 413:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_WIN_PART_SCROLLBAR);
+ARM GAS  D:\Temp\ccwRKatG.s 			page 21
+
+
+ 572              		.loc 1 413 13 view .LVU115
+ 573 0256 0021     		movs	r1, #0
+ 574 0258 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 575              	.LVL102:
+ 414:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_WIN_PART_CONTENT_SCROLLABLE);
+ 576              		.loc 1 414 13 view .LVU116
+ 577 025c 4221     		movs	r1, #66
+ 578 025e 2046     		mov	r0, r4
+ 579 0260 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 580              	.LVL103:
+ 415:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_WIN_PART_HEADER);
+ 581              		.loc 1 415 13 view .LVU117
+ 582 0264 4121     		movs	r1, #65
+ 583 0266 2046     		mov	r0, r4
+ 584 0268 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 585              	.LVL104:
+ 416:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 586              		.loc 1 416 13 view .LVU118
+ 587 026c 4021     		movs	r1, #64
+ 588 026e 2046     		mov	r0, r4
+ 589 0270 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 590              	.LVL105:
+ 417:lvgl/src/lv_themes/lv_theme.c **** 
+ 591              		.loc 1 417 13 view .LVU119
+ 592 0274 F6E6     		b	.L8
+ 593              	.LVL106:
+ 594              	.L10:
+ 420:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 595              		.loc 1 420 13 view .LVU120
+ 596 0276 0021     		movs	r1, #0
+ 597 0278 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 598              	.LVL107:
+ 421:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 599              		.loc 1 421 13 view .LVU121
+ 600 027c F2E6     		b	.L8
+ 601              	.LVL108:
+ 602              	.L14:
+ 426:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TEXTAREA_PART_PLACEHOLDER);
+ 603              		.loc 1 426 13 view .LVU122
+ 604 027e 0021     		movs	r1, #0
+ 605 0280 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 606              	.LVL109:
+ 427:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TEXTAREA_PART_CURSOR);
+ 607              		.loc 1 427 13 view .LVU123
+ 608 0284 0421     		movs	r1, #4
+ 609 0286 2046     		mov	r0, r4
+ 610 0288 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 611              	.LVL110:
+ 428:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_TEXTAREA_PART_SCROLLBAR);
+ 612              		.loc 1 428 13 view .LVU124
+ 613 028c 0321     		movs	r1, #3
+ 614 028e 2046     		mov	r0, r4
+ 615 0290 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 616              	.LVL111:
+ 429:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 617              		.loc 1 429 13 view .LVU125
+ 618 0294 0121     		movs	r1, #1
+ARM GAS  D:\Temp\ccwRKatG.s 			page 22
+
+
+ 619 0296 2046     		mov	r0, r4
+ 620 0298 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 621              	.LVL112:
+ 430:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 622              		.loc 1 430 13 view .LVU126
+ 623 029c E2E6     		b	.L8
+ 624              	.LVL113:
+ 625              	.L21:
+ 435:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_SPINBOX_PART_CURSOR);
+ 626              		.loc 1 435 13 view .LVU127
+ 627 029e 0021     		movs	r1, #0
+ 628 02a0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 629              	.LVL114:
+ 436:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 630              		.loc 1 436 13 view .LVU128
+ 631 02a4 0321     		movs	r1, #3
+ 632 02a6 2046     		mov	r0, r4
+ 633 02a8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 634              	.LVL115:
+ 437:lvgl/src/lv_themes/lv_theme.c **** 
+ 635              		.loc 1 437 13 view .LVU129
+ 636 02ac DAE6     		b	.L8
+ 637              	.LVL116:
+ 638              	.L20:
+ 440:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 639              		.loc 1 440 13 view .LVU130
+ 640 02ae 0021     		movs	r1, #0
+ 641 02b0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 642              	.LVL117:
+ 441:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 643              		.loc 1 441 13 view .LVU131
+ 644 02b4 D6E6     		b	.L8
+ 645              	.LVL118:
+ 646              	.L44:
+ 446:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CALENDAR_PART_DATE);
+ 647              		.loc 1 446 13 view .LVU132
+ 648 02b6 0021     		movs	r1, #0
+ 649 02b8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 650              	.LVL119:
+ 447:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CALENDAR_PART_HEADER);
+ 651              		.loc 1 447 13 view .LVU133
+ 652 02bc 0321     		movs	r1, #3
+ 653 02be 2046     		mov	r0, r4
+ 654 02c0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 655              	.LVL120:
+ 448:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CALENDAR_PART_DAY_NAMES);
+ 656              		.loc 1 448 13 view .LVU134
+ 657 02c4 0121     		movs	r1, #1
+ 658 02c6 2046     		mov	r0, r4
+ 659 02c8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 660              	.LVL121:
+ 449:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 661              		.loc 1 449 13 view .LVU135
+ 662 02cc 0221     		movs	r1, #2
+ 663 02ce 2046     		mov	r0, r4
+ 664 02d0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 665              	.LVL122:
+ARM GAS  D:\Temp\ccwRKatG.s 			page 23
+
+
+ 450:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 666              		.loc 1 450 13 view .LVU136
+ 667 02d4 C6E6     		b	.L8
+ 668              	.LVL123:
+ 669              	.L39:
+ 454:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_CPICKER_PART_KNOB);
+ 670              		.loc 1 454 13 view .LVU137
+ 671 02d6 0021     		movs	r1, #0
+ 672 02d8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 673              	.LVL124:
+ 455:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 674              		.loc 1 455 13 view .LVU138
+ 675 02dc 0121     		movs	r1, #1
+ 676 02de 2046     		mov	r0, r4
+ 677 02e0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 678              	.LVL125:
+ 456:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 679              		.loc 1 456 13 view .LVU139
+ 680 02e4 BEE6     		b	.L8
+ 681              	.LVL126:
+ 682              	.L28:
+ 461:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 683              		.loc 1 461 13 view .LVU140
+ 684 02e6 0021     		movs	r1, #0
+ 685 02e8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 686              	.LVL127:
+ 462:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 687              		.loc 1 462 13 view .LVU141
+ 688 02ec BAE6     		b	.L8
+ 689              	.LVL128:
+ 690              	.L37:
+ 466:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_GAUGE_PART_MAJOR);
+ 691              		.loc 1 466 13 view .LVU142
+ 692 02ee 0021     		movs	r1, #0
+ 693 02f0 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 694              	.LVL129:
+ 467:lvgl/src/lv_themes/lv_theme.c ****             lv_obj_clean_style_list(obj, LV_GAUGE_PART_NEEDLE);
+ 695              		.loc 1 467 13 view .LVU143
+ 696 02f4 0121     		movs	r1, #1
+ 697 02f6 2046     		mov	r0, r4
+ 698 02f8 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 699              	.LVL130:
+ 468:lvgl/src/lv_themes/lv_theme.c ****             break;
+ 700              		.loc 1 468 13 view .LVU144
+ 701 02fc 0221     		movs	r1, #2
+ 702 02fe 2046     		mov	r0, r4
+ 703 0300 FFF7FEFF 		bl	lv_obj_clean_style_list
+ 704              	.LVL131:
+ 469:lvgl/src/lv_themes/lv_theme.c **** #endif
+ 705              		.loc 1 469 13 view .LVU145
+ 706              		.loc 1 475 1 is_stmt 0 view .LVU146
+ 707 0304 AEE6     		b	.L8
+ 708              		.cfi_endproc
+ 709              	.LFE574:
+ 711              		.section	.text.lv_theme_set_act,"ax",%progbits
+ 712              		.align	1
+ 713              		.global	lv_theme_set_act
+ARM GAS  D:\Temp\ccwRKatG.s 			page 24
+
+
+ 714              		.syntax unified
+ 715              		.thumb
+ 716              		.thumb_func
+ 717              		.fpu fpv4-sp-d16
+ 719              	lv_theme_set_act:
+ 720              	.LVL132:
+ 721              	.LFB560:
+  44:lvgl/src/lv_themes/lv_theme.c ****     act_theme = th;
+ 722              		.loc 1 44 1 is_stmt 1 view -0
+ 723              		.cfi_startproc
+ 724              		@ args = 0, pretend = 0, frame = 0
+ 725              		@ frame_needed = 0, uses_anonymous_args = 0
+ 726              		@ link register save eliminated.
+  45:lvgl/src/lv_themes/lv_theme.c **** }
+ 727              		.loc 1 45 5 view .LVU148
+  45:lvgl/src/lv_themes/lv_theme.c **** }
+ 728              		.loc 1 45 15 is_stmt 0 view .LVU149
+ 729 0000 014B     		ldr	r3, .L53
+ 730 0002 1860     		str	r0, [r3]
+  46:lvgl/src/lv_themes/lv_theme.c **** 
+ 731              		.loc 1 46 1 view .LVU150
+ 732 0004 7047     		bx	lr
+ 733              	.L54:
+ 734 0006 00BF     		.align	2
+ 735              	.L53:
+ 736 0008 00000000 		.word	.LANCHOR0
+ 737              		.cfi_endproc
+ 738              	.LFE560:
+ 740              		.section	.text.lv_theme_get_act,"ax",%progbits
+ 741              		.align	1
+ 742              		.global	lv_theme_get_act
+ 743              		.syntax unified
+ 744              		.thumb
+ 745              		.thumb_func
+ 746              		.fpu fpv4-sp-d16
+ 748              	lv_theme_get_act:
+ 749              	.LFB561:
+  53:lvgl/src/lv_themes/lv_theme.c ****     return act_theme;
+ 750              		.loc 1 53 1 is_stmt 1 view -0
+ 751              		.cfi_startproc
+ 752              		@ args = 0, pretend = 0, frame = 0
+ 753              		@ frame_needed = 0, uses_anonymous_args = 0
+ 754              		@ link register save eliminated.
+  54:lvgl/src/lv_themes/lv_theme.c **** }
+ 755              		.loc 1 54 5 view .LVU152
+  55:lvgl/src/lv_themes/lv_theme.c **** 
+ 756              		.loc 1 55 1 is_stmt 0 view .LVU153
+ 757 0000 014B     		ldr	r3, .L56
+ 758 0002 1868     		ldr	r0, [r3]
+ 759 0004 7047     		bx	lr
+ 760              	.L57:
+ 761 0006 00BF     		.align	2
+ 762              	.L56:
+ 763 0008 00000000 		.word	.LANCHOR0
+ 764              		.cfi_endproc
+ 765              	.LFE561:
+ 767              		.section	.text.lv_theme_apply,"ax",%progbits
+ARM GAS  D:\Temp\ccwRKatG.s 			page 25
+
+
+ 768              		.align	1
+ 769              		.global	lv_theme_apply
+ 770              		.syntax unified
+ 771              		.thumb
+ 772              		.thumb_func
+ 773              		.fpu fpv4-sp-d16
+ 775              	lv_theme_apply:
+ 776              	.LVL133:
+ 777              	.LFB562:
+  63:lvgl/src/lv_themes/lv_theme.c ****     /* Remove the existing styles from all part of the object. */
+ 778              		.loc 1 63 1 is_stmt 1 view -0
+ 779              		.cfi_startproc
+ 780              		@ args = 0, pretend = 0, frame = 0
+ 781              		@ frame_needed = 0, uses_anonymous_args = 0
+  63:lvgl/src/lv_themes/lv_theme.c ****     /* Remove the existing styles from all part of the object. */
+ 782              		.loc 1 63 1 is_stmt 0 view .LVU155
+ 783 0000 38B5     		push	{r3, r4, r5, lr}
+ 784              	.LCFI2:
+ 785              		.cfi_def_cfa_offset 16
+ 786              		.cfi_offset 3, -16
+ 787              		.cfi_offset 4, -12
+ 788              		.cfi_offset 5, -8
+ 789              		.cfi_offset 14, -4
+ 790 0002 0446     		mov	r4, r0
+ 791 0004 0D46     		mov	r5, r1
+  65:lvgl/src/lv_themes/lv_theme.c **** 
+ 792              		.loc 1 65 5 is_stmt 1 view .LVU156
+ 793 0006 FFF7FEFF 		bl	clear_styles
+ 794              	.LVL134:
+  69:lvgl/src/lv_themes/lv_theme.c **** }
+ 795              		.loc 1 69 5 view .LVU157
+ 796 000a 2A46     		mov	r2, r5
+ 797 000c 2146     		mov	r1, r4
+ 798 000e 024B     		ldr	r3, .L60
+ 799 0010 1868     		ldr	r0, [r3]
+ 800 0012 FFF7FEFF 		bl	apply_theme
+ 801              	.LVL135:
+  70:lvgl/src/lv_themes/lv_theme.c **** 
+ 802              		.loc 1 70 1 is_stmt 0 view .LVU158
+ 803 0016 38BD     		pop	{r3, r4, r5, pc}
+ 804              	.LVL136:
+ 805              	.L61:
+  70:lvgl/src/lv_themes/lv_theme.c **** 
+ 806              		.loc 1 70 1 view .LVU159
+ 807              		.align	2
+ 808              	.L60:
+ 809 0018 00000000 		.word	.LANCHOR0
+ 810              		.cfi_endproc
+ 811              	.LFE562:
+ 813              		.section	.text.lv_theme_copy,"ax",%progbits
+ 814              		.align	1
+ 815              		.global	lv_theme_copy
+ 816              		.syntax unified
+ 817              		.thumb
+ 818              		.thumb_func
+ 819              		.fpu fpv4-sp-d16
+ 821              	lv_theme_copy:
+ARM GAS  D:\Temp\ccwRKatG.s 			page 26
+
+
+ 822              	.LVL137:
+ 823              	.LFB563:
+  79:lvgl/src/lv_themes/lv_theme.c ****     _lv_memset_00(theme, sizeof(lv_theme_t));
+ 824              		.loc 1 79 1 is_stmt 1 view -0
+ 825              		.cfi_startproc
+ 826              		@ args = 0, pretend = 0, frame = 0
+ 827              		@ frame_needed = 0, uses_anonymous_args = 0
+  79:lvgl/src/lv_themes/lv_theme.c ****     _lv_memset_00(theme, sizeof(lv_theme_t));
+ 828              		.loc 1 79 1 is_stmt 0 view .LVU161
+ 829 0000 38B5     		push	{r3, r4, r5, lr}
+ 830              	.LCFI3:
+ 831              		.cfi_def_cfa_offset 16
+ 832              		.cfi_offset 3, -16
+ 833              		.cfi_offset 4, -12
+ 834              		.cfi_offset 5, -8
+ 835              		.cfi_offset 14, -4
+ 836 0002 0546     		mov	r5, r0
+ 837 0004 0C46     		mov	r4, r1
+  80:lvgl/src/lv_themes/lv_theme.c **** 
+ 838              		.loc 1 80 5 is_stmt 1 view .LVU162
+ 839 0006 2821     		movs	r1, #40
+ 840              	.LVL138:
+  80:lvgl/src/lv_themes/lv_theme.c **** 
+ 841              		.loc 1 80 5 is_stmt 0 view .LVU163
+ 842 0008 FFF7FEFF 		bl	_lv_memset_00
+ 843              	.LVL139:
+  82:lvgl/src/lv_themes/lv_theme.c ****         theme->font_small = copy->font_small;
+ 844              		.loc 1 82 5 is_stmt 1 view .LVU164
+  82:lvgl/src/lv_themes/lv_theme.c ****         theme->font_small = copy->font_small;
+ 845              		.loc 1 82 7 is_stmt 0 view .LVU165
+ 846 000c 9CB1     		cbz	r4, .L62
+  83:lvgl/src/lv_themes/lv_theme.c ****         theme->font_normal = copy->font_normal;
+ 847              		.loc 1 83 9 is_stmt 1 view .LVU166
+  83:lvgl/src/lv_themes/lv_theme.c ****         theme->font_normal = copy->font_normal;
+ 848              		.loc 1 83 33 is_stmt 0 view .LVU167
+ 849 000e 2369     		ldr	r3, [r4, #16]
+  83:lvgl/src/lv_themes/lv_theme.c ****         theme->font_normal = copy->font_normal;
+ 850              		.loc 1 83 27 view .LVU168
+ 851 0010 2B61     		str	r3, [r5, #16]
+  84:lvgl/src/lv_themes/lv_theme.c ****         theme->font_subtitle = copy->font_subtitle;
+ 852              		.loc 1 84 9 is_stmt 1 view .LVU169
+  84:lvgl/src/lv_themes/lv_theme.c ****         theme->font_subtitle = copy->font_subtitle;
+ 853              		.loc 1 84 34 is_stmt 0 view .LVU170
+ 854 0012 6369     		ldr	r3, [r4, #20]
+  84:lvgl/src/lv_themes/lv_theme.c ****         theme->font_subtitle = copy->font_subtitle;
+ 855              		.loc 1 84 28 view .LVU171
+ 856 0014 6B61     		str	r3, [r5, #20]
+  85:lvgl/src/lv_themes/lv_theme.c ****         theme->font_title = copy->font_title;
+ 857              		.loc 1 85 9 is_stmt 1 view .LVU172
+  85:lvgl/src/lv_themes/lv_theme.c ****         theme->font_title = copy->font_title;
+ 858              		.loc 1 85 36 is_stmt 0 view .LVU173
+ 859 0016 A369     		ldr	r3, [r4, #24]
+  85:lvgl/src/lv_themes/lv_theme.c ****         theme->font_title = copy->font_title;
+ 860              		.loc 1 85 30 view .LVU174
+ 861 0018 AB61     		str	r3, [r5, #24]
+  86:lvgl/src/lv_themes/lv_theme.c ****         theme->color_primary = copy->color_primary;
+ 862              		.loc 1 86 9 is_stmt 1 view .LVU175
+ARM GAS  D:\Temp\ccwRKatG.s 			page 27
+
+
+  86:lvgl/src/lv_themes/lv_theme.c ****         theme->color_primary = copy->color_primary;
+ 863              		.loc 1 86 33 is_stmt 0 view .LVU176
+ 864 001a E369     		ldr	r3, [r4, #28]
+  86:lvgl/src/lv_themes/lv_theme.c ****         theme->color_primary = copy->color_primary;
+ 865              		.loc 1 86 27 view .LVU177
+ 866 001c EB61     		str	r3, [r5, #28]
+  87:lvgl/src/lv_themes/lv_theme.c ****         theme->color_secondary = copy->color_secondary;
+ 867              		.loc 1 87 9 is_stmt 1 view .LVU178
+  87:lvgl/src/lv_themes/lv_theme.c ****         theme->color_secondary = copy->color_secondary;
+ 868              		.loc 1 87 30 is_stmt 0 view .LVU179
+ 869 001e A389     		ldrh	r3, [r4, #12]
+ 870 0020 AB81     		strh	r3, [r5, #12]	@ movhi
+  88:lvgl/src/lv_themes/lv_theme.c ****         theme->flags = copy->flags;
+ 871              		.loc 1 88 9 is_stmt 1 view .LVU180
+  88:lvgl/src/lv_themes/lv_theme.c ****         theme->flags = copy->flags;
+ 872              		.loc 1 88 32 is_stmt 0 view .LVU181
+ 873 0022 E389     		ldrh	r3, [r4, #14]
+ 874 0024 EB81     		strh	r3, [r5, #14]	@ movhi
+  89:lvgl/src/lv_themes/lv_theme.c ****         theme->base = copy->base;
+ 875              		.loc 1 89 9 is_stmt 1 view .LVU182
+  89:lvgl/src/lv_themes/lv_theme.c ****         theme->base = copy->base;
+ 876              		.loc 1 89 28 is_stmt 0 view .LVU183
+ 877 0026 236A     		ldr	r3, [r4, #32]
+  89:lvgl/src/lv_themes/lv_theme.c ****         theme->base = copy->base;
+ 878              		.loc 1 89 22 view .LVU184
+ 879 0028 2B62     		str	r3, [r5, #32]
+  90:lvgl/src/lv_themes/lv_theme.c ****         theme->apply_cb = copy->apply_cb;
+ 880              		.loc 1 90 9 is_stmt 1 view .LVU185
+  90:lvgl/src/lv_themes/lv_theme.c ****         theme->apply_cb = copy->apply_cb;
+ 881              		.loc 1 90 27 is_stmt 0 view .LVU186
+ 882 002a A368     		ldr	r3, [r4, #8]
+  90:lvgl/src/lv_themes/lv_theme.c ****         theme->apply_cb = copy->apply_cb;
+ 883              		.loc 1 90 21 view .LVU187
+ 884 002c AB60     		str	r3, [r5, #8]
+  91:lvgl/src/lv_themes/lv_theme.c ****         theme->apply_xcb = copy->apply_xcb;
+ 885              		.loc 1 91 9 is_stmt 1 view .LVU188
+  91:lvgl/src/lv_themes/lv_theme.c ****         theme->apply_xcb = copy->apply_xcb;
+ 886              		.loc 1 91 31 is_stmt 0 view .LVU189
+ 887 002e 2368     		ldr	r3, [r4]
+  91:lvgl/src/lv_themes/lv_theme.c ****         theme->apply_xcb = copy->apply_xcb;
+ 888              		.loc 1 91 25 view .LVU190
+ 889 0030 2B60     		str	r3, [r5]
+  92:lvgl/src/lv_themes/lv_theme.c ****     }
+ 890              		.loc 1 92 9 is_stmt 1 view .LVU191
+  92:lvgl/src/lv_themes/lv_theme.c ****     }
+ 891              		.loc 1 92 32 is_stmt 0 view .LVU192
+ 892 0032 6368     		ldr	r3, [r4, #4]
+  92:lvgl/src/lv_themes/lv_theme.c ****     }
+ 893              		.loc 1 92 26 view .LVU193
+ 894 0034 6B60     		str	r3, [r5, #4]
+ 895              	.L62:
+  95:lvgl/src/lv_themes/lv_theme.c **** 
+ 896              		.loc 1 95 1 view .LVU194
+ 897 0036 38BD     		pop	{r3, r4, r5, pc}
+  95:lvgl/src/lv_themes/lv_theme.c **** 
+ 898              		.loc 1 95 1 view .LVU195
+ 899              		.cfi_endproc
+ARM GAS  D:\Temp\ccwRKatG.s 			page 28
+
+
+ 900              	.LFE563:
+ 902              		.section	.text.lv_theme_set_base,"ax",%progbits
+ 903              		.align	1
+ 904              		.global	lv_theme_set_base
+ 905              		.syntax unified
+ 906              		.thumb
+ 907              		.thumb_func
+ 908              		.fpu fpv4-sp-d16
+ 910              	lv_theme_set_base:
+ 911              	.LVL140:
+ 912              	.LFB564:
+ 105:lvgl/src/lv_themes/lv_theme.c ****     new_theme->base = base;
+ 913              		.loc 1 105 1 is_stmt 1 view -0
+ 914              		.cfi_startproc
+ 915              		@ args = 0, pretend = 0, frame = 0
+ 916              		@ frame_needed = 0, uses_anonymous_args = 0
+ 917              		@ link register save eliminated.
+ 106:lvgl/src/lv_themes/lv_theme.c **** }
+ 918              		.loc 1 106 5 view .LVU197
+ 106:lvgl/src/lv_themes/lv_theme.c **** }
+ 919              		.loc 1 106 21 is_stmt 0 view .LVU198
+ 920 0000 8160     		str	r1, [r0, #8]
+ 107:lvgl/src/lv_themes/lv_theme.c **** 
+ 921              		.loc 1 107 1 view .LVU199
+ 922 0002 7047     		bx	lr
+ 923              		.cfi_endproc
+ 924              	.LFE564:
+ 926              		.section	.text.lv_theme_set_apply_cb,"ax",%progbits
+ 927              		.align	1
+ 928              		.global	lv_theme_set_apply_cb
+ 929              		.syntax unified
+ 930              		.thumb
+ 931              		.thumb_func
+ 932              		.fpu fpv4-sp-d16
+ 934              	lv_theme_set_apply_cb:
+ 935              	.LVL141:
+ 936              	.LFB565:
+ 116:lvgl/src/lv_themes/lv_theme.c ****     theme->apply_cb = apply_cb;
+ 937              		.loc 1 116 1 is_stmt 1 view -0
+ 938              		.cfi_startproc
+ 939              		@ args = 0, pretend = 0, frame = 0
+ 940              		@ frame_needed = 0, uses_anonymous_args = 0
+ 941              		@ link register save eliminated.
+ 117:lvgl/src/lv_themes/lv_theme.c **** }
+ 942              		.loc 1 117 5 view .LVU201
+ 117:lvgl/src/lv_themes/lv_theme.c **** }
+ 943              		.loc 1 117 21 is_stmt 0 view .LVU202
+ 944 0000 0160     		str	r1, [r0]
+ 118:lvgl/src/lv_themes/lv_theme.c **** 
+ 945              		.loc 1 118 1 view .LVU203
+ 946 0002 7047     		bx	lr
+ 947              		.cfi_endproc
+ 948              	.LFE565:
+ 950              		.section	.text.lv_theme_get_font_small,"ax",%progbits
+ 951              		.align	1
+ 952              		.global	lv_theme_get_font_small
+ 953              		.syntax unified
+ARM GAS  D:\Temp\ccwRKatG.s 			page 29
+
+
+ 954              		.thumb
+ 955              		.thumb_func
+ 956              		.fpu fpv4-sp-d16
+ 958              	lv_theme_get_font_small:
+ 959              	.LFB566:
+ 125:lvgl/src/lv_themes/lv_theme.c ****     return act_theme->font_small;
+ 960              		.loc 1 125 1 is_stmt 1 view -0
+ 961              		.cfi_startproc
+ 962              		@ args = 0, pretend = 0, frame = 0
+ 963              		@ frame_needed = 0, uses_anonymous_args = 0
+ 964              		@ link register save eliminated.
+ 126:lvgl/src/lv_themes/lv_theme.c **** }
+ 965              		.loc 1 126 5 view .LVU205
+ 126:lvgl/src/lv_themes/lv_theme.c **** }
+ 966              		.loc 1 126 21 is_stmt 0 view .LVU206
+ 967 0000 014B     		ldr	r3, .L68
+ 968 0002 1B68     		ldr	r3, [r3]
+ 127:lvgl/src/lv_themes/lv_theme.c **** 
+ 969              		.loc 1 127 1 view .LVU207
+ 970 0004 1869     		ldr	r0, [r3, #16]
+ 971 0006 7047     		bx	lr
+ 972              	.L69:
+ 973              		.align	2
+ 974              	.L68:
+ 975 0008 00000000 		.word	.LANCHOR0
+ 976              		.cfi_endproc
+ 977              	.LFE566:
+ 979              		.section	.text.lv_theme_get_font_normal,"ax",%progbits
+ 980              		.align	1
+ 981              		.global	lv_theme_get_font_normal
+ 982              		.syntax unified
+ 983              		.thumb
+ 984              		.thumb_func
+ 985              		.fpu fpv4-sp-d16
+ 987              	lv_theme_get_font_normal:
+ 988              	.LFB567:
+ 134:lvgl/src/lv_themes/lv_theme.c ****     return act_theme->font_normal;
+ 989              		.loc 1 134 1 is_stmt 1 view -0
+ 990              		.cfi_startproc
+ 991              		@ args = 0, pretend = 0, frame = 0
+ 992              		@ frame_needed = 0, uses_anonymous_args = 0
+ 993              		@ link register save eliminated.
+ 135:lvgl/src/lv_themes/lv_theme.c **** }
+ 994              		.loc 1 135 5 view .LVU209
+ 135:lvgl/src/lv_themes/lv_theme.c **** }
+ 995              		.loc 1 135 21 is_stmt 0 view .LVU210
+ 996 0000 014B     		ldr	r3, .L71
+ 997 0002 1B68     		ldr	r3, [r3]
+ 136:lvgl/src/lv_themes/lv_theme.c **** 
+ 998              		.loc 1 136 1 view .LVU211
+ 999 0004 5869     		ldr	r0, [r3, #20]
+ 1000 0006 7047     		bx	lr
+ 1001              	.L72:
+ 1002              		.align	2
+ 1003              	.L71:
+ 1004 0008 00000000 		.word	.LANCHOR0
+ 1005              		.cfi_endproc
+ARM GAS  D:\Temp\ccwRKatG.s 			page 30
+
+
+ 1006              	.LFE567:
+ 1008              		.section	.text.lv_theme_get_font_subtitle,"ax",%progbits
+ 1009              		.align	1
+ 1010              		.global	lv_theme_get_font_subtitle
+ 1011              		.syntax unified
+ 1012              		.thumb
+ 1013              		.thumb_func
+ 1014              		.fpu fpv4-sp-d16
+ 1016              	lv_theme_get_font_subtitle:
+ 1017              	.LFB568:
+ 143:lvgl/src/lv_themes/lv_theme.c ****     return act_theme->font_subtitle;
+ 1018              		.loc 1 143 1 is_stmt 1 view -0
+ 1019              		.cfi_startproc
+ 1020              		@ args = 0, pretend = 0, frame = 0
+ 1021              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1022              		@ link register save eliminated.
+ 144:lvgl/src/lv_themes/lv_theme.c **** }
+ 1023              		.loc 1 144 5 view .LVU213
+ 144:lvgl/src/lv_themes/lv_theme.c **** }
+ 1024              		.loc 1 144 21 is_stmt 0 view .LVU214
+ 1025 0000 014B     		ldr	r3, .L74
+ 1026 0002 1B68     		ldr	r3, [r3]
+ 145:lvgl/src/lv_themes/lv_theme.c **** 
+ 1027              		.loc 1 145 1 view .LVU215
+ 1028 0004 9869     		ldr	r0, [r3, #24]
+ 1029 0006 7047     		bx	lr
+ 1030              	.L75:
+ 1031              		.align	2
+ 1032              	.L74:
+ 1033 0008 00000000 		.word	.LANCHOR0
+ 1034              		.cfi_endproc
+ 1035              	.LFE568:
+ 1037              		.section	.text.lv_theme_get_font_title,"ax",%progbits
+ 1038              		.align	1
+ 1039              		.global	lv_theme_get_font_title
+ 1040              		.syntax unified
+ 1041              		.thumb
+ 1042              		.thumb_func
+ 1043              		.fpu fpv4-sp-d16
+ 1045              	lv_theme_get_font_title:
+ 1046              	.LFB569:
+ 152:lvgl/src/lv_themes/lv_theme.c ****     return act_theme->font_title;
+ 1047              		.loc 1 152 1 is_stmt 1 view -0
+ 1048              		.cfi_startproc
+ 1049              		@ args = 0, pretend = 0, frame = 0
+ 1050              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1051              		@ link register save eliminated.
+ 153:lvgl/src/lv_themes/lv_theme.c **** }
+ 1052              		.loc 1 153 5 view .LVU217
+ 153:lvgl/src/lv_themes/lv_theme.c **** }
+ 1053              		.loc 1 153 21 is_stmt 0 view .LVU218
+ 1054 0000 014B     		ldr	r3, .L77
+ 1055 0002 1B68     		ldr	r3, [r3]
+ 154:lvgl/src/lv_themes/lv_theme.c **** 
+ 1056              		.loc 1 154 1 view .LVU219
+ 1057 0004 D869     		ldr	r0, [r3, #28]
+ 1058 0006 7047     		bx	lr
+ARM GAS  D:\Temp\ccwRKatG.s 			page 31
+
+
+ 1059              	.L78:
+ 1060              		.align	2
+ 1061              	.L77:
+ 1062 0008 00000000 		.word	.LANCHOR0
+ 1063              		.cfi_endproc
+ 1064              	.LFE569:
+ 1066              		.section	.text.lv_theme_get_color_primary,"ax",%progbits
+ 1067              		.align	1
+ 1068              		.global	lv_theme_get_color_primary
+ 1069              		.syntax unified
+ 1070              		.thumb
+ 1071              		.thumb_func
+ 1072              		.fpu fpv4-sp-d16
+ 1074              	lv_theme_get_color_primary:
+ 1075              	.LFB570:
+ 161:lvgl/src/lv_themes/lv_theme.c ****     return act_theme->color_primary;
+ 1076              		.loc 1 161 1 is_stmt 1 view -0
+ 1077              		.cfi_startproc
+ 1078              		@ args = 0, pretend = 0, frame = 0
+ 1079              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1080              		@ link register save eliminated.
+ 162:lvgl/src/lv_themes/lv_theme.c **** }
+ 1081              		.loc 1 162 5 view .LVU221
+ 162:lvgl/src/lv_themes/lv_theme.c **** }
+ 1082              		.loc 1 162 21 is_stmt 0 view .LVU222
+ 1083 0000 014B     		ldr	r3, .L80
+ 1084 0002 1B68     		ldr	r3, [r3]
+ 163:lvgl/src/lv_themes/lv_theme.c **** 
+ 1085              		.loc 1 163 1 view .LVU223
+ 1086 0004 9889     		ldrh	r0, [r3, #12]
+ 1087 0006 7047     		bx	lr
+ 1088              	.L81:
+ 1089              		.align	2
+ 1090              	.L80:
+ 1091 0008 00000000 		.word	.LANCHOR0
+ 1092              		.cfi_endproc
+ 1093              	.LFE570:
+ 1095              		.section	.text.lv_theme_get_color_secondary,"ax",%progbits
+ 1096              		.align	1
+ 1097              		.global	lv_theme_get_color_secondary
+ 1098              		.syntax unified
+ 1099              		.thumb
+ 1100              		.thumb_func
+ 1101              		.fpu fpv4-sp-d16
+ 1103              	lv_theme_get_color_secondary:
+ 1104              	.LFB571:
+ 170:lvgl/src/lv_themes/lv_theme.c ****     return act_theme->color_secondary;
+ 1105              		.loc 1 170 1 is_stmt 1 view -0
+ 1106              		.cfi_startproc
+ 1107              		@ args = 0, pretend = 0, frame = 0
+ 1108              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1109              		@ link register save eliminated.
+ 171:lvgl/src/lv_themes/lv_theme.c **** }
+ 1110              		.loc 1 171 5 view .LVU225
+ 171:lvgl/src/lv_themes/lv_theme.c **** }
+ 1111              		.loc 1 171 21 is_stmt 0 view .LVU226
+ 1112 0000 014B     		ldr	r3, .L83
+ARM GAS  D:\Temp\ccwRKatG.s 			page 32
+
+
+ 1113 0002 1B68     		ldr	r3, [r3]
+ 172:lvgl/src/lv_themes/lv_theme.c **** 
+ 1114              		.loc 1 172 1 view .LVU227
+ 1115 0004 D889     		ldrh	r0, [r3, #14]
+ 1116 0006 7047     		bx	lr
+ 1117              	.L84:
+ 1118              		.align	2
+ 1119              	.L83:
+ 1120 0008 00000000 		.word	.LANCHOR0
+ 1121              		.cfi_endproc
+ 1122              	.LFE571:
+ 1124              		.section	.text.lv_theme_get_flags,"ax",%progbits
+ 1125              		.align	1
+ 1126              		.global	lv_theme_get_flags
+ 1127              		.syntax unified
+ 1128              		.thumb
+ 1129              		.thumb_func
+ 1130              		.fpu fpv4-sp-d16
+ 1132              	lv_theme_get_flags:
+ 1133              	.LFB572:
+ 179:lvgl/src/lv_themes/lv_theme.c ****     return act_theme->flags;
+ 1134              		.loc 1 179 1 is_stmt 1 view -0
+ 1135              		.cfi_startproc
+ 1136              		@ args = 0, pretend = 0, frame = 0
+ 1137              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1138              		@ link register save eliminated.
+ 180:lvgl/src/lv_themes/lv_theme.c **** }
+ 1139              		.loc 1 180 5 view .LVU229
+ 180:lvgl/src/lv_themes/lv_theme.c **** }
+ 1140              		.loc 1 180 21 is_stmt 0 view .LVU230
+ 1141 0000 014B     		ldr	r3, .L86
+ 1142 0002 1B68     		ldr	r3, [r3]
+ 181:lvgl/src/lv_themes/lv_theme.c **** 
+ 1143              		.loc 1 181 1 view .LVU231
+ 1144 0004 186A     		ldr	r0, [r3, #32]
+ 1145 0006 7047     		bx	lr
+ 1146              	.L87:
+ 1147              		.align	2
+ 1148              	.L86:
+ 1149 0008 00000000 		.word	.LANCHOR0
+ 1150              		.cfi_endproc
+ 1151              	.LFE572:
+ 1153              		.section	.bss.act_theme,"aw",%nobits
+ 1154              		.align	2
+ 1155              		.set	.LANCHOR0,. + 0
+ 1158              	act_theme:
+ 1159 0000 00000000 		.space	4
+ 1160              		.text
+ 1161              	.Letext0:
+ 1162              		.file 2 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1163              		.file 3 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\inc
+ 1164              		.file 4 "Drivers/CMSIS/Include/core_cm4.h"
+ 1165              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h"
+ 1166              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 1167              		.file 7 "lvgl/lv_conf.h"
+ 1168              		.file 8 "lvgl/src/lv_themes/../../src/lv_misc/lv_types.h"
+ 1169              		.file 9 "lvgl/src/lv_themes/../../src/lv_misc/lv_mem.h"
+ARM GAS  D:\Temp\ccwRKatG.s 			page 33
+
+
+ 1170              		.file 10 "lvgl/src/lv_themes/../../src/lv_misc/lv_ll.h"
+ 1171              		.file 11 "lvgl/src/lv_themes/../../src/lv_hal/../lv_misc/lv_color.h"
+ 1172              		.file 12 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1173              		.file 13 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1174              		.file 14 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\lib\\gcc\\arm-non
+ 1175              		.file 15 "c:\\stm32\\gnu mcu eclipse\\arm embedded gcc\\8.2.1-1.4-20190214-0604\\arm-none-eabi\\in
+ 1176              		.file 16 "lvgl/src/lv_themes/../../src/lv_hal/../lv_misc/lv_area.h"
+ 1177              		.file 17 "lvgl/src/lv_themes/../../src/lv_core/lv_obj.h"
+ 1178              		.file 18 "lvgl/src/lv_themes/../../src/lv_hal/lv_hal_indev.h"
+ 1179              		.file 19 "lvgl/src/lv_themes/../../src/lv_core/../lv_font/lv_font.h"
+ 1180              		.file 20 "lvgl/src/lv_themes/../../src/lv_core/../lv_misc/lv_anim.h"
+ 1181              		.file 21 "lvgl/src/lv_themes/../../src/lv_core/lv_style.h"
+ 1182              		.file 22 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_bidi.h"
+ 1183              		.file 23 "d:\\_project\\stm32\\f407\\hack_rf_new\\lvgl\\src\\lv_misc\\lv_txt.h"
+ 1184              		.file 24 "lvgl/src/lv_themes/../../src/lv_core/../lv_draw/lv_draw_label.h"
+ 1185              		.file 25 "lvgl/src/lv_themes/../../src/lv_themes/lv_theme.h"
+ 1186              		.file 26 "lvgl/src/lv_themes/../../src/lv_widgets/lv_cont.h"
+ 1187              		.file 27 "lvgl/src/lv_themes/../../src/lv_widgets/lv_btn.h"
+ 1188              		.file 28 "lvgl/src/lv_themes/../../src/lv_widgets/lv_label.h"
+ 1189              		.file 29 "lvgl/src/lv_themes/../../src/lv_widgets/lv_img.h"
+ 1190              		.file 30 "lvgl/src/lv_themes/../../src/lv_widgets/lv_page.h"
+ 1191              		.file 31 "lvgl/src/lv_themes/../../src/lv_widgets/lv_list.h"
+ 1192              		.file 32 "lvgl/src/lv_themes/../../src/lv_widgets/lv_chart.h"
+ 1193              		.file 33 "lvgl/src/lv_themes/../../src/lv_widgets/lv_table.h"
+ 1194              		.file 34 "lvgl/src/lv_themes/../../src/lv_widgets/lv_checkbox.h"
+ 1195              		.file 35 "lvgl/src/lv_themes/../../src/lv_widgets/lv_cpicker.h"
+ 1196              		.file 36 "lvgl/src/lv_themes/../../src/lv_widgets/lv_bar.h"
+ 1197              		.file 37 "lvgl/src/lv_themes/../../src/lv_widgets/lv_slider.h"
+ 1198              		.file 38 "lvgl/src/lv_themes/../../src/lv_widgets/lv_led.h"
+ 1199              		.file 39 "lvgl/src/lv_themes/../../src/lv_widgets/lv_btnmatrix.h"
+ 1200              		.file 40 "lvgl/src/lv_themes/../../src/lv_widgets/lv_keyboard.h"
+ 1201              		.file 41 "lvgl/src/lv_themes/../../src/lv_widgets/lv_dropdown.h"
+ 1202              		.file 42 "lvgl/src/lv_themes/../../src/lv_widgets/lv_roller.h"
+ 1203              		.file 43 "lvgl/src/lv_themes/../../src/lv_widgets/lv_textarea.h"
+ 1204              		.file 44 "lvgl/src/lv_themes/../../src/lv_widgets/lv_canvas.h"
+ 1205              		.file 45 "lvgl/src/lv_themes/../../src/lv_widgets/lv_win.h"
+ 1206              		.file 46 "lvgl/src/lv_themes/../../src/lv_widgets/lv_tabview.h"
+ 1207              		.file 47 "lvgl/src/lv_themes/../../src/lv_widgets/lv_tileview.h"
+ 1208              		.file 48 "lvgl/src/lv_themes/../../src/lv_widgets/lv_msgbox.h"
+ 1209              		.file 49 "lvgl/src/lv_themes/../../src/lv_widgets/lv_objmask.h"
+ 1210              		.file 50 "lvgl/src/lv_themes/../../src/lv_widgets/lv_linemeter.h"
+ 1211              		.file 51 "lvgl/src/lv_themes/../../src/lv_widgets/lv_gauge.h"
+ 1212              		.file 52 "lvgl/src/lv_themes/../../src/lv_widgets/lv_switch.h"
+ 1213              		.file 53 "lvgl/src/lv_themes/../../src/lv_widgets/lv_arc.h"
+ 1214              		.file 54 "lvgl/src/lv_themes/../../src/lv_widgets/lv_spinner.h"
+ 1215              		.file 55 "lvgl/src/lv_themes/../../src/lv_widgets/lv_calendar.h"
+ 1216              		.file 56 "lvgl/src/lv_themes/../../src/lv_widgets/lv_spinbox.h"
+ARM GAS  D:\Temp\ccwRKatG.s 			page 34
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lv_theme.c
+  D:\Temp\ccwRKatG.s:18     .text.apply_theme:0000000000000000 $t
+  D:\Temp\ccwRKatG.s:25     .text.apply_theme:0000000000000000 apply_theme
+  D:\Temp\ccwRKatG.s:87     .text.apply_theme:0000000000000030 $d
+  D:\Temp\ccwRKatG.s:92     .text.clear_styles:0000000000000000 $t
+  D:\Temp\ccwRKatG.s:98     .text.clear_styles:0000000000000000 clear_styles
+  D:\Temp\ccwRKatG.s:120    .text.clear_styles:000000000000000e $d
+  D:\Temp\ccwRKatG.s:160    .text.clear_styles:000000000000005e $t
+  D:\Temp\ccwRKatG.s:712    .text.lv_theme_set_act:0000000000000000 $t
+  D:\Temp\ccwRKatG.s:719    .text.lv_theme_set_act:0000000000000000 lv_theme_set_act
+  D:\Temp\ccwRKatG.s:736    .text.lv_theme_set_act:0000000000000008 $d
+  D:\Temp\ccwRKatG.s:741    .text.lv_theme_get_act:0000000000000000 $t
+  D:\Temp\ccwRKatG.s:748    .text.lv_theme_get_act:0000000000000000 lv_theme_get_act
+  D:\Temp\ccwRKatG.s:763    .text.lv_theme_get_act:0000000000000008 $d
+  D:\Temp\ccwRKatG.s:768    .text.lv_theme_apply:0000000000000000 $t
+  D:\Temp\ccwRKatG.s:775    .text.lv_theme_apply:0000000000000000 lv_theme_apply
+  D:\Temp\ccwRKatG.s:809    .text.lv_theme_apply:0000000000000018 $d
+  D:\Temp\ccwRKatG.s:814    .text.lv_theme_copy:0000000000000000 $t
+  D:\Temp\ccwRKatG.s:821    .text.lv_theme_copy:0000000000000000 lv_theme_copy
+  D:\Temp\ccwRKatG.s:903    .text.lv_theme_set_base:0000000000000000 $t
+  D:\Temp\ccwRKatG.s:910    .text.lv_theme_set_base:0000000000000000 lv_theme_set_base
+  D:\Temp\ccwRKatG.s:927    .text.lv_theme_set_apply_cb:0000000000000000 $t
+  D:\Temp\ccwRKatG.s:934    .text.lv_theme_set_apply_cb:0000000000000000 lv_theme_set_apply_cb
+  D:\Temp\ccwRKatG.s:951    .text.lv_theme_get_font_small:0000000000000000 $t
+  D:\Temp\ccwRKatG.s:958    .text.lv_theme_get_font_small:0000000000000000 lv_theme_get_font_small
+  D:\Temp\ccwRKatG.s:975    .text.lv_theme_get_font_small:0000000000000008 $d
+  D:\Temp\ccwRKatG.s:980    .text.lv_theme_get_font_normal:0000000000000000 $t
+  D:\Temp\ccwRKatG.s:987    .text.lv_theme_get_font_normal:0000000000000000 lv_theme_get_font_normal
+  D:\Temp\ccwRKatG.s:1004   .text.lv_theme_get_font_normal:0000000000000008 $d
+  D:\Temp\ccwRKatG.s:1009   .text.lv_theme_get_font_subtitle:0000000000000000 $t
+  D:\Temp\ccwRKatG.s:1016   .text.lv_theme_get_font_subtitle:0000000000000000 lv_theme_get_font_subtitle
+  D:\Temp\ccwRKatG.s:1033   .text.lv_theme_get_font_subtitle:0000000000000008 $d
+  D:\Temp\ccwRKatG.s:1038   .text.lv_theme_get_font_title:0000000000000000 $t
+  D:\Temp\ccwRKatG.s:1045   .text.lv_theme_get_font_title:0000000000000000 lv_theme_get_font_title
+  D:\Temp\ccwRKatG.s:1062   .text.lv_theme_get_font_title:0000000000000008 $d
+  D:\Temp\ccwRKatG.s:1067   .text.lv_theme_get_color_primary:0000000000000000 $t
+  D:\Temp\ccwRKatG.s:1074   .text.lv_theme_get_color_primary:0000000000000000 lv_theme_get_color_primary
+  D:\Temp\ccwRKatG.s:1091   .text.lv_theme_get_color_primary:0000000000000008 $d
+  D:\Temp\ccwRKatG.s:1096   .text.lv_theme_get_color_secondary:0000000000000000 $t
+  D:\Temp\ccwRKatG.s:1103   .text.lv_theme_get_color_secondary:0000000000000000 lv_theme_get_color_secondary
+  D:\Temp\ccwRKatG.s:1120   .text.lv_theme_get_color_secondary:0000000000000008 $d
+  D:\Temp\ccwRKatG.s:1125   .text.lv_theme_get_flags:0000000000000000 $t
+  D:\Temp\ccwRKatG.s:1132   .text.lv_theme_get_flags:0000000000000000 lv_theme_get_flags
+  D:\Temp\ccwRKatG.s:1149   .text.lv_theme_get_flags:0000000000000008 $d
+  D:\Temp\ccwRKatG.s:1154   .bss.act_theme:0000000000000000 $d
+  D:\Temp\ccwRKatG.s:1158   .bss.act_theme:0000000000000000 act_theme
+
+UNDEFINED SYMBOLS
+lv_obj_clean_style_list
+_lv_memset_00

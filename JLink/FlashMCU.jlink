@@ -1,0 +1,6 @@
+r
+loadbin build\STM32F103CDC.bin, 0x00
+verifybin build\STM32F103CDC.bin, 0x00
+r
+g
+q
